@@ -1,0 +1,30 @@
+query getcustomerOrders($customerAccessToken: String!, $country: CountryCode)@inContext(country: $country) {
+  customer(customerAccessToken: $customerAccessToken) {
+    orders(first:10) {
+      edges {
+        node {
+          totalPrice {
+            amount
+            currencyCode # store's currency
+          }
+          lineItems(first:10) {
+            edges {
+              node {
+                originalTotalPrice {
+                  amount
+                  currencyCode # store's currency
+                }
+                variant {
+                  price {
+                    amount
+                    currencyCode # active local currency
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

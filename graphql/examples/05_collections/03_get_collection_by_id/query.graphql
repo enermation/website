@@ -1,0 +1,9 @@
+# Query that returns details from a collection object by passing the collection.id as an argument.
+
+query getCollectionById($id: ID!) {
+	collection(id: $id) {
+		title
+		description
+                handle
+	}
+}
