@@ -1,13 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  CalendarRange,
-  Droplet,
-  Gauge,
-  Layers,
-  Calendar,
-  Mail,
-} from "lucide-react";
+import { Calendar, Mail } from "lucide-react";
+import client from "@/lib/shopify";
+import { GET_ALL_PRODUCTS } from "@/lib/queries";
+import type { ShopifyProduct } from "@/lib/types";
 
 // Inline brand-icon SVGs — lucide-react v1.7 does not ship social brand icons
 
@@ -47,7 +43,6 @@ function YoutubeIcon({ className }: { className?: string }) {
 }
 import { cn } from "@/lib/utils";
 import {
-  cars,
   instagramPosts,
   newsArticle,
   navLinks,
@@ -55,7 +50,6 @@ import {
   supplyingImage,
   carsForSaleImage,
   sellYourCarImage,
-  type Car,
 } from "@/lib/data";
 
 // ── Shared primitives ────────────────────────────────────────────────────────
@@ -99,52 +93,42 @@ function SectionHeading({
 
 // ── Car card ─────────────────────────────────────────────────────────────────
 
-function CarCard({ car }: { car: Car }) {
-  const specs = [
-    { icon: CalendarRange, value: car.spec.year },
-    { icon: Droplet,       value: car.spec.color },
-    { icon: Gauge,         value: car.spec.mileage },
-    { icon: Layers,        value: car.spec.interior },
-  ] as const;
+function CarCard({ product }: { product: ShopifyProduct }) {
+  const image = product.images.edges[0]?.node;
+  const { amount, currencyCode } = product.priceRange.minVariantPrice;
+  const price = new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency: currencyCode,
+  }).format(parseFloat(amount));
 
   return (
-    <Link href="#" className="flex flex-col group">
+    <Link href={`/products/${product.handle}`} className="flex flex-col group">
       {/* Image */}
-      <div className="relative aspect-[3/2] overflow-hidden">
-        <Image
-          src={car.image}
-          alt={car.name}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 100vw"
-        />
+      <div className="relative aspect-[3/2] overflow-hidden bg-gray-94">
+        {image && (
+          <Image
+            src={image.url}
+            alt={image.altText ?? product.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 100vw"
+          />
+        )}
       </div>
 
       {/* Title */}
       <h3 className="font-inter font-normal text-xl text-gray-7 mt-3 px-1 leading-snug">
-        {car.name}
+        {product.title}
       </h3>
 
       {/* Description + price */}
-      <div className="flex flex-col flex-1 px-1 mt-3 pb-4">
+      <div className="flex flex-col flex-1 px-1 mt-3 pb-4 border-b border-gray-87">
         <p className="font-roboto text-15 text-gray-33 leading-relaxed line-clamp-2 flex-1">
-          {car.description}
+          {product.description}
         </p>
         <p className="font-montserrat font-semibold text-lg text-black mt-2">
-          {car.price}
+          {product.availableForSale ? price : "Reserved — More Wanted"}
         </p>
-      </div>
-
-      {/* Specs grid */}
-      <div className="border-t border-gray-87 pt-4 px-1 grid grid-cols-2 gap-y-2 gap-x-3 pb-2">
-        {specs.map(({ icon: Icon, value }) => (
-          <div key={value} className="flex items-center gap-1.5">
-            <Icon className="size-3.5 shrink-0 text-gray-7" />
-            <span className="font-montserrat font-medium text-13 text-gray-7 truncate">
-              {value}
-            </span>
-          </div>
-        ))}
       </div>
     </Link>
   );
@@ -152,7 +136,12 @@ function CarCard({ car }: { car: Car }) {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-export default function Home() {
+export default async function Home() {
+  const { data } = await client.request<{
+    products: { edges: { node: ShopifyProduct }[] }
+  }>(GET_ALL_PRODUCTS);
+  const products = data?.products.edges.map((e) => e.node).slice(0, 6) ?? [];
+
   return (
     <main>
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
@@ -221,8 +210,8 @@ export default function Home() {
         <SectionHeading title="Latest Arrivals for Sale" />
         <div className="max-w-site mx-auto px-6 pb-16">
           <div className="grid grid-cols-3 gap-8">
-            {cars.map((car) => (
-              <CarCard key={car.id} car={car} />
+            {products.map((product) => (
+              <CarCard key={product.id} product={product} />
             ))}
           </div>
 
