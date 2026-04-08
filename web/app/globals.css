@@ -5,6 +5,22 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-brand-green: var(--brand-green);
+  --color-brand-red: var(--brand-red);
+  --color-gray-7: var(--gray-7);
+  --color-gray-16: var(--gray-16);
+  --color-gray-18: var(--gray-18);
+  --color-gray-33: var(--gray-33);
+  --color-gray-60: var(--gray-60);
+  --color-gray-87: var(--gray-87);
+  --color-gray-90: var(--gray-90);
+  --color-gray-93: var(--gray-93);
+  --color-gray-94: var(--gray-94);
+  --color-gray-98: var(--gray-98);
+  --color-black-30: var(--black-30);
+  --color-black-40: var(--black-40);
+  --color-white-30: var(--white-30);
+  --color-white-70: var(--white-70);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -73,6 +89,52 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
+
+  /* ─── Figma Design Tokens ─── */
+
+  /* Brand colors */
+  --brand-green: oklch(0.38 0.12 145);   /* #006620 Camarone */
+  --brand-red: oklch(0.41 0.16 23);      /* #a70a0c Totem Pole */
+
+  /* Gray palette */
+  --gray-7: oklch(0.17 0 0);             /* #111111 Cod Gray */
+  --gray-16: oklch(0.27 0 0);            /* #282828 Mine Shaft */
+  --gray-18: oklch(0.30 0 0);            /* #2e2e2e */
+  --gray-33: oklch(0.44 0 0);            /* #555555 Emperor */
+  --gray-60: oklch(0.68 0 0);            /* #999999 Dusty Gray */
+  --gray-87: oklch(0.90 0 0);            /* #dddddd Alto */
+  --gray-90: oklch(0.93 0 0);            /* #e5e5e5 Mercury */
+  --gray-93: oklch(0.95 0 0);            /* #eeeeee */
+  --gray-94: oklch(0.95 0 0);            /* #efefef Gallery */
+  --gray-98: oklch(0.98 0 0);            /* #f9f9f9 Alabaster */
+
+  /* Opacity overlays */
+  --black-30: oklch(0 0 0 / 30%);
+  --black-40: oklch(0 0 0 / 40%);
+  --white-30: oklch(1 0 0 / 30%);
+  --white-70: oklch(1 0 0 / 70%);
+
+  /* Figma font families (load via next/font if needed) */
+  --font-roboto: 'Roboto', sans-serif;
+  --font-montserrat: 'Montserrat', sans-serif;
+
+  /* Font sizes */
+  --font-size-2xs: 0.75rem;              /* 12px */
+  --font-size-xs: 0.8125rem;             /* 13px */
+  --font-size-sm: 0.9375rem;             /* 15px */
+  --font-size-md: 1.125rem;              /* 18px */
+
+  /* Named spacing */
+  --spacing-s-plus: 1.5rem;             /* 24px */
+  --spacing-l: 3rem;                    /* 48px */
+
+  /* Container widths */
+  --container-xs: 20.625rem;            /* 330px */
+  --container-sm: 26rem;               /* 416px */
+  --container-md: 41.25rem;            /* 660px */
+  --container-lg: 66rem;               /* 1056px */
+  --container-xl: 82.5rem;             /* 1320px */
+
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);

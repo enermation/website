@@ -118,15 +118,26 @@ bun run lint
 
 ### Code Style
 - TypeScript with strict mode enabled
-- No `any` types without justification
+- IMPORTANT: **Never use `any` type** — always write a proper type or interface. Use `unknown` + narrowing if the shape is genuinely unknown
 - Explicit over clever patterns
 - Path aliases for imports (`@/`)
+
+### Styling
+- IMPORTANT: **Never use Tailwind arbitrary values** (e.g. `w-[100px]`, `text-[#ff0000]`, `mt-[13px]`) — always use a design token or a standard Tailwind scale step
+- IMPORTANT: **Never hardcode colors, radii, or spacing values** in className strings or inline styles — all values must come from CSS custom properties defined in `web/app/globals.css`
+- If a required token doesn't exist in `globals.css`, add it there first, then use it via Tailwind
+- Strictly use Tailwind utility classes for all styling; no inline `style={{}}` props except for truly dynamic runtime values that cannot be expressed as a class
+
+### Data & Content
+- IMPORTANT: **All static data, page content, and copy** (e.g. nav links, feature lists, testimonials, pricing tiers, product descriptions) must live in `web/lib/` as typed `.ts` files (e.g. `lib/data.ts`, `lib/nav.ts`) — never hardcode them inside component JSX
+- Components import and render data; they do not define it
 
 ### Component Architecture
 - App Router pattern with server components by default
 - shadcn/ui for base UI components
 - Custom hooks in `hooks/` directory
-- Utilities in `lib/` directory
+- Utilities and data files in `lib/` directory
+- IMPORTANT: **Do not create a new component file for something used only once** — import the shadcn/ui primitive directly and compose it inline in the file where it's needed. Only extract into a separate component when it is (or will be) used in more than one place. Exception: if the single-use block exceeds ~80 lines of JSX and extraction meaningfully improves readability, extraction is acceptable — but reusability, not tidiness, should be the default reason to create a component
 
 ### Shopify Integration
 - Storefront API client configured in `lib/shopify.ts`
@@ -271,8 +282,10 @@ function MyComponent({
 - **Framework**: Tailwind CSS v4 (`@import "tailwindcss"` — no `tailwind.config.js`)
 - **Utility**: Always use `cn()` from `@/lib/utils` to merge class names (clsx + tailwind-merge)
 - **Animations**: `tw-animate-css` is available via `@import "tw-animate-css"`
-- **Global styles**: `web/app/globals.css` — add project-wide base styles in `@layer base`
+- **Global styles**: `web/app/globals.css` — add project-wide base styles in `@layer base`; all design tokens (colors, radius, spacing, typography) must be defined here
 - **No CSS Modules, no styled-components** — Tailwind utility classes only
+- IMPORTANT: **No arbitrary Tailwind values** — never write `w-[...]`, `h-[...]`, `text-[...]`, `bg-[#...]`, etc. Use the token scale or standard Tailwind steps
+- IMPORTANT: **No inline `style={{}}` props** for values that can be expressed as Tailwind classes or CSS variables
 - Responsive breakpoints: `sm:` (640px), `md:` (768px), `lg:` (1024px), `xl:` (1280px), `2xl:` (1536px)
 - Mobile detection: use `useIsMobile()` hook from `@/hooks/use-mobile` (breakpoint: 768px)
 - Dark mode: apply with `dark:` Tailwind prefix (activated via `.dark` class, not media query)
