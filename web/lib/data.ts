@@ -30,6 +30,18 @@ export type NewsArticle = {
 export type NavLink = {
   label: string
   href: string
+  hasDropdown?: boolean
+}
+
+export type SubNavItem = {
+  label: string
+  href: string
+  active?: boolean
+}
+
+export type FooterLink = {
+  label: string
+  href: string
 }
 
 // ── Section images ──────────────────────────────────────────────────────────
@@ -50,11 +62,57 @@ export const sellYourCarImage =
 
 export const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
-  { label: "Supercars", href: "#" },
-  { label: "Sell Your Car", href: "#" },
-  { label: "Services", href: "#" },
-  { label: "About", href: "#" },
+  { label: "Showroom", href: "#", hasDropdown: true },
+  { label: "Sell Your Car", href: "#", hasDropdown: true },
+  { label: "Services", href: "#", hasDropdown: true },
+  { label: "About", href: "#", hasDropdown: true },
   { label: "Contact", href: "#" },
+]
+
+// ── Cars page sub-navigation ─────────────────────────────────────────────────
+
+export const carsSubNav: SubNavItem[] = [
+  { label: "Cars For Sale", href: "/cars", active: true },
+  { label: "Previously Sold", href: "#" },
+  { label: "Wishlist", href: "#" },
+  { label: "Landjets", href: "#" },
+]
+
+// ── Footer data ──────────────────────────────────────────────────────────────
+
+export const footerShowroomLinks: FooterLink[] = [
+  { label: "Cars For Sale", href: "/cars" },
+  { label: "Previously Sold", href: "#" },
+  { label: "Sell Us Your Car", href: "#" },
+]
+
+export const footerAboutLinks: FooterLink[] = [
+  { label: "Our Story", href: "#" },
+  { label: "Why Amari FAQ", href: "#" },
+  { label: "Testimonials", href: "#" },
+]
+
+export const footerContactLinks: FooterLink[] = [
+  { label: "How To Find Us", href: "#" },
+]
+
+export const footerContactInfo = {
+  phone: "+44 (0)1772 663777",
+  email: "sales@amarisupercars.com",
+}
+
+export const footerLegalLinks: FooterLink[] = [
+  { label: "Terms & Conditions", href: "#" },
+  { label: "Privacy Policy", href: "#" },
+  { label: "Contact Us", href: "#" },
+]
+
+// ── Filter / sort options ────────────────────────────────────────────────────
+
+export const sortOptions = [
+  { label: "Price: High to Low", value: "price-desc" },
+  { label: "Price: Low to High", value: "price-asc" },
+  { label: "Newest First", value: "newest" },
 ]
 
 // ── Latest arrivals ──────────────────────────────────────────────────────────

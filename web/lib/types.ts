@@ -31,6 +31,7 @@ export type ShopifyProduct = {
   id: string
   title: string
   handle: string
+  vendor: string
   description: string
   availableForSale: boolean
   images: { edges: { node: ShopifyImage }[] }

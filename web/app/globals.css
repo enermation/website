@@ -35,6 +35,7 @@
   --color-gray-93: var(--gray-93);
   --color-gray-94: var(--gray-94);
   --color-gray-98: var(--gray-98);
+  --color-select-border: var(--select-border);
   --color-black-30: var(--black-30);
   --color-black-40: var(--black-40);
   --color-white-30: var(--white-30);
@@ -125,6 +126,9 @@
   --gray-93: oklch(0.95 0 0); /* #eeeeee */
   --gray-94: oklch(0.95 0 0); /* #efefef Gallery */
   --gray-98: oklch(0.98 0 0); /* #f9f9f9 Alabaster */
+
+  /* Form */
+  --select-border: oklch(0.855 0.013 248); /* #ced4da — input/select border */
 
   /* Opacity overlays */
   --black-30: oklch(0 0 0 / 30%);

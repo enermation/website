@@ -10,6 +10,7 @@ export const GET_ALL_PRODUCTS = `
           title
           description
           handle
+          vendor
           availableForSale
           images(first: 1) {
             edges {
