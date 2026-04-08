@@ -186,7 +186,7 @@ export default async function Home() {
 
           <div className="flex justify-center mt-12">
             <Link
-              href="#"
+              href="/collections/cars-for-sale"
               className="font-montserrat font-semibold text-13 uppercase tracking-wider border-2 border-black text-black px-8 py-3 hover:bg-black hover:text-white transition-colors"
             >
               View all stock for sale
@@ -239,14 +239,16 @@ export default async function Home() {
             image: carsForSaleImage,
             title: "Cars For Sale",
             alt: "A showroom floor filled with exotic supercars",
+            href: "/collections/cars-for-sale",
           },
           {
             image: sellYourCarImage,
             title: "Sell Us Your Car",
             alt: "A red Ferrari F40 — we buy supercars",
+            href: "#",
           },
-        ].map(({ image, title, alt }) => (
-          <Link key={title} href="#" className="relative overflow-hidden block">
+        ].map(({ image, title, alt, href }) => (
+          <Link key={title} href={href} className="relative overflow-hidden block">
             <div className="relative h-cta">
               <Image
                 src={image}
