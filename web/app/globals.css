@@ -5,6 +5,24 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* ─── Fonts ─── */
+  --font-inter: var(--font-inter-var, 'Inter', sans-serif);
+  --font-roboto: var(--font-roboto-var, 'Roboto', sans-serif);
+  --font-montserrat: var(--font-montserrat-var, 'Montserrat', sans-serif);
+
+  /* ─── Font sizes ─── */
+  --font-size-13: 0.8125rem;      /* 13px — labels, meta */
+  --font-size-15: 0.9375rem;      /* 15px — body text */
+  --font-size-section: 2.125rem;  /* 34px — section headings */
+  --font-size-banner: 2.675rem;   /* 42.8px — full-bleed banner headings */
+
+  /* ─── Max widths ─── */
+  --max-w-site: 82.5rem;          /* 1320px — main container */
+
+  /* ─── Custom spacing ─── */
+  --spacing-cta: 46.25rem;        /* 740px — CTA split section height */
+
+  /* ─── Colors ─── */
   --color-brand-green: var(--brand-green);
   --color-brand-red: var(--brand-red);
   --color-gray-7: var(--gray-7);
