@@ -17,17 +17,17 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
 
   function updateParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString())
-    if (value === "" || value === "Show All" || value === "newest") {
+    if (!value || value === "Show All") {
       params.delete(key)
     } else {
       params.set(key, value)
     }
-    router.push(`/cars?${params.toString()}`)
+    router.push(`?${params.toString()}`)
   }
 
   return (
     <div className="flex flex-wrap items-end gap-0 border-b border-gray-90 pb-3">
-      {/* Make select — wider */}
+      {/* Make select */}
       <div className="flex flex-col gap-1 px-3 pt-6 w-1/3 min-w-0 shrink-0">
         <label className="font-montserrat font-semibold text-13 text-black uppercase tracking-wider">
           Make
@@ -66,7 +66,12 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
       {/* Action buttons */}
       <div className="flex items-end gap-0 ml-auto px-3 pt-6">
         <button
-          onClick={() => router.push("/cars")}
+          onClick={() => {
+            const params = new URLSearchParams(searchParams.toString())
+            params.delete("make")
+            params.delete("sort")
+            router.push(`?${params.toString()}`)
+          }}
           className={cn(
             "flex items-center gap-2 h-10 px-5 border-2 border-black font-montserrat font-semibold text-xs uppercase tracking-wider transition-colors whitespace-nowrap",
             "text-black bg-white hover:bg-black hover:text-white"

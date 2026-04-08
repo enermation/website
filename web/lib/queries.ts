@@ -137,15 +137,15 @@ export const GET_PRODUCTS_IN_COLLECTION = `
             title
             handle
             vendor
+            description
             availableForSale
             images(first: 1) {
               edges {
                 node {
-                  id
                   url
+                  altText
                   width
                   height
-                  altText
                 }
               }
             }
@@ -154,9 +154,17 @@ export const GET_PRODUCTS_IN_COLLECTION = `
                 amount
                 currencyCode
               }
-              maxVariantPrice {
-                amount
-                currencyCode
+            }
+            variants(first: 3) {
+              edges {
+                node {
+                  id
+                  title
+                  price {
+                    amount
+                    currencyCode
+                  }
+                }
               }
             }
           }

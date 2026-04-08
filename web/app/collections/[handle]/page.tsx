@@ -1,15 +1,26 @@
 import Image from "next/image"
 import Link from "next/link"
+import { notFound } from "next/navigation"
 import { Suspense } from "react"
 import { Calendar, Palette, Gauge, Armchair } from "lucide-react"
 import client from "@/lib/shopify"
-import { GET_ALL_PRODUCTS } from "@/lib/queries"
+import { GET_PRODUCTS_IN_COLLECTION } from "@/lib/queries"
 import type { ShopifyProduct } from "@/lib/types"
-import { carsSubNav, sortOptions } from "@/lib/data"
+import { showroomSubNav, sortOptions } from "@/lib/data"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { FilterBar } from "./filter-bar"
 import { cn } from "@/lib/utils"
+
+// ── Shopify response type ─────────────────────────────────────────────────────
+
+type CollectionResponse = {
+  collection: {
+    id: string
+    title: string
+    products: { edges: { node: ShopifyProduct }[] }
+  } | null
+}
 
 // ── Car card ─────────────────────────────────────────────────────────────────
 
@@ -21,11 +32,11 @@ function CarCard({ product }: { product: ShopifyProduct }) {
     currency: currencyCode,
   }).format(parseFloat(amount))
 
-  // Derive display spec from available Shopify fields
   const firstVariant = product.variants.edges[0]?.node
-  const variantTitle = firstVariant?.title && firstVariant.title !== "Default Title"
-    ? firstVariant.title
-    : null
+  const variantTitle =
+    firstVariant?.title && firstVariant.title !== "Default Title"
+      ? firstVariant.title
+      : null
 
   return (
     <Link href={`/products/${product.handle}`} className="flex flex-col group">
@@ -52,13 +63,17 @@ function CarCard({ product }: { product: ShopifyProduct }) {
         {product.vendor && (
           <div className="flex items-center gap-2 px-2 py-1">
             <Palette className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-roboto font-medium text-13 text-black truncate">{product.vendor}</span>
+            <span className="font-roboto font-medium text-13 text-black truncate">
+              {product.vendor}
+            </span>
           </div>
         )}
         {variantTitle && (
           <div className="flex items-center gap-2 px-2 py-1">
             <Armchair className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-roboto font-medium text-13 text-black truncate">{variantTitle}</span>
+            <span className="font-roboto font-medium text-13 text-black truncate">
+              {variantTitle}
+            </span>
           </div>
         )}
         <div className="flex items-center gap-2 px-2 py-1">
@@ -88,18 +103,25 @@ function CarCard({ product }: { product: ShopifyProduct }) {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-export default async function CarsPage({
+export default async function CollectionPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ handle: string }>
   searchParams: Promise<{ make?: string; sort?: string }>
 }) {
+  const { handle } = await params
   const { make, sort } = await searchParams
 
-  const { data } = await client.request<{
-    products: { edges: { node: ShopifyProduct }[] }
-  }>(GET_ALL_PRODUCTS)
+  const { data } = await client.request<CollectionResponse>(
+    GET_PRODUCTS_IN_COLLECTION,
+    { variables: { handle } }
+  )
 
-  let products = data?.products.edges.map((e) => e.node) ?? []
+  if (!data?.collection) notFound()
+
+  const { title, products: productData } = data.collection
+  let products = productData.edges.map((e) => e.node)
 
   // Unique makes from vendor field
   const makes = [
@@ -127,9 +149,6 @@ export default async function CarsPage({
     )
   }
 
-  const currentSortLabel =
-    sortOptions.find((o) => o.value === sort)?.label ?? sortOptions[0].label
-
   return (
     <>
       <SiteHeader />
@@ -137,27 +156,30 @@ export default async function CarsPage({
       {/* Sub-navigation */}
       <nav className="bg-white border-b border-gray-90">
         <div className="max-w-site mx-auto flex justify-center">
-          {carsSubNav.map((tab) => (
-            <Link
-              key={tab.label}
-              href={tab.href}
-              className={cn(
-                "font-montserrat font-semibold text-13 uppercase tracking-wide px-4 py-4 border-b-2 transition-colors",
-                tab.active
-                  ? "border-black text-black"
-                  : "border-transparent text-black/36 hover:text-black/60"
-              )}
-            >
-              {tab.label}
-            </Link>
-          ))}
+          {showroomSubNav.map((tab) => {
+            const isActive = tab.href === `/collections/${handle}`
+            return (
+              <Link
+                key={tab.label}
+                href={tab.href}
+                className={cn(
+                  "font-montserrat font-semibold text-13 uppercase tracking-wide px-4 py-4 border-b-2 transition-colors",
+                  isActive
+                    ? "border-black text-black"
+                    : "border-transparent text-black/36 hover:text-black/60"
+                )}
+              >
+                {tab.label}
+              </Link>
+            )
+          })}
         </div>
       </nav>
 
-      {/* Page title */}
+      {/* Page title — driven by Shopify collection title */}
       <section className="bg-white border-b border-gray-90 py-10 text-center">
         <h1 className="font-inter font-normal text-section uppercase tracking-widest text-gray-7">
-          Cars For Sale
+          {title}
         </h1>
         <div className="flex justify-center mt-6">
           <div className="flex items-center">
@@ -172,11 +194,7 @@ export default async function CarsPage({
       <section className="bg-white py-6">
         <div className="max-w-site mx-auto px-3">
           <Suspense>
-            <FilterBar
-              makes={makes}
-              currentMake={make}
-              currentSort={sort}
-            />
+            <FilterBar makes={makes} currentMake={make} currentSort={sort} />
           </Suspense>
 
           {products.length === 0 ? (

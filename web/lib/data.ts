@@ -71,17 +71,17 @@ export const navLinks: NavLink[] = [
 
 // ── Cars page sub-navigation ─────────────────────────────────────────────────
 
-export const carsSubNav: SubNavItem[] = [
-  { label: "Cars For Sale", href: "/cars", active: true },
-  { label: "Previously Sold", href: "#" },
+export const showroomSubNav: SubNavItem[] = [
+  { label: "Cars For Sale", href: "/collections/cars-for-sale" },
+  { label: "Previously Sold", href: "/collections/previously-sold" },
   { label: "Wishlist", href: "#" },
-  { label: "Landjets", href: "#" },
+  { label: "Landjets", href: "/collections/landjets" },
 ]
 
 // ── Footer data ──────────────────────────────────────────────────────────────
 
 export const footerShowroomLinks: FooterLink[] = [
-  { label: "Cars For Sale", href: "/cars" },
+  { label: "Cars For Sale", href: "/collections/cars-for-sale" },
   { label: "Previously Sold", href: "#" },
   { label: "Sell Us Your Car", href: "#" },
 ]
