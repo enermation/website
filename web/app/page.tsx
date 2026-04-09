@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Mail } from "lucide-react";
 import client from "@/lib/shopify";
-import { GET_ALL_PRODUCTS } from "@/lib/queries";
-import type { ShopifyProduct } from "@/lib/types";
+import { GET_COLLECTIONS } from "@/lib/queries";
+import type { ShopifyCollection } from "@/lib/types";
 import { InstagramIcon } from "@/components/social-icons";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -56,43 +56,31 @@ function SectionHeading({
   );
 }
 
-// ── Car card ─────────────────────────────────────────────────────────────────
+// ── Collection card ───────────────────────────────────────────────────────────
 
-function CarCard({ product }: { product: ShopifyProduct }) {
-  const image = product.images.edges[0]?.node;
-  const { amount, currencyCode } = product.priceRange.minVariantPrice;
-  const price = new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency: currencyCode,
-  }).format(parseFloat(amount));
-
+function CollectionCard({ collection }: { collection: ShopifyCollection }) {
   return (
-    <Link href={`/products/${product.handle}`} className="flex flex-col group">
-      {/* Image */}
+    <Link
+      href={`/collections/${collection.handle}`}
+      className="flex flex-col group"
+    >
       <div className="relative aspect-[3/2] overflow-hidden bg-gray-94">
-        {image && (
+        {collection.image && (
           <Image
-            src={image.url}
-            alt={image.altText ?? product.title}
+            src={collection.image.url}
+            alt={collection.image.altText ?? collection.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 100vw"
           />
         )}
       </div>
-
-      {/* Title */}
-      <h3 className="font-inter font-normal text-xl text-gray-7 mt-3 px-1 leading-snug">
-        {product.title}
-      </h3>
-
-      {/* Description + price */}
-      <div className="flex flex-col flex-1 px-1 mt-3 pb-4 border-b border-gray-87">
-        <p className="font-roboto text-15 text-gray-33 leading-relaxed line-clamp-2 flex-1">
-          {product.description}
-        </p>
-        <p className="font-montserrat font-semibold text-lg text-black mt-2">
-          {product.availableForSale ? price : "Reserved — More Wanted"}
+      <div className="px-1 mt-3 pb-4 border-b border-gray-87">
+        <h3 className="font-inter font-normal text-xl text-gray-7 leading-snug">
+          {collection.title}
+        </h3>
+        <p className="font-montserrat text-13 text-gray-33 mt-1 tracking-wide">
+          Discover More
         </p>
       </div>
     </Link>
@@ -103,9 +91,9 @@ function CarCard({ product }: { product: ShopifyProduct }) {
 
 export default async function Home() {
   const { data } = await client.request<{
-    products: { edges: { node: ShopifyProduct }[] }
-  }>(GET_ALL_PRODUCTS);
-  const products = data?.products.edges.map((e) => e.node).slice(0, 6) ?? [];
+    collections: { edges: { node: ShopifyCollection }[] }
+  }>(GET_COLLECTIONS);
+  const collections = data?.collections.edges.map((e) => e.node) ?? [];
 
   return (
     <>
@@ -125,20 +113,20 @@ export default async function Home() {
 
       {/* ── LATEST ARRIVALS ───────────────────────────────────────────────── */}
       <section className="bg-white">
-        <SectionHeading title="Latest Arrivals for Sale" />
+        <SectionHeading title="Browse Our Collections" />
         <div className="max-w-site mx-auto px-6 pb-16">
           <div className="grid grid-cols-3 gap-8">
-            {products.map((product) => (
-              <CarCard key={product.id} product={product} />
+            {collections.map((collection) => (
+              <CollectionCard key={collection.id} collection={collection} />
             ))}
           </div>
 
           <div className="flex justify-center mt-12">
             <Link
-              href="/collections/cars-for-sale"
+              href="/collections/shopall"
               className="font-montserrat font-semibold text-13 uppercase tracking-wider border-2 border-black text-black px-8 py-3 hover:bg-black hover:text-white transition-colors"
             >
-              View all stock for sale
+              View all collections
             </Link>
           </div>
         </div>
