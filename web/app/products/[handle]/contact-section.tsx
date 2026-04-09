@@ -10,7 +10,7 @@ export function ContactSection({ productTitle }: { productTitle: string }) {
   function handleSend() {
     const subject = encodeURIComponent(`Enquiry: ${productTitle}`)
     const body = encodeURIComponent(
-      message || "Please contact me with more information about this car."
+      message || "Please contact me with more information about this listing."
     )
     window.location.href = `mailto:${footerContactInfo.email}?subject=${subject}&body=${body}`
   }
@@ -18,7 +18,7 @@ export function ContactSection({ productTitle }: { productTitle: string }) {
   return (
     <div data-slot="contact-section" className="flex flex-col gap-3">
       <Textarea
-        placeholder="Ask for more information about this car..."
+        placeholder="Ask for more information about this listing..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         rows={4}

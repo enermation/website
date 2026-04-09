@@ -36,6 +36,12 @@ function CarCard({ product }: { product: ShopifyProduct }) {
     firstVariant?.title && firstVariant.title !== "Default Title"
       ? firstVariant.title
       : null
+  const variantParts = variantTitle?.split(" / ").map((part) => part.trim()) ?? []
+  const variantYear =
+    variantParts[0] && /^\d{4}$/.test(variantParts[0]) ? variantParts[0] : null
+  const variantSummary = variantTitle
+    ? variantParts.slice(variantYear ? 1 : 0).join(" / ") || variantTitle
+    : null
 
   return (
     <Link href={`/products/${product.handle}`} className="flex flex-col group">
@@ -67,11 +73,11 @@ function CarCard({ product }: { product: ShopifyProduct }) {
             </span>
           </div>
         )}
-        {variantTitle && (
+        {variantSummary && (
           <div className="flex items-center gap-2 px-2 py-1">
             <Armchair className="size-3.5 text-gray-7 shrink-0" />
             <span className="font-roboto font-medium text-13 text-black truncate">
-              {variantTitle}
+              {variantSummary}
             </span>
           </div>
         )}
@@ -81,10 +87,12 @@ function CarCard({ product }: { product: ShopifyProduct }) {
             {product.availableForSale ? "Available" : "Sold"}
           </span>
         </div>
-        <div className="flex items-center gap-2 px-2 py-1">
-          <Calendar className="size-3.5 text-gray-7 shrink-0" />
-          <span className="font-roboto font-medium text-13 text-black">2025</span>
-        </div>
+        {variantYear && (
+          <div className="flex items-center gap-2 px-2 py-1">
+            <Calendar className="size-3.5 text-gray-7 shrink-0" />
+            <span className="font-roboto font-medium text-13 text-black">{variantYear}</span>
+          </div>
+        )}
       </div>
 
       {/* Description + price */}
@@ -198,7 +206,7 @@ export default async function CollectionPage({
 
           {products.length === 0 ? (
             <p className="font-roboto text-15 text-gray-33 text-center py-24">
-              No vehicles found{make && make !== "Show All" ? ` for ${make}` : ""}.
+              No products found{make && make !== "Show All" ? ` for ${make}` : ""}.
             </p>
           ) : (
             <div className="grid grid-cols-3 gap-6 mt-6">

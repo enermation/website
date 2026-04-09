@@ -27,10 +27,10 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
 
   return (
     <div className="flex flex-wrap items-end gap-0 border-b border-gray-90 pb-3">
-      {/* Make select */}
+      {/* Brand select */}
       <div className="flex flex-col gap-1 px-3 pt-6 w-1/3 min-w-0 shrink-0">
         <label className="font-montserrat font-semibold text-13 text-black uppercase tracking-wider">
-          Make
+          Brand
         </label>
         <select
           value={currentMake ?? "Show All"}

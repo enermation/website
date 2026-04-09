@@ -1,4 +1,4 @@
-import Image from "next/image"
+﻿import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Calendar, Gauge, Palette, Armchair, User, Phone } from "lucide-react"
@@ -20,7 +20,7 @@ import { ImageGallery } from "./image-gallery"
 import { EnquiryForm } from "./enquiry-form"
 import { ContactSection } from "./contact-section"
 
-// ── Response types ────────────────────────────────────────────────────────────
+// Response types
 
 type ProductResponse = {
   product: ShopifyProduct | null
@@ -34,7 +34,7 @@ type CollectionResponse = {
   } | null
 }
 
-// ── Shared primitives ─────────────────────────────────────────────────────────
+// Shared primitives
 
 function StripeBar() {
   return (
@@ -46,7 +46,7 @@ function StripeBar() {
   )
 }
 
-// ── Similar car card ──────────────────────────────────────────────────────────
+// Similar car card
 
 function CarCard({ product }: { product: ShopifyProduct }) {
   const image = product.images.edges[0]?.node
@@ -114,14 +114,14 @@ function CarCard({ product }: { product: ShopifyProduct }) {
           {product.description}
         </p>
         <p className="font-montserrat font-semibold text-lg text-black mt-3">
-          {product.availableForSale ? price : "Reserved — More Wanted"}
+          {product.availableForSale ? price : "Reserved - More Wanted"}
         </p>
       </div>
     </Link>
   )
 }
 
-// ── Metadata ──────────────────────────────────────────────────────────────────
+// Metadata
 
 export async function generateMetadata({
   params,
@@ -139,7 +139,7 @@ export async function generateMetadata({
   }
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// Page
 
 export default async function ProductPage({
   params,
@@ -206,12 +206,12 @@ export default async function ProductPage({
         </div>
       </div>
 
-      {/* Main body — 2-column */}
+      {/* Main body - 2-column */}
       <section className="bg-white">
         <div className="max-w-site mx-auto px-6 py-10">
           <div className="grid grid-cols-4 gap-10 items-start">
 
-            {/* ── Left column (3/4) ─────────────────────────────── */}
+            {/* Left column (3/4) */}
             <div className="col-span-3 flex flex-col gap-8">
 
               {/* Title + price */}
@@ -267,11 +267,11 @@ export default async function ProductPage({
                 </div>
               )}
 
-              {/* About This Car */}
+              {/* About this listing */}
               {product.description && (
                 <div className="flex flex-col gap-3">
                   <h2 className="font-inter font-normal text-xl text-gray-7">
-                    About This Car
+                    About This Listing
                   </h2>
                   <p className="font-roboto text-15 text-gray-33 leading-relaxed whitespace-pre-line">
                     {product.description}
@@ -279,15 +279,15 @@ export default async function ProductPage({
                 </div>
               )}
 
-              {/* Car Details */}
+              {/* Listing details */}
               <div className="flex flex-col gap-3">
                 <h2 className="font-inter font-normal text-xl text-gray-7">
-                  Car Details
+                  Listing Details
                 </h2>
                 <dl className="divide-y divide-gray-90">
                   {product.vendor && (
                     <div className="flex justify-between py-3">
-                      <dt className="font-roboto text-13 text-gray-33">Make</dt>
+                      <dt className="font-roboto text-13 text-gray-33">Brand</dt>
                       <dd className="font-roboto text-13 text-black">{product.vendor}</dd>
                     </div>
                   )}
@@ -329,7 +329,7 @@ export default async function ProductPage({
                       {dealerInfo.name}
                     </p>
                     <p className="font-roboto text-13 text-gray-33">
-                      Specialist supercar dealer
+                      Specialist vehicle export broker
                     </p>
                     <a
                       href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
@@ -403,7 +403,7 @@ export default async function ProductPage({
               </div>
             </div>
 
-            {/* ── Right sidebar (1/4) ───────────────────────────── */}
+            {/* Right sidebar (1/4) */}
             <aside className="col-span-1 sticky top-6 flex flex-col gap-5 border border-gray-90 p-6">
 
               {/* Dealer info at top (mirrors Figma agent block) */}
@@ -435,7 +435,7 @@ export default async function ProductPage({
                   href={primaryShowroomCollectionHref}
                   className="font-roboto text-13 text-black hover:text-brand-green transition-colors"
                 >
-                  {dealerInfo.name} — View all cars
+                  {dealerInfo.name} - View all stock
                 </Link>
               </div>
             </aside>
@@ -490,7 +490,7 @@ export default async function ProductPage({
                 </div>
                 <div className="flex items-center gap-2 font-montserrat text-13 text-gray-33">
                   <span>{story.date}</span>
-                  <span>·</span>
+                  <span>|</span>
                   <span>{story.category}</span>
                 </div>
                 <h3 className="font-inter font-normal text-base text-gray-7 leading-snug group-hover:text-brand-green transition-colors">
@@ -505,3 +505,4 @@ export default async function ProductPage({
     </>
   )
 }
+
