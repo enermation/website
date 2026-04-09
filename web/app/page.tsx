@@ -16,6 +16,7 @@ import {
   supplyingImage,
   carsForSaleImage,
   sellYourCarImage,
+  primaryShowroomCollectionHref,
 } from "@/lib/data";
 
 // ── Shared primitives ────────────────────────────────────────────────────────
@@ -126,7 +127,7 @@ export default async function Home() {
 
           <div className="flex justify-center mt-12">
             <Link
-              href="/collections/shop-all"
+              href={primaryShowroomCollectionHref}
               className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-black bg-background h-9 px-8 font-montserrat font-semibold text-13 uppercase tracking-wider text-black transition-colors duration-200 hover:bg-black hover:text-white"
             >
               View all collections
@@ -179,7 +180,7 @@ export default async function Home() {
             image: carsForSaleImage,
             title: "Cars For Sale",
             alt: "A showroom floor filled with exotic supercars",
-            href: "/collections/cars-for-sale",
+            href: primaryShowroomCollectionHref,
           },
           {
             image: sellYourCarImage,

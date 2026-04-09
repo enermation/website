@@ -34,6 +34,7 @@ export const GET_ALL_PRODUCTS = `
               node {
                 id
                 title
+                availableForSale
                 price {
                   amount
                   currencyCode
@@ -163,6 +164,7 @@ export const GET_PRODUCTS_IN_COLLECTION = `
                 node {
                   id
                   title
+                  availableForSale
                   price {
                     amount
                     currencyCode

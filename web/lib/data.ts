@@ -44,6 +44,9 @@ export type FooterLink = {
   href: string
 }
 
+export const primaryShowroomCollectionHandle = "shop-all"
+export const primaryShowroomCollectionHref = `/collections/${primaryShowroomCollectionHandle}` as const
+
 // ── Section images ──────────────────────────────────────────────────────────
 
 export const heroImage =
@@ -72,7 +75,7 @@ export const navLinks: NavLink[] = [
 // ── Cars page sub-navigation ─────────────────────────────────────────────────
 
 export const showroomSubNav: SubNavItem[] = [
-  { label: "Cars For Sale", href: "/collections/cars-for-sale" },
+  { label: "Cars For Sale", href: primaryShowroomCollectionHref },
   { label: "Previously Sold", href: "/collections/previously-sold" },
   { label: "Wishlist", href: "#" },
   { label: "Landjets", href: "/collections/landjets" },
@@ -81,7 +84,7 @@ export const showroomSubNav: SubNavItem[] = [
 // ── Footer data ──────────────────────────────────────────────────────────────
 
 export const footerShowroomLinks: FooterLink[] = [
-  { label: "Cars For Sale", href: "/collections/cars-for-sale" },
+  { label: "Cars For Sale", href: primaryShowroomCollectionHref },
   { label: "Previously Sold", href: "#" },
   { label: "Sell Us Your Car", href: "#" },
 ]

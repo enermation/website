@@ -9,7 +9,11 @@ import type { ShopifyProduct } from "@/lib/types"
 import { SiteHeader } from "@/components/site-header"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
-import { footerContactInfo } from "@/lib/data"
+import {
+  footerContactInfo,
+  primaryShowroomCollectionHandle,
+  primaryShowroomCollectionHref,
+} from "@/lib/data"
 import { ImageGallery } from "./image-gallery"
 import { EnquiryForm } from "./enquiry-form"
 
@@ -146,7 +150,7 @@ export default async function ProductPage({
       variables: { handle },
     }),
     client.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
-      variables: { handle: "cars-for-sale" },
+      variables: { handle: primaryShowroomCollectionHandle },
     }),
   ])
 
@@ -186,7 +190,7 @@ export default async function ProductPage({
             Home
           </Link>
           <span>/</span>
-          <Link href="/collections/cars-for-sale" className="hover:text-black transition-colors">
+          <Link href={primaryShowroomCollectionHref} className="hover:text-black transition-colors">
             Showroom
           </Link>
           <span>/</span>
@@ -385,7 +389,7 @@ export default async function ProductPage({
             </div>
             <div className="flex justify-center mt-12">
               <Link
-                href="/collections/cars-for-sale"
+                href={primaryShowroomCollectionHref}
                 className="font-montserrat font-semibold text-13 uppercase tracking-wider border-2 border-black text-black px-8 py-3 hover:bg-black hover:text-white transition-colors"
               >
                 View all stock for sale
