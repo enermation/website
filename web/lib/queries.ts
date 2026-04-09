@@ -1,3 +1,18 @@
+// ── Shared metafield fragment ─────────────────────────────────────────────────
+
+const PRODUCT_METAFIELDS = `
+  make: metafield(namespace: "vehicle", key: "make") { value type }
+  model: metafield(namespace: "vehicle", key: "model") { value type }
+  year: metafield(namespace: "vehicle", key: "year") { value type }
+  mileage: metafield(namespace: "vehicle", key: "mileage") { value type }
+  colour: metafield(namespace: "vehicle", key: "colour") { value type }
+  fuelType: metafield(namespace: "vehicle", key: "fuel_type") { value type }
+  transmission: metafield(namespace: "vehicle", key: "transmission") { value type }
+  originCountry: metafield(namespace: "vehicle", key: "origin_country") { value type }
+  condition: metafield(namespace: "vehicle", key: "condition") { value type }
+  engine: metafield(namespace: "vehicle", key: "engine") { value type }
+`
+
 // ── Products ──────────────────────────────────────────────────────────────────
 
 export const GET_ALL_PRODUCTS = `
@@ -42,6 +57,7 @@ export const GET_ALL_PRODUCTS = `
               }
             }
           }
+          ${PRODUCT_METAFIELDS}
         }
       }
     }
@@ -113,6 +129,7 @@ export const GET_PRODUCT_BY_HANDLE = `
           }
         }
       }
+      ${PRODUCT_METAFIELDS}
     }
   }
 `
@@ -196,6 +213,7 @@ export const GET_PRODUCTS_IN_COLLECTION = `
                 }
               }
             }
+            ${PRODUCT_METAFIELDS}
           }
         }
       }

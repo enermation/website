@@ -1,4 +1,4 @@
-import { Armchair, Calendar, Gauge, Palette } from 'lucide-react'
+import { Calendar, Gauge, Palette, Wrench } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { productPage } from '@/lib/data'
@@ -6,6 +6,10 @@ import type { ShopifyProduct } from '@/lib/types'
 
 type CarCardProps = {
   product: ShopifyProduct
+}
+
+function metaValue(field: { value: string | null } | null): string | null {
+  return field?.value ?? null
 }
 
 export function CarCard({ product }: CarCardProps) {
@@ -16,26 +20,39 @@ export function CarCard({ product }: CarCardProps) {
     currency: currencyCode,
   }).format(parseFloat(amount))
 
-  const firstVariant = product.variants.edges[0]?.node
-  const variantTitle =
-    firstVariant?.title && firstVariant.title !== 'Default Title' ? firstVariant.title : null
-  const variantParts = variantTitle?.split(' / ').map(part => part.trim()) ?? []
-  const variantYear = variantParts[0] && /^\d{4}$/.test(variantParts[0]) ? variantParts[0] : null
-  const variantSummary = variantTitle
-    ? variantParts.slice(variantYear ? 1 : 0).join(' / ') || variantTitle
-    : null
-  const mobileDetailCandidates = [
-    variantYear,
-    variantParts[1],
-    variantParts[2],
-    variantParts[3],
-    product.vendor,
-    variantSummary,
+  // Structured metafield values
+  const make = metaValue(product.make) ?? product.vendor
+  const year = metaValue(product.year)
+  const transmission = metaValue(product.transmission)
+  const fuelType = metaValue(product.fuelType)
+  const mileage = metaValue(product.mileage)
+  const colour = metaValue(product.colour)
+
+  // Transmission/fuel combined display (e.g. "Automatic / Petrol")
+  const transmissionFuel = [transmission, fuelType].filter(Boolean).join(' / ') || null
+
+  // Desktop detail rows
+  const desktopDetails = [
+    { icon: Palette, label: make },
+    { icon: Wrench, label: transmissionFuel },
+    {
+      icon: Gauge,
+      label: product.availableForSale ? productPage.labels.available : productPage.labels.sold,
+    },
+    { icon: Calendar, label: year },
+  ].filter(row => row.label)
+
+  // Mobile detail list (up to 4 items)
+  const mobileDetails = [
+    year,
+    transmissionFuel,
+    mileage,
+    colour,
+    make,
     product.availableForSale ? productPage.labels.available : productPage.labels.sold,
   ]
-  const mobileDetails = Array.from(
-    new Set(mobileDetailCandidates.filter((detail): detail is string => Boolean(detail)))
-  ).slice(0, 4)
+    .filter(Boolean)
+    .slice(0, 4)
 
   return (
     <Link href={`/products/${product.handle}`} className="flex flex-col group">
@@ -75,34 +92,12 @@ export function CarCard({ product }: CarCardProps) {
       </div>
 
       <div className="mt-3 hidden grid-cols-2 gap-y-1 border-t border-gray-87 pt-2 md:grid">
-        {product.vendor && (
-          <div className="flex items-center gap-2 px-2 py-1">
-            <Palette className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-body font-medium text-13 text-foreground truncate">
-              {product.vendor}
-            </span>
+        {desktopDetails.map(({ icon: Icon, label }) => (
+          <div key={label} className="flex items-center gap-2 px-2 py-1">
+            <Icon className="size-3.5 text-gray-7 shrink-0" />
+            <span className="font-body font-medium text-13 text-foreground truncate">{label}</span>
           </div>
-        )}
-        {variantSummary && (
-          <div className="flex items-center gap-2 px-2 py-1">
-            <Armchair className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-body font-medium text-13 text-foreground truncate">
-              {variantSummary}
-            </span>
-          </div>
-        )}
-        <div className="flex items-center gap-2 px-2 py-1">
-          <Gauge className="size-3.5 text-gray-7 shrink-0" />
-          <span className="font-body font-medium text-13 text-foreground">
-            {product.availableForSale ? productPage.labels.available : productPage.labels.sold}
-          </span>
-        </div>
-        {variantYear && (
-          <div className="flex items-center gap-2 px-2 py-1">
-            <Calendar className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-body font-medium text-13 text-foreground">{variantYear}</span>
-          </div>
-        )}
+        ))}
       </div>
 
       <div className="mt-3 hidden flex-1 flex-col px-1 pb-4 md:flex">

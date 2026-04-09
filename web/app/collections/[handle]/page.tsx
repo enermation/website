@@ -49,7 +49,8 @@ function buildMakeOptions(products: ShopifyProduct[]): MakeOption[] {
   const counts = new Map<string, number>()
 
   for (const product of products) {
-    const make = product.vendor?.trim()
+    // Prefer structured metafield make, fall back to vendor
+    const make = product.make?.value?.trim() || product.vendor?.trim()
     if (!make) continue
     counts.set(make, (counts.get(make) ?? 0) + 1)
   }
