@@ -242,3 +242,50 @@ export const newsArticle: NewsArticle = {
   excerpt:
     "Enermation' Definitive Guide to the Ultimate Driving Experience in 2024",
 }
+
+// ── Related stories (product page) ──────────────────────────────────────────
+
+export type RelatedStory = {
+  id: string
+  image: string
+  date: string
+  category: string
+  title: string
+  href: string
+}
+
+export const relatedStories: RelatedStory[] = [
+  {
+    id: "1",
+    image: "https://www.figma.com/api/mcp/asset/7952f809-824f-4cae-8a06-c76f0aed92da",
+    date: "06 March 2024",
+    category: "Latest News",
+    title: "Enermation's Top 5 Supercar Picks to Grace Your Driveway in 2024",
+    href: "#",
+  },
+  {
+    id: "2",
+    image: "https://www.figma.com/api/mcp/asset/e68c70fa-4341-476f-a6f2-59f911ed718b",
+    date: "15 January 2024",
+    category: "Cars",
+    title: "Why the Ferrari SF90 Stradale Remains the Ultimate Hybrid Supercar",
+    href: "#",
+  },
+  {
+    id: "3",
+    image: "https://www.figma.com/api/mcp/asset/5a5d4229-cf0c-4ed0-b6f7-ee2d10307a5f",
+    date: "22 November 2023",
+    category: "News",
+    title: "Lamborghini Aventador Ultimae: The Last of a Legendary V12 Era",
+    href: "#",
+  },
+]
+
+// ── Dealer info ───────────────────────────────────────────────────────────────
+
+export const dealerInfo = {
+  name: "Enermation Supercars",
+  address: "Preston, Lancashire, UK",
+  about:
+    "Based in Preston in Lancashire, close to Junction 31A of the M6 Motorway, Enermation are internationally renowned for offering a unique selection of some of the world's finest automobiles. With literally hundreds of beautiful cars supplied to a diverse customer base, Enermation is the premier supercar dealer in the UK.",
+}

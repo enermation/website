@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Calendar, Gauge, Palette, Armchair } from "lucide-react"
+import { Calendar, Gauge, Palette, Armchair, User, Phone } from "lucide-react"
 import type { Metadata } from "next"
 import client from "@/lib/shopify"
 import { GET_PRODUCT_BY_HANDLE, GET_PRODUCTS_IN_COLLECTION } from "@/lib/queries"
@@ -11,11 +11,14 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import {
   footerContactInfo,
+  dealerInfo,
+  relatedStories,
   primaryShowroomCollectionHandle,
   primaryShowroomCollectionHref,
 } from "@/lib/data"
 import { ImageGallery } from "./image-gallery"
 import { EnquiryForm } from "./enquiry-form"
+import { ContactSection } from "./contact-section"
 
 // ── Response types ────────────────────────────────────────────────────────────
 
@@ -165,14 +168,12 @@ export default async function ProductPage({
     currency: currencyCode,
   }).format(parseFloat(amount))
 
-  // Spec options from first variant — exclude the Shopify default placeholder
   const firstVariant = product.variants.edges[0]?.node
   const specOptions =
     firstVariant?.selectedOptions?.filter(
       (o) => o.name !== "Title" && o.value !== "Default Title"
     ) ?? []
 
-  // Similar cars — exclude current product, first 3
   const similarCars =
     collectionData?.collection?.products.edges
       .map((e) => e.node)
@@ -198,22 +199,22 @@ export default async function ProductPage({
         </div>
       </nav>
 
-      {/* Mosaic gallery — full width within site container */}
+      {/* Mosaic gallery */}
       <div className="bg-white">
         <div className="max-w-site mx-auto px-6 pt-6">
           <ImageGallery images={images} />
         </div>
       </div>
 
-      {/* Main body — 2-column layout */}
+      {/* Main body — 2-column */}
       <section className="bg-white">
         <div className="max-w-site mx-auto px-6 py-10">
           <div className="grid grid-cols-4 gap-10 items-start">
 
-            {/* ── Left column (3/4) ───────────────────────────── */}
+            {/* ── Left column (3/4) ─────────────────────────────── */}
             <div className="col-span-3 flex flex-col gap-8">
 
-              {/* Title + price row */}
+              {/* Title + price */}
               <div className="flex justify-between items-start gap-6">
                 <div className="flex flex-col gap-1">
                   {product.vendor && (
@@ -243,7 +244,7 @@ export default async function ProductPage({
                 </div>
               </div>
 
-              {/* Specs bar — from variant selectedOptions */}
+              {/* Specs bar */}
               {specOptions.length > 0 && (
                 <div className="flex border-y border-gray-90">
                   {specOptions.map((opt, i) => (
@@ -268,48 +269,40 @@ export default async function ProductPage({
 
               {/* About This Car */}
               {product.description && (
-                <div className="flex flex-col gap-4">
-                  <h2 className="font-inter font-normal text-xl uppercase tracking-widest text-gray-7">
+                <div className="flex flex-col gap-3">
+                  <h2 className="font-inter font-normal text-xl text-gray-7">
                     About This Car
                   </h2>
-                  <StripeBar />
                   <p className="font-roboto text-15 text-gray-33 leading-relaxed whitespace-pre-line">
                     {product.description}
                   </p>
                 </div>
               )}
 
-              {/* Car Details table */}
-              <div className="flex flex-col gap-4">
-                <h2 className="font-inter font-normal text-xl uppercase tracking-widest text-gray-7">
+              {/* Car Details */}
+              <div className="flex flex-col gap-3">
+                <h2 className="font-inter font-normal text-xl text-gray-7">
                   Car Details
                 </h2>
-                <StripeBar />
                 <dl className="divide-y divide-gray-90">
                   {product.vendor && (
                     <div className="flex justify-between py-3">
                       <dt className="font-roboto text-13 text-gray-33">Make</dt>
-                      <dd className="font-roboto text-13 text-black text-right">
-                        {product.vendor}
-                      </dd>
+                      <dd className="font-roboto text-13 text-black">{product.vendor}</dd>
                     </div>
                   )}
                   {specOptions.map((opt) => (
                     <div key={opt.name} className="flex justify-between py-3">
                       <dt className="font-roboto text-13 text-gray-33">{opt.name}</dt>
-                      <dd className="font-roboto text-13 text-black text-right">
-                        {opt.value}
-                      </dd>
+                      <dd className="font-roboto text-13 text-black">{opt.value}</dd>
                     </div>
                   ))}
                   <div className="flex justify-between py-3">
                     <dt className="font-roboto text-13 text-gray-33">Status</dt>
-                    <dd
-                      className={cn(
-                        "font-roboto text-13",
-                        product.availableForSale ? "text-brand-green" : "text-gray-33"
-                      )}
-                    >
+                    <dd className={cn(
+                      "font-roboto text-13",
+                      product.availableForSale ? "text-brand-green" : "text-gray-33"
+                    )}>
                       {product.availableForSale ? "Available" : "Sold / Reserved"}
                     </dd>
                   </div>
@@ -322,66 +315,144 @@ export default async function ProductPage({
                 </dl>
               </div>
 
-              {/* Contact CTA */}
-              <div className="flex items-center gap-4 pt-2">
-                <a
-                  href={`mailto:${footerContactInfo.email}?subject=${encodeURIComponent(`Enquiry: ${product.title}`)}`}
-                  className="font-montserrat font-semibold text-13 uppercase tracking-wider border-2 border-black text-black px-8 py-3 hover:bg-black hover:text-white transition-colors"
-                >
-                  Enquire About This Car
-                </a>
-                <a
-                  href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
-                  className="font-montserrat text-13 text-gray-33 hover:text-black transition-colors"
-                >
-                  {footerContactInfo.phone}
-                </a>
+              {/* Ask a Question */}
+              <div className="flex flex-col gap-4">
+                <h2 className="font-inter font-normal text-xl text-gray-7">
+                  Ask a Question
+                </h2>
+                <div className="flex items-start gap-4">
+                  <div className="flex items-center justify-center size-10 rounded-full bg-gray-90 shrink-0">
+                    <User className="size-5 text-gray-33" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="font-roboto font-medium text-13 text-black">
+                      {dealerInfo.name}
+                    </p>
+                    <p className="font-roboto text-13 text-gray-33">
+                      Specialist supercar dealer
+                    </p>
+                    <a
+                      href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
+                      className="flex items-center gap-1.5 font-roboto text-13 text-brand-green hover:opacity-80 transition-opacity mt-1"
+                    >
+                      <Phone className="size-3.5" />
+                      Call Us
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Agent */}
+              <div className="flex flex-col gap-3">
+                <h2 className="font-inter font-normal text-xl text-gray-7">
+                  Contact Agent
+                </h2>
+                <ContactSection productTitle={product.title} />
+              </div>
+
+              {/* For Sale By */}
+              <div className="flex flex-col gap-4 border-t border-gray-90 pt-8">
+                <h2 className="font-inter font-normal text-xl text-gray-7">
+                  For Sale By
+                </h2>
+
+                <div className="flex flex-col gap-1">
+                  <Link
+                    href={primaryShowroomCollectionHref}
+                    className="font-roboto font-medium text-13 text-black hover:text-brand-green transition-colors"
+                  >
+                    {dealerInfo.name}
+                  </Link>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <p className="font-roboto font-medium text-13 text-gray-33">About</p>
+                  <p className="font-roboto text-13 text-black leading-relaxed">
+                    {dealerInfo.about}
+                  </p>
+                </div>
+
+                <dl className="divide-y divide-gray-90">
+                  <div className="flex flex-col gap-0.5 py-3">
+                    <dt className="font-roboto text-13 text-gray-33">Address</dt>
+                    <dd className="font-roboto text-13 text-black">{dealerInfo.address}</dd>
+                  </div>
+                  <div className="flex flex-col gap-0.5 py-3">
+                    <dt className="font-roboto text-13 text-gray-33">Phone number</dt>
+                    <dd>
+                      <a
+                        href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
+                        className="font-roboto text-13 text-black hover:text-brand-green transition-colors"
+                      >
+                        {footerContactInfo.phone}
+                      </a>
+                    </dd>
+                  </div>
+                  <div className="flex flex-col gap-0.5 py-3">
+                    <dt className="font-roboto text-13 text-gray-33">Email</dt>
+                    <dd>
+                      <a
+                        href={`mailto:${footerContactInfo.email}`}
+                        className="font-roboto text-13 text-black hover:text-brand-green transition-colors"
+                      >
+                        {footerContactInfo.email}
+                      </a>
+                    </dd>
+                  </div>
+                </dl>
               </div>
             </div>
 
-            {/* ── Right sidebar (1/4) ─────────────────────────── */}
+            {/* ── Right sidebar (1/4) ───────────────────────────── */}
             <aside className="col-span-1 sticky top-6 flex flex-col gap-5 border border-gray-90 p-6">
-              <div className="flex flex-col gap-3">
-                <h2 className="font-inter font-normal text-xl uppercase tracking-widest text-gray-7">
-                  Enquire
-                </h2>
-                <StripeBar />
+
+              {/* Dealer info at top (mirrors Figma agent block) */}
+              <div className="flex items-start gap-3 pb-4 border-b border-gray-90">
+                <div className="flex items-center justify-center size-10 rounded-full bg-gray-90 shrink-0">
+                  <User className="size-5 text-gray-33" />
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <p className="font-roboto font-medium text-13 text-black">
+                    {dealerInfo.name}
+                  </p>
+                  <p className="font-roboto text-13 text-gray-33">Specialist dealer</p>
+                  <a
+                    href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
+                    className="flex items-center gap-1.5 font-roboto text-13 text-brand-green hover:opacity-80 transition-opacity mt-1"
+                  >
+                    <Phone className="size-3.5" />
+                    Call Agent
+                  </a>
+                </div>
               </div>
 
+              {/* Enquiry form */}
               <EnquiryForm productTitle={product.title} />
 
-              <div className="border-t border-gray-90 pt-4 flex flex-col gap-2">
-                <p className="font-montserrat font-semibold text-13 text-gray-7">
-                  Enermation Supercars
-                </p>
-                <a
-                  href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
-                  className="font-roboto text-13 text-gray-33 hover:text-black transition-colors"
+              {/* Dealer footer in sidebar */}
+              <div className="border-t border-gray-90 pt-4">
+                <Link
+                  href={primaryShowroomCollectionHref}
+                  className="font-roboto text-13 text-black hover:text-brand-green transition-colors"
                 >
-                  {footerContactInfo.phone}
-                </a>
-                <a
-                  href={`mailto:${footerContactInfo.email}`}
-                  className="font-roboto text-13 text-gray-33 hover:text-black transition-colors"
-                >
-                  {footerContactInfo.email}
-                </a>
+                  {dealerInfo.name} — View all cars
+                </Link>
               </div>
             </aside>
           </div>
         </div>
       </section>
 
-      {/* Similar cars */}
+      {/* You May Also Like */}
       {similarCars.length > 0 && (
         <section className="bg-gray-98 py-16">
-          <div className="flex flex-col items-center gap-6 pb-10">
-            <h2 className="font-inter font-normal text-section uppercase tracking-widest text-center text-gray-7">
-              You May Also Like
-            </h2>
-            <StripeBar />
-          </div>
           <div className="max-w-site mx-auto px-6">
+            <div className="flex items-center justify-between mb-10">
+              <h2 className="font-inter font-normal text-section uppercase tracking-widest text-gray-7">
+                You May Also Like
+              </h2>
+              <StripeBar />
+            </div>
             <div className="grid grid-cols-3 gap-6">
               {similarCars.map((car) => (
                 <CarCard key={car.id} product={car} />
@@ -398,6 +469,39 @@ export default async function ProductPage({
           </div>
         </section>
       )}
+
+      {/* Related Stories */}
+      <section className="bg-white py-16 border-t border-gray-90">
+        <div className="max-w-site mx-auto px-6">
+          <h2 className="font-inter font-normal text-section uppercase tracking-widest text-gray-7 mb-10">
+            Related Stories
+          </h2>
+          <div className="grid grid-cols-3 gap-6">
+            {relatedStories.map((story) => (
+              <Link key={story.id} href={story.href} className="flex flex-col gap-3 group">
+                <div className="relative aspect-[3/2] overflow-hidden bg-gray-94">
+                  <Image
+                    src={story.image}
+                    alt={story.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(min-width: 1280px) 400px, 33vw"
+                  />
+                </div>
+                <div className="flex items-center gap-2 font-montserrat text-13 text-gray-33">
+                  <span>{story.date}</span>
+                  <span>·</span>
+                  <span>{story.category}</span>
+                </div>
+                <h3 className="font-inter font-normal text-base text-gray-7 leading-snug group-hover:text-brand-green transition-colors">
+                  {story.title}
+                </h3>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
     </>
   )
 }
