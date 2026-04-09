@@ -41,6 +41,7 @@ export type ShopifyProduct = {
     maxVariantPrice?: ShopifyMoney // present in GET_PRODUCT_BY_HANDLE, absent in GET_ALL_PRODUCTS
   }
   variants: { edges: { node: ShopifyProductVariant }[] }
+  collections?: { edges: { node: ShopifyCollection }[] }
 }
 
 export type ShopifyCollection = {
@@ -77,4 +78,11 @@ export type ShopifyCart = {
     totalTaxAmount: ShopifyMoney | null
     totalDutyAmount: ShopifyMoney | null
   }
+}
+
+export type ShopifyShopInfo = {
+  name: string
+  primaryDomain: {
+    url: string
+  } | null
 }

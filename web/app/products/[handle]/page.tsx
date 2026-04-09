@@ -16,17 +16,10 @@ import { CarCard } from '@/components/car-card'
 import { SiteHeader } from '@/components/site-header'
 import { StripeBar } from '@/components/stripe-bar'
 import { Badge } from '@/components/ui/badge'
-import {
-  dealerInfo,
-  footerContactInfo,
-  primaryShowroomCollectionHandle,
-  primaryShowroomCollectionHref,
-  productPage,
-  relatedStories,
-} from '@/lib/data'
-import { GET_PRODUCT_BY_HANDLE, GET_PRODUCTS_IN_COLLECTION } from '@/lib/queries'
+import { footerContactInfo, productPage, relatedStories } from '@/lib/data'
+import { GET_PRODUCT_BY_HANDLE, GET_PRODUCTS_IN_COLLECTION, GET_SHOP_INFO } from '@/lib/queries'
 import client from '@/lib/shopify'
-import type { ShopifyProduct } from '@/lib/types'
+import type { ShopifyProduct, ShopifyShopInfo } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ContactSection } from './contact-section'
 import { EnquiryForm } from './enquiry-form'
@@ -42,6 +35,10 @@ type CollectionResponse = {
     title: string
     products: { edges: { node: ShopifyProduct }[] }
   } | null
+}
+
+type ShopResponse = {
+  shop: ShopifyShopInfo | null
 }
 
 function getSpecIcon(name: string): LucideIcon {
@@ -91,19 +88,23 @@ export async function generateMetadata({
 export default async function ProductPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
 
-  const [{ data: productData }, { data: collectionData }] = await Promise.all([
+  const [{ data: productData }, { data: shopData }] = await Promise.all([
     client.request<ProductResponse>(GET_PRODUCT_BY_HANDLE, {
       variables: { handle },
     }),
-    client.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
-      variables: { handle: primaryShowroomCollectionHandle },
-    }),
+    client.request<ShopResponse>(GET_SHOP_INFO),
   ])
 
   if (!productData?.product) notFound()
 
   const product = productData.product
+  const shop = shopData?.shop ?? null
   const images = product.images.edges.map(edge => edge.node)
+  const primaryCollection = product.collections?.edges[0]?.node ?? null
+  const showroomHref = primaryCollection ? `/collections/${primaryCollection.handle}` : '/'
+  const showroomLabel = primaryCollection?.title ?? productPage.breadcrumb.showroom
+  const sellerName = product.vendor?.trim() || shop?.name || productPage.breadcrumb.showroom
+  const sellerWebsite = shop?.primaryDomain?.url ?? null
 
   const { amount, currencyCode } = product.priceRange.minVariantPrice
   const price = new Intl.NumberFormat('en-GB', {
@@ -118,8 +119,14 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
     ) ?? []
   const mobileSpecs = specOptions.slice(0, 4)
 
+  const collectionData = primaryCollection
+    ? await client.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
+        variables: { handle: primaryCollection.handle, sortKey: 'BEST_SELLING', reverse: false },
+      })
+    : null
+
   const similarCars =
-    collectionData?.collection?.products.edges
+    collectionData?.data?.collection?.products.edges
       .map(edge => edge.node)
       .filter(collectionProduct => collectionProduct.handle !== handle)
       .slice(0, 3) ?? []
@@ -134,11 +141,8 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
             {productPage.breadcrumb.home}
           </Link>
           <span>/</span>
-          <Link
-            href={primaryShowroomCollectionHref}
-            className="transition-colors hover:text-foreground"
-          >
-            {productPage.breadcrumb.showroom}
+          <Link href={showroomHref} className="transition-colors hover:text-foreground">
+            {showroomLabel}
           </Link>
           <span>/</span>
           <span className="truncate text-foreground">{product.title}</span>
@@ -157,11 +161,8 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
             {productPage.breadcrumb.home}
           </Link>
           <ChevronRight className="size-3 text-gray-60" />
-          <Link
-            href={primaryShowroomCollectionHref}
-            className="transition-colors hover:text-foreground"
-          >
-            {productPage.breadcrumb.showroom}
+          <Link href={showroomHref} className="transition-colors hover:text-foreground">
+            {showroomLabel}
           </Link>
           <ChevronRight className="size-3 text-gray-60" />
           <span className="truncate text-foreground">{product.title}</span>
@@ -312,9 +313,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                     <User className="size-5 text-gray-33" />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <p className="font-body text-13 font-medium text-foreground">
-                      {dealerInfo.name}
-                    </p>
+                    <p className="font-body text-13 font-medium text-foreground">{sellerName}</p>
                     <p className="font-body text-13 text-gray-33">
                       {productPage.labels.specialistExportBroker}
                     </p>
@@ -339,9 +338,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                     <User className="size-5 text-gray-33" />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <p className="font-body text-13 font-medium text-foreground">
-                      {dealerInfo.name}
-                    </p>
+                    <p className="font-body text-13 font-medium text-foreground">{sellerName}</p>
                     <p className="font-body text-13 text-gray-33">
                       {productPage.labels.specialistExportBroker}
                     </p>
@@ -370,25 +367,34 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
 
                 <div className="flex flex-col gap-1">
                   <Link
-                    href={primaryShowroomCollectionHref}
+                    href={showroomHref}
                     className="font-body text-13 font-medium text-foreground transition-colors hover:text-brand-green"
                   >
-                    {dealerInfo.name}
+                    {sellerName}
                   </Link>
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <p className="font-body text-13 font-medium text-gray-33">About</p>
+                  <p className="font-body text-13 font-medium text-gray-33">Collection</p>
                   <p className="font-body text-13 leading-relaxed text-foreground">
-                    {dealerInfo.about}
+                    {showroomLabel}
                   </p>
                 </div>
 
                 <dl className="divide-y divide-gray-90">
-                  <div className="flex flex-col gap-0.5 py-3">
-                    <dt className="font-body text-13 text-gray-33">{productPage.labels.address}</dt>
-                    <dd className="font-body text-13 text-foreground">{dealerInfo.address}</dd>
-                  </div>
+                  {sellerWebsite && (
+                    <div className="flex flex-col gap-0.5 py-3">
+                      <dt className="font-body text-13 text-gray-33">Website</dt>
+                      <dd>
+                        <a
+                          href={sellerWebsite}
+                          className="font-body text-13 text-foreground transition-colors hover:text-brand-green"
+                        >
+                          {sellerWebsite}
+                        </a>
+                      </dd>
+                    </div>
+                  )}
                   <div className="flex flex-col gap-0.5 py-3">
                     <dt className="font-body text-13 text-gray-33">
                       {productPage.labels.phoneNumber}
@@ -423,7 +429,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                   <User className="size-5 text-gray-33" />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <p className="font-body text-13 font-medium text-foreground">{dealerInfo.name}</p>
+                  <p className="font-body text-13 font-medium text-foreground">{sellerName}</p>
                   <p className="font-body text-13 text-gray-33">
                     {productPage.labels.specialistDealer}
                   </p>
@@ -441,10 +447,10 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
 
               <div className="border-t border-gray-90 pt-4">
                 <Link
-                  href={primaryShowroomCollectionHref}
+                  href={showroomHref}
                   className="font-body text-13 text-foreground transition-colors hover:text-brand-green"
                 >
-                  {dealerInfo.name} - {productPage.labels.viewAllStock}
+                  {sellerName} - {productPage.labels.viewAllStock}
                 </Link>
               </div>
             </aside>
@@ -470,7 +476,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
             </div>
             <div className="mt-8 flex justify-center md:mt-12">
               <Link
-                href={primaryShowroomCollectionHref}
+                href={showroomHref}
                 className="border-2 border-foreground px-8 py-3 text-center font-heading text-13 font-semibold uppercase tracking-wider text-foreground transition-colors hover:bg-foreground hover:text-background"
               >
                 {productPage.labels.viewAllStockForSale}

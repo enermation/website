@@ -100,6 +100,30 @@ export const GET_PRODUCT_BY_HANDLE = `
           }
         }
       }
+      collections(first: 10) {
+        edges {
+          node {
+            id
+            handle
+            title
+            image {
+              url
+              altText
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+export const GET_SHOP_INFO = `
+  query getShopInfo {
+    shop {
+      name
+      primaryDomain {
+        url
+      }
     }
   }
 `
