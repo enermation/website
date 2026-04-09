@@ -20,6 +20,11 @@ type CollectionResponse = {
   } | null
 }
 
+type MakeOption = {
+  label: string
+  count: number
+}
+
 // ── Sort key mapping ──────────────────────────────────────────────────────────
 
 function getSortConfig(sort?: string): { sortKey: string; reverse?: boolean } {
@@ -31,8 +36,25 @@ function getSortConfig(sort?: string): { sortKey: string; reverse?: boolean } {
     case 'newest':
       return { sortKey: 'CREATED', reverse: true }
     default:
-      return { sortKey: 'BEST_SELLING' }
+      return { sortKey: 'PRICE', reverse: true }
   }
+}
+
+function buildMakeOptions(products: ShopifyProduct[]): MakeOption[] {
+  const counts = new Map<string, number>()
+
+  for (const product of products) {
+    const make = product.vendor?.trim()
+    if (!make) continue
+    counts.set(make, (counts.get(make) ?? 0) + 1)
+  }
+
+  return [
+    { label: 'Show All', count: products.length },
+    ...Array.from(counts.entries())
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([label, count]) => ({ label, count })),
+  ]
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -50,27 +72,28 @@ export default async function CollectionPage({
   const { sortKey, reverse } = getSortConfig(sort)
   const filter = make && make !== 'Show All' ? [{ vendor: make }] : undefined
 
-  const { data } = await client.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
-    variables: { handle, sortKey, reverse, filter },
-  })
+  const [{ data: filteredData }, { data: allData }] = await Promise.all([
+    client.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
+      variables: { handle, sortKey, reverse, filter },
+    }),
+    client.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
+      variables: { handle, sortKey: 'BEST_SELLING', reverse: false },
+    }),
+  ])
 
-  if (!data?.collection) notFound()
+  if (!filteredData?.collection || !allData?.collection) notFound()
 
-  const { title, products: productData } = data.collection
+  const { title, products: productData } = filteredData.collection
   const products = productData.edges.map(e => e.node)
-
-  // Unique makes from vendor field
-  const makes = [
-    'Show All',
-    ...Array.from(new Set(products.map(p => p.vendor).filter(Boolean))).sort(),
-  ]
+  const allProducts = allData.collection.products.edges.map(e => e.node)
+  const makeOptions = buildMakeOptions(allProducts)
 
   return (
     <>
       <SiteHeader />
 
       {/* Sub-navigation */}
-      <nav className="bg-background border-b border-gray-90">
+      <nav className="hidden md:block bg-background border-b border-gray-90">
         <div className="max-w-site mx-auto flex justify-center">
           {showroomSubNav.map(tab => {
             const isActive = tab.href === `/collections/${handle}`
@@ -93,8 +116,8 @@ export default async function CollectionPage({
       </nav>
 
       {/* Page title — driven by Shopify collection title */}
-      <section className="bg-background border-b border-gray-90 py-10 text-center">
-        <h1 className="font-display font-normal text-section uppercase tracking-widest text-gray-7">
+      <section className="bg-background border-b border-gray-90 px-3 py-10 text-center">
+        <h1 className="font-sans text-section font-normal uppercase tracking-widest text-gray-7 md:font-display">
           {title}
         </h1>
         <div className="flex justify-center mt-6">
@@ -106,11 +129,33 @@ export default async function CollectionPage({
         </div>
       </section>
 
+      <nav className="border-b border-gray-90 bg-background px-3 py-5 md:hidden">
+        <div className="grid grid-cols-2">
+          {showroomSubNav.map(tab => {
+            const isActive = tab.href === `/collections/${handle}`
+            return (
+              <Link
+                key={tab.label}
+                href={tab.href}
+                className={cn(
+                  'flex justify-center px-4 py-3 text-center font-heading text-13 font-semibold uppercase tracking-wide transition-colors',
+                  isActive
+                    ? 'border-b-2 border-gray-90 text-foreground'
+                    : 'border-b-2 border-transparent text-foreground/36'
+                )}
+              >
+                {tab.label}
+              </Link>
+            )
+          })}
+        </div>
+      </nav>
+
       {/* Content */}
-      <section className="bg-background py-6">
+      <section className="bg-background py-3 md:py-6">
         <div className="max-w-site mx-auto px-3">
           <Suspense>
-            <FilterBar makes={makes} currentMake={make} currentSort={sort} />
+            <FilterBar makeOptions={makeOptions} currentMake={make} currentSort={sort} />
           </Suspense>
 
           {products.length === 0 ? (
@@ -118,7 +163,7 @@ export default async function CollectionPage({
               No products found{make && make !== 'Show All' ? ` for ${make}` : ''}.
             </p>
           ) : (
-            <div className="grid grid-cols-3 gap-6 mt-6">
+            <div className="mt-6 grid grid-cols-1 gap-y-6 md:grid-cols-3 md:gap-6">
               {products.map(product => (
                 <CarCard key={product.id} product={product} />
               ))}

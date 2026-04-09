@@ -24,11 +24,22 @@ export function CarCard({ product }: CarCardProps) {
   const variantSummary = variantTitle
     ? variantParts.slice(variantYear ? 1 : 0).join(' / ') || variantTitle
     : null
+  const mobileDetailCandidates = [
+    variantYear,
+    variantParts[1],
+    variantParts[2],
+    variantParts[3],
+    product.vendor,
+    variantSummary,
+    product.availableForSale ? productPage.labels.available : productPage.labels.sold,
+  ]
+  const mobileDetails = Array.from(
+    new Set(mobileDetailCandidates.filter((detail): detail is string => Boolean(detail)))
+  ).slice(0, 4)
 
   return (
     <Link href={`/products/${product.handle}`} className="flex flex-col group">
-      {/* Image */}
-      <div className="relative aspect-[3/2] overflow-hidden bg-gray-94 shrink-0">
+      <div className="car-card-media relative h-56 overflow-hidden bg-gray-94 shrink-0 md:h-auto">
         {image && (
           <Image
             src={image.url}
@@ -40,13 +51,30 @@ export function CarCard({ product }: CarCardProps) {
         )}
       </div>
 
-      {/* Title */}
-      <h3 className="font-display font-normal text-xl text-gray-7 mt-3 px-1 leading-snug">
+      <h3 className="mt-3 px-1 font-sans text-lg font-normal leading-8 text-gray-7 md:font-display md:text-xl md:leading-snug">
         {product.title}
       </h3>
 
-      {/* Spec row */}
-      <div className="grid grid-cols-2 border-t border-gray-87 mt-3 pt-2 gap-y-1">
+      <div className="mt-3 flex flex-col px-1 md:hidden">
+        <p className="line-clamp-4 flex-1 font-body text-15 leading-7 text-gray-33">
+          {product.description}
+        </p>
+        <p className="mt-3 font-heading text-lg font-semibold text-foreground">
+          {product.availableForSale ? price : productPage.labels.reservedMoreWanted}
+        </p>
+      </div>
+
+      <div className="mt-4 border-t border-gray-87 px-2 pt-3 pb-1 md:hidden">
+        <div className="flex flex-col gap-3">
+          {mobileDetails.map(detail => (
+            <p key={detail} className="font-body text-13 font-medium text-foreground">
+              {detail}
+            </p>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-3 hidden grid-cols-2 gap-y-1 border-t border-gray-87 pt-2 md:grid">
         {product.vendor && (
           <div className="flex items-center gap-2 px-2 py-1">
             <Palette className="size-3.5 text-gray-7 shrink-0" />
@@ -77,8 +105,7 @@ export function CarCard({ product }: CarCardProps) {
         )}
       </div>
 
-      {/* Description + price */}
-      <div className="flex flex-col flex-1 px-1 mt-3 pb-4">
+      <div className="mt-3 hidden flex-1 flex-col px-1 pb-4 md:flex">
         <p className="font-body text-15 text-gray-33 leading-relaxed line-clamp-2 flex-1">
           {product.description}
         </p>
