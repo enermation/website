@@ -44,7 +44,7 @@ export function SiteHeader() {
               key={label}
               href={href}
               aria-label={label}
-              className="flex items-center justify-center size-8 rounded-full bg-gray-16 text-white/70 hover:text-white transition-colors shrink-0"
+              className="flex items-center justify-center size-7 rounded bg-gray-16 text-white/70 hover:text-white hover:bg-gray-18 shrink-0 transition-colors"
             >
               <Icon className="size-3.5" />
             </Link>
