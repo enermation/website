@@ -1,3 +1,11 @@
+/*
+  FONT USAGE MAP
+  --font-display  (Bebas Neue)            → Hero headlines, section titles, logo
+  --font-heading  (Barlow Semi Condensed) → Subheadings, buttons, nav, labels, prices
+  --font-body     (Inter)                 → Body copy, specs, descriptions, form fields
+  --font-luxury   (Playfair italic)       → Luxury taglines only, max 2-3x per page
+*/
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
