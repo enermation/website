@@ -1,4 +1,5 @@
 import { ChevronDown, Menu, Phone } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   FacebookIcon,
@@ -23,16 +24,15 @@ export function SiteHeader() {
     <header className="bg-black">
       {/* Logo row */}
       <div className="relative flex justify-center py-7 border-b border-gray-18">
-        <Link href="/" className="flex flex-col items-center gap-3">
-          <span className="font-display text-5xl font-light text-white uppercase tracking-widest leading-none">
-            Enermation
-          </span>
-          {/* Tricolor stripe under logo */}
-          <div className="flex items-center">
-            <div className="h-1 w-10 bg-brand-green" />
-            <div className="h-1 w-10 bg-white" />
-            <div className="h-1 w-10 bg-brand-red" />
-          </div>
+        <Link href="/" aria-label="Enermation home">
+          <Image
+            src="/logo.jpg"
+            alt="Enermation"
+            width={360}
+            height={88}
+            priority
+            className="h-auto w-56 md:w-64"
+          />
         </Link>
 
         {/* Hamburger — mobile only */}

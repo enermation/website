@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   FacebookIcon,
@@ -66,15 +67,8 @@ export async function SiteFooter() {
     <footer className="bg-black pt-12 pb-10">
       {/* Mobile: Logo + Social centered at top */}
       <div className="md:hidden flex flex-col items-center gap-6 pb-10 px-4">
-        <Link href="/" className="flex flex-col items-center gap-2">
-          <span className="font-display text-4xl font-light text-white uppercase tracking-widest leading-none">
-            Enermation
-          </span>
-          <div className="flex items-center">
-            <div className="h-0.5 w-8 bg-brand-green" />
-            <div className="h-0.5 w-8 bg-white/60" />
-            <div className="h-0.5 w-8 bg-brand-red" />
-          </div>
+        <Link href="/" aria-label="Enermation home">
+          <Image src="/logo.jpg" alt="Enermation" width={300} height={74} className="h-auto w-48" />
         </Link>
         <div className="flex items-center gap-2">
           {socialLinks.map(({ label, Icon, href }) => (
@@ -136,15 +130,14 @@ export async function SiteFooter() {
 
           {/* Desktop: Logo + Social (4th column) */}
           <div className="hidden md:flex flex-col items-end gap-6 justify-between">
-            <Link href="/" className="flex flex-col items-end gap-2">
-              <span className="font-display text-3xl font-light text-white uppercase tracking-widest leading-none">
-                Enermation
-              </span>
-              <div className="flex items-center">
-                <div className="h-0.5 w-8 bg-brand-green" />
-                <div className="h-0.5 w-8 bg-white/60" />
-                <div className="h-0.5 w-8 bg-brand-red" />
-              </div>
+            <Link href="/" aria-label="Enermation home">
+              <Image
+                src="/logo.jpg"
+                alt="Enermation"
+                width={260}
+                height={64}
+                className="h-auto w-40"
+              />
             </Link>
             <div className="flex items-center gap-2">
               {socialLinks.map(({ label, Icon, href }) => (

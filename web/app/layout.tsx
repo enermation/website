@@ -36,6 +36,11 @@ export const metadata: Metadata = {
   title: 'Enermation — Supplying the Finest Supercars',
   description:
     "Enermation are internationally renowned for offering a unique selection of some of the world's finest automobiles. The premier supercar dealer in the UK.",
+  icons: {
+    icon: '/logo.jpg',
+    shortcut: '/logo.jpg',
+    apple: '/logo.jpg',
+  },
 }
 
 export default function RootLayout({
