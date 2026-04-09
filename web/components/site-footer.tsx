@@ -1,189 +1,116 @@
-import Image from 'next/image'
+import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+
+import { Input } from '@/components/ui/input'
 import {
-  FacebookIcon,
-  InstagramIcon,
-  TikTokIcon,
-  TwitterIcon,
-  YoutubeIcon,
-} from '@/components/social-icons'
-import {
-  type FooterLink,
-  footerAboutLinks,
-  footerContactInfo,
-  footerContactLinks,
-  footerLegalLinks,
+  footerContent,
+  footerPrimaryLinks,
+  footerSocialLinks,
 } from '@/lib/data'
-import { GET_COLLECTIONS } from '@/lib/queries'
-import { getClient } from '@/lib/shopify'
-import type { ShopifyCollection } from '@/lib/types'
+import { cn } from '@/lib/utils'
 
-const socialLinks = [
-  { label: 'Instagram', Icon: InstagramIcon, href: '#' },
-  { label: 'Facebook', Icon: FacebookIcon, href: '#' },
-  { label: 'TikTok', Icon: TikTokIcon, href: '#' },
-  { label: 'Twitter', Icon: TwitterIcon, href: '#' },
-  { label: 'YouTube', Icon: YoutubeIcon, href: '#' },
-]
-
-function FooterColumn({ heading, links }: { heading: string; links: FooterLink[] }) {
+function FooterWordmark() {
   return (
-    <div className="flex flex-col items-center md:items-start gap-4">
-      <h4 className="font-heading font-semibold text-white text-sm uppercase tracking-widest">
-        {heading}
-      </h4>
-      <div className="h-0.5 w-10 bg-white/30" />
-      <ul className="flex flex-col items-center md:items-start gap-1">
-        {links.map(({ label, href }) => (
+    <Link
+      href="/"
+      className="mx-auto flex w-full max-w-5xl justify-center text-center text-gray-90 transition-colors hover:text-white"
+    >
+      <span className="font-heading text-5xl leading-none font-semibold uppercase tracking-tight sm:text-7xl lg:text-9xl">
+        Enermation
+      </span>
+    </Link>
+  )
+}
+
+function FooterPrimaryNav({ className }: { className?: string }) {
+  return (
+    <nav data-slot="footer-primary-nav" className={className} aria-label="Footer">
+      <ul className="flex flex-col gap-y-2 text-gray-90">
+        {footerPrimaryLinks.map(({ label, href }) => (
           <li key={label}>
             <Link
               href={href}
-              className="font-heading text-13 text-white/80 tracking-wide hover:text-white transition-colors"
+              className="inline-flex w-fit font-heading text-4xl leading-none font-semibold uppercase tracking-tight transition-colors hover:text-white sm:text-5xl"
             >
               {label}
             </Link>
           </li>
         ))}
       </ul>
+    </nav>
+  )
+}
+
+function FooterStayConnected({ className }: { className?: string }) {
+  return (
+    <div data-slot="footer-stay-connected" className={cn('flex-col gap-6', className)}>
+      <div className="max-w-sm">
+        <p className="text-sm leading-relaxed font-semibold text-gray-87">{footerContent.description}</p>
+      </div>
+
+      <div className="flex max-w-sm flex-col gap-1">
+        <Input
+          type="email"
+          placeholder={footerContent.inputPlaceholder}
+          aria-label={footerContent.inputPlaceholder}
+          className="h-10 rounded-none border-0 border-b border-white-30 bg-transparent px-0 text-lg font-semibold text-gray-90 placeholder:text-gray-60 focus-visible:border-white focus-visible:ring-0 dark:bg-transparent"
+        />
+        <button
+          type="button"
+          className="inline-flex w-fit items-center gap-2 pt-1 font-heading text-xl font-semibold uppercase tracking-tight text-gray-90 transition-colors hover:text-white"
+        >
+          <span>{footerContent.actionLabel}</span>
+          <ArrowRight className="size-5" />
+        </button>
+      </div>
     </div>
   )
 }
 
-type CollectionsResponse = {
-  collections: {
-    edges: { node: ShopifyCollection }[]
-  }
+function FooterSocialLinks({ className }: { className?: string }) {
+  return (
+    <div
+      data-slot="footer-social-links"
+      className={cn('flex flex-wrap gap-x-1 gap-y-1 text-sm font-semibold text-gray-60', className)}
+    >
+      {footerSocialLinks.map(({ label, href }, index) => (
+        <span key={label} className="flex items-center gap-x-1">
+          <Link href={href} className="text-gray-87 transition-colors hover:text-white">
+            {label}
+          </Link>
+          {index < footerSocialLinks.length - 1 && <span aria-hidden>,</span>}
+        </span>
+      ))}
+    </div>
+  )
 }
 
-export async function SiteFooter() {
-  const shopify = await getClient()
-  const { data } = await shopify.request<CollectionsResponse>(GET_COLLECTIONS)
-  const footerShowroomLinks: FooterLink[] =
-    data?.collections.edges.map(({ node }) => ({
-      label: node.title,
-      href: `/collections/${node.handle}`,
-    })) ?? []
-
+function FooterMeta({ className }: { className?: string }) {
   return (
-    <footer className="bg-black pt-12 pb-10">
-      {/* Mobile: Logo + Social centered at top */}
-      <div className="md:hidden flex flex-col items-center gap-6 pb-10 px-4">
-        <Link href="/" aria-label="Enermation home">
-          <Image src="/logo.jpg" alt="Enermation" width={300} height={74} className="h-auto w-48" />
-        </Link>
-        <div className="flex items-center gap-2">
-          {socialLinks.map(({ label, Icon, href }) => (
-            <Link
-              key={label}
-              href={href}
-              aria-label={label}
-              className="flex items-center justify-center size-10 rounded-full bg-gray-16 text-white/70 hover:text-white hover:bg-gray-18 transition-colors"
-            >
-              <Icon className="size-4" />
-            </Link>
-          ))}
-        </div>
-      </div>
+    <div data-slot="footer-meta" className={cn('flex flex-col gap-y-2', className)}>
+      <FooterSocialLinks />
+      <p className="text-sm font-semibold text-gray-60">{footerContent.companyLine}</p>
+    </div>
+  )
+}
 
-      <div className="max-w-site mx-auto px-4 md:px-8">
-        {/* Columns: stacked centered on mobile, 4-col grid on desktop */}
-        <div className="flex flex-col items-center gap-10 pb-8 border-b border-gray-18 md:grid md:grid-cols-4 md:gap-8 md:items-start">
-          <FooterColumn heading="Showroom" links={footerShowroomLinks} />
-          <FooterColumn heading="About" links={footerAboutLinks} />
-
-          {/* Contact column */}
-          <div className="flex flex-col items-center md:items-start gap-4">
-            <h4 className="font-heading font-semibold text-white text-sm uppercase tracking-widest">
-              Contact
-            </h4>
-            <div className="h-0.5 w-10 bg-white/30" />
-            <ul className="flex flex-col items-center md:items-start gap-1">
-              {footerContactLinks.map(({ label, href }) => (
-                <li key={label}>
-                  <Link
-                    href={href}
-                    className="font-heading text-13 text-white/80 tracking-wide hover:text-white transition-colors"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-              <li className="text-center md:text-left">
-                <span className="font-heading font-bold text-13 text-white tracking-wide">T </span>
-                <Link
-                  href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
-                  className="font-heading text-13 text-white/80 tracking-wide hover:text-white transition-colors"
-                >
-                  {footerContactInfo.phone}
-                </Link>
-              </li>
-              <li className="text-center md:text-left">
-                <span className="font-heading font-bold text-13 text-white tracking-wide">E </span>
-                <Link
-                  href={`mailto:${footerContactInfo.email}`}
-                  className="font-heading text-13 text-white/80 tracking-wide hover:text-white transition-colors"
-                >
-                  {footerContactInfo.email}
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Desktop: Logo + Social (4th column) */}
-          <div className="hidden md:flex flex-col items-end gap-6 justify-between">
-            <Link href="/" aria-label="Enermation home">
-              <Image
-                src="/logo.jpg"
-                alt="Enermation"
-                width={260}
-                height={64}
-                className="h-auto w-40"
-              />
-            </Link>
-            <div className="flex items-center gap-2">
-              {socialLinks.map(({ label, Icon, href }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  aria-label={label}
-                  className="flex items-center justify-center size-10 rounded bg-gray-16 text-white/70 hover:text-white hover:bg-gray-18 transition-colors"
-                >
-                  <Icon className="size-4" />
-                </Link>
-              ))}
-            </div>
-          </div>
+export function SiteFooter() {
+  return (
+    <footer data-slot="site-footer" className="relative z-10 bg-black pb-4 lg:min-h-screen">
+      <div className="mx-auto flex w-full max-w-site flex-col px-4 md:px-8 lg:min-h-screen">
+        <div className="border-b border-white-30 pb-3 pt-10 lg:pb-4 lg:pt-12">
+          <FooterWordmark />
         </div>
 
-        {/* Bottom row */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between pt-5 gap-2">
-          <p className="font-heading text-xs text-white/80 text-center md:text-left">
-            © 2026 Enermation Lifestyle Ltd. T/A Enermation Supercars. Registered Company Number:
-            06937335
-          </p>
-          <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 font-heading text-xs text-white/80">
-            {footerLegalLinks.map(({ label, href }, i) => (
-              <span key={label} className="flex items-center gap-2">
-                {i > 0 && <span className="opacity-40">|</span>}
-                <Link href={href} className="hover:text-white transition-colors">
-                  {label}
-                </Link>
-              </span>
-            ))}
-            <span className="opacity-40">|</span>
-            <span>
-              Site by <span className="font-display italic font-bold">racecar</span>
-            </span>
-          </div>
-        </div>
+        <div className="grid flex-1 grid-cols-4 gap-x-3 gap-y-10 pb-2 pt-4 lg:grid-cols-12 lg:content-end lg:items-end lg:gap-y-2 lg:py-0">
+          <FooterPrimaryNav className="col-span-full border-b border-white-30 pb-4 lg:col-start-7 lg:col-end-9 lg:border-none lg:pb-0" />
 
-        {/* Disclaimer */}
-        <p className="font-heading text-xs text-gray-60 mt-4 leading-relaxed text-center md:text-left">
-          Disclaimer: Great care is taken to ensure the specification displayed for each vehicle is
-          correct, however due to how data is ported from third party sources from time to time
-          errors may occur. Enermation take no responsibility or liability for such errors in the
-          listings and we advise you check the full vehicle details independently before purchase.
-        </p>
+          <FooterStayConnected className="col-span-full hidden lg:col-start-1 lg:col-end-5 lg:flex" />
+
+          <FooterMeta className="col-span-full lg:hidden" />
+
+          <FooterMeta className="hidden lg:col-start-10 lg:col-end-13 lg:flex lg:items-end lg:text-right" />
+        </div>
       </div>
     </footer>
   )

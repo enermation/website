@@ -44,6 +44,17 @@ export type FooterLink = {
   href: string
 }
 
+export type FooterLinkGroup = {
+  title: string
+  links: FooterLink[]
+}
+
+export type FooterSocialPlatform = 'instagram' | 'facebook' | 'tiktok' | 'twitter' | 'youtube'
+
+export type FooterSocialLink = FooterLink & {
+  platform: FooterSocialPlatform
+}
+
 export const primaryShowroomCollectionHandle = 'shop-all'
 export const primaryShowroomCollectionHref =
   `/collections/${primaryShowroomCollectionHandle}` as const
@@ -82,9 +93,19 @@ export const footerAboutLinks: FooterLink[] = [
   { label: 'Testimonials', href: '#' },
 ]
 
+export const footerPrimaryLinks: FooterLink[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Showroom', href: primaryShowroomCollectionHref },
+  { label: 'Sell Your Car', href: '#' },
+  { label: 'Services', href: '#' },
+  { label: 'About', href: '#' },
+  { label: 'Contact Us', href: '#' },
+]
+
 export const footerContactLinks: FooterLink[] = [{ label: 'How To Find Us', href: '#' }]
 
 export const footerContactInfo = {
+  location: 'Preston, Lancashire, UK',
   phone: '+44 (0)1772 663777',
   email: 'sales@enermation.com',
 }
@@ -94,6 +115,39 @@ export const footerLegalLinks: FooterLink[] = [
   { label: 'Privacy Policy', href: '#' },
   { label: 'Contact Us', href: '#' },
 ]
+
+export const footerNavigationGroups: FooterLinkGroup[] = [
+  {
+    title: 'Explore',
+    links: footerPrimaryLinks,
+  },
+  {
+    title: 'Information',
+    links: [...footerAboutLinks, ...footerContactLinks],
+  },
+]
+
+export const footerSocialLinks: FooterSocialLink[] = [
+  { label: 'Instagram', href: '#', platform: 'instagram' },
+  { label: 'Facebook', href: '#', platform: 'facebook' },
+  { label: 'TikTok', href: '#', platform: 'tiktok' },
+  { label: 'Twitter', href: '#', platform: 'twitter' },
+  { label: 'YouTube', href: '#', platform: 'youtube' },
+]
+
+export const footerContent = {
+  eyebrow: 'Stay Connected',
+  description:
+    'Join the Enermation mailing list for newly sourced inventory, notable arrivals, and specialist market updates.',
+  inputPlaceholder: 'Enter your email',
+  actionLabel: 'Roll Me In',
+  companyLine:
+    '© 2026 Enermation Lifestyle Ltd. T/A Enermation Supercars. Registered Company Number: 06937335',
+  disclaimer:
+    'Disclaimer: Great care is taken to ensure the specification displayed for each vehicle is correct, however due to how data is ported from third party sources from time to time errors may occur. Enermation take no responsibility or liability for such errors in the listings and we advise you check the full vehicle details independently before purchase.',
+  creditPrefix: 'Site by',
+  creditLabel: 'racecar',
+} as const
 
 // ── Filter / sort options ────────────────────────────────────────────────────
 
