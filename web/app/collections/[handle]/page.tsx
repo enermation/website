@@ -6,7 +6,7 @@ import { Calendar, Palette, Gauge, Armchair } from "lucide-react"
 import client from "@/lib/shopify"
 import { GET_PRODUCTS_IN_COLLECTION } from "@/lib/queries"
 import type { ShopifyProduct } from "@/lib/types"
-import { showroomSubNav, sortOptions } from "@/lib/data"
+import { showroomSubNav } from "@/lib/data"
 import { SiteHeader } from "@/components/site-header"
 import { FilterBar } from "./filter-bar"
 import { cn } from "@/lib/utils"
@@ -19,6 +19,21 @@ type CollectionResponse = {
     title: string
     products: { edges: { node: ShopifyProduct }[] }
   } | null
+}
+
+// ── Sort key mapping ──────────────────────────────────────────────────────────
+
+function getSortConfig(sort?: string): { sortKey: string; reverse?: boolean } {
+  switch (sort) {
+    case "price-asc":
+      return { sortKey: "PRICE", reverse: false }
+    case "price-desc":
+      return { sortKey: "PRICE", reverse: true }
+    case "newest":
+      return { sortKey: "CREATED", reverse: true }
+    default:
+      return { sortKey: "BEST_SELLING" }
+  }
 }
 
 // ── Car card ─────────────────────────────────────────────────────────────────
@@ -68,7 +83,7 @@ function CarCard({ product }: { product: ShopifyProduct }) {
         {product.vendor && (
           <div className="flex items-center gap-2 px-2 py-1">
             <Palette className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-body font-medium text-13 text-black truncate">
+            <span className="font-body font-medium text-13 text-foreground truncate">
               {product.vendor}
             </span>
           </div>
@@ -76,21 +91,21 @@ function CarCard({ product }: { product: ShopifyProduct }) {
         {variantSummary && (
           <div className="flex items-center gap-2 px-2 py-1">
             <Armchair className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-body font-medium text-13 text-black truncate">
+            <span className="font-body font-medium text-13 text-foreground truncate">
               {variantSummary}
             </span>
           </div>
         )}
         <div className="flex items-center gap-2 px-2 py-1">
           <Gauge className="size-3.5 text-gray-7 shrink-0" />
-          <span className="font-body font-medium text-13 text-black">
+          <span className="font-body font-medium text-13 text-foreground">
             {product.availableForSale ? "Available" : "Sold"}
           </span>
         </div>
         {variantYear && (
           <div className="flex items-center gap-2 px-2 py-1">
             <Calendar className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-body font-medium text-13 text-black">{variantYear}</span>
+            <span className="font-body font-medium text-13 text-foreground">{variantYear}</span>
           </div>
         )}
       </div>
@@ -100,7 +115,7 @@ function CarCard({ product }: { product: ShopifyProduct }) {
         <p className="font-body text-15 text-gray-33 leading-relaxed line-clamp-2 flex-1">
           {product.description}
         </p>
-        <p className="font-heading font-semibold text-lg text-black mt-3">
+        <p className="font-heading font-semibold text-lg text-foreground mt-3">
           {product.availableForSale ? price : "Reserved — More Wanted"}
         </p>
       </div>
@@ -120,15 +135,18 @@ export default async function CollectionPage({
   const { handle } = await params
   const { make, sort } = await searchParams
 
+  const { sortKey, reverse } = getSortConfig(sort)
+  const filter = make && make !== "Show All" ? [{ vendor: make }] : undefined
+
   const { data } = await client.request<CollectionResponse>(
     GET_PRODUCTS_IN_COLLECTION,
-    { variables: { handle } }
+    { variables: { handle, sortKey, reverse, filter } }
   )
 
   if (!data?.collection) notFound()
 
   const { title, products: productData } = data.collection
-  let products = productData.edges.map((e) => e.node)
+  const products = productData.edges.map((e) => e.node)
 
   // Unique makes from vendor field
   const makes = [
@@ -136,32 +154,12 @@ export default async function CollectionPage({
     ...Array.from(new Set(products.map((p) => p.vendor).filter(Boolean))).sort(),
   ]
 
-  // Filter by make
-  if (make && make !== "Show All") {
-    products = products.filter((p) => p.vendor === make)
-  }
-
-  // Sort
-  if (sort === "price-desc") {
-    products = [...products].sort(
-      (a, b) =>
-        parseFloat(b.priceRange.minVariantPrice.amount) -
-        parseFloat(a.priceRange.minVariantPrice.amount)
-    )
-  } else if (sort === "price-asc") {
-    products = [...products].sort(
-      (a, b) =>
-        parseFloat(a.priceRange.minVariantPrice.amount) -
-        parseFloat(b.priceRange.minVariantPrice.amount)
-    )
-  }
-
   return (
     <>
       <SiteHeader />
 
       {/* Sub-navigation */}
-      <nav className="bg-white border-b border-gray-90">
+      <nav className="bg-background border-b border-gray-90">
         <div className="max-w-site mx-auto flex justify-center">
           {showroomSubNav.map((tab) => {
             const isActive = tab.href === `/collections/${handle}`
@@ -172,8 +170,8 @@ export default async function CollectionPage({
                 className={cn(
                   "font-heading font-semibold text-13 uppercase tracking-wide px-4 py-4 border-b-2 transition-colors",
                   isActive
-                    ? "border-black text-black"
-                    : "border-transparent text-black/36 hover:text-black/60"
+                    ? "border-foreground text-foreground"
+                    : "border-transparent text-foreground/36 hover:text-foreground/60"
                 )}
               >
                 {tab.label}
@@ -184,7 +182,7 @@ export default async function CollectionPage({
       </nav>
 
       {/* Page title — driven by Shopify collection title */}
-      <section className="bg-white border-b border-gray-90 py-10 text-center">
+      <section className="bg-background border-b border-gray-90 py-10 text-center">
         <h1 className="font-display font-normal text-section uppercase tracking-widest text-gray-7">
           {title}
         </h1>
@@ -198,7 +196,7 @@ export default async function CollectionPage({
       </section>
 
       {/* Content */}
-      <section className="bg-white py-6">
+      <section className="bg-background py-6">
         <div className="max-w-site mx-auto px-3">
           <Suspense>
             <FilterBar makes={makes} currentMake={make} currentSort={sort} />

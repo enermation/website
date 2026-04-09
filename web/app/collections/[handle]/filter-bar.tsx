@@ -3,7 +3,14 @@
 import { useRouter, useSearchParams } from "next/navigation"
 import { LayoutGrid, Heart, SlidersHorizontal } from "lucide-react"
 import { sortOptions } from "@/lib/data"
-import { cn } from "@/lib/utils"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
 
 type FilterBarProps = {
   makes: string[]
@@ -29,75 +36,80 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
     <div className="flex flex-wrap items-end gap-0 border-b border-gray-90 pb-3">
       {/* Brand select */}
       <div className="flex flex-col gap-1 px-3 pt-6 w-1/3 min-w-0 shrink-0">
-        <label className="font-heading font-semibold text-13 text-black uppercase tracking-wider">
+        <label className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider">
           Brand
         </label>
-        <select
+        <Select
           value={currentMake ?? "Show All"}
-          onChange={(e) => updateParam("make", e.target.value)}
-          className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-black bg-white focus:outline-none focus:ring-1 focus:ring-black appearance-none cursor-pointer"
+          onValueChange={(value) => updateParam("make", value)}
         >
-          {makes.map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {makes.map((m) => (
+              <SelectItem key={m} value={m}>
+                {m}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Sort select */}
       <div className="flex flex-col gap-1 px-3 pt-6 w-1/5 min-w-0 shrink-0">
-        <label className="font-heading font-semibold text-13 text-black uppercase tracking-wider">
+        <label className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider">
           Sort By
         </label>
-        <select
+        <Select
           value={currentSort ?? ""}
-          onChange={(e) => updateParam("sort", e.target.value)}
-          className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-black bg-white focus:outline-none focus:ring-1 focus:ring-black appearance-none cursor-pointer"
+          onValueChange={(value) => updateParam("sort", value)}
         >
-          {sortOptions.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {sortOptions.map((o) => (
+              <SelectItem key={o.value} value={o.value}>
+                {o.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Action buttons */}
       <div className="flex items-end gap-0 ml-auto px-3 pt-6">
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => {
             const params = new URLSearchParams(searchParams.toString())
             params.delete("make")
             params.delete("sort")
             router.push(`?${params.toString()}`)
           }}
-          className={cn(
-            "flex items-center gap-2 h-10 px-5 border-2 border-black font-heading font-semibold text-xs uppercase tracking-wider transition-colors whitespace-nowrap",
-            "text-black bg-white hover:bg-black hover:text-white"
-          )}
+          className="h-10 px-5 border-2 border-foreground font-heading font-semibold text-xs uppercase tracking-wider"
         >
           <LayoutGrid className="size-3.5 shrink-0" />
           View All
-        </button>
-        <button
-          className={cn(
-            "flex items-center gap-2 h-10 px-5 border-2 border-l-0 border-black font-heading font-semibold text-xs uppercase tracking-wider transition-colors whitespace-nowrap",
-            "text-black bg-white hover:bg-black hover:text-white"
-          )}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-10 px-5 border-2 border-l-0 border-foreground font-heading font-semibold text-xs uppercase tracking-wider"
         >
           <Heart className="size-3.5 shrink-0" />
           Wishlist (0)
-        </button>
-        <button
-          className={cn(
-            "flex items-center gap-2 h-10 px-5 border-2 border-l-0 border-black font-heading font-semibold text-xs uppercase tracking-wider transition-colors whitespace-nowrap",
-            "text-white bg-black hover:bg-gray-16"
-          )}
+        </Button>
+        <Button
+          variant="default"
+          size="sm"
+          className="h-10 px-5 border-2 border-foreground bg-foreground text-background hover:bg-gray-16 font-heading font-semibold text-xs uppercase tracking-wider"
         >
           <SlidersHorizontal className="size-3.5 shrink-0" />
           Filter Stock
-        </button>
+        </Button>
       </div>
     </div>
   )
