@@ -1,14 +1,14 @@
-import Link from "next/link"
-import { notFound } from "next/navigation"
-import { Suspense } from "react"
-import client from "@/lib/shopify"
-import { GET_PRODUCTS_IN_COLLECTION } from "@/lib/queries"
-import type { ShopifyProduct } from "@/lib/types"
-import { showroomSubNav } from "@/lib/data"
-import { SiteHeader } from "@/components/site-header"
-import { CarCard } from "@/components/car-card"
-import { FilterBar } from "./filter-bar"
-import { cn } from "@/lib/utils"
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
+import { CarCard } from '@/components/car-card'
+import { SiteHeader } from '@/components/site-header'
+import { showroomSubNav } from '@/lib/data'
+import { GET_PRODUCTS_IN_COLLECTION } from '@/lib/queries'
+import client from '@/lib/shopify'
+import type { ShopifyProduct } from '@/lib/types'
+import { cn } from '@/lib/utils'
+import { FilterBar } from './filter-bar'
 
 // ── Shopify response type ─────────────────────────────────────────────────────
 
@@ -24,14 +24,14 @@ type CollectionResponse = {
 
 function getSortConfig(sort?: string): { sortKey: string; reverse?: boolean } {
   switch (sort) {
-    case "price-asc":
-      return { sortKey: "PRICE", reverse: false }
-    case "price-desc":
-      return { sortKey: "PRICE", reverse: true }
-    case "newest":
-      return { sortKey: "CREATED", reverse: true }
+    case 'price-asc':
+      return { sortKey: 'PRICE', reverse: false }
+    case 'price-desc':
+      return { sortKey: 'PRICE', reverse: true }
+    case 'newest':
+      return { sortKey: 'CREATED', reverse: true }
     default:
-      return { sortKey: "BEST_SELLING" }
+      return { sortKey: 'BEST_SELLING' }
   }
 }
 
@@ -48,22 +48,21 @@ export default async function CollectionPage({
   const { make, sort } = await searchParams
 
   const { sortKey, reverse } = getSortConfig(sort)
-  const filter = make && make !== "Show All" ? [{ vendor: make }] : undefined
+  const filter = make && make !== 'Show All' ? [{ vendor: make }] : undefined
 
-  const { data } = await client.request<CollectionResponse>(
-    GET_PRODUCTS_IN_COLLECTION,
-    { variables: { handle, sortKey, reverse, filter } }
-  )
+  const { data } = await client.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
+    variables: { handle, sortKey, reverse, filter },
+  })
 
   if (!data?.collection) notFound()
 
   const { title, products: productData } = data.collection
-  const products = productData.edges.map((e) => e.node)
+  const products = productData.edges.map(e => e.node)
 
   // Unique makes from vendor field
   const makes = [
-    "Show All",
-    ...Array.from(new Set(products.map((p) => p.vendor).filter(Boolean))).sort(),
+    'Show All',
+    ...Array.from(new Set(products.map(p => p.vendor).filter(Boolean))).sort(),
   ]
 
   return (
@@ -73,17 +72,17 @@ export default async function CollectionPage({
       {/* Sub-navigation */}
       <nav className="bg-background border-b border-gray-90">
         <div className="max-w-site mx-auto flex justify-center">
-          {showroomSubNav.map((tab) => {
+          {showroomSubNav.map(tab => {
             const isActive = tab.href === `/collections/${handle}`
             return (
               <Link
                 key={tab.label}
                 href={tab.href}
                 className={cn(
-                  "font-heading font-semibold text-13 uppercase tracking-wide px-4 py-4 border-b-2 transition-colors",
+                  'font-heading font-semibold text-13 uppercase tracking-wide px-4 py-4 border-b-2 transition-colors',
                   isActive
-                    ? "border-foreground text-foreground"
-                    : "border-transparent text-foreground/36 hover:text-foreground/60"
+                    ? 'border-foreground text-foreground'
+                    : 'border-transparent text-foreground/36 hover:text-foreground/60'
                 )}
               >
                 {tab.label}
@@ -116,11 +115,11 @@ export default async function CollectionPage({
 
           {products.length === 0 ? (
             <p className="font-body text-15 text-gray-33 text-center py-24">
-              No products found{make && make !== "Show All" ? ` for ${make}` : ""}.
+              No products found{make && make !== 'Show All' ? ` for ${make}` : ''}.
             </p>
           ) : (
             <div className="grid grid-cols-3 gap-6 mt-6">
-              {products.map((product) => (
+              {products.map(product => (
                 <CarCard key={product.id} product={product} />
               ))}
             </div>
@@ -130,4 +129,3 @@ export default async function CollectionPage({
     </>
   )
 }
-

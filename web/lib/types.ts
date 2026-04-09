@@ -38,7 +38,7 @@ export type ShopifyProduct = {
   images: { edges: { node: ShopifyImage }[] }
   priceRange: {
     minVariantPrice: ShopifyMoney
-    maxVariantPrice?: ShopifyMoney  // present in GET_PRODUCT_BY_HANDLE, absent in GET_ALL_PRODUCTS
+    maxVariantPrice?: ShopifyMoney // present in GET_PRODUCT_BY_HANDLE, absent in GET_ALL_PRODUCTS
   }
   variants: { edges: { node: ShopifyProductVariant }[] }
 }

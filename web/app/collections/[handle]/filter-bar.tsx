@@ -1,16 +1,16 @@
-"use client"
+'use client'
 
-import { useRouter, useSearchParams } from "next/navigation"
-import { LayoutGrid, Heart, SlidersHorizontal } from "lucide-react"
-import { sortOptions } from "@/lib/data"
+import { Heart, LayoutGrid, SlidersHorizontal } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
+} from '@/components/ui/select'
+import { sortOptions } from '@/lib/data'
 
 type FilterBarProps = {
   makes: string[]
@@ -24,7 +24,7 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
 
   function updateParam(key: string, value: string | null) {
     const params = new URLSearchParams(searchParams.toString())
-    if (!value || value === "Show All") {
+    if (!value || value === 'Show All') {
       params.delete(key)
     } else {
       params.set(key, value)
@@ -36,18 +36,24 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
     <div className="flex flex-wrap items-end gap-0 border-b border-gray-90 pb-3">
       {/* Brand select */}
       <div className="flex flex-col gap-1 px-3 pt-6 w-1/3 min-w-0 shrink-0">
-        <label htmlFor="brand-select" className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider">
+        <label
+          htmlFor="brand-select"
+          className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider"
+        >
           Brand
         </label>
         <Select
-          value={currentMake ?? "Show All"}
-          onValueChange={(value) => updateParam("make", value)}
+          value={currentMake ?? 'Show All'}
+          onValueChange={value => updateParam('make', value)}
         >
-          <SelectTrigger id="brand-select" className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background">
+          <SelectTrigger
+            id="brand-select"
+            className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {makes.map((m) => (
+            {makes.map(m => (
               <SelectItem key={m} value={m}>
                 {m}
               </SelectItem>
@@ -58,18 +64,21 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
 
       {/* Sort select */}
       <div className="flex flex-col gap-1 px-3 pt-6 w-1/5 min-w-0 shrink-0">
-        <label htmlFor="sort-select" className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider">
+        <label
+          htmlFor="sort-select"
+          className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider"
+        >
           Sort By
         </label>
-        <Select
-          value={currentSort ?? ""}
-          onValueChange={(value) => updateParam("sort", value)}
-        >
-          <SelectTrigger id="sort-select" className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background">
+        <Select value={currentSort ?? ''} onValueChange={value => updateParam('sort', value)}>
+          <SelectTrigger
+            id="sort-select"
+            className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {sortOptions.map((o) => (
+            {sortOptions.map(o => (
               <SelectItem key={o.value} value={o.value}>
                 {o.label}
               </SelectItem>
@@ -85,8 +94,8 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
           size="sm"
           onClick={() => {
             const params = new URLSearchParams(searchParams.toString())
-            params.delete("make")
-            params.delete("sort")
+            params.delete('make')
+            params.delete('sort')
             router.push(`?${params.toString()}`)
           }}
           className="h-10 px-5 border-2 border-foreground font-heading font-semibold text-xs uppercase tracking-wider"

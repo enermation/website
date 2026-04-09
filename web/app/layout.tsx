@@ -1,47 +1,47 @@
-import type { Metadata } from "next";
-import { Bebas_Neue, Barlow_Semi_Condensed, Inter, Playfair_Display } from "next/font/google";
-import "./globals.css";
-import { SiteFooter } from "@/components/site-footer";
+import type { Metadata } from 'next'
+import { Barlow_Semi_Condensed, Bebas_Neue, Inter, Playfair_Display } from 'next/font/google'
+import './globals.css'
+import { SiteFooter } from '@/components/site-footer'
 
 const display = Bebas_Neue({
-  variable: "--font-display",
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
+  variable: '--font-display',
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+})
 
 const heading = Barlow_Semi_Condensed({
-  variable: "--font-heading",
-  weight: ["600", "700"],
-  subsets: ["latin"],
-  display: "swap",
-});
+  variable: '--font-heading',
+  weight: ['600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+})
 
 const body = Inter({
-  variable: "--font-body",
-  weight: ["400", "500"],
-  subsets: ["latin"],
-  display: "swap",
-});
+  variable: '--font-body',
+  weight: ['400', '500'],
+  subsets: ['latin'],
+  display: 'swap',
+})
 
 const luxury = Playfair_Display({
-  variable: "--font-luxury",
-  weight: "400",
-  style: "italic",
-  subsets: ["latin"],
-  display: "swap",
-});
+  variable: '--font-luxury',
+  weight: '400',
+  style: 'italic',
+  subsets: ['latin'],
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: "Enermation — Supplying the Finest Supercars",
+  title: 'Enermation — Supplying the Finest Supercars',
   description:
     "Enermation are internationally renowned for offering a unique selection of some of the world's finest automobiles. The premier supercar dealer in the UK.",
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html
@@ -49,8 +49,10 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${display.variable} ${heading.variable} ${body.variable} ${luxury.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}<SiteFooter /></body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <SiteFooter />
+      </body>
     </html>
-  );
+  )
 }
-

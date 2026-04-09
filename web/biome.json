@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!../graphql", "!components/ui"]
+    "includes": ["**", "!../graphql", "!.claude", "!.qwen", "!components/ui"]
   },
   "formatter": {
     "enabled": true,
@@ -40,6 +40,11 @@
       "trailingCommas": "es5",
       "semicolons": "asNeeded",
       "arrowParentheses": "asNeeded"
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   },
   "assist": {

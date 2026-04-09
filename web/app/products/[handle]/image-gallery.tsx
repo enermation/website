@@ -1,5 +1,5 @@
-import Image from "next/image"
-import type { ShopifyImage } from "@/lib/types"
+import Image from 'next/image'
+import type { ShopifyImage } from '@/lib/types'
 
 export function ImageGallery({ images }: { images: ShopifyImage[] }) {
   if (images.length === 0) return null
@@ -14,7 +14,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
       <div className="relative flex-1 overflow-hidden bg-gray-94">
         <Image
           src={mainImage.url}
-          alt={mainImage.altText ?? ""}
+          alt={mainImage.altText ?? ''}
           fill
           priority
           className="object-cover"
@@ -31,7 +31,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
               <div key={image.url} className="relative overflow-hidden bg-gray-94">
                 <Image
                   src={image.url}
-                  alt={image.altText ?? ""}
+                  alt={image.altText ?? ''}
                   fill
                   className="object-cover"
                   sizes="(min-width: 1320px) 330px, 25vw"
@@ -51,4 +51,3 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
     </div>
   )
 }
-

@@ -1,8 +1,8 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Calendar, Palette, Gauge, Armchair } from "lucide-react"
-import type { ShopifyProduct } from "@/lib/types"
-import { productPage } from "@/lib/data"
+import { Armchair, Calendar, Gauge, Palette } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { productPage } from '@/lib/data'
+import type { ShopifyProduct } from '@/lib/types'
 
 type CarCardProps = {
   product: ShopifyProduct
@@ -11,21 +11,18 @@ type CarCardProps = {
 export function CarCard({ product }: CarCardProps) {
   const image = product.images.edges[0]?.node
   const { amount, currencyCode } = product.priceRange.minVariantPrice
-  const price = new Intl.NumberFormat("en-GB", {
-    style: "currency",
+  const price = new Intl.NumberFormat('en-GB', {
+    style: 'currency',
     currency: currencyCode,
   }).format(parseFloat(amount))
 
   const firstVariant = product.variants.edges[0]?.node
   const variantTitle =
-    firstVariant?.title && firstVariant.title !== "Default Title"
-      ? firstVariant.title
-      : null
-  const variantParts = variantTitle?.split(" / ").map((part) => part.trim()) ?? []
-  const variantYear =
-    variantParts[0] && /^\d{4}$/.test(variantParts[0]) ? variantParts[0] : null
+    firstVariant?.title && firstVariant.title !== 'Default Title' ? firstVariant.title : null
+  const variantParts = variantTitle?.split(' / ').map(part => part.trim()) ?? []
+  const variantYear = variantParts[0] && /^\d{4}$/.test(variantParts[0]) ? variantParts[0] : null
   const variantSummary = variantTitle
-    ? variantParts.slice(variantYear ? 1 : 0).join(" / ") || variantTitle
+    ? variantParts.slice(variantYear ? 1 : 0).join(' / ') || variantTitle
     : null
 
   return (
