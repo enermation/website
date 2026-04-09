@@ -300,7 +300,12 @@ function MyComponent({
 
 ### Next.js App Router Rules
 
-- Components are **Server Components by default** — only add `"use client"` when needed (event handlers, hooks, browser APIs)
+- Components are **Server Components by default** — only add `"use client"` when a component requires one of the following:
+  - React hooks: `useState`, `useEffect`, `useReducer`, `useRef`, etc.
+  - Navigation hooks: `useRouter`, `usePathname`, `useSearchParams`, `useParams`
+  - Browser APIs: `window`, `document`, `localStorage`, etc.
+  - Event handlers: `onClick`, `onChange`, `onSubmit`, etc.
+  - Everything else — layout, static UI, data fetching, passing props — stays as a Server Component
 - Pages go in `web/app/` following App Router file conventions (`page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`)
 - API routes go in `web/app/api/[route]/route.ts`
 - Use `@/` path alias for all internal imports (maps to `web/` root)
