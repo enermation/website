@@ -28,6 +28,10 @@
   /* ─── Max widths ─── */
   --max-w-site: 82.5rem; /* 1320px — main container */
 
+  /* ─── Lightbox dimensions ─── */
+  --w-lightbox: 90vw;
+  --h-lightbox: 80vh;
+
   /* ─── Custom spacing ─── */
   --spacing-cta: 46.25rem; /* 740px — CTA split section height */
 
