@@ -1,6 +1,6 @@
 # Enermation Website
 
-A **Next.js 16** storefront and marketing site for Enermation, with Shopify Storefront API integration, collection browsing, and product detail pages.
+**Next.js 16** storefront and marketing site for Enermation, with Shopify Storefront API integration, collection browsing, and product detail pages.
 
 ## At a glance
 
