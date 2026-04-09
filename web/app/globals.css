@@ -20,6 +20,7 @@
   --font-luxury: var(--font-luxury);
 
   /* ─── Font sizes ─── */
+  --text-11: 0.6875rem; /* 11px — keyboard hints, fine print */
   --text-13: 0.8125rem; /* 13px — labels, meta */
   --text-15: 0.9375rem; /* 15px — body text */
   --text-section: 2.125rem; /* 34px — section headings */
@@ -29,8 +30,8 @@
   --max-w-site: 82.5rem; /* 1320px — main container */
 
   /* ─── Lightbox dimensions ─── */
-  --w-lightbox: 90vw;
-  --h-lightbox: 80vh;
+  --w-lightbox: 95vw;
+  --h-lightbox: 85vh;
 
   /* ─── Custom spacing ─── */
   --spacing-cta: 46.25rem; /* 740px — CTA split section height */
