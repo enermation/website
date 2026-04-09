@@ -206,4 +206,8 @@
   .car-card-media {
     aspect-ratio: 3 / 2;
   }
+
+  .product-gallery-mobile {
+    aspect-ratio: 39 / 32;
+  }
 }

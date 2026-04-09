@@ -1,4 +1,13 @@
-import { Phone, User } from 'lucide-react'
+import {
+  Armchair,
+  Calendar,
+  ChevronRight,
+  Gauge,
+  type LucideIcon,
+  Palette,
+  Phone,
+  User,
+} from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -23,8 +32,6 @@ import { ContactSection } from './contact-section'
 import { EnquiryForm } from './enquiry-form'
 import { ImageGallery } from './image-gallery'
 
-// Response types
-
 type ProductResponse = {
   product: ShopifyProduct | null
 }
@@ -37,7 +44,31 @@ type CollectionResponse = {
   } | null
 }
 
-// Metadata
+function getSpecIcon(name: string): LucideIcon {
+  const normalizedName = name.toLowerCase()
+
+  if (normalizedName.includes('year') || normalizedName.includes('reg')) {
+    return Calendar
+  }
+
+  if (
+    normalizedName.includes('mileage') ||
+    normalizedName.includes('miles') ||
+    normalizedName.includes('odometer')
+  ) {
+    return Gauge
+  }
+
+  if (
+    normalizedName.includes('interior') ||
+    normalizedName.includes('trim') ||
+    normalizedName.includes('upholstery')
+  ) {
+    return Armchair
+  }
+
+  return Palette
+}
 
 export async function generateMetadata({
   params,
@@ -48,14 +79,14 @@ export async function generateMetadata({
   const { data } = await client.request<ProductResponse>(GET_PRODUCT_BY_HANDLE, {
     variables: { handle },
   })
+
   if (!data?.product) return {}
+
   return {
     title: `${data.product.title} | Enermation`,
     description: data.product.description.slice(0, 160),
   }
 }
-
-// Page
 
 export default async function ProductPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
@@ -72,7 +103,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
   if (!productData?.product) notFound()
 
   const product = productData.product
-  const images = product.images.edges.map(e => e.node)
+  const images = product.images.edges.map(edge => edge.node)
 
   const { amount, currencyCode } = product.priceRange.minVariantPrice
   const price = new Intl.NumberFormat('en-GB', {
@@ -82,70 +113,85 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
 
   const firstVariant = product.variants.edges[0]?.node
   const specOptions =
-    firstVariant?.selectedOptions?.filter(o => o.name !== 'Title' && o.value !== 'Default Title') ??
-    []
+    firstVariant?.selectedOptions?.filter(
+      option => option.name !== 'Title' && option.value !== 'Default Title'
+    ) ?? []
+  const mobileSpecs = specOptions.slice(0, 4)
 
   const similarCars =
     collectionData?.collection?.products.edges
-      .map(e => e.node)
-      .filter(p => p.handle !== handle)
+      .map(edge => edge.node)
+      .filter(collectionProduct => collectionProduct.handle !== handle)
       .slice(0, 3) ?? []
 
   return (
     <>
       <SiteHeader />
 
-      {/* Breadcrumb */}
-      <nav className="bg-background border-b border-gray-90">
-        <div className="max-w-site mx-auto px-6 py-3 flex items-center gap-2 font-heading text-13 text-gray-33">
-          <Link href="/" className="hover:text-foreground transition-colors">
+      <nav className="hidden border-b border-gray-90 bg-background md:block">
+        <div className="mx-auto flex max-w-site items-center gap-2 px-6 py-3 font-heading text-13 text-gray-33">
+          <Link href="/" className="transition-colors hover:text-foreground">
             {productPage.breadcrumb.home}
           </Link>
           <span>/</span>
           <Link
             href={primaryShowroomCollectionHref}
-            className="hover:text-foreground transition-colors"
+            className="transition-colors hover:text-foreground"
           >
             {productPage.breadcrumb.showroom}
           </Link>
           <span>/</span>
-          <span className="text-foreground truncate">{product.title}</span>
+          <span className="truncate text-foreground">{product.title}</span>
         </div>
       </nav>
 
-      {/* Mosaic gallery */}
       <div className="bg-background">
-        <div className="max-w-site mx-auto px-6 pt-6">
+        <div className="mx-auto max-w-site pt-0 md:px-6 md:pt-6">
           <ImageGallery images={images} />
         </div>
       </div>
 
-      {/* Main body - 2-column */}
+      <nav className="border-b border-gray-90 bg-background md:hidden">
+        <div className="mx-auto flex max-w-site items-center gap-1 px-4 py-3 font-heading text-13 text-gray-33">
+          <Link href="/" className="transition-colors hover:text-foreground">
+            {productPage.breadcrumb.home}
+          </Link>
+          <ChevronRight className="size-3 text-gray-60" />
+          <Link
+            href={primaryShowroomCollectionHref}
+            className="transition-colors hover:text-foreground"
+          >
+            {productPage.breadcrumb.showroom}
+          </Link>
+          <ChevronRight className="size-3 text-gray-60" />
+          <span className="truncate text-foreground">{product.title}</span>
+        </div>
+      </nav>
+
       <section className="bg-background">
-        <div className="max-w-site mx-auto px-6 py-10">
-          <div className="grid grid-cols-4 gap-10 items-start">
-            {/* Left column (3/4) */}
-            <div className="col-span-3 flex flex-col gap-8">
-              {/* Title + price */}
-              <div className="flex justify-between items-start gap-6">
+        <div className="mx-auto max-w-site px-4 py-6 md:px-6 md:py-10">
+          <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-4">
+            <div className="col-span-3 flex flex-col gap-6 md:gap-8">
+              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-6">
                 <div className="flex flex-col gap-1">
                   {product.vendor && (
                     <p className="font-body text-13 uppercase tracking-widest text-gray-33">
                       {product.vendor}
                     </p>
                   )}
-                  <h1 className="font-display font-normal text-3xl text-gray-7 leading-snug">
+                  <h1 className="font-display text-2xl leading-tight text-gray-7 md:text-3xl md:leading-snug">
                     {product.title}
                   </h1>
                 </div>
-                <div className="flex flex-col items-end gap-2 shrink-0">
-                  <p className="font-heading font-semibold text-2xl text-foreground whitespace-nowrap">
+
+                <div className="flex shrink-0 flex-col items-start gap-2 md:items-end">
+                  <p className="whitespace-nowrap font-heading text-2xl font-semibold text-foreground">
                     {product.availableForSale ? price : productPage.labels.reserved}
                   </p>
                   <Badge
                     variant="outline"
                     className={cn(
-                      'font-heading font-semibold uppercase tracking-wide rounded-none h-auto px-3 py-1',
+                      'h-auto rounded-none px-3 py-1 font-heading text-13 font-semibold uppercase tracking-wide',
                       product.availableForSale
                         ? 'border-brand-green text-brand-green'
                         : 'border-gray-33 text-gray-33'
@@ -158,62 +204,88 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 </div>
               </div>
 
-              {/* Specs bar */}
               {specOptions.length > 0 && (
-                <div className="flex border-y border-gray-90">
-                  {specOptions.map((opt, i) => (
-                    <div
-                      key={opt.name}
-                      className={cn(
-                        'flex flex-col gap-0.5 px-6 py-4 flex-1',
-                        i > 0 && 'border-l border-gray-90',
-                        i === 0 && 'pl-0'
-                      )}
-                    >
-                      <span className="font-display font-normal text-lg text-gray-7">
-                        {opt.value}
-                      </span>
-                      <span className="font-body text-13 text-gray-33">{opt.name}</span>
-                    </div>
-                  ))}
-                </div>
+                <>
+                  <div className="grid grid-cols-2 gap-px border-y border-gray-90 bg-gray-90 md:hidden">
+                    {mobileSpecs.map(option => {
+                      const Icon = getSpecIcon(option.name)
+
+                      return (
+                        <div
+                          key={option.name}
+                          className="flex items-start gap-3 bg-background px-4 py-3"
+                        >
+                          <div className="mt-0.5 flex size-9 items-center justify-center rounded-full bg-gray-98">
+                            <Icon className="size-4 text-gray-33" strokeWidth={1.8} />
+                          </div>
+                          <div className="flex min-w-0 flex-col gap-0.5">
+                            <span className="font-heading text-13 uppercase tracking-wide text-gray-33">
+                              {option.name}
+                            </span>
+                            <span className="truncate font-body text-15 text-foreground">
+                              {option.value}
+                            </span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  <div className="hidden border-y border-gray-90 md:flex">
+                    {specOptions.map((option, index) => (
+                      <div
+                        key={option.name}
+                        className={cn(
+                          'flex flex-1 flex-col gap-0.5 px-6 py-4',
+                          index > 0 && 'border-l border-gray-90',
+                          index === 0 && 'pl-0'
+                        )}
+                      >
+                        <span className="font-display text-lg text-gray-7">{option.value}</span>
+                        <span className="font-body text-13 text-gray-33">{option.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
               )}
 
-              {/* About this listing */}
               {product.description && (
                 <div className="flex flex-col gap-3">
-                  <h2 className="font-display font-normal text-xl text-gray-7">
+                  <h2 className="font-display text-xl text-gray-7">
                     {productPage.sections.aboutThisListing}
                   </h2>
-                  <p className="font-body text-15 text-gray-33 leading-relaxed whitespace-pre-line">
+                  <p className="whitespace-pre-line font-body text-15 leading-relaxed text-gray-33">
                     {product.description}
                   </p>
                 </div>
               )}
 
-              {/* Listing details */}
               <div className="flex flex-col gap-3">
-                <h2 className="font-display font-normal text-xl text-gray-7">
+                <h2 className="font-display text-xl text-gray-7">
                   {productPage.sections.listingDetails}
                 </h2>
-                <dl className="divide-y divide-gray-90">
+                <dl className="divide-y divide-gray-90 border-y border-gray-90 md:border-y-0">
                   {product.vendor && (
-                    <div className="flex justify-between py-3">
+                    <div className="flex items-start justify-between gap-4 py-3">
                       <dt className="font-body text-13 text-gray-33">{productPage.labels.brand}</dt>
-                      <dd className="font-body text-13 text-foreground">{product.vendor}</dd>
+                      <dd className="text-right font-body text-13 text-foreground">
+                        {product.vendor}
+                      </dd>
                     </div>
                   )}
-                  {specOptions.map(opt => (
-                    <div key={opt.name} className="flex justify-between py-3">
-                      <dt className="font-body text-13 text-gray-33">{opt.name}</dt>
-                      <dd className="font-body text-13 text-foreground">{opt.value}</dd>
+                  {specOptions.map(option => (
+                    <div key={option.name} className="flex items-start justify-between gap-4 py-3">
+                      <dt className="font-body text-13 text-gray-33">{option.name}</dt>
+                      <dd className="text-right font-body text-13 text-foreground">
+                        {option.value}
+                      </dd>
                     </div>
                   ))}
-                  <div className="flex justify-between py-3">
+                  <div className="flex items-start justify-between gap-4 py-3">
                     <dt className="font-body text-13 text-gray-33">{productPage.labels.status}</dt>
                     <dd
                       className={cn(
-                        'font-body text-13',
+                        'text-right font-body text-13',
                         product.availableForSale ? 'text-brand-green' : 'text-gray-33'
                       )}
                     >
@@ -222,26 +294,25 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                         : productPage.labels.soldOrReserved}
                     </dd>
                   </div>
-                  <div className="flex justify-between py-3">
+                  <div className="flex items-start justify-between gap-4 py-3">
                     <dt className="font-body text-13 text-gray-33">{productPage.labels.price}</dt>
-                    <dd className="font-heading font-semibold text-13 text-foreground">
+                    <dd className="text-right font-heading text-13 font-semibold text-foreground">
                       {product.availableForSale ? price : productPage.labels.reserved}
                     </dd>
                   </div>
                 </dl>
               </div>
 
-              {/* Ask a Question */}
-              <div className="flex flex-col gap-4">
-                <h2 className="font-display font-normal text-xl text-gray-7">
+              <div className="flex flex-col gap-4 md:hidden">
+                <h2 className="font-display text-xl text-gray-7">
                   {productPage.sections.askAQuestion}
                 </h2>
                 <div className="flex items-start gap-4">
-                  <div className="flex items-center justify-center size-10 rounded-full bg-gray-90 shrink-0">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-90">
                     <User className="size-5 text-gray-33" />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <p className="font-body font-medium text-13 text-foreground">
+                    <p className="font-body text-13 font-medium text-foreground">
                       {dealerInfo.name}
                     </p>
                     <p className="font-body text-13 text-gray-33">
@@ -249,7 +320,34 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                     </p>
                     <a
                       href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
-                      className="flex items-center gap-1.5 font-body text-13 text-brand-green hover:opacity-80 transition-opacity mt-1"
+                      className="mt-1 flex items-center gap-1.5 font-body text-13 text-brand-green transition-opacity hover:opacity-80"
+                    >
+                      <Phone className="size-3.5" />
+                      {productPage.labels.callUs}
+                    </a>
+                  </div>
+                </div>
+                <ContactSection productTitle={product.title} />
+              </div>
+
+              <div className="hidden flex-col gap-4 md:flex">
+                <h2 className="font-display text-xl text-gray-7">
+                  {productPage.sections.askAQuestion}
+                </h2>
+                <div className="flex items-start gap-4">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-90">
+                    <User className="size-5 text-gray-33" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="font-body text-13 font-medium text-foreground">
+                      {dealerInfo.name}
+                    </p>
+                    <p className="font-body text-13 text-gray-33">
+                      {productPage.labels.specialistExportBroker}
+                    </p>
+                    <a
+                      href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
+                      className="mt-1 flex items-center gap-1.5 font-body text-13 text-brand-green transition-opacity hover:opacity-80"
                     >
                       <Phone className="size-3.5" />
                       {productPage.labels.callUs}
@@ -258,32 +356,30 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 </div>
               </div>
 
-              {/* Contact Agent */}
-              <div className="flex flex-col gap-3">
-                <h2 className="font-display font-normal text-xl text-gray-7">
+              <div className="hidden flex-col gap-3 md:flex">
+                <h2 className="font-display text-xl text-gray-7">
                   {productPage.sections.contactAgent}
                 </h2>
                 <ContactSection productTitle={product.title} />
               </div>
 
-              {/* For Sale By */}
-              <div className="flex flex-col gap-4 border-t border-gray-90 pt-8">
-                <h2 className="font-display font-normal text-xl text-gray-7">
+              <div className="flex flex-col gap-4 border-t border-gray-90 pt-6 md:pt-8">
+                <h2 className="font-display text-xl text-gray-7">
                   {productPage.sections.forSaleBy}
                 </h2>
 
                 <div className="flex flex-col gap-1">
                   <Link
                     href={primaryShowroomCollectionHref}
-                    className="font-body font-medium text-13 text-foreground hover:text-brand-green transition-colors"
+                    className="font-body text-13 font-medium text-foreground transition-colors hover:text-brand-green"
                   >
                     {dealerInfo.name}
                   </Link>
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <p className="font-body font-medium text-13 text-gray-33">About</p>
-                  <p className="font-body text-13 text-foreground leading-relaxed">
+                  <p className="font-body text-13 font-medium text-gray-33">About</p>
+                  <p className="font-body text-13 leading-relaxed text-foreground">
                     {dealerInfo.about}
                   </p>
                 </div>
@@ -300,7 +396,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                     <dd>
                       <a
                         href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
-                        className="font-body text-13 text-foreground hover:text-brand-green transition-colors"
+                        className="font-body text-13 text-foreground transition-colors hover:text-brand-green"
                       >
                         {footerContactInfo.phone}
                       </a>
@@ -311,7 +407,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                     <dd>
                       <a
                         href={`mailto:${footerContactInfo.email}`}
-                        className="font-body text-13 text-foreground hover:text-brand-green transition-colors"
+                        className="font-body text-13 text-foreground transition-colors hover:text-brand-green"
                       >
                         {footerContactInfo.email}
                       </a>
@@ -321,21 +417,19 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
               </div>
             </div>
 
-            {/* Right sidebar (1/4) */}
-            <aside className="col-span-1 sticky top-6 flex flex-col gap-5 border border-gray-90 p-6">
-              {/* Dealer info at top (mirrors Figma agent block) */}
-              <div className="flex items-start gap-3 pb-4 border-b border-gray-90">
-                <div className="flex items-center justify-center size-10 rounded-full bg-gray-90 shrink-0">
+            <aside className="sticky top-6 hidden flex-col gap-5 border border-gray-90 p-6 md:col-span-1 md:flex">
+              <div className="flex items-start gap-3 border-b border-gray-90 pb-4">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-90">
                   <User className="size-5 text-gray-33" />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <p className="font-body font-medium text-13 text-foreground">{dealerInfo.name}</p>
+                  <p className="font-body text-13 font-medium text-foreground">{dealerInfo.name}</p>
                   <p className="font-body text-13 text-gray-33">
                     {productPage.labels.specialistDealer}
                   </p>
                   <a
                     href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
-                    className="flex items-center gap-1.5 font-body text-13 text-brand-green hover:opacity-80 transition-opacity mt-1"
+                    className="mt-1 flex items-center gap-1.5 font-body text-13 text-brand-green transition-opacity hover:opacity-80"
                   >
                     <Phone className="size-3.5" />
                     {productPage.labels.callAgent}
@@ -343,14 +437,12 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 </div>
               </div>
 
-              {/* Enquiry form */}
               <EnquiryForm productTitle={product.title} />
 
-              {/* Dealer footer in sidebar */}
               <div className="border-t border-gray-90 pt-4">
                 <Link
                   href={primaryShowroomCollectionHref}
-                  className="font-body text-13 text-foreground hover:text-brand-green transition-colors"
+                  className="font-body text-13 text-foreground transition-colors hover:text-brand-green"
                 >
                   {dealerInfo.name} - {productPage.labels.viewAllStock}
                 </Link>
@@ -360,25 +452,26 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
         </div>
       </section>
 
-      {/* You May Also Like */}
       {similarCars.length > 0 && (
-        <section className="bg-gray-98 py-16">
-          <div className="max-w-site mx-auto px-6">
-            <div className="flex items-center justify-between mb-10">
-              <h2 className="font-display font-normal text-section uppercase tracking-widest text-gray-7">
+        <section className="bg-gray-98 py-12 md:py-16">
+          <div className="mx-auto max-w-site px-4 md:px-6">
+            <div className="mb-8 flex items-center justify-between md:mb-10">
+              <h2 className="font-display text-2xl uppercase tracking-widest text-gray-7 md:text-section">
                 {productPage.sections.youMayAlsoLike}
               </h2>
-              <StripeBar />
+              <div className="hidden md:block">
+                <StripeBar />
+              </div>
             </div>
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {similarCars.map(car => (
                 <CarCard key={car.id} product={car} />
               ))}
             </div>
-            <div className="flex justify-center mt-12">
+            <div className="mt-8 flex justify-center md:mt-12">
               <Link
                 href={primaryShowroomCollectionHref}
-                className="font-heading font-semibold text-13 uppercase tracking-wider border-2 border-foreground text-foreground px-8 py-3 hover:bg-foreground hover:text-background transition-colors"
+                className="border-2 border-foreground px-8 py-3 text-center font-heading text-13 font-semibold uppercase tracking-wider text-foreground transition-colors hover:bg-foreground hover:text-background"
               >
                 {productPage.labels.viewAllStockForSale}
               </Link>
@@ -387,22 +480,21 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
         </section>
       )}
 
-      {/* Related Stories */}
-      <section className="bg-background py-16 border-t border-gray-90">
-        <div className="max-w-site mx-auto px-6">
-          <h2 className="font-display font-normal text-section uppercase tracking-widest text-gray-7 mb-10">
+      <section className="border-t border-gray-90 bg-background py-12 md:py-16">
+        <div className="mx-auto max-w-site px-4 md:px-6">
+          <h2 className="mb-8 font-display text-2xl uppercase tracking-widest text-gray-7 md:mb-10 md:text-section">
             {productPage.sections.relatedStories}
           </h2>
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {relatedStories.map(story => (
-              <Link key={story.id} href={story.href} className="flex flex-col gap-3 group">
-                <div className="relative aspect-[3/2] overflow-hidden bg-gray-94">
+              <Link key={story.id} href={story.href} className="group flex flex-col gap-3">
+                <div className="car-card-media relative overflow-hidden bg-gray-94">
                   <Image
                     src={story.image}
                     alt={story.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(min-width: 1280px) 400px, 33vw"
+                    sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 100vw"
                   />
                 </div>
                 <div className="flex items-center gap-2 font-heading text-13 text-gray-33">
@@ -410,7 +502,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                   <span>|</span>
                   <span>{story.category}</span>
                 </div>
-                <h3 className="font-display font-normal text-base text-gray-7 leading-snug group-hover:text-brand-green transition-colors">
+                <h3 className="font-display text-base leading-snug text-gray-7 transition-colors group-hover:text-brand-green">
                   {story.title}
                 </h3>
               </Link>
