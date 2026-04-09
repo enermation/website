@@ -18,7 +18,7 @@ import { StripeBar } from '@/components/stripe-bar'
 import { Badge } from '@/components/ui/badge'
 import { footerContactInfo, productPage, relatedStories } from '@/lib/data'
 import { GET_PRODUCT_BY_HANDLE, GET_PRODUCTS_IN_COLLECTION, GET_SHOP_INFO } from '@/lib/queries'
-import client from '@/lib/shopify'
+import { getClient } from '@/lib/shopify'
 import type { ShopifyProduct, ShopifyShopInfo } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ContactSection } from './contact-section'
@@ -73,7 +73,8 @@ export async function generateMetadata({
   params: Promise<{ handle: string }>
 }): Promise<Metadata> {
   const { handle } = await params
-  const { data } = await client.request<ProductResponse>(GET_PRODUCT_BY_HANDLE, {
+  const shopify = await getClient()
+  const { data } = await shopify.request<ProductResponse>(GET_PRODUCT_BY_HANDLE, {
     variables: { handle },
   })
 
@@ -87,12 +88,13 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
+  const shopify = await getClient()
 
   const [{ data: productData }, { data: shopData }] = await Promise.all([
-    client.request<ProductResponse>(GET_PRODUCT_BY_HANDLE, {
+    shopify.request<ProductResponse>(GET_PRODUCT_BY_HANDLE, {
       variables: { handle },
     }),
-    client.request<ShopResponse>(GET_SHOP_INFO),
+    shopify.request<ShopResponse>(GET_SHOP_INFO),
   ])
 
   if (!productData?.product) notFound()
@@ -120,7 +122,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
   const mobileSpecs = specOptions.slice(0, 4)
 
   const collectionData = primaryCollection
-    ? await client.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
+    ? await shopify.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
         variables: { handle: primaryCollection.handle, sortKey: 'BEST_SELLING', reverse: false },
       })
     : null

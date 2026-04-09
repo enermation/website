@@ -16,7 +16,7 @@ import {
   supplyingImage,
 } from '@/lib/data'
 import { GET_COLLECTIONS } from '@/lib/queries'
-import client from '@/lib/shopify'
+import { getClient } from '@/lib/shopify'
 import type { ShopifyCollection } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
@@ -99,7 +99,8 @@ function MobileCollectionCard({ collection }: { collection: ShopifyCollection })
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default async function Home() {
-  const { data } = await client.request<{
+  const shopify = await getClient()
+  const { data } = await shopify.request<{
     collections: { edges: { node: ShopifyCollection }[] }
   }>(GET_COLLECTIONS)
   const collections = data?.collections.edges.map(e => e.node) ?? []

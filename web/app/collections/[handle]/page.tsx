@@ -4,7 +4,7 @@ import { Suspense } from 'react'
 import { CarCard } from '@/components/car-card'
 import { SiteHeader } from '@/components/site-header'
 import { GET_COLLECTIONS, GET_PRODUCTS_IN_COLLECTION } from '@/lib/queries'
-import client from '@/lib/shopify'
+import { getClient } from '@/lib/shopify'
 import type { ShopifyCollection, ShopifyProduct } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { FilterBar } from './filter-bar'
@@ -77,14 +77,16 @@ export default async function CollectionPage({
   const { sortKey, reverse } = getSortConfig(sort)
   const filter = make && make !== 'Show All' ? [{ vendor: make }] : undefined
 
+  const shopify = await getClient()
+
   const [{ data: filteredData }, { data: allData }, { data: collectionsData }] = await Promise.all([
-    client.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
+    shopify.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
       variables: { handle, sortKey, reverse, filter },
     }),
-    client.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
+    shopify.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
       variables: { handle, sortKey: 'BEST_SELLING', reverse: false },
     }),
-    client.request<CollectionsResponse>(GET_COLLECTIONS),
+    shopify.request<CollectionsResponse>(GET_COLLECTIONS),
   ])
 
   if (!filteredData?.collection || !allData?.collection) notFound()

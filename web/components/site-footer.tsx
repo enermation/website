@@ -15,7 +15,7 @@ import {
   footerLegalLinks,
 } from '@/lib/data'
 import { GET_COLLECTIONS } from '@/lib/queries'
-import client from '@/lib/shopify'
+import { getClient } from '@/lib/shopify'
 import type { ShopifyCollection } from '@/lib/types'
 
 const socialLinks = [
@@ -56,7 +56,8 @@ type CollectionsResponse = {
 }
 
 export async function SiteFooter() {
-  const { data } = await client.request<CollectionsResponse>(GET_COLLECTIONS)
+  const shopify = await getClient()
+  const { data } = await shopify.request<CollectionsResponse>(GET_COLLECTIONS)
   const footerShowroomLinks: FooterLink[] =
     data?.collections.edges.map(({ node }) => ({
       label: node.title,

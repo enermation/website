@@ -6,7 +6,7 @@ import {
   GET_PRODUCT_BY_HANDLE,
   GET_PRODUCTS_IN_COLLECTION,
 } from '@/lib/queries'
-import client from '@/lib/shopify'
+import { getClient } from '@/lib/shopify'
 
 const SHOP_QUERY = `
   query {
@@ -18,41 +18,49 @@ const SHOP_QUERY = `
 `
 
 export async function GET(req: NextRequest) {
+  const shopify = await getClient()
   const q = req.nextUrl.searchParams.get('q') ?? 'shop'
   const handle = req.nextUrl.searchParams.get('handle') ?? ''
   const cartId = req.nextUrl.searchParams.get('cartId') ?? ''
+
+  if (!shopify) {
+    return NextResponse.json(
+      { error: 'Shopify environment variables not configured' },
+      { status: 503 }
+    )
+  }
 
   let result: { data?: unknown; errors?: unknown }
 
   switch (q) {
     case 'shop':
-      result = await client.request(SHOP_QUERY)
+      result = await shopify.request(SHOP_QUERY)
       break
 
     case 'products':
-      result = await client.request(GET_ALL_PRODUCTS)
+      result = await shopify.request(GET_ALL_PRODUCTS)
       break
 
     case 'product':
       if (!handle)
         return NextResponse.json({ error: 'Pass ?handle=your-product-handle' }, { status: 400 })
-      result = await client.request(GET_PRODUCT_BY_HANDLE, { variables: { handle } })
+      result = await shopify.request(GET_PRODUCT_BY_HANDLE, { variables: { handle } })
       break
 
     case 'collections':
-      result = await client.request(GET_COLLECTIONS)
+      result = await shopify.request(GET_COLLECTIONS)
       break
 
     case 'collection':
       if (!handle)
         return NextResponse.json({ error: 'Pass ?handle=your-collection-handle' }, { status: 400 })
-      result = await client.request(GET_PRODUCTS_IN_COLLECTION, { variables: { handle } })
+      result = await shopify.request(GET_PRODUCTS_IN_COLLECTION, { variables: { handle } })
       break
 
     case 'cart':
       if (!cartId)
         return NextResponse.json({ error: 'Pass ?cartId=gid://shopify/Cart/...' }, { status: 400 })
-      result = await client.request(GET_CART, { variables: { cartId } })
+      result = await shopify.request(GET_CART, { variables: { cartId } })
       break
 
     default:
