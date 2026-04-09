@@ -12,8 +12,10 @@ import {
   footerContactInfo,
   footerContactLinks,
   footerLegalLinks,
-  footerShowroomLinks,
 } from '@/lib/data'
+import { GET_COLLECTIONS } from '@/lib/queries'
+import client from '@/lib/shopify'
+import type { ShopifyCollection } from '@/lib/types'
 
 const socialLinks = [
   { label: 'Instagram', Icon: InstagramIcon, href: '#' },
@@ -46,7 +48,20 @@ function FooterColumn({ heading, links }: { heading: string; links: FooterLink[]
   )
 }
 
-export function SiteFooter() {
+type CollectionsResponse = {
+  collections: {
+    edges: { node: ShopifyCollection }[]
+  }
+}
+
+export async function SiteFooter() {
+  const { data } = await client.request<CollectionsResponse>(GET_COLLECTIONS)
+  const footerShowroomLinks: FooterLink[] =
+    data?.collections.edges.map(({ node }) => ({
+      label: node.title,
+      href: `/collections/${node.handle}`,
+    })) ?? []
+
   return (
     <footer className="bg-black pt-12 pb-10">
       {/* Mobile: Logo + Social centered at top */}

@@ -3,10 +3,9 @@ import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { CarCard } from '@/components/car-card'
 import { SiteHeader } from '@/components/site-header'
-import { showroomSubNav } from '@/lib/data'
-import { GET_PRODUCTS_IN_COLLECTION } from '@/lib/queries'
+import { GET_COLLECTIONS, GET_PRODUCTS_IN_COLLECTION } from '@/lib/queries'
 import client from '@/lib/shopify'
-import type { ShopifyProduct } from '@/lib/types'
+import type { ShopifyCollection, ShopifyProduct } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { FilterBar } from './filter-bar'
 
@@ -18,6 +17,12 @@ type CollectionResponse = {
     title: string
     products: { edges: { node: ShopifyProduct }[] }
   } | null
+}
+
+type CollectionsResponse = {
+  collections: {
+    edges: { node: ShopifyCollection }[]
+  }
 }
 
 type MakeOption = {
@@ -72,13 +77,14 @@ export default async function CollectionPage({
   const { sortKey, reverse } = getSortConfig(sort)
   const filter = make && make !== 'Show All' ? [{ vendor: make }] : undefined
 
-  const [{ data: filteredData }, { data: allData }] = await Promise.all([
+  const [{ data: filteredData }, { data: allData }, { data: collectionsData }] = await Promise.all([
     client.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
       variables: { handle, sortKey, reverse, filter },
     }),
     client.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
       variables: { handle, sortKey: 'BEST_SELLING', reverse: false },
     }),
+    client.request<CollectionsResponse>(GET_COLLECTIONS),
   ])
 
   if (!filteredData?.collection || !allData?.collection) notFound()
@@ -87,6 +93,7 @@ export default async function CollectionPage({
   const products = productData.edges.map(e => e.node)
   const allProducts = allData.collection.products.edges.map(e => e.node)
   const makeOptions = buildMakeOptions(allProducts)
+  const collectionLinks = collectionsData?.collections.edges.map(edge => edge.node) ?? []
 
   return (
     <>
@@ -95,12 +102,13 @@ export default async function CollectionPage({
       {/* Sub-navigation */}
       <nav className="hidden md:block bg-background border-b border-gray-90">
         <div className="max-w-site mx-auto flex justify-center">
-          {showroomSubNav.map(tab => {
-            const isActive = tab.href === `/collections/${handle}`
+          {collectionLinks.map(collection => {
+            const href = `/collections/${collection.handle}`
+            const isActive = collection.handle === handle
             return (
               <Link
-                key={tab.label}
-                href={tab.href}
+                key={collection.id}
+                href={href}
                 className={cn(
                   'font-heading font-semibold text-13 uppercase tracking-wide px-4 py-4 border-b-2 transition-colors',
                   isActive
@@ -108,7 +116,7 @@ export default async function CollectionPage({
                     : 'border-transparent text-foreground/36 hover:text-foreground/60'
                 )}
               >
-                {tab.label}
+                {collection.title}
               </Link>
             )
           })}
@@ -131,12 +139,13 @@ export default async function CollectionPage({
 
       <nav className="border-b border-gray-90 bg-background px-3 py-5 md:hidden">
         <div className="grid grid-cols-2">
-          {showroomSubNav.map(tab => {
-            const isActive = tab.href === `/collections/${handle}`
+          {collectionLinks.map(collection => {
+            const href = `/collections/${collection.handle}`
+            const isActive = collection.handle === handle
             return (
               <Link
-                key={tab.label}
-                href={tab.href}
+                key={collection.id}
+                href={href}
                 className={cn(
                   'flex justify-center px-4 py-3 text-center font-heading text-13 font-semibold uppercase tracking-wide transition-colors',
                   isActive
@@ -144,7 +153,7 @@ export default async function CollectionPage({
                     : 'border-b-2 border-transparent text-foreground/36'
                 )}
               >
-                {tab.label}
+                {collection.title}
               </Link>
             )
           })}

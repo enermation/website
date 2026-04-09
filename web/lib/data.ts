@@ -74,27 +74,7 @@ export const navLinks: NavLink[] = [
 
 // ── Cars page sub-navigation ─────────────────────────────────────────────────
 
-export const showroomSubNav: SubNavItem[] = [
-  { label: 'All Stock', href: primaryShowroomCollectionHref },
-  { label: 'Residential', href: '/collections/residential-automobiles' },
-  { label: 'Commercial', href: '/collections/commercial-vehicles' },
-  { label: 'Motorcycles', href: '/collections/motorcycles' },
-  { label: 'Spare Parts', href: '/collections/spare-parts' },
-  { label: 'Previously Sold', href: '/collections/previously-sold' },
-  { label: 'Landjets', href: '/collections/landjets' },
-]
-
 // ── Footer data ──────────────────────────────────────────────────────────────
-
-export const footerShowroomLinks: FooterLink[] = [
-  { label: 'All Stock', href: primaryShowroomCollectionHref },
-  { label: 'Residential', href: '/collections/residential-automobiles' },
-  { label: 'Commercial', href: '/collections/commercial-vehicles' },
-  { label: 'Motorcycles', href: '/collections/motorcycles' },
-  { label: 'Spare Parts', href: '/collections/spare-parts' },
-  { label: 'Previously Sold', href: '/collections/previously-sold' },
-  { label: 'Landjets', href: '/collections/landjets' },
-]
 
 export const footerAboutLinks: FooterLink[] = [
   { label: 'Our Story', href: '#' },
