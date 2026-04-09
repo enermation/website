@@ -7,8 +7,6 @@ import { StripeBar } from '@/components/stripe-bar'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Card, CardContent } from '@/components/ui/card'
 import {
-  type Car,
-  cars,
   carsForSaleImage,
   heroImage,
   instagramPosts,
@@ -68,32 +66,31 @@ function CollectionCard({ collection }: { collection: ShopifyCollection }) {
   )
 }
 
-// ── Car listing card (mobile) ─────────────────────────────────────────────────
+// ── Collection card (mobile) ──────────────────────────────────────────────────
 
-function MobileCarCard({ car }: { car: Car }) {
+function MobileCollectionCard({ collection }: { collection: ShopifyCollection }) {
   return (
-    <Link href={`/products/${car.id}`} className="block border-b border-gray-87 py-6">
+    <Link
+      href={`/collections/${collection.handle}`}
+      className="block border-b border-gray-87 py-6 last:border-b-0"
+    >
       <AspectRatio ratio={3 / 2} className="bg-gray-94 mb-4">
-        <Image
-          src={car.image}
-          alt={car.name}
-          fill
-          className="object-cover"
-          sizes="(max-width: 767px) calc(100vw - 1.5rem)"
-        />
-      </AspectRatio>
-      <h3 className="font-display font-normal text-2xl text-gray-7 mb-2 px-1">{car.name}</h3>
-      <p className="font-body text-15 text-gray-33 leading-relaxed mb-2 px-1">{car.description}</p>
-      <p className="font-display text-2xl text-gray-7 mb-4 px-1">{car.price}</p>
-      <div className="flex flex-col gap-1 px-1">
-        {([car.spec.year, car.spec.color, car.spec.mileage, car.spec.interior] as const).map(
-          value => (
-            <div key={value} className="flex items-center gap-2 font-heading text-13 text-gray-33">
-              <ChevronRight className="size-3 shrink-0" />
-              <span>{value}</span>
-            </div>
-          )
+        {collection.image && (
+          <Image
+            src={collection.image.url}
+            alt={collection.image.altText ?? collection.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 767px) calc(100vw - 1.5rem)"
+          />
         )}
+      </AspectRatio>
+      <h3 className="mb-2 px-1 font-display text-2xl font-normal text-gray-7">
+        {collection.title}
+      </h3>
+      <div className="flex items-center gap-2 px-1 font-heading text-13 text-gray-33">
+        <ChevronRight className="size-3 shrink-0" />
+        <span>Discover More</span>
       </div>
     </Link>
   )
@@ -118,26 +115,19 @@ export default async function Home() {
 
         {/* ── LATEST ARRIVALS / COLLECTIONS ─────────────────────────────── */}
         <section className="bg-white">
-          {/* Mobile heading */}
-          <div className="md:hidden">
-            <SectionHeading title="Latest Arrival for Sale" />
-          </div>
-          {/* Desktop heading */}
-          <div className="hidden md:block">
-            <SectionHeading title="Browse Our Collections" />
-          </div>
+          <SectionHeading title="Browse Our Collections" />
 
-          {/* Mobile: individual car listings */}
+          {/* Mobile: collections list */}
           <div className="md:hidden px-3 pb-10">
-            {cars.map(car => (
-              <MobileCarCard key={car.id} car={car} />
+            {collections.map(collection => (
+              <MobileCollectionCard key={collection.id} collection={collection} />
             ))}
             <div className="flex justify-center mt-10">
               <Link
                 href={primaryShowroomCollectionHref}
                 className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-black bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-black transition-colors duration-200 hover:bg-black hover:text-white"
               >
-                View All Stock
+                View all collections
               </Link>
             </div>
           </div>
