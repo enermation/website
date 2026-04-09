@@ -2,6 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Calendar, Palette, Gauge, Armchair } from "lucide-react"
 import type { ShopifyProduct } from "@/lib/types"
+import { productPage } from "@/lib/data"
 
 type CarCardProps = {
   product: ShopifyProduct
@@ -68,7 +69,7 @@ export function CarCard({ product }: CarCardProps) {
         <div className="flex items-center gap-2 px-2 py-1">
           <Gauge className="size-3.5 text-gray-7 shrink-0" />
           <span className="font-body font-medium text-13 text-foreground">
-            {product.availableForSale ? "Available" : "Sold"}
+            {product.availableForSale ? productPage.labels.available : productPage.labels.sold}
           </span>
         </div>
         {variantYear && (
@@ -85,7 +86,7 @@ export function CarCard({ product }: CarCardProps) {
           {product.description}
         </p>
         <p className="font-heading font-semibold text-lg text-foreground mt-3">
-          {product.availableForSale ? price : "Reserved — More Wanted"}
+          {product.availableForSale ? price : productPage.labels.reservedMoreWanted}
         </p>
       </div>
     </Link>

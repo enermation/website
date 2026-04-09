@@ -22,7 +22,7 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  function updateParam(key: string, value: string) {
+  function updateParam(key: string, value: string | null) {
     const params = new URLSearchParams(searchParams.toString())
     if (!value || value === "Show All") {
       params.delete(key)
@@ -36,14 +36,14 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
     <div className="flex flex-wrap items-end gap-0 border-b border-gray-90 pb-3">
       {/* Brand select */}
       <div className="flex flex-col gap-1 px-3 pt-6 w-1/3 min-w-0 shrink-0">
-        <label className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider">
+        <label htmlFor="brand-select" className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider">
           Brand
         </label>
         <Select
           value={currentMake ?? "Show All"}
           onValueChange={(value) => updateParam("make", value)}
         >
-          <SelectTrigger className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background">
+          <SelectTrigger id="brand-select" className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -58,14 +58,14 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
 
       {/* Sort select */}
       <div className="flex flex-col gap-1 px-3 pt-6 w-1/5 min-w-0 shrink-0">
-        <label className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider">
+        <label htmlFor="sort-select" className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider">
           Sort By
         </label>
         <Select
           value={currentSort ?? ""}
           onValueChange={(value) => updateParam("sort", value)}
         >
-          <SelectTrigger className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background">
+          <SelectTrigger id="sort-select" className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -114,4 +114,3 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
     </div>
   )
 }
-

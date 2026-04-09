@@ -296,3 +296,40 @@ export const dealerInfo = {
   about:
     "Based in Preston in Lancashire, close to Junction 31A of the M6 Motorway, Enermation are internationally renowned for offering a unique selection of some of the world's finest automobiles. With literally hundreds of beautiful cars supplied to a diverse customer base, Enermation is the premier supercar dealer in the UK.",
 }
+
+// ── Product page copy ─────────────────────────────────────────────────────────
+
+export const productPage = {
+  breadcrumb: {
+    home: "Home",
+    showroom: "Showroom",
+  },
+  sections: {
+    aboutThisListing: "About This Listing",
+    listingDetails: "Listing Details",
+    askAQuestion: "Ask a Question",
+    contactAgent: "Contact Agent",
+    forSaleBy: "For Sale By",
+    youMayAlsoLike: "You May Also Like",
+    relatedStories: "Related Stories",
+  },
+  labels: {
+    brand: "Brand",
+    status: "Status",
+    price: "Price",
+    address: "Address",
+    phoneNumber: "Phone number",
+    email: "Email",
+    specialistExportBroker: "Specialist vehicle export broker",
+    specialistDealer: "Specialist dealer",
+    callUs: "Call Us",
+    callAgent: "Call Agent",
+    viewAllStock: "View all stock",
+    viewAllStockForSale: "View all stock for sale",
+    available: "Available",
+    sold: "Sold",
+    soldOrReserved: "Sold / Reserved",
+    reserved: "Reserved",
+    reservedMoreWanted: "Reserved — More Wanted",
+  },
+} as const

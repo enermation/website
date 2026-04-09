@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
 import { footerContactInfo } from "@/lib/data"
 
 export function EnquiryForm({ productTitle }: { productTitle: string }) {
@@ -58,12 +59,12 @@ export function EnquiryForm({ productTitle }: { productTitle: string }) {
         rows={4}
         className="rounded-none resize-none"
       />
-      <button
+      <Button
         type="submit"
-        className="font-heading font-semibold text-13 uppercase tracking-wider bg-brand-green text-white px-6 py-3 hover:opacity-90 transition-opacity"
+        className="bg-brand-green text-white hover:opacity-90 transition-opacity rounded-none"
       >
         Send Message
-      </button>
+      </Button>
     </form>
   )
 }

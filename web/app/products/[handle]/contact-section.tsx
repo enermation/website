@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
 import { footerContactInfo } from "@/lib/data"
 
 export function ContactSection({ productTitle }: { productTitle: string }) {
@@ -24,13 +25,13 @@ export function ContactSection({ productTitle }: { productTitle: string }) {
         rows={4}
         className="rounded-none resize-none"
       />
-      <button
+      <Button
         type="button"
         onClick={handleSend}
-        className="w-full font-heading font-semibold text-13 uppercase tracking-wider bg-brand-green text-white px-6 py-3 hover:opacity-90 transition-opacity"
+        className="bg-brand-green text-white hover:opacity-90 transition-opacity rounded-none"
       >
         Ask a Question
-      </button>
+      </Button>
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { Calendar, ChevronRight, Mail } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { SiteHeader } from '@/components/site-header'
+import { StripeBar } from '@/components/stripe-bar'
 import { InstagramIcon } from '@/components/social-icons'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Card, CardContent } from '@/components/ui/card'
@@ -22,16 +23,6 @@ import type { ShopifyCollection } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 // ── Shared primitives ────────────────────────────────────────────────────────
-
-function StripeBar({ dark = false }: { dark?: boolean }) {
-  return (
-    <div className="flex items-center">
-      <div className="h-1 w-10 bg-brand-green" />
-      <div className={cn('h-1 w-10', dark ? 'bg-white' : 'bg-white border border-gray-87')} />
-      <div className="h-1 w-10 bg-brand-red" />
-    </div>
-  )
-}
 
 function SectionHeading({ title, dark = false }: { title: string; dark?: boolean }) {
   return (

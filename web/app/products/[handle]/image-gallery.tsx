@@ -37,8 +37,8 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                   sizes="(min-width: 1320px) 330px, 25vw"
                 />
                 {isLast && extraCount > 0 && (
-                  <div className="absolute inset-0 flex items-end justify-end p-3 bg-black/30">
-                    <span className="font-heading text-13 text-white bg-black/60 px-3 py-1">
+                  <div className="absolute inset-0 flex items-end justify-end p-3 bg-black-30">
+                    <span className="font-heading text-13 text-white bg-black-40 px-3 py-1">
                       +{extraCount} Photos
                     </span>
                   </div>

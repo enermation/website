@@ -17,6 +17,7 @@ import {
   relatedStories,
   primaryShowroomCollectionHandle,
   primaryShowroomCollectionHref,
+  productPage,
 } from "@/lib/data"
 import { ImageGallery } from "./image-gallery"
 import { EnquiryForm } from "./enquiry-form"
@@ -103,11 +104,11 @@ export default async function ProductPage({
       <nav className="bg-background border-b border-gray-90">
         <div className="max-w-site mx-auto px-6 py-3 flex items-center gap-2 font-heading text-13 text-gray-33">
           <Link href="/" className="hover:text-foreground transition-colors">
-            Home
+            {productPage.breadcrumb.home}
           </Link>
           <span>/</span>
           <Link href={primaryShowroomCollectionHref} className="hover:text-foreground transition-colors">
-            Showroom
+            {productPage.breadcrumb.showroom}
           </Link>
           <span>/</span>
           <span className="text-foreground truncate">{product.title}</span>
@@ -143,7 +144,7 @@ export default async function ProductPage({
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
                   <p className="font-heading font-semibold text-2xl text-foreground whitespace-nowrap">
-                    {product.availableForSale ? price : "Reserved"}
+                    {product.availableForSale ? price : productPage.labels.reserved}
                   </p>
                   <Badge
                     variant="outline"
@@ -154,7 +155,7 @@ export default async function ProductPage({
                         : "border-gray-33 text-gray-33"
                     )}
                   >
-                    {product.availableForSale ? "Available" : "Sold"}
+                    {product.availableForSale ? productPage.labels.available : productPage.labels.sold}
                   </Badge>
                 </div>
               </div>
@@ -186,7 +187,7 @@ export default async function ProductPage({
               {product.description && (
                 <div className="flex flex-col gap-3">
                   <h2 className="font-display font-normal text-xl text-gray-7">
-                    About This Listing
+                    {productPage.sections.aboutThisListing}
                   </h2>
                   <p className="font-body text-15 text-gray-33 leading-relaxed whitespace-pre-line">
                     {product.description}
@@ -197,34 +198,34 @@ export default async function ProductPage({
               {/* Listing details */}
               <div className="flex flex-col gap-3">
                 <h2 className="font-display font-normal text-xl text-gray-7">
-                  Listing Details
+                  {productPage.sections.listingDetails}
                 </h2>
                 <dl className="divide-y divide-gray-90">
                   {product.vendor && (
                     <div className="flex justify-between py-3">
-                      <dt className="font-body text-13 text-gray-33">Brand</dt>
-                      <dd className="font-body text-13 text-black">{product.vendor}</dd>
+                      <dt className="font-body text-13 text-gray-33">{productPage.labels.brand}</dt>
+                      <dd className="font-body text-13 text-foreground">{product.vendor}</dd>
                     </div>
                   )}
                   {specOptions.map((opt) => (
                     <div key={opt.name} className="flex justify-between py-3">
                       <dt className="font-body text-13 text-gray-33">{opt.name}</dt>
-                      <dd className="font-body text-13 text-black">{opt.value}</dd>
+                      <dd className="font-body text-13 text-foreground">{opt.value}</dd>
                     </div>
                   ))}
                   <div className="flex justify-between py-3">
-                    <dt className="font-body text-13 text-gray-33">Status</dt>
+                    <dt className="font-body text-13 text-gray-33">{productPage.labels.status}</dt>
                     <dd className={cn(
                       "font-body text-13",
                       product.availableForSale ? "text-brand-green" : "text-gray-33"
                     )}>
-                      {product.availableForSale ? "Available" : "Sold / Reserved"}
+                      {product.availableForSale ? productPage.labels.available : productPage.labels.soldOrReserved}
                     </dd>
                   </div>
                   <div className="flex justify-between py-3">
-                    <dt className="font-body text-13 text-gray-33">Price</dt>
-                    <dd className="font-heading font-semibold text-13 text-black">
-                      {product.availableForSale ? price : "Reserved"}
+                    <dt className="font-body text-13 text-gray-33">{productPage.labels.price}</dt>
+                    <dd className="font-heading font-semibold text-13 text-foreground">
+                      {product.availableForSale ? price : productPage.labels.reserved}
                     </dd>
                   </div>
                 </dl>
@@ -233,25 +234,25 @@ export default async function ProductPage({
               {/* Ask a Question */}
               <div className="flex flex-col gap-4">
                 <h2 className="font-display font-normal text-xl text-gray-7">
-                  Ask a Question
+                  {productPage.sections.askAQuestion}
                 </h2>
                 <div className="flex items-start gap-4">
                   <div className="flex items-center justify-center size-10 rounded-full bg-gray-90 shrink-0">
                     <User className="size-5 text-gray-33" />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <p className="font-body font-medium text-13 text-black">
+                    <p className="font-body font-medium text-13 text-foreground">
                       {dealerInfo.name}
                     </p>
                     <p className="font-body text-13 text-gray-33">
-                      Specialist vehicle export broker
+                      {productPage.labels.specialistExportBroker}
                     </p>
                     <a
                       href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
                       className="flex items-center gap-1.5 font-body text-13 text-brand-green hover:opacity-80 transition-opacity mt-1"
                     >
                       <Phone className="size-3.5" />
-                      Call Us
+                      {productPage.labels.callUs}
                     </a>
                   </div>
                 </div>
@@ -260,7 +261,7 @@ export default async function ProductPage({
               {/* Contact Agent */}
               <div className="flex flex-col gap-3">
                 <h2 className="font-display font-normal text-xl text-gray-7">
-                  Contact Agent
+                  {productPage.sections.contactAgent}
                 </h2>
                 <ContactSection productTitle={product.title} />
               </div>
@@ -268,13 +269,13 @@ export default async function ProductPage({
               {/* For Sale By */}
               <div className="flex flex-col gap-4 border-t border-gray-90 pt-8">
                 <h2 className="font-display font-normal text-xl text-gray-7">
-                  For Sale By
+                  {productPage.sections.forSaleBy}
                 </h2>
 
                 <div className="flex flex-col gap-1">
                   <Link
                     href={primaryShowroomCollectionHref}
-                    className="font-body font-medium text-13 text-black hover:text-brand-green transition-colors"
+                    className="font-body font-medium text-13 text-foreground hover:text-brand-green transition-colors"
                   >
                     {dealerInfo.name}
                   </Link>
@@ -282,33 +283,33 @@ export default async function ProductPage({
 
                 <div className="flex flex-col gap-1">
                   <p className="font-body font-medium text-13 text-gray-33">About</p>
-                  <p className="font-body text-13 text-black leading-relaxed">
+                  <p className="font-body text-13 text-foreground leading-relaxed">
                     {dealerInfo.about}
                   </p>
                 </div>
 
                 <dl className="divide-y divide-gray-90">
                   <div className="flex flex-col gap-0.5 py-3">
-                    <dt className="font-body text-13 text-gray-33">Address</dt>
-                    <dd className="font-body text-13 text-black">{dealerInfo.address}</dd>
+                    <dt className="font-body text-13 text-gray-33">{productPage.labels.address}</dt>
+                    <dd className="font-body text-13 text-foreground">{dealerInfo.address}</dd>
                   </div>
                   <div className="flex flex-col gap-0.5 py-3">
-                    <dt className="font-body text-13 text-gray-33">Phone number</dt>
+                    <dt className="font-body text-13 text-gray-33">{productPage.labels.phoneNumber}</dt>
                     <dd>
                       <a
                         href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
-                        className="font-body text-13 text-black hover:text-brand-green transition-colors"
+                        className="font-body text-13 text-foreground hover:text-brand-green transition-colors"
                       >
                         {footerContactInfo.phone}
                       </a>
                     </dd>
                   </div>
                   <div className="flex flex-col gap-0.5 py-3">
-                    <dt className="font-body text-13 text-gray-33">Email</dt>
+                    <dt className="font-body text-13 text-gray-33">{productPage.labels.email}</dt>
                     <dd>
                       <a
                         href={`mailto:${footerContactInfo.email}`}
-                        className="font-body text-13 text-black hover:text-brand-green transition-colors"
+                        className="font-body text-13 text-foreground hover:text-brand-green transition-colors"
                       >
                         {footerContactInfo.email}
                       </a>
@@ -327,16 +328,16 @@ export default async function ProductPage({
                   <User className="size-5 text-gray-33" />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <p className="font-body font-medium text-13 text-black">
+                  <p className="font-body font-medium text-13 text-foreground">
                     {dealerInfo.name}
                   </p>
-                  <p className="font-body text-13 text-gray-33">Specialist dealer</p>
+                  <p className="font-body text-13 text-gray-33">{productPage.labels.specialistDealer}</p>
                   <a
                     href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
                     className="flex items-center gap-1.5 font-body text-13 text-brand-green hover:opacity-80 transition-opacity mt-1"
                   >
                     <Phone className="size-3.5" />
-                    Call Agent
+                    {productPage.labels.callAgent}
                   </a>
                 </div>
               </div>
@@ -348,9 +349,9 @@ export default async function ProductPage({
               <div className="border-t border-gray-90 pt-4">
                 <Link
                   href={primaryShowroomCollectionHref}
-                  className="font-body text-13 text-black hover:text-brand-green transition-colors"
+                  className="font-body text-13 text-foreground hover:text-brand-green transition-colors"
                 >
-                  {dealerInfo.name} - View all stock
+                  {dealerInfo.name} - {productPage.labels.viewAllStock}
                 </Link>
               </div>
             </aside>
@@ -364,7 +365,7 @@ export default async function ProductPage({
           <div className="max-w-site mx-auto px-6">
             <div className="flex items-center justify-between mb-10">
               <h2 className="font-display font-normal text-section uppercase tracking-widest text-gray-7">
-                You May Also Like
+                {productPage.sections.youMayAlsoLike}
               </h2>
               <StripeBar />
             </div>
@@ -376,9 +377,9 @@ export default async function ProductPage({
             <div className="flex justify-center mt-12">
               <Link
                 href={primaryShowroomCollectionHref}
-                className="font-heading font-semibold text-13 uppercase tracking-wider border-2 border-black text-black px-8 py-3 hover:bg-black hover:text-white transition-colors"
+                className="font-heading font-semibold text-13 uppercase tracking-wider border-2 border-foreground text-foreground px-8 py-3 hover:bg-foreground hover:text-background transition-colors"
               >
-                View all stock for sale
+                {productPage.labels.viewAllStockForSale}
               </Link>
             </div>
           </div>
@@ -386,10 +387,10 @@ export default async function ProductPage({
       )}
 
       {/* Related Stories */}
-      <section className="bg-white py-16 border-t border-gray-90">
+      <section className="bg-background py-16 border-t border-gray-90">
         <div className="max-w-site mx-auto px-6">
           <h2 className="font-display font-normal text-section uppercase tracking-widest text-gray-7 mb-10">
-            Related Stories
+            {productPage.sections.relatedStories}
           </h2>
           <div className="grid grid-cols-3 gap-6">
             {relatedStories.map((story) => (
