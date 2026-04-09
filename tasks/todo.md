@@ -1,49 +1,37 @@
-# Task: Replace Hand-Rolled UI with shadcn/ui Components
+# Product Page — QWEN.md Compliance Fix
 
-## Status: In Progress
+## A. Color Token Replacements
+- [ ] `page.tsx`: `text-black` → `text-foreground` (~15 instances)
+- [ ] `page.tsx`: `bg-white` → `bg-background` (4 instances)
+- [ ] `page.tsx`: `border-black` → `border-foreground`, `hover:bg-black` → `hover:bg-foreground`, `hover:text-white` → `hover:text-background`
+- [ ] `image-gallery.tsx`: `bg-black/30` → `bg-black-30`, `bg-black/60` → `bg-black-40`
 
-## Scope
-3 files affected: `web/app/page.tsx`, `web/components/site-header.tsx`, `web/components/site-footer.tsx`
+## B. shadcn Button (replace native `<button>`)
+- [ ] `enquiry-form.tsx`: native `<button>` → `Button` from `@/components/ui/button`
+- [ ] `contact-section.tsx`: native `<button>` → `Button` from `@/components/ui/button`
 
-## Component Mapping
+## C. Extract Shared Components
+- [ ] Create `web/components/car-card.tsx` — used in collection page + product page (2+ places)
+- [ ] Create `web/components/stripe-bar.tsx` — used in product page + home page
+- [ ] Update `web/app/collections/[handle]/page.tsx` — import shared `CarCard`
+- [ ] Update `web/app/products/[handle]/page.tsx` — import shared `CarCard` and `StripeBar`
+- [ ] Update `web/app/page.tsx` — import shared `StripeBar`
 
-| Hand-rolled | Replace With | Notes |
-|---|---|---|
-| `StripeBar` (3 divs) | `Separator` × 3 with custom colors | Keep tricolor brand identity |
-| `CollectionCard` | `Card` + `AspectRatio` | Use Card's built-in image handling |
-| CTA `<Link>` buttons | `Button` (asChild) | "View all collections", "Our Story", "Read More", Newsletter CTA |
-| Instagram grid `<div>` | `AspectRatio` | Replace `aspect-[3/2]` and `aspect-square` wrappers |
-| Social icon `<Link>` wrappers | `Button` (asChild, variant=ghost) | site-header + site-footer + page hero |
-| Footer accent bars | `Separator` | Replace `h-0.5 w-10 bg-white/30` |
-| Phone CTA button | `Button` | site-header phone link |
+## D. Static Data to `lib/data.ts`
+- [ ] Add `productPage` section to `web/lib/data.ts` with typed copy:
+  - "Ask a Question", "Contact Agent", "For Sale By", "Listing Details", "About This Listing"
+  - "You May Also Like", "Related Stories", "View all stock for sale"
+  - "Specialist vehicle export broker", "Specialist dealer"
+- [ ] Update `page.tsx` to import and use data from `lib/data.ts`
 
-## Implementation Order
+## E. Bug Fix
+- [ ] `page.tsx` CarCard: hardcoded year `"2025"` → remove or derive from product data
 
-1. **`page.tsx`** — StripeBar → Separator, CollectionCard → Card, CTA links → Button(asChild), Instagram → AspectRatio
-2. **`site-header.tsx`** — Social links → Button(asChild), Phone CTA → Button, Logo stripe → Separator
-3. **`site-footer.tsx`** — Accent bars → Separator, Social links → Button(asChild)
-
-## Constraints
-- Keep visual parity 1:1 with current design
-- Use `asChild` on Button for `<Link>` elements (Next.js routing)
-- Maintain all existing hover states, transitions, typography
-- No arbitrary Tailwind values
-- All colors from CSS custom properties
-
-## Risk
-- shadcn Button uses `@base-ui/react` which is client-side — need `asChild` + `"use client"` boundary for components that import it
-- Card component has specific internal structure (`CardHeader`, `CardContent`, etc.) — may need custom className overrides to match current design
-
-## Checklist
-
-- [ ] Replace StripeBar with Separator component
-- [ ] Replace CollectionCard with Card component
-- [ ] Replace CTA buttons with Button component
-- [ ] Replace Instagram grid with AspectRatio component
-- [ ] Update site-header to use Button component
-- [ ] Update site-footer to use Separator and Button components
-- [ ] Verify build passes
+## F. Arbitrary Values
+- [ ] `image-gallery.tsx`: `h-96` → add token or use standard Tailwind scale
+- [ ] `aspect-[3/2]` → keep (standard ratio, no Tailwind default)
 
 ## Review
-
-_(To be filled after implementation)_
+- [ ] Run `bun run lint` — no errors
+- [ ] Run `bun run build` — no errors
+- [ ] Verify visual parity on dev server

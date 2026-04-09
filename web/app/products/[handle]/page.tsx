@@ -1,12 +1,14 @@
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Calendar, Gauge, Palette, Armchair, User, Phone } from "lucide-react"
+import { User, Phone } from "lucide-react"
 import type { Metadata } from "next"
 import client from "@/lib/shopify"
 import { GET_PRODUCT_BY_HANDLE, GET_PRODUCTS_IN_COLLECTION } from "@/lib/queries"
 import type { ShopifyProduct } from "@/lib/types"
 import { SiteHeader } from "@/components/site-header"
+import { CarCard } from "@/components/car-card"
+import { StripeBar } from "@/components/stripe-bar"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import {
@@ -32,93 +34,6 @@ type CollectionResponse = {
     title: string
     products: { edges: { node: ShopifyProduct }[] }
   } | null
-}
-
-// Shared primitives
-
-function StripeBar() {
-  return (
-    <div className="flex items-center">
-      <div className="h-1 w-10 bg-brand-green" />
-      <div className="h-1 w-10 bg-white border border-gray-87" />
-      <div className="h-1 w-10 bg-brand-red" />
-    </div>
-  )
-}
-
-// Similar car card
-
-function CarCard({ product }: { product: ShopifyProduct }) {
-  const image = product.images.edges[0]?.node
-  const { amount, currencyCode } = product.priceRange.minVariantPrice
-  const price = new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency: currencyCode,
-  }).format(parseFloat(amount))
-
-  const firstVariant = product.variants.edges[0]?.node
-  const variantTitle =
-    firstVariant?.title && firstVariant.title !== "Default Title"
-      ? firstVariant.title
-      : null
-
-  return (
-    <Link href={`/products/${product.handle}`} className="flex flex-col group">
-      <div className="relative aspect-[3/2] overflow-hidden bg-gray-94 shrink-0">
-        {image && (
-          <Image
-            src={image.url}
-            alt={image.altText ?? product.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 100vw"
-          />
-        )}
-      </div>
-
-      <h3 className="font-display font-normal text-xl text-gray-7 mt-3 px-1 leading-snug">
-        {product.title}
-      </h3>
-
-      <div className="grid grid-cols-2 border-t border-gray-87 mt-3 pt-2 gap-y-1">
-        {product.vendor && (
-          <div className="flex items-center gap-2 px-2 py-1">
-            <Palette className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-body font-medium text-13 text-black truncate">
-              {product.vendor}
-            </span>
-          </div>
-        )}
-        {variantTitle && (
-          <div className="flex items-center gap-2 px-2 py-1">
-            <Armchair className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-body font-medium text-13 text-black truncate">
-              {variantTitle}
-            </span>
-          </div>
-        )}
-        <div className="flex items-center gap-2 px-2 py-1">
-          <Gauge className="size-3.5 text-gray-7 shrink-0" />
-          <span className="font-body font-medium text-13 text-black">
-            {product.availableForSale ? "Available" : "Sold"}
-          </span>
-        </div>
-        <div className="flex items-center gap-2 px-2 py-1">
-          <Calendar className="size-3.5 text-gray-7 shrink-0" />
-          <span className="font-body font-medium text-13 text-black">2025</span>
-        </div>
-      </div>
-
-      <div className="flex flex-col flex-1 px-1 mt-3 pb-4">
-        <p className="font-body text-15 text-gray-33 leading-relaxed line-clamp-2 flex-1">
-          {product.description}
-        </p>
-        <p className="font-heading font-semibold text-lg text-black mt-3">
-          {product.availableForSale ? price : "Reserved - More Wanted"}
-        </p>
-      </div>
-    </Link>
-  )
 }
 
 // Metadata
@@ -185,29 +100,29 @@ export default async function ProductPage({
       <SiteHeader />
 
       {/* Breadcrumb */}
-      <nav className="bg-white border-b border-gray-90">
+      <nav className="bg-background border-b border-gray-90">
         <div className="max-w-site mx-auto px-6 py-3 flex items-center gap-2 font-heading text-13 text-gray-33">
-          <Link href="/" className="hover:text-black transition-colors">
+          <Link href="/" className="hover:text-foreground transition-colors">
             Home
           </Link>
           <span>/</span>
-          <Link href={primaryShowroomCollectionHref} className="hover:text-black transition-colors">
+          <Link href={primaryShowroomCollectionHref} className="hover:text-foreground transition-colors">
             Showroom
           </Link>
           <span>/</span>
-          <span className="text-black truncate">{product.title}</span>
+          <span className="text-foreground truncate">{product.title}</span>
         </div>
       </nav>
 
       {/* Mosaic gallery */}
-      <div className="bg-white">
+      <div className="bg-background">
         <div className="max-w-site mx-auto px-6 pt-6">
           <ImageGallery images={images} />
         </div>
       </div>
 
       {/* Main body - 2-column */}
-      <section className="bg-white">
+      <section className="bg-background">
         <div className="max-w-site mx-auto px-6 py-10">
           <div className="grid grid-cols-4 gap-10 items-start">
 
@@ -227,7 +142,7 @@ export default async function ProductPage({
                   </h1>
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
-                  <p className="font-heading font-semibold text-2xl text-black whitespace-nowrap">
+                  <p className="font-heading font-semibold text-2xl text-foreground whitespace-nowrap">
                     {product.availableForSale ? price : "Reserved"}
                   </p>
                   <Badge
