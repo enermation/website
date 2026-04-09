@@ -1,4 +1,4 @@
-﻿import Image from "next/image"
+import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Calendar, Gauge, Palette, Armchair, User, Phone } from "lucide-react"
@@ -76,7 +76,7 @@ function CarCard({ product }: { product: ShopifyProduct }) {
         )}
       </div>
 
-      <h3 className="font-inter font-normal text-xl text-gray-7 mt-3 px-1 leading-snug">
+      <h3 className="font-display font-normal text-xl text-gray-7 mt-3 px-1 leading-snug">
         {product.title}
       </h3>
 
@@ -84,7 +84,7 @@ function CarCard({ product }: { product: ShopifyProduct }) {
         {product.vendor && (
           <div className="flex items-center gap-2 px-2 py-1">
             <Palette className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-roboto font-medium text-13 text-black truncate">
+            <span className="font-body font-medium text-13 text-black truncate">
               {product.vendor}
             </span>
           </div>
@@ -92,28 +92,28 @@ function CarCard({ product }: { product: ShopifyProduct }) {
         {variantTitle && (
           <div className="flex items-center gap-2 px-2 py-1">
             <Armchair className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-roboto font-medium text-13 text-black truncate">
+            <span className="font-body font-medium text-13 text-black truncate">
               {variantTitle}
             </span>
           </div>
         )}
         <div className="flex items-center gap-2 px-2 py-1">
           <Gauge className="size-3.5 text-gray-7 shrink-0" />
-          <span className="font-roboto font-medium text-13 text-black">
+          <span className="font-body font-medium text-13 text-black">
             {product.availableForSale ? "Available" : "Sold"}
           </span>
         </div>
         <div className="flex items-center gap-2 px-2 py-1">
           <Calendar className="size-3.5 text-gray-7 shrink-0" />
-          <span className="font-roboto font-medium text-13 text-black">2025</span>
+          <span className="font-body font-medium text-13 text-black">2025</span>
         </div>
       </div>
 
       <div className="flex flex-col flex-1 px-1 mt-3 pb-4">
-        <p className="font-roboto text-15 text-gray-33 leading-relaxed line-clamp-2 flex-1">
+        <p className="font-body text-15 text-gray-33 leading-relaxed line-clamp-2 flex-1">
           {product.description}
         </p>
-        <p className="font-montserrat font-semibold text-lg text-black mt-3">
+        <p className="font-heading font-semibold text-lg text-black mt-3">
           {product.availableForSale ? price : "Reserved - More Wanted"}
         </p>
       </div>
@@ -186,7 +186,7 @@ export default async function ProductPage({
 
       {/* Breadcrumb */}
       <nav className="bg-white border-b border-gray-90">
-        <div className="max-w-site mx-auto px-6 py-3 flex items-center gap-2 font-montserrat text-13 text-gray-33">
+        <div className="max-w-site mx-auto px-6 py-3 flex items-center gap-2 font-heading text-13 text-gray-33">
           <Link href="/" className="hover:text-black transition-colors">
             Home
           </Link>
@@ -218,22 +218,22 @@ export default async function ProductPage({
               <div className="flex justify-between items-start gap-6">
                 <div className="flex flex-col gap-1">
                   {product.vendor && (
-                    <p className="font-roboto text-13 uppercase tracking-widest text-gray-33">
+                    <p className="font-body text-13 uppercase tracking-widest text-gray-33">
                       {product.vendor}
                     </p>
                   )}
-                  <h1 className="font-inter font-normal text-3xl text-gray-7 leading-snug">
+                  <h1 className="font-display font-normal text-3xl text-gray-7 leading-snug">
                     {product.title}
                   </h1>
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
-                  <p className="font-montserrat font-semibold text-2xl text-black whitespace-nowrap">
+                  <p className="font-heading font-semibold text-2xl text-black whitespace-nowrap">
                     {product.availableForSale ? price : "Reserved"}
                   </p>
                   <Badge
                     variant="outline"
                     className={cn(
-                      "font-montserrat font-semibold uppercase tracking-wide rounded-none h-auto px-3 py-1",
+                      "font-heading font-semibold uppercase tracking-wide rounded-none h-auto px-3 py-1",
                       product.availableForSale
                         ? "border-brand-green text-brand-green"
                         : "border-gray-33 text-gray-33"
@@ -256,10 +256,10 @@ export default async function ProductPage({
                         i === 0 && "pl-0"
                       )}
                     >
-                      <span className="font-inter font-normal text-lg text-gray-7">
+                      <span className="font-display font-normal text-lg text-gray-7">
                         {opt.value}
                       </span>
-                      <span className="font-roboto text-13 text-gray-33">
+                      <span className="font-body text-13 text-gray-33">
                         {opt.name}
                       </span>
                     </div>
@@ -270,10 +270,10 @@ export default async function ProductPage({
               {/* About this listing */}
               {product.description && (
                 <div className="flex flex-col gap-3">
-                  <h2 className="font-inter font-normal text-xl text-gray-7">
+                  <h2 className="font-display font-normal text-xl text-gray-7">
                     About This Listing
                   </h2>
-                  <p className="font-roboto text-15 text-gray-33 leading-relaxed whitespace-pre-line">
+                  <p className="font-body text-15 text-gray-33 leading-relaxed whitespace-pre-line">
                     {product.description}
                   </p>
                 </div>
@@ -281,34 +281,34 @@ export default async function ProductPage({
 
               {/* Listing details */}
               <div className="flex flex-col gap-3">
-                <h2 className="font-inter font-normal text-xl text-gray-7">
+                <h2 className="font-display font-normal text-xl text-gray-7">
                   Listing Details
                 </h2>
                 <dl className="divide-y divide-gray-90">
                   {product.vendor && (
                     <div className="flex justify-between py-3">
-                      <dt className="font-roboto text-13 text-gray-33">Brand</dt>
-                      <dd className="font-roboto text-13 text-black">{product.vendor}</dd>
+                      <dt className="font-body text-13 text-gray-33">Brand</dt>
+                      <dd className="font-body text-13 text-black">{product.vendor}</dd>
                     </div>
                   )}
                   {specOptions.map((opt) => (
                     <div key={opt.name} className="flex justify-between py-3">
-                      <dt className="font-roboto text-13 text-gray-33">{opt.name}</dt>
-                      <dd className="font-roboto text-13 text-black">{opt.value}</dd>
+                      <dt className="font-body text-13 text-gray-33">{opt.name}</dt>
+                      <dd className="font-body text-13 text-black">{opt.value}</dd>
                     </div>
                   ))}
                   <div className="flex justify-between py-3">
-                    <dt className="font-roboto text-13 text-gray-33">Status</dt>
+                    <dt className="font-body text-13 text-gray-33">Status</dt>
                     <dd className={cn(
-                      "font-roboto text-13",
+                      "font-body text-13",
                       product.availableForSale ? "text-brand-green" : "text-gray-33"
                     )}>
                       {product.availableForSale ? "Available" : "Sold / Reserved"}
                     </dd>
                   </div>
                   <div className="flex justify-between py-3">
-                    <dt className="font-roboto text-13 text-gray-33">Price</dt>
-                    <dd className="font-montserrat font-semibold text-13 text-black">
+                    <dt className="font-body text-13 text-gray-33">Price</dt>
+                    <dd className="font-heading font-semibold text-13 text-black">
                       {product.availableForSale ? price : "Reserved"}
                     </dd>
                   </div>
@@ -317,7 +317,7 @@ export default async function ProductPage({
 
               {/* Ask a Question */}
               <div className="flex flex-col gap-4">
-                <h2 className="font-inter font-normal text-xl text-gray-7">
+                <h2 className="font-display font-normal text-xl text-gray-7">
                   Ask a Question
                 </h2>
                 <div className="flex items-start gap-4">
@@ -325,15 +325,15 @@ export default async function ProductPage({
                     <User className="size-5 text-gray-33" />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <p className="font-roboto font-medium text-13 text-black">
+                    <p className="font-body font-medium text-13 text-black">
                       {dealerInfo.name}
                     </p>
-                    <p className="font-roboto text-13 text-gray-33">
+                    <p className="font-body text-13 text-gray-33">
                       Specialist vehicle export broker
                     </p>
                     <a
                       href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
-                      className="flex items-center gap-1.5 font-roboto text-13 text-brand-green hover:opacity-80 transition-opacity mt-1"
+                      className="flex items-center gap-1.5 font-body text-13 text-brand-green hover:opacity-80 transition-opacity mt-1"
                     >
                       <Phone className="size-3.5" />
                       Call Us
@@ -344,7 +344,7 @@ export default async function ProductPage({
 
               {/* Contact Agent */}
               <div className="flex flex-col gap-3">
-                <h2 className="font-inter font-normal text-xl text-gray-7">
+                <h2 className="font-display font-normal text-xl text-gray-7">
                   Contact Agent
                 </h2>
                 <ContactSection productTitle={product.title} />
@@ -352,48 +352,48 @@ export default async function ProductPage({
 
               {/* For Sale By */}
               <div className="flex flex-col gap-4 border-t border-gray-90 pt-8">
-                <h2 className="font-inter font-normal text-xl text-gray-7">
+                <h2 className="font-display font-normal text-xl text-gray-7">
                   For Sale By
                 </h2>
 
                 <div className="flex flex-col gap-1">
                   <Link
                     href={primaryShowroomCollectionHref}
-                    className="font-roboto font-medium text-13 text-black hover:text-brand-green transition-colors"
+                    className="font-body font-medium text-13 text-black hover:text-brand-green transition-colors"
                   >
                     {dealerInfo.name}
                   </Link>
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <p className="font-roboto font-medium text-13 text-gray-33">About</p>
-                  <p className="font-roboto text-13 text-black leading-relaxed">
+                  <p className="font-body font-medium text-13 text-gray-33">About</p>
+                  <p className="font-body text-13 text-black leading-relaxed">
                     {dealerInfo.about}
                   </p>
                 </div>
 
                 <dl className="divide-y divide-gray-90">
                   <div className="flex flex-col gap-0.5 py-3">
-                    <dt className="font-roboto text-13 text-gray-33">Address</dt>
-                    <dd className="font-roboto text-13 text-black">{dealerInfo.address}</dd>
+                    <dt className="font-body text-13 text-gray-33">Address</dt>
+                    <dd className="font-body text-13 text-black">{dealerInfo.address}</dd>
                   </div>
                   <div className="flex flex-col gap-0.5 py-3">
-                    <dt className="font-roboto text-13 text-gray-33">Phone number</dt>
+                    <dt className="font-body text-13 text-gray-33">Phone number</dt>
                     <dd>
                       <a
                         href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
-                        className="font-roboto text-13 text-black hover:text-brand-green transition-colors"
+                        className="font-body text-13 text-black hover:text-brand-green transition-colors"
                       >
                         {footerContactInfo.phone}
                       </a>
                     </dd>
                   </div>
                   <div className="flex flex-col gap-0.5 py-3">
-                    <dt className="font-roboto text-13 text-gray-33">Email</dt>
+                    <dt className="font-body text-13 text-gray-33">Email</dt>
                     <dd>
                       <a
                         href={`mailto:${footerContactInfo.email}`}
-                        className="font-roboto text-13 text-black hover:text-brand-green transition-colors"
+                        className="font-body text-13 text-black hover:text-brand-green transition-colors"
                       >
                         {footerContactInfo.email}
                       </a>
@@ -412,13 +412,13 @@ export default async function ProductPage({
                   <User className="size-5 text-gray-33" />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <p className="font-roboto font-medium text-13 text-black">
+                  <p className="font-body font-medium text-13 text-black">
                     {dealerInfo.name}
                   </p>
-                  <p className="font-roboto text-13 text-gray-33">Specialist dealer</p>
+                  <p className="font-body text-13 text-gray-33">Specialist dealer</p>
                   <a
                     href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
-                    className="flex items-center gap-1.5 font-roboto text-13 text-brand-green hover:opacity-80 transition-opacity mt-1"
+                    className="flex items-center gap-1.5 font-body text-13 text-brand-green hover:opacity-80 transition-opacity mt-1"
                   >
                     <Phone className="size-3.5" />
                     Call Agent
@@ -433,7 +433,7 @@ export default async function ProductPage({
               <div className="border-t border-gray-90 pt-4">
                 <Link
                   href={primaryShowroomCollectionHref}
-                  className="font-roboto text-13 text-black hover:text-brand-green transition-colors"
+                  className="font-body text-13 text-black hover:text-brand-green transition-colors"
                 >
                   {dealerInfo.name} - View all stock
                 </Link>
@@ -448,7 +448,7 @@ export default async function ProductPage({
         <section className="bg-gray-98 py-16">
           <div className="max-w-site mx-auto px-6">
             <div className="flex items-center justify-between mb-10">
-              <h2 className="font-inter font-normal text-section uppercase tracking-widest text-gray-7">
+              <h2 className="font-display font-normal text-section uppercase tracking-widest text-gray-7">
                 You May Also Like
               </h2>
               <StripeBar />
@@ -461,7 +461,7 @@ export default async function ProductPage({
             <div className="flex justify-center mt-12">
               <Link
                 href={primaryShowroomCollectionHref}
-                className="font-montserrat font-semibold text-13 uppercase tracking-wider border-2 border-black text-black px-8 py-3 hover:bg-black hover:text-white transition-colors"
+                className="font-heading font-semibold text-13 uppercase tracking-wider border-2 border-black text-black px-8 py-3 hover:bg-black hover:text-white transition-colors"
               >
                 View all stock for sale
               </Link>
@@ -473,7 +473,7 @@ export default async function ProductPage({
       {/* Related Stories */}
       <section className="bg-white py-16 border-t border-gray-90">
         <div className="max-w-site mx-auto px-6">
-          <h2 className="font-inter font-normal text-section uppercase tracking-widest text-gray-7 mb-10">
+          <h2 className="font-display font-normal text-section uppercase tracking-widest text-gray-7 mb-10">
             Related Stories
           </h2>
           <div className="grid grid-cols-3 gap-6">
@@ -488,12 +488,12 @@ export default async function ProductPage({
                     sizes="(min-width: 1280px) 400px, 33vw"
                   />
                 </div>
-                <div className="flex items-center gap-2 font-montserrat text-13 text-gray-33">
+                <div className="flex items-center gap-2 font-heading text-13 text-gray-33">
                   <span>{story.date}</span>
                   <span>|</span>
                   <span>{story.category}</span>
                 </div>
-                <h3 className="font-inter font-normal text-base text-gray-7 leading-snug group-hover:text-brand-green transition-colors">
+                <h3 className="font-display font-normal text-base text-gray-7 leading-snug group-hover:text-brand-green transition-colors">
                   {story.title}
                 </h3>
               </Link>
@@ -505,4 +505,5 @@ export default async function ProductPage({
     </>
   )
 }
+
 

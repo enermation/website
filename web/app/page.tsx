@@ -47,7 +47,7 @@ function SectionHeading({
     <div className="flex flex-col items-center gap-6 py-12">
       <h2
         className={cn(
-          "font-inter font-normal text-section uppercase tracking-widest text-center",
+          "font-display font-normal text-section uppercase tracking-widest text-center",
           dark ? "text-gray-93" : "text-gray-7"
         )}
       >
@@ -79,10 +79,10 @@ function CollectionCard({ collection }: { collection: ShopifyCollection }) {
           </AspectRatio>
         )}
         <CardContent className="px-1 pt-3 pb-4 border-b border-gray-87">
-          <h3 className="font-inter font-normal text-xl text-gray-7 leading-snug">
+          <h3 className="font-display font-normal text-xl text-gray-7 leading-snug">
             {collection.title}
           </h3>
-          <p className="font-montserrat text-13 text-gray-33 mt-1 tracking-wide">
+          <p className="font-heading text-13 text-gray-33 mt-1 tracking-wide">
             Discover More
           </p>
         </CardContent>
@@ -128,7 +128,7 @@ export default async function Home() {
           <div className="flex justify-center mt-12">
             <Link
               href={primaryShowroomCollectionHref}
-              className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-black bg-background h-9 px-8 font-montserrat font-semibold text-13 uppercase tracking-wider text-black transition-colors duration-200 hover:bg-black hover:text-white"
+              className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-black bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-black transition-colors duration-200 hover:bg-black hover:text-white"
             >
               View all collections
             </Link>
@@ -147,12 +147,12 @@ export default async function Home() {
         />
         <div className="relative z-10 max-w-site mx-auto flex justify-end">
           <div className="w-1/2 text-right">
-            <h2 className="font-inter font-normal text-banner uppercase tracking-widest text-white leading-tight mb-8">
+            <h2 className="font-display font-normal text-banner uppercase tracking-widest text-white leading-tight mb-8">
               Supplying the
               <br />
               finest Supercars
             </h2>
-            <p className="font-roboto text-15 text-white leading-relaxed mb-8">
+            <p className="font-body text-15 text-white leading-relaxed mb-8">
               Based in Preston in Lancashire, close to Junction 31A of the M6
               Motorway, Enermation stock a wide range of contemporary and classic
               Super Cars and sports cars for sale from such marques as Aston
@@ -165,7 +165,7 @@ export default async function Home() {
             </p>
             <Link
               href="#"
-              className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-white bg-transparent h-9 px-8 font-montserrat font-semibold text-13 uppercase tracking-wider text-white transition-colors duration-200 hover:bg-white hover:text-gray-7"
+              className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-white bg-transparent h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-white transition-colors duration-200 hover:bg-white hover:text-gray-7"
             >
               Our Story
             </Link>
@@ -201,10 +201,10 @@ export default async function Home() {
               <div className="absolute inset-0 bg-black-40" />
             </AspectRatio>
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-              <h2 className="font-inter font-normal text-section uppercase tracking-widest text-gray-93">
+              <h2 className="font-display font-normal text-section uppercase tracking-widest text-gray-93">
                 {title}
               </h2>
-              <p className="font-montserrat text-15 text-white-70 tracking-widest">
+              <p className="font-heading text-15 text-white-70 tracking-widest">
                 Discover More
               </p>
               <div className="mt-4">
@@ -239,7 +239,7 @@ export default async function Home() {
                 />
               </AspectRatio>
 
-              <div className="flex items-center gap-3 mb-4 font-montserrat text-13 text-black tracking-wide">
+              <div className="flex items-center gap-3 mb-4 font-heading text-13 text-black tracking-wide">
                 <span className="flex items-center gap-1.5">
                   <Calendar className="size-3 shrink-0" />
                   {newsArticle.date}
@@ -248,16 +248,16 @@ export default async function Home() {
                 <span>{newsArticle.category}</span>
               </div>
 
-              <h3 className="font-inter font-normal text-3xl text-gray-7 leading-tight mb-4">
+              <h3 className="font-display font-normal text-3xl text-gray-7 leading-tight mb-4">
                 {newsArticle.title}
               </h3>
-              <p className="font-roboto text-15 text-gray-33 leading-relaxed mb-8">
+              <p className="font-body text-15 text-gray-33 leading-relaxed mb-8">
                 {newsArticle.excerpt}
               </p>
 
               <Link
                 href="#"
-                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-black bg-background h-9 px-8 font-montserrat font-semibold text-13 uppercase tracking-wider text-black transition-colors duration-200 hover:bg-black hover:text-white"
+                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-black bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-black transition-colors duration-200 hover:bg-black hover:text-white"
               >
                 Read More
               </Link>
@@ -265,12 +265,12 @@ export default async function Home() {
 
             {/* Instagram feed — 5 cols */}
             <div className="col-span-5 border-l border-gray-90 pl-8">
-              <h3 className="font-inter font-medium text-2xl text-gray-7 uppercase tracking-widest mb-3">
+              <h3 className="font-display font-medium text-2xl text-gray-7 uppercase tracking-widest mb-3">
                 Enermation on Instagram
               </h3>
               <div className="flex items-center gap-2 mb-5">
                 <InstagramIcon className="size-3 text-black shrink-0" />
-                <span className="font-montserrat text-13 text-black">
+                <span className="font-heading text-13 text-black">
                   Follow us @enermation
                 </span>
               </div>
@@ -292,15 +292,15 @@ export default async function Home() {
 
           {/* Newsletter */}
           <div className="border-t border-gray-90 pt-12 flex flex-col items-center gap-3">
-            <h3 className="font-inter font-medium text-2xl text-gray-7 uppercase tracking-widest">
+            <h3 className="font-display font-medium text-2xl text-gray-7 uppercase tracking-widest">
               Newsletter
             </h3>
-            <p className="font-montserrat text-13 text-gray-33 text-center">
+            <p className="font-heading text-13 text-gray-33 text-center">
               Stay up to date with our news and latest stock
             </p>
             <Link
               href="#"
-              className="mt-3 inline-flex items-center gap-1.5 shrink-0 items-center justify-center rounded-none border-2 border-black bg-black h-9 px-8 font-montserrat font-semibold text-13 uppercase tracking-wider text-white transition-colors duration-200 hover:bg-gray-16 hover:border-gray-16"
+              className="mt-3 inline-flex items-center gap-1.5 shrink-0 items-center justify-center rounded-none border-2 border-black bg-black h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-white transition-colors duration-200 hover:bg-gray-16 hover:border-gray-16"
             >
               Mailing list sign up
               <Mail className="size-3.5" />
@@ -312,3 +312,4 @@ export default async function Home() {
     </>
   );
 }
+

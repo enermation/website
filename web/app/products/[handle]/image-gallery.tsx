@@ -38,7 +38,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                 />
                 {isLast && extraCount > 0 && (
                   <div className="absolute inset-0 flex items-end justify-end p-3 bg-black/30">
-                    <span className="font-montserrat text-13 text-white bg-black/60 px-3 py-1">
+                    <span className="font-heading text-13 text-white bg-black/60 px-3 py-1">
                       +{extraCount} Photos
                     </span>
                   </div>
@@ -51,3 +51,4 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
     </div>
   )
 }
+

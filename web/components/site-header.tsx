@@ -23,7 +23,7 @@ export function SiteHeader() {
       {/* Logo row */}
       <div className="flex justify-center py-7 border-b border-gray-18">
         <Link href="/" className="flex flex-col items-center gap-3">
-          <span className="font-inter text-5xl font-light text-white uppercase tracking-widest leading-none">
+          <span className="font-display text-5xl font-light text-white uppercase tracking-widest leading-none">
             Enermation
           </span>
           {/* Tricolor stripe under logo */}
@@ -57,7 +57,7 @@ export function SiteHeader() {
             <Link
               key={label}
               href={href}
-              className="flex items-center gap-1 font-montserrat font-semibold text-13 text-white uppercase tracking-wider px-4 py-5 hover:text-white/70 transition-colors whitespace-nowrap"
+              className="flex items-center gap-1 font-heading font-semibold text-13 text-white uppercase tracking-wider px-4 py-5 hover:text-white/70 transition-colors whitespace-nowrap"
             >
               {label}
               {hasDropdown && <ChevronDown className="size-3 opacity-70" />}
@@ -68,7 +68,7 @@ export function SiteHeader() {
         {/* Phone CTA */}
         <Link
           href="tel:+441772663777"
-          className="flex items-center gap-2 bg-gray-16 rounded-full px-4 py-2 font-roboto font-bold text-white text-xs tracking-wide hover:bg-gray-18 transition-colors whitespace-nowrap"
+          className="flex items-center gap-2 bg-gray-16 rounded-full px-4 py-2 font-body font-bold text-white text-xs tracking-wide hover:bg-gray-18 transition-colors whitespace-nowrap"
         >
           <Phone className="size-3.5 shrink-0" />
           +44 (0)1772 663777
@@ -84,3 +84,4 @@ export function SiteHeader() {
     </header>
   )
 }
+

@@ -27,10 +27,11 @@ export function ContactSection({ productTitle }: { productTitle: string }) {
       <button
         type="button"
         onClick={handleSend}
-        className="w-full font-montserrat font-semibold text-13 uppercase tracking-wider bg-brand-green text-white px-6 py-3 hover:opacity-90 transition-opacity"
+        className="w-full font-heading font-semibold text-13 uppercase tracking-wider bg-brand-green text-white px-6 py-3 hover:opacity-90 transition-opacity"
       >
         Ask a Question
       </button>
     </div>
   )
 }
+

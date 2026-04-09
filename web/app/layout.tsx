@@ -1,34 +1,33 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, Roboto, Montserrat } from "next/font/google";
+import { Bebas_Neue, Barlow_Semi_Condensed, Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SiteFooter } from "@/components/site-footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const inter = Inter({
-  variable: "--font-inter-var",
+const display = Bebas_Neue({
+  variable: "--font-display",
+  weight: "400",
   subsets: ["latin"],
   display: "swap",
 });
 
-const roboto = Roboto({
-  variable: "--font-roboto-var",
-  weight: ["400", "500", "700"],
+const heading = Barlow_Semi_Condensed({
+  variable: "--font-heading",
+  weight: ["600", "700"],
   subsets: ["latin"],
   display: "swap",
 });
 
-const montserrat = Montserrat({
-  variable: "--font-montserrat-var",
-  weight: ["400", "600"],
+const body = Inter({
+  variable: "--font-body",
+  weight: ["400", "500"],
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const luxury = Playfair_Display({
+  variable: "--font-luxury",
+  weight: "400",
+  style: "italic",
   subsets: ["latin"],
   display: "swap",
 });
@@ -48,9 +47,10 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${roboto.variable} ${montserrat.variable} h-full antialiased`}
+      className={`${display.variable} ${heading.variable} ${body.variable} ${luxury.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}<SiteFooter /></body>
     </html>
   );
 }
+

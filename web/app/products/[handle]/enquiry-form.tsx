@@ -60,10 +60,11 @@ export function EnquiryForm({ productTitle }: { productTitle: string }) {
       />
       <button
         type="submit"
-        className="font-montserrat font-semibold text-13 uppercase tracking-wider bg-brand-green text-white px-6 py-3 hover:opacity-90 transition-opacity"
+        className="font-heading font-semibold text-13 uppercase tracking-wider bg-brand-green text-white px-6 py-3 hover:opacity-90 transition-opacity"
       >
         Send Message
       </button>
     </form>
   )
 }
+

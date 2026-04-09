@@ -32,7 +32,7 @@ function FooterColumn({
 }) {
   return (
     <div className="flex flex-col gap-4">
-      <h4 className="font-montserrat font-semibold text-white text-sm uppercase tracking-widest">
+      <h4 className="font-heading font-semibold text-white text-sm uppercase tracking-widest">
         {heading}
       </h4>
       <div className="h-0.5 w-10 bg-white/30" />
@@ -41,7 +41,7 @@ function FooterColumn({
           <li key={label}>
             <Link
               href={href}
-              className="font-montserrat text-13 text-white/80 tracking-wide hover:text-white transition-colors"
+              className="font-heading text-13 text-white/80 tracking-wide hover:text-white transition-colors"
             >
               {label}
             </Link>
@@ -63,7 +63,7 @@ export function SiteFooter() {
 
           {/* Contact column */}
           <div className="flex flex-col gap-4">
-            <h4 className="font-montserrat font-semibold text-white text-sm uppercase tracking-widest">
+            <h4 className="font-heading font-semibold text-white text-sm uppercase tracking-widest">
               Contact
             </h4>
             <div className="h-0.5 w-10 bg-white/30" />
@@ -72,30 +72,30 @@ export function SiteFooter() {
                 <li key={label}>
                   <Link
                     href={href}
-                    className="font-montserrat text-13 text-white/80 tracking-wide hover:text-white transition-colors"
+                    className="font-heading text-13 text-white/80 tracking-wide hover:text-white transition-colors"
                   >
                     {label}
                   </Link>
                 </li>
               ))}
               <li>
-                <span className="font-montserrat font-bold text-13 text-white tracking-wide">
+                <span className="font-heading font-bold text-13 text-white tracking-wide">
                   T{" "}
                 </span>
                 <Link
                   href={`tel:${footerContactInfo.phone.replace(/\s/g, "")}`}
-                  className="font-montserrat text-13 text-white/80 tracking-wide hover:text-white transition-colors"
+                  className="font-heading text-13 text-white/80 tracking-wide hover:text-white transition-colors"
                 >
                   {footerContactInfo.phone}
                 </Link>
               </li>
               <li>
-                <span className="font-montserrat font-bold text-13 text-white tracking-wide">
+                <span className="font-heading font-bold text-13 text-white tracking-wide">
                   E{" "}
                 </span>
                 <Link
                   href={`mailto:${footerContactInfo.email}`}
-                  className="font-montserrat text-13 text-white/80 tracking-wide hover:text-white transition-colors"
+                  className="font-heading text-13 text-white/80 tracking-wide hover:text-white transition-colors"
                 >
                   {footerContactInfo.email}
                 </Link>
@@ -106,7 +106,7 @@ export function SiteFooter() {
           {/* Logo + social */}
           <div className="flex flex-col items-end gap-6 justify-between">
             <Link href="/" className="flex flex-col items-end gap-2">
-              <span className="font-inter text-3xl font-light text-white uppercase tracking-widest leading-none">
+              <span className="font-display text-3xl font-light text-white uppercase tracking-widest leading-none">
                 Enermation
               </span>
               <div className="flex items-center">
@@ -132,10 +132,10 @@ export function SiteFooter() {
 
         {/* Bottom row */}
         <div className="flex items-center justify-between pt-5">
-          <p className="font-montserrat text-2xs text-white/80">
+          <p className="font-heading text-2xs text-white/80">
             © 2026 Enermation Lifestyle Ltd. T/A Enermation Supercars. Registered Company Number: 06937335
           </p>
-          <div className="flex items-center gap-2 font-montserrat text-2xs text-white/80">
+          <div className="flex items-center gap-2 font-heading text-2xs text-white/80">
             {footerLegalLinks.map(({ label, href }, i) => (
               <span key={label} className="flex items-center gap-2">
                 {i > 0 && <span className="opacity-40">|</span>}
@@ -147,13 +147,13 @@ export function SiteFooter() {
             <span className="opacity-40">|</span>
             <span>
               Site by{" "}
-              <span className="font-inter italic font-bold">racecar</span>
+              <span className="font-display italic font-bold">racecar</span>
             </span>
           </div>
         </div>
 
         {/* Disclaimer */}
-        <p className="font-montserrat text-2xs text-gray-60 mt-4 leading-relaxed">
+        <p className="font-heading text-2xs text-gray-60 mt-4 leading-relaxed">
           Disclaimer: Great care is taken to ensure the specification displayed for each vehicle is
           correct, however due to how data is ported from third party sources from time to time
           errors may occur. Enermation take no responsibility or liability for such errors
@@ -164,3 +164,4 @@ export function SiteFooter() {
     </footer>
   )
 }
+

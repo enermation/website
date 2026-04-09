@@ -29,13 +29,13 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
     <div className="flex flex-wrap items-end gap-0 border-b border-gray-90 pb-3">
       {/* Brand select */}
       <div className="flex flex-col gap-1 px-3 pt-6 w-1/3 min-w-0 shrink-0">
-        <label className="font-montserrat font-semibold text-13 text-black uppercase tracking-wider">
+        <label className="font-heading font-semibold text-13 text-black uppercase tracking-wider">
           Brand
         </label>
         <select
           value={currentMake ?? "Show All"}
           onChange={(e) => updateParam("make", e.target.value)}
-          className="w-full h-10 px-3 border border-select-border rounded font-roboto text-base text-black bg-white focus:outline-none focus:ring-1 focus:ring-black appearance-none cursor-pointer"
+          className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-black bg-white focus:outline-none focus:ring-1 focus:ring-black appearance-none cursor-pointer"
         >
           {makes.map((m) => (
             <option key={m} value={m}>
@@ -47,13 +47,13 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
 
       {/* Sort select */}
       <div className="flex flex-col gap-1 px-3 pt-6 w-1/5 min-w-0 shrink-0">
-        <label className="font-montserrat font-semibold text-13 text-black uppercase tracking-wider">
+        <label className="font-heading font-semibold text-13 text-black uppercase tracking-wider">
           Sort By
         </label>
         <select
           value={currentSort ?? ""}
           onChange={(e) => updateParam("sort", e.target.value)}
-          className="w-full h-10 px-3 border border-select-border rounded font-roboto text-base text-black bg-white focus:outline-none focus:ring-1 focus:ring-black appearance-none cursor-pointer"
+          className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-black bg-white focus:outline-none focus:ring-1 focus:ring-black appearance-none cursor-pointer"
         >
           {sortOptions.map((o) => (
             <option key={o.value} value={o.value}>
@@ -73,7 +73,7 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
             router.push(`?${params.toString()}`)
           }}
           className={cn(
-            "flex items-center gap-2 h-10 px-5 border-2 border-black font-montserrat font-semibold text-xs uppercase tracking-wider transition-colors whitespace-nowrap",
+            "flex items-center gap-2 h-10 px-5 border-2 border-black font-heading font-semibold text-xs uppercase tracking-wider transition-colors whitespace-nowrap",
             "text-black bg-white hover:bg-black hover:text-white"
           )}
         >
@@ -82,7 +82,7 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
         </button>
         <button
           className={cn(
-            "flex items-center gap-2 h-10 px-5 border-2 border-l-0 border-black font-montserrat font-semibold text-xs uppercase tracking-wider transition-colors whitespace-nowrap",
+            "flex items-center gap-2 h-10 px-5 border-2 border-l-0 border-black font-heading font-semibold text-xs uppercase tracking-wider transition-colors whitespace-nowrap",
             "text-black bg-white hover:bg-black hover:text-white"
           )}
         >
@@ -91,7 +91,7 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
         </button>
         <button
           className={cn(
-            "flex items-center gap-2 h-10 px-5 border-2 border-l-0 border-black font-montserrat font-semibold text-xs uppercase tracking-wider transition-colors whitespace-nowrap",
+            "flex items-center gap-2 h-10 px-5 border-2 border-l-0 border-black font-heading font-semibold text-xs uppercase tracking-wider transition-colors whitespace-nowrap",
             "text-white bg-black hover:bg-gray-16"
           )}
         >
@@ -102,3 +102,4 @@ export function FilterBar({ makes, currentMake, currentSort }: FilterBarProps) {
     </div>
   )
 }
+

@@ -59,7 +59,7 @@ function CarCard({ product }: { product: ShopifyProduct }) {
       </div>
 
       {/* Title */}
-      <h3 className="font-inter font-normal text-xl text-gray-7 mt-3 px-1 leading-snug">
+      <h3 className="font-display font-normal text-xl text-gray-7 mt-3 px-1 leading-snug">
         {product.title}
       </h3>
 
@@ -68,7 +68,7 @@ function CarCard({ product }: { product: ShopifyProduct }) {
         {product.vendor && (
           <div className="flex items-center gap-2 px-2 py-1">
             <Palette className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-roboto font-medium text-13 text-black truncate">
+            <span className="font-body font-medium text-13 text-black truncate">
               {product.vendor}
             </span>
           </div>
@@ -76,31 +76,31 @@ function CarCard({ product }: { product: ShopifyProduct }) {
         {variantSummary && (
           <div className="flex items-center gap-2 px-2 py-1">
             <Armchair className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-roboto font-medium text-13 text-black truncate">
+            <span className="font-body font-medium text-13 text-black truncate">
               {variantSummary}
             </span>
           </div>
         )}
         <div className="flex items-center gap-2 px-2 py-1">
           <Gauge className="size-3.5 text-gray-7 shrink-0" />
-          <span className="font-roboto font-medium text-13 text-black">
+          <span className="font-body font-medium text-13 text-black">
             {product.availableForSale ? "Available" : "Sold"}
           </span>
         </div>
         {variantYear && (
           <div className="flex items-center gap-2 px-2 py-1">
             <Calendar className="size-3.5 text-gray-7 shrink-0" />
-            <span className="font-roboto font-medium text-13 text-black">{variantYear}</span>
+            <span className="font-body font-medium text-13 text-black">{variantYear}</span>
           </div>
         )}
       </div>
 
       {/* Description + price */}
       <div className="flex flex-col flex-1 px-1 mt-3 pb-4">
-        <p className="font-roboto text-15 text-gray-33 leading-relaxed line-clamp-2 flex-1">
+        <p className="font-body text-15 text-gray-33 leading-relaxed line-clamp-2 flex-1">
           {product.description}
         </p>
-        <p className="font-montserrat font-semibold text-lg text-black mt-3">
+        <p className="font-heading font-semibold text-lg text-black mt-3">
           {product.availableForSale ? price : "Reserved — More Wanted"}
         </p>
       </div>
@@ -170,7 +170,7 @@ export default async function CollectionPage({
                 key={tab.label}
                 href={tab.href}
                 className={cn(
-                  "font-montserrat font-semibold text-13 uppercase tracking-wide px-4 py-4 border-b-2 transition-colors",
+                  "font-heading font-semibold text-13 uppercase tracking-wide px-4 py-4 border-b-2 transition-colors",
                   isActive
                     ? "border-black text-black"
                     : "border-transparent text-black/36 hover:text-black/60"
@@ -185,7 +185,7 @@ export default async function CollectionPage({
 
       {/* Page title — driven by Shopify collection title */}
       <section className="bg-white border-b border-gray-90 py-10 text-center">
-        <h1 className="font-inter font-normal text-section uppercase tracking-widest text-gray-7">
+        <h1 className="font-display font-normal text-section uppercase tracking-widest text-gray-7">
           {title}
         </h1>
         <div className="flex justify-center mt-6">
@@ -205,7 +205,7 @@ export default async function CollectionPage({
           </Suspense>
 
           {products.length === 0 ? (
-            <p className="font-roboto text-15 text-gray-33 text-center py-24">
+            <p className="font-body text-15 text-gray-33 text-center py-24">
               No products found{make && make !== "Show All" ? ` for ${make}` : ""}.
             </p>
           ) : (
@@ -220,3 +220,4 @@ export default async function CollectionPage({
     </>
   )
 }
+
