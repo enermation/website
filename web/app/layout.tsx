@@ -33,9 +33,9 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "AMARI™ Supercars — Supplying the Finest Supercars",
+  title: "Enermation — Supplying the Finest Supercars",
   description:
-    "AMARI™ Supercars are internationally renowned for offering a unique selection of some of the world's finest automobiles. The premier supercar dealer in the UK.",
+    "Enermation are internationally renowned for offering a unique selection of some of the world's finest automobiles. The premier supercar dealer in the UK.",
 };
 
 export default function RootLayout({

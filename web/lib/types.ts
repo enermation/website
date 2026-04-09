@@ -34,6 +34,7 @@ export type ShopifyProduct = {
   vendor: string
   description: string
   availableForSale: boolean
+  tags?: string[]
   images: { edges: { node: ShopifyImage }[] }
   priceRange: {
     minVariantPrice: ShopifyMoney

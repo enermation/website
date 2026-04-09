@@ -88,7 +88,7 @@ export const footerShowroomLinks: FooterLink[] = [
 
 export const footerAboutLinks: FooterLink[] = [
   { label: "Our Story", href: "#" },
-  { label: "Why Amari FAQ", href: "#" },
+  { label: "Why Enermation FAQ", href: "#" },
   { label: "Testimonials", href: "#" },
 ]
 
@@ -98,7 +98,7 @@ export const footerContactLinks: FooterLink[] = [
 
 export const footerContactInfo = {
   phone: "+44 (0)1772 663777",
-  email: "sales@amarisupercars.com",
+  email: "sales@enermation.com",
 }
 
 export const footerLegalLinks: FooterLink[] = [
@@ -137,7 +137,7 @@ export const cars: Car[] = [
     name: "FERRARI FF V12 Novitec",
     image: "https://www.figma.com/api/mcp/asset/e37e51ac-e0ef-495b-ace7-8d4e00bfc008",
     description:
-      "Registered April 2012 Amari Supercars are proud to present this highly specified Ferrari FF Novitec V12,…",
+      "Registered April 2012 Enermation are proud to present this highly specified Ferrari FF Novitec V12,…",
     price: "£109,995",
     spec: {
       year: "2012 / 12",
@@ -151,7 +151,7 @@ export const cars: Car[] = [
     name: "Ferrari Purosangue Esteso by Novitec",
     image: "https://www.figma.com/api/mcp/asset/d001d36f-edd8-4733-b35d-da3a7f6037f8",
     description:
-      "Amari Supercars are proud to present this extraordinary Ferrari Purosangue Esteso by Novitec, an exceptionally…",
+      "Enermation are proud to present this extraordinary Ferrari Purosangue Esteso by Novitec, an exceptionally…",
     price: "Reserved — More Wanted",
     spec: {
       year: "2025 / 2025",
@@ -165,7 +165,7 @@ export const cars: Car[] = [
     name: "Ferrari SF90 Stradale",
     image: "https://www.figma.com/api/mcp/asset/9734ddde-7f13-46a5-8239-42b54520aca2",
     description:
-      "Amari Supercars are proud to present this exceptional Ferrari SF90 Stradale, finished in the sophisticated…",
+      "Enermation are proud to present this exceptional Ferrari SF90 Stradale, finished in the sophisticated…",
     price: "£285,995",
     spec: {
       year: "2020 / 20",
@@ -193,7 +193,7 @@ export const cars: Car[] = [
     name: "Lamborghini Aventador LP 780-4 Ultimae",
     image: "https://www.figma.com/api/mcp/asset/358b0f11-a047-4cf6-9426-837e8de8f999",
     description:
-      "Amari Supercars are proud to present this outstanding Lamborghini Aventador LP 780-4 Ultimae, finished in…",
+      "Enermation are proud to present this outstanding Lamborghini Aventador LP 780-4 Ultimae, finished in…",
     price: "Reserved — More Wanted",
     spec: {
       year: "2022 / 22",
@@ -235,7 +235,7 @@ export const newsArticle: NewsArticle = {
   image: "https://www.figma.com/api/mcp/asset/7952f809-824f-4cae-8a06-c76f0aed92da",
   date: "06 March 2024",
   category: "Latest News",
-  title: "Amari's Top 5 Supercar Picks to Grace Your Driveway in 2024",
+  title: "Enermation's Top 5 Supercar Picks to Grace Your Driveway in 2024",
   excerpt:
-    "Amari Supercars' Definitive Guide to the Ultimate Driving Experience in 2024",
+    "Enermation' Definitive Guide to the Ultimate Driving Experience in 2024",
 }

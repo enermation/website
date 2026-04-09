@@ -4,17 +4,13 @@ import { Calendar, Mail } from "lucide-react";
 import client from "@/lib/shopify";
 import { GET_ALL_PRODUCTS } from "@/lib/queries";
 import type { ShopifyProduct } from "@/lib/types";
-import {
-  FacebookIcon,
-  InstagramIcon,
-  TwitterIcon,
-  YoutubeIcon,
-} from "@/components/social-icons";
+import { InstagramIcon } from "@/components/social-icons";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 import { cn } from "@/lib/utils";
 import {
   instagramPosts,
   newsArticle,
-  navLinks,
   heroImage,
   supplyingImage,
   carsForSaleImage,
@@ -112,7 +108,9 @@ export default async function Home() {
   const products = data?.products.edges.map((e) => e.node).slice(0, 6) ?? [];
 
   return (
-    <main>
+    <>
+      <SiteHeader />
+      <main>
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="relative min-h-screen bg-gray-7 overflow-hidden">
         <Image
@@ -123,55 +121,6 @@ export default async function Home() {
           priority
           aria-hidden="true"
         />
-
-        {/* Navigation */}
-        <nav className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-16 py-6">
-          {/* Social icons */}
-          <div className="flex items-center gap-3">
-            {[
-              { label: "Facebook",  Icon: FacebookIcon  },
-              { label: "Instagram", Icon: InstagramIcon },
-              { label: "Twitter",   Icon: TwitterIcon   },
-              { label: "YouTube",   Icon: YoutubeIcon   },
-            ].map(({ label, Icon }) => (
-              <Link
-                key={label}
-                href="#"
-                aria-label={label}
-                className="text-white/60 hover:text-white transition-colors"
-              >
-                <Icon className="size-4" />
-              </Link>
-            ))}
-          </div>
-
-          {/* Logo */}
-          <Link
-            href="/"
-            className="font-inter font-light text-2xl uppercase tracking-widest text-white"
-          >
-            AMARI™
-          </Link>
-
-          {/* Nav links */}
-          <div className="flex items-center gap-6">
-            {navLinks.map(({ label, href }) => (
-              <Link
-                key={label}
-                href={href}
-                className="font-montserrat text-13 text-white/80 uppercase tracking-wider hover:text-white transition-colors"
-              >
-                {label}
-              </Link>
-            ))}
-            <Link
-              href="#"
-              className="font-montserrat text-13 font-semibold text-white border border-white/60 px-4 py-2 uppercase tracking-wider whitespace-nowrap hover:bg-white hover:text-gray-7 transition-colors"
-            >
-              Get Valuation
-            </Link>
-          </div>
-        </nav>
       </section>
 
       {/* ── LATEST ARRIVALS ───────────────────────────────────────────────── */}
@@ -213,13 +162,13 @@ export default async function Home() {
             </h2>
             <p className="font-roboto text-15 text-white leading-relaxed mb-8">
               Based in Preston in Lancashire, close to Junction 31A of the M6
-              Motorway, AMARI™ stock a wide range of contemporary and classic
+              Motorway, Enermation stock a wide range of contemporary and classic
               Super Cars and sports cars for sale from such marques as Aston
               Martin, Bentley, Bugatti, Ferrari, Lamborghini, Pagani, Porsche
-              and a great many more. AMARI™ Supercars are internationally
+              and a great many more. Enermation Supercars are internationally
               renowned for offering a unique selection of some of the
               world&apos;s finest automobiles. With literally hundreds of
-              beautiful cars supplied to a diverse customer base, AMARI™ is the
+              beautiful cars supplied to a diverse customer base, Enermation is the
               premier and Number 1 Supercar dealer in the UK.
             </p>
             <Link
@@ -325,12 +274,12 @@ export default async function Home() {
             {/* Instagram feed — 5 cols */}
             <div className="col-span-5 border-l border-gray-90 pl-8">
               <h3 className="font-inter font-medium text-2xl text-gray-7 uppercase tracking-widest mb-3">
-                AMARI™ on Instagram
+                Enermation on Instagram
               </h3>
               <div className="flex items-center gap-2 mb-5">
                 <InstagramIcon className="size-3 text-black shrink-0" />
                 <span className="font-montserrat text-13 text-black">
-                  Follow us @amarisupercars
+                  Follow us @enermation
                 </span>
               </div>
               <div className="grid grid-cols-4 gap-px">
@@ -371,5 +320,7 @@ export default async function Home() {
         </div>
       </section>
     </main>
+      <SiteFooter />
+    </>
   );
 }

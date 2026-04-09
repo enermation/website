@@ -53,6 +53,9 @@ export const GET_PRODUCT_BY_HANDLE = `
       id
       title
       description
+      handle
+      vendor
+      tags
       availableForSale
       images(first: 10) {
         edges {

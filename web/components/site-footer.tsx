@@ -107,7 +107,7 @@ export function SiteFooter() {
           <div className="flex flex-col items-end gap-6 justify-between">
             <Link href="/" className="flex flex-col items-end gap-2">
               <span className="font-inter text-3xl font-light text-white uppercase tracking-widest leading-none">
-                AMARI™
+                Enermation
               </span>
               <div className="flex items-center">
                 <div className="h-0.5 w-8 bg-brand-green" />
@@ -133,7 +133,7 @@ export function SiteFooter() {
         {/* Bottom row */}
         <div className="flex items-center justify-between pt-5">
           <p className="font-montserrat text-2xs text-white/80">
-            © 2026 AMARI™ Lifestyle Ltd. T/A AMARI™ Supercars. Registered Company Number: 06937335
+            © 2026 Enermation Lifestyle Ltd. T/A Enermation Supercars. Registered Company Number: 06937335
           </p>
           <div className="flex items-center gap-2 font-montserrat text-2xs text-white/80">
             {footerLegalLinks.map(({ label, href }, i) => (
@@ -156,7 +156,7 @@ export function SiteFooter() {
         <p className="font-montserrat text-2xs text-gray-60 mt-4 leading-relaxed">
           Disclaimer: Great care is taken to ensure the specification displayed for each vehicle is
           correct, however due to how data is ported from third party sources from time to time
-          errors may occur. Amari Lifestyle Ltd take no responsibility or liability for such errors
+          errors may occur. Enermation take no responsibility or liability for such errors
           in the listings and we advise you check the full vehicle details independently before
           purchase.
         </p>

@@ -24,7 +24,7 @@ export function SiteHeader() {
       <div className="flex justify-center py-7 border-b border-gray-18">
         <Link href="/" className="flex flex-col items-center gap-3">
           <span className="font-inter text-5xl font-light text-white uppercase tracking-widest leading-none">
-            AMARI™
+            Enermation
           </span>
           {/* Tricolor stripe under logo */}
           <div className="flex items-center">
