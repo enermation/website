@@ -15,6 +15,26 @@ export type ShopifySelectedOption = {
   value: string
 }
 
+// Metafield returned by Storefront API queries
+export type ShopifyMetafield = {
+  value: string | null
+  type: string | null
+}
+
+// Vehicle-specific metafields (all optional — may not be set on every product)
+export type VehicleMetafields = {
+  make: ShopifyMetafield | null
+  model: ShopifyMetafield | null
+  year: ShopifyMetafield | null
+  mileage: ShopifyMetafield | null
+  colour: ShopifyMetafield | null
+  fuelType: ShopifyMetafield | null
+  transmission: ShopifyMetafield | null
+  originCountry: ShopifyMetafield | null
+  condition: ShopifyMetafield | null
+  engine: ShopifyMetafield | null
+}
+
 // Variant shape returned by GET_PRODUCT_BY_HANDLE (full detail).
 // compareAtPrice and selectedOptions are not returned by GET_ALL_PRODUCTS
 // variants, so those fields are optional here.
@@ -42,6 +62,17 @@ export type ShopifyProduct = {
   }
   variants: { edges: { node: ShopifyProductVariant }[] }
   collections?: { edges: { node: ShopifyCollection }[] }
+  // Vehicle metafields (null if not set or not a vehicle product)
+  make: ShopifyMetafield | null
+  model: ShopifyMetafield | null
+  year: ShopifyMetafield | null
+  mileage: ShopifyMetafield | null
+  colour: ShopifyMetafield | null
+  fuelType: ShopifyMetafield | null
+  transmission: ShopifyMetafield | null
+  originCountry: ShopifyMetafield | null
+  condition: ShopifyMetafield | null
+  engine: ShopifyMetafield | null
 }
 
 export type ShopifyCollection = {
