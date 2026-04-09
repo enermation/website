@@ -1,5 +1,5 @@
-import { connection } from 'next/server'
 import { createStorefrontApiClient } from '@shopify/storefront-api-client'
+import { connection } from 'next/server'
 
 function getRequiredEnv(name: 'SHOPIFY_STORE_DOMAIN' | 'SHOPIFY_STOREFRONT_ACCESS_TOKEN') {
   const value = process.env[name]?.trim()
