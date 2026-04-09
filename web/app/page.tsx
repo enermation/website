@@ -8,6 +8,8 @@ import { InstagramIcon } from "@/components/social-icons";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import {
   instagramPosts,
   newsArticle,
@@ -64,25 +66,27 @@ function CollectionCard({ collection }: { collection: ShopifyCollection }) {
       href={`/collections/${collection.handle}`}
       className="flex flex-col group"
     >
-      <div className="relative aspect-[3/2] overflow-hidden bg-gray-94">
+      <Card className="overflow-hidden p-0 ring-0">
         {collection.image && (
-          <Image
-            src={collection.image.url}
-            alt={collection.image.altText ?? collection.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 100vw"
-          />
+          <AspectRatio ratio={3 / 2} className="bg-gray-94">
+            <Image
+              src={collection.image.url}
+              alt={collection.image.altText ?? collection.title}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 100vw"
+            />
+          </AspectRatio>
         )}
-      </div>
-      <div className="px-1 mt-3 pb-4 border-b border-gray-87">
-        <h3 className="font-inter font-normal text-xl text-gray-7 leading-snug">
-          {collection.title}
-        </h3>
-        <p className="font-montserrat text-13 text-gray-33 mt-1 tracking-wide">
-          Discover More
-        </p>
-      </div>
+        <CardContent className="px-1 pt-3 pb-4 border-b border-gray-87">
+          <h3 className="font-inter font-normal text-xl text-gray-7 leading-snug">
+            {collection.title}
+          </h3>
+          <p className="font-montserrat text-13 text-gray-33 mt-1 tracking-wide">
+            Discover More
+          </p>
+        </CardContent>
+      </Card>
     </Link>
   );
 }
@@ -123,8 +127,8 @@ export default async function Home() {
 
           <div className="flex justify-center mt-12">
             <Link
-              href="/collections/shopall"
-              className="font-montserrat font-semibold text-13 uppercase tracking-wider border-2 border-black text-black px-8 py-3 hover:bg-black hover:text-white transition-colors"
+              href="/collections/shop-all"
+              className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-black bg-background h-9 px-8 font-montserrat font-semibold text-13 uppercase tracking-wider text-black transition-colors duration-200 hover:bg-black hover:text-white"
             >
               View all collections
             </Link>
@@ -161,7 +165,7 @@ export default async function Home() {
             </p>
             <Link
               href="#"
-              className="inline-block font-montserrat font-semibold text-13 uppercase tracking-wider border-2 border-white text-white px-8 py-3 hover:bg-white hover:text-gray-7 transition-colors"
+              className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-white bg-transparent h-9 px-8 font-montserrat font-semibold text-13 uppercase tracking-wider text-white transition-colors duration-200 hover:bg-white hover:text-gray-7"
             >
               Our Story
             </Link>
@@ -186,7 +190,7 @@ export default async function Home() {
           },
         ].map(({ image, title, alt, href }) => (
           <Link key={title} href={href} className="relative overflow-hidden block">
-            <div className="relative h-cta">
+            <AspectRatio ratio={16 / 9} className="bg-gray-94">
               <Image
                 src={image}
                 alt={alt}
@@ -195,7 +199,7 @@ export default async function Home() {
                 sizes="50vw"
               />
               <div className="absolute inset-0 bg-black-40" />
-            </div>
+            </AspectRatio>
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
               <h2 className="font-inter font-normal text-section uppercase tracking-widest text-gray-93">
                 {title}
@@ -225,7 +229,7 @@ export default async function Home() {
 
             {/* Featured article — 7 cols */}
             <article className="col-span-7 pr-16">
-              <div className="relative aspect-[3/2] w-full rounded overflow-hidden mb-6">
+              <AspectRatio ratio={3 / 2} className="w-full rounded overflow-hidden mb-6">
                 <Image
                   src={newsArticle.image}
                   alt={newsArticle.title}
@@ -233,7 +237,7 @@ export default async function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 730px, 55vw"
                 />
-              </div>
+              </AspectRatio>
 
               <div className="flex items-center gap-3 mb-4 font-montserrat text-13 text-black tracking-wide">
                 <span className="flex items-center gap-1.5">
@@ -253,7 +257,7 @@ export default async function Home() {
 
               <Link
                 href="#"
-                className="inline-block font-montserrat font-semibold text-13 uppercase tracking-wider border-2 border-black text-black px-8 py-3 hover:bg-black hover:text-white transition-colors"
+                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-black bg-background h-9 px-8 font-montserrat font-semibold text-13 uppercase tracking-wider text-black transition-colors duration-200 hover:bg-black hover:text-white"
               >
                 Read More
               </Link>
@@ -272,10 +276,7 @@ export default async function Home() {
               </div>
               <div className="grid grid-cols-4 gap-px">
                 {instagramPosts.map((post) => (
-                  <div
-                    key={post.id}
-                    className="relative aspect-square overflow-hidden bg-gray-94"
-                  >
+                  <AspectRatio key={post.id} ratio={1} className="overflow-hidden bg-gray-94">
                     <Image
                       src={post.image}
                       alt=""
@@ -283,7 +284,7 @@ export default async function Home() {
                       className="object-cover hover:opacity-80 transition-opacity"
                       sizes="(min-width: 1280px) 120px, 10vw"
                     />
-                  </div>
+                  </AspectRatio>
                 ))}
               </div>
             </div>
@@ -299,7 +300,7 @@ export default async function Home() {
             </p>
             <Link
               href="#"
-              className="mt-3 flex items-center gap-3 font-montserrat font-semibold text-13 uppercase tracking-wider bg-black text-white border-2 border-black px-8 py-3 hover:bg-gray-16 transition-colors"
+              className="mt-3 inline-flex items-center gap-1.5 shrink-0 items-center justify-center rounded-none border-2 border-black bg-black h-9 px-8 font-montserrat font-semibold text-13 uppercase tracking-wider text-white transition-colors duration-200 hover:bg-gray-16 hover:border-gray-16"
             >
               Mailing list sign up
               <Mail className="size-3.5" />

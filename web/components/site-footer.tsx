@@ -121,7 +121,7 @@ export function SiteFooter() {
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="flex items-center justify-center size-10 rounded-full bg-gray-16 text-white/70 hover:text-white transition-colors"
+                  className="flex items-center justify-center size-10 rounded bg-gray-16 text-white/70 hover:text-white hover:bg-gray-18 transition-colors"
                 >
                   <Icon className="size-4" />
                 </Link>
