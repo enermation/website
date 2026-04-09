@@ -8,7 +8,6 @@ import { GET_PRODUCTS_IN_COLLECTION } from "@/lib/queries"
 import type { ShopifyProduct } from "@/lib/types"
 import { showroomSubNav, sortOptions } from "@/lib/data"
 import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { FilterBar } from "./filter-bar"
 import { cn } from "@/lib/utils"
 
@@ -210,8 +209,6 @@ export default async function CollectionPage({
           )}
         </div>
       </section>
-
-      <SiteFooter />
     </>
   )
 }

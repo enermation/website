@@ -8,3 +8,5 @@ qwen.md
 .qwen/
 .env
 .playwright/
+.vercel
+.env*.local

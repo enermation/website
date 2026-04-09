@@ -6,7 +6,6 @@ import { GET_COLLECTIONS } from "@/lib/queries";
 import type { ShopifyCollection } from "@/lib/types";
 import { InstagramIcon } from "@/components/social-icons";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -309,7 +308,6 @@ export default async function Home() {
         </div>
       </section>
     </main>
-      <SiteFooter />
     </>
   );
 }

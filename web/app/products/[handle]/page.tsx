@@ -7,7 +7,6 @@ import client from "@/lib/shopify"
 import { GET_PRODUCT_BY_HANDLE, GET_PRODUCTS_IN_COLLECTION } from "@/lib/queries"
 import type { ShopifyProduct } from "@/lib/types"
 import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { footerContactInfo } from "@/lib/data"
@@ -395,8 +394,6 @@ export default async function ProductPage({
           </div>
         </section>
       )}
-
-      <SiteFooter />
     </>
   )
 }
