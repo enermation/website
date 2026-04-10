@@ -59,7 +59,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
-          body_path: web/CHANGELOG.md
+          body_path: CHANGELOG.md
           draft: false
           prerelease: false
         env:
