@@ -1,4 +1,4 @@
-import { Calendar, ChevronRight, Mail } from 'lucide-react'
+import { Calendar, ChevronRight, Gauge, Mail, Palette, Wrench } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { SiteHeader } from '@/components/site-header'
@@ -11,14 +11,24 @@ import {
   heroImage,
   instagramPosts,
   newsArticle,
+  primaryShowroomCollectionHandle,
   primaryShowroomCollectionHref,
+  productPage,
   sellYourCarImage,
   supplyingImage,
 } from '@/lib/data'
-import { GET_COLLECTIONS } from '@/lib/queries'
+import { GET_COLLECTIONS, GET_PRODUCTS_IN_COLLECTION } from '@/lib/queries'
 import { getClient } from '@/lib/shopify'
-import type { ShopifyCollection } from '@/lib/types'
+import type { ShopifyCollection, ShopifyProduct } from '@/lib/types'
 import { cn } from '@/lib/utils'
+
+type CollectionProductsResponse = {
+  collection: {
+    id: string
+    title: string
+    products: { edges: { node: ShopifyProduct }[] }
+  } | null
+}
 
 // ── Shared primitives ────────────────────────────────────────────────────────
 
@@ -39,6 +49,66 @@ function SectionHeading({ title, dark = false }: { title: string; dark?: boolean
 }
 
 // ── Collection card (desktop) ─────────────────────────────────────────────────
+
+function metaValue(field: { value: string | null } | null): string | null {
+  return field?.value ?? null
+}
+
+function formatPrice(product: ShopifyProduct): string {
+  const { amount, currencyCode } = product.priceRange.minVariantPrice
+
+  return new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: currencyCode,
+  }).format(parseFloat(amount))
+}
+
+function LatestArrivalCard({ product }: { product: ShopifyProduct }) {
+  const image = product.images.edges[0]?.node
+  const details = [
+    { icon: Calendar, label: metaValue(product.year) },
+    { icon: Palette, label: metaValue(product.colour) },
+    { icon: Gauge, label: metaValue(product.mileage) },
+    { icon: Wrench, label: metaValue(product.transmission) },
+  ].filter(detail => detail.label)
+
+  return (
+    <Link href={`/products/${product.handle}`} className="group flex flex-col">
+      <AspectRatio ratio={3 / 2} className="overflow-hidden bg-gray-94">
+        {image && (
+          <Image
+            src={image.url}
+            alt={image.altText ?? product.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(min-width: 1280px) 416px, (min-width: 768px) 33vw, 100vw"
+          />
+        )}
+      </AspectRatio>
+
+      <div className="flex flex-1 flex-col gap-3 px-1 pt-4">
+        <h3 className="font-display text-xl leading-snug text-gray-7">{product.title}</h3>
+        <p className="line-clamp-3 font-body text-15 leading-relaxed text-gray-33">
+          {product.description}
+        </p>
+        <p className="font-heading text-lg font-semibold text-foreground">
+          {product.availableForSale ? formatPrice(product) : productPage.labels.reservedMoreWanted}
+        </p>
+      </div>
+
+      {details.length > 0 && (
+        <div className="mt-4 grid grid-cols-2 gap-y-3 border-t border-gray-87 px-1 pt-3">
+          {details.map(({ icon: Icon, label }) => (
+            <div key={label} className="flex items-center gap-2 pr-2">
+              <Icon className="size-3.5 shrink-0 text-gray-7" />
+              <span className="truncate font-body text-13 font-medium text-foreground">{label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </Link>
+  )
+}
 
 function CollectionCard({ collection }: { collection: ShopifyCollection }) {
   return (
@@ -100,10 +170,21 @@ function MobileCollectionCard({ collection }: { collection: ShopifyCollection })
 
 export default async function Home() {
   const shopify = await getClient()
-  const { data } = await shopify.request<{
-    collections: { edges: { node: ShopifyCollection }[] }
-  }>(GET_COLLECTIONS)
-  const collections = data?.collections.edges.map(e => e.node) ?? []
+  const [{ data: collectionsData }, { data: latestArrivalsData }] = await Promise.all([
+    shopify.request<{
+      collections: { edges: { node: ShopifyCollection }[] }
+    }>(GET_COLLECTIONS),
+    shopify.request<CollectionProductsResponse>(GET_PRODUCTS_IN_COLLECTION, {
+      variables: {
+        handle: primaryShowroomCollectionHandle,
+        sortKey: 'CREATED',
+        reverse: true,
+        first: 6,
+      },
+    }),
+  ])
+  const collections = collectionsData?.collections.edges.map(e => e.node) ?? []
+  const latestArrivals = latestArrivalsData?.collection?.products.edges.map(edge => edge.node) ?? []
 
   return (
     <>
@@ -115,6 +196,26 @@ export default async function Home() {
         </section>
 
         {/* ── LATEST ARRIVALS / COLLECTIONS ─────────────────────────────── */}
+        <section className="bg-white">
+          <SectionHeading title="Latest Arrivals for Sale" />
+
+          <div className="mx-auto max-w-site px-4 pb-14 md:px-6 md:pb-16">
+            <div className="grid grid-cols-1 gap-y-10 md:grid-cols-3 md:gap-x-8 md:gap-y-12">
+              {latestArrivals.map(product => (
+                <LatestArrivalCard key={product.id} product={product} />
+              ))}
+            </div>
+            <div className="mt-12 flex justify-center">
+              <Link
+                href={primaryShowroomCollectionHref}
+                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-foreground bg-background px-8 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
+              >
+                {productPage.labels.viewAllStockForSale}
+              </Link>
+            </div>
+          </div>
+        </section>
+
         <section className="bg-white">
           <SectionHeading title="Browse Our Collections" />
 

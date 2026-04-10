@@ -171,11 +171,11 @@ export const GET_COLLECTIONS = `
 `
 
 export const GET_PRODUCTS_IN_COLLECTION = `
-  query getProductsInCollection($handle: String!, $sortKey: ProductCollectionSortKeys!, $reverse: Boolean, $filter: [ProductFilter!]) {
+  query getProductsInCollection($handle: String!, $sortKey: ProductCollectionSortKeys!, $reverse: Boolean, $filter: [ProductFilter!], $first: Int = 50) {
     collection(handle: $handle) {
       id
       title
-      products(first: 50, sortKey: $sortKey, reverse: $reverse, filters: $filter) {
+      products(first: $first, sortKey: $sortKey, reverse: $reverse, filters: $filter) {
         edges {
           node {
             id
