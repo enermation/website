@@ -280,8 +280,8 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                       </div>
                     </div>
                     {isLast && remainingCount > 0 && (
-                      <div
-                        role="presentation"
+                      <button
+                        type="button"
                         className="absolute inset-0 flex cursor-pointer items-end justify-end bg-black-30 p-3 transition-opacity hover:bg-black-40"
                         onClick={e => {
                           e.stopPropagation()
@@ -291,7 +291,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                         <span className="bg-black-40 px-3 py-1 font-heading text-13 text-white">
                           +{remainingCount} Photos
                         </span>
-                      </div>
+                      </button>
                     )}
                   </button>
                 )

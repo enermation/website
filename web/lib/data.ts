@@ -1,4 +1,4 @@
-export type CarSpec = {
+﻿export type CarSpec = {
   year: string
   color: string
   mileage: string
@@ -69,7 +69,7 @@ export const primaryShowroomCollectionHandle = 'shop-all'
 export const primaryShowroomCollectionHref =
   `/collections/${primaryShowroomCollectionHandle}` as const
 
-// ── Hero carousel categories ─────────────────────────────────────────────────
+// â”€â”€ Hero carousel categories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type HeroCategory = {
   label: string
@@ -82,15 +82,15 @@ export const heroCategories: HeroCategory[] = [
   { label: 'Commercial', href: '/collections/commercial-vehicles' },
 ]
 
-// ── Section images ──────────────────────────────────────────────────────────
+// â”€â”€ Section images â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-export const heroImage = '/images/hero.jpg'
+export const heroImage = '/images/hero.webp'
 
-export const supplyingImage = '/images/supplying-energy.jpg'
+export const supplyingImage = '/images/supplying-energy.webp'
 
-export const carsForSaleImage = '/images/cars-for-sale.jpg'
+export const carsForSaleImage = '/images/cars-for-sale.webp'
 
-export const sellYourCarImage = '/images/sell-your-car.jpg'
+export const sellYourCarImage = '/images/sell-your-car.webp'
 
 export type CardNavLink = {
   label: string
@@ -133,7 +133,7 @@ export const cardNavItems: CardNavItem[] = [
   },
 ]
 
-// ── Navigation ───────────────────────────────────────────────────────────────
+// â”€â”€ Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const navLinks: NavLink[] = [
   { label: 'Home', href: '/' },
@@ -162,16 +162,16 @@ export const headerActions: { primary: HeaderAction; secondary: HeaderAction } =
   secondary: { label: 'Contact Sales', href: '/#contact' },
 }
 
-// ── Header dropdown copy ─────────────────────────────────────────────────────
+// â”€â”€ Header dropdown copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const headerDropdownCopy = {
   featuredLabel: 'Featured category',
   browseLabel: 'Browse',
 } as const
 
-// ── Cars page sub-navigation ─────────────────────────────────────────────────
+// â”€â”€ Cars page sub-navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// ── Footer data ──────────────────────────────────────────────────────────────
+// â”€â”€ Footer data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const footerAboutLinks: FooterLink[] = [
   { label: 'Our Story', href: '#' },
@@ -228,14 +228,14 @@ export const footerContent = {
   inputPlaceholder: 'Enter your email',
   actionLabel: 'Roll Me In',
   companyLine:
-    '© 2026 Enermation Lifestyle Ltd. T/A Enermation Supercars. Registered Company Number: 06937335',
+    'Â© 2026 Enermation Lifestyle Ltd. T/A Enermation Supercars. Registered Company Number: 06937335',
   disclaimer:
     'Disclaimer: Great care is taken to ensure the specification displayed for each vehicle is correct, however due to how data is ported from third party sources from time to time errors may occur. Enermation take no responsibility or liability for such errors in the listings and we advise you check the full vehicle details independently before purchase.',
   creditPrefix: 'Site by',
   creditLabel: 'racecar',
 } as const
 
-// ── Filter / sort options ────────────────────────────────────────────────────
+// â”€â”€ Filter / sort options â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const sortOptions = [
   { label: 'Price: High to Low', value: 'price-desc' },
@@ -243,16 +243,16 @@ export const sortOptions = [
   { label: 'Newest First', value: 'newest' },
 ]
 
-// ── Latest arrivals ──────────────────────────────────────────────────────────
+// â”€â”€ Latest arrivals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const cars: Car[] = [
   {
     id: 'ferrari-812-superfast',
     name: 'Ferrari 812 Superfast',
-    image: '/images/cars/ferrari-812-superfast.jpg',
+    image: '/images/cars/ferrari-812-superfast.webp',
     description:
-      'Registered March 2019/19 Specification Exterior Paintwork in Nero Daytona Interior in Nero Hide Adaptive…',
-    price: '£239,995',
+      'Registered March 2019/19 Specification Exterior Paintwork in Nero Daytona Interior in Nero Hide Adaptiveâ€¦',
+    price: 'Â£239,995',
     spec: {
       year: '2019 / 19',
       color: 'Nero Daytona',
@@ -263,10 +263,10 @@ export const cars: Car[] = [
   {
     id: 'ferrari-ff-v12-novitec',
     name: 'FERRARI FF V12 Novitec',
-    image: '/images/cars/ferrari-ff-v12-novitec.jpg',
+    image: '/images/cars/ferrari-ff-v12-novitec.webp',
     description:
-      'Registered April 2012 Enermation are proud to present this highly specified Ferrari FF Novitec V12,…',
-    price: '£109,995',
+      'Registered April 2012 Enermation are proud to present this highly specified Ferrari FF Novitec V12,â€¦',
+    price: 'Â£109,995',
     spec: {
       year: '2012 / 12',
       color: 'Grigio Silverstone',
@@ -277,10 +277,10 @@ export const cars: Car[] = [
   {
     id: 'ferrari-purosangue-esteso',
     name: 'Ferrari Purosangue Esteso by Novitec',
-    image: '/images/cars/ferrari-purosangue-esteso.jpg',
+    image: '/images/cars/ferrari-purosangue-esteso.webp',
     description:
-      'Enermation are proud to present this extraordinary Ferrari Purosangue Esteso by Novitec, an exceptionally…',
-    price: 'Reserved — More Wanted',
+      'Enermation are proud to present this extraordinary Ferrari Purosangue Esteso by Novitec, an exceptionallyâ€¦',
+    price: 'Reserved â€” More Wanted',
     spec: {
       year: '2025 / 2025',
       color: 'Nero Daytona Metallic',
@@ -291,10 +291,10 @@ export const cars: Car[] = [
   {
     id: 'ferrari-sf90-stradale',
     name: 'Ferrari SF90 Stradale',
-    image: '/images/cars/ferrari-sf90-stradale.jpg',
+    image: '/images/cars/ferrari-sf90-stradale.webp',
     description:
-      'Enermation are proud to present this exceptional Ferrari SF90 Stradale, finished in the sophisticated…',
-    price: '£285,995',
+      'Enermation are proud to present this exceptional Ferrari SF90 Stradale, finished in the sophisticatedâ€¦',
+    price: 'Â£285,995',
     spec: {
       year: '2020 / 20',
       color: 'Grigio Alloy',
@@ -305,10 +305,10 @@ export const cars: Car[] = [
   {
     id: 'ferrari-812-gts',
     name: 'Ferrari 812 GTS',
-    image: '/images/cars/ferrari-812-gts.jpg',
+    image: '/images/cars/ferrari-812-gts.webp',
     description:
-      'The Ferrari 812 GTS is a convertible supercar powered by a naturally aspirated 6.5-litre V12 engine delivering…',
-    price: '£314,995',
+      'The Ferrari 812 GTS is a convertible supercar powered by a naturally aspirated 6.5-litre V12 engine deliveringâ€¦',
+    price: 'Â£314,995',
     spec: {
       year: '2020 / 70',
       color: 'Grigio Silverstone',
@@ -319,10 +319,10 @@ export const cars: Car[] = [
   {
     id: 'lamborghini-aventador-ultimae',
     name: 'Lamborghini Aventador LP 780-4 Ultimae',
-    image: '/images/cars/lamborghini-aventador-ultimae.jpg',
+    image: '/images/cars/lamborghini-aventador-ultimae.webp',
     description:
-      'Enermation are proud to present this outstanding Lamborghini Aventador LP 780-4 Ultimae, finished in…',
-    price: 'Reserved — More Wanted',
+      'Enermation are proud to present this outstanding Lamborghini Aventador LP 780-4 Ultimae, finished inâ€¦',
+    price: 'Reserved â€” More Wanted',
     spec: {
       year: '2022 / 22',
       color: 'Verde Selvans',
@@ -332,42 +332,42 @@ export const cars: Car[] = [
   },
 ]
 
-// ── Instagram feed ───────────────────────────────────────────────────────────
+// â”€â”€ Instagram feed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const instagramPosts: InstagramPost[] = [
-  { id: '1', image: '/images/instagram/1.jpg' },
-  { id: '2', image: '/images/instagram/2.jpg' },
-  { id: '3', image: '/images/instagram/3.jpg' },
-  { id: '4', image: '/images/instagram/4.jpg' },
-  { id: '5', image: '/images/instagram/5.jpg' },
-  { id: '6', image: '/images/instagram/6.jpg' },
-  { id: '7', image: '/images/instagram/7.jpg' },
-  { id: '8', image: '/images/instagram/8.jpg' },
-  { id: '9', image: '/images/instagram/9.jpg' },
-  { id: '10', image: '/images/instagram/10.jpg' },
-  { id: '11', image: '/images/instagram/11.jpg' },
-  { id: '12', image: '/images/instagram/12.jpg' },
-  { id: '13', image: '/images/instagram/13.jpg' },
-  { id: '14', image: '/images/instagram/14.jpg' },
-  { id: '15', image: '/images/instagram/15.jpg' },
-  { id: '16', image: '/images/instagram/16.jpg' },
-  { id: '17', image: '/images/instagram/17.jpg' },
-  { id: '18', image: '/images/instagram/18.jpg' },
-  { id: '19', image: '/images/instagram/19.jpg' },
-  { id: '20', image: '/images/instagram/20.jpg' },
+  { id: '1', image: '/images/instagram/1.webp' },
+  { id: '2', image: '/images/instagram/2.webp' },
+  { id: '3', image: '/images/instagram/3.webp' },
+  { id: '4', image: '/images/instagram/4.webp' },
+  { id: '5', image: '/images/instagram/5.webp' },
+  { id: '6', image: '/images/instagram/6.webp' },
+  { id: '7', image: '/images/instagram/7.webp' },
+  { id: '8', image: '/images/instagram/8.webp' },
+  { id: '9', image: '/images/instagram/9.webp' },
+  { id: '10', image: '/images/instagram/10.webp' },
+  { id: '11', image: '/images/instagram/11.webp' },
+  { id: '12', image: '/images/instagram/12.webp' },
+  { id: '13', image: '/images/instagram/13.webp' },
+  { id: '14', image: '/images/instagram/14.webp' },
+  { id: '15', image: '/images/instagram/15.webp' },
+  { id: '16', image: '/images/instagram/16.webp' },
+  { id: '17', image: '/images/instagram/17.webp' },
+  { id: '18', image: '/images/instagram/18.webp' },
+  { id: '19', image: '/images/instagram/19.webp' },
+  { id: '20', image: '/images/instagram/20.webp' },
 ]
 
-// ── Latest company news ──────────────────────────────────────────────────────
+// â”€â”€ Latest company news â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const newsArticle: NewsArticle = {
-  image: '/images/news/news-article-1.jpg',
+  image: '/images/news/news-article-1.webp',
   date: '06 March 2024',
   category: 'Latest News',
   title: "Enermation's Top 5 Supercar Picks to Grace Your Driveway in 2024",
   excerpt: "Enermation' Definitive Guide to the Ultimate Driving Experience in 2024",
 }
 
-// ── Related stories (product page) ──────────────────────────────────────────
+// â”€â”€ Related stories (product page) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type RelatedStory = {
   id: string
@@ -382,7 +382,7 @@ export type RelatedStory = {
 export const relatedStories: RelatedStory[] = [
   {
     id: '1',
-    image: '/images/news/news-article-1.jpg',
+    image: '/images/news/news-article-1.webp',
     date: '06 March 2024',
     category: 'Latest News',
     title: "Enermation's Top 5 Supercar Picks to Grace Your Driveway in 2024",
@@ -391,7 +391,7 @@ export const relatedStories: RelatedStory[] = [
   },
   {
     id: '2',
-    image: '/images/instagram/1.jpg',
+    image: '/images/instagram/1.webp',
     date: '15 January 2024',
     category: 'Cars',
     title: 'Why the Ferrari SF90 Stradale Remains the Ultimate Hybrid Supercar',
@@ -400,7 +400,7 @@ export const relatedStories: RelatedStory[] = [
   },
   {
     id: '3',
-    image: '/images/instagram/2.jpg',
+    image: '/images/instagram/2.webp',
     date: '22 November 2023',
     category: 'News',
     title: 'Lamborghini Aventador Ultimae: The Last of a Legendary V12 Era',
@@ -409,7 +409,7 @@ export const relatedStories: RelatedStory[] = [
   },
 ]
 
-// ── Dealer info ───────────────────────────────────────────────────────────────
+// â”€â”€ Dealer info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const dealerInfo = {
   name: 'Enermation Supercars',
@@ -421,7 +421,7 @@ export const dealerInfo = {
     "Based in Preston in Lancashire, close to Junction 31A of the M6 Motorway, Enermation are internationally renowned for offering a unique selection of some of the world's finest automobiles. With literally hundreds of beautiful cars supplied to a diverse customer base, Enermation is the premier supercar dealer in the UK.",
 }
 
-// ── Product page copy ─────────────────────────────────────────────────────────
+// â”€â”€ Product page copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const productPage = {
   breadcrumb: {
@@ -454,7 +454,7 @@ export const productPage = {
     sold: 'Sold',
     soldOrReserved: 'Sold / Reserved',
     reserved: 'Reserved',
-    reservedMoreWanted: 'Reserved — More Wanted',
+    reservedMoreWanted: 'Reserved â€” More Wanted',
     notSpecified: 'Not specified',
     vatType: 'VAT Type',
     noDutyPaid: 'No Duty Paid',

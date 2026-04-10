@@ -15,11 +15,7 @@ gsap.registerPlugin(useGSAP)
 
 const TOTAL = heroCategories.length
 
-const MODEL_PATHS = [
-  '/models/sedan.glb',
-  '/models/suv.glb',
-  '/models/commercial.glb',
-]
+const MODEL_PATHS = ['/models/sedan.glb', '/models/suv.glb', '/models/commercial.glb']
 
 // Scale multipliers derived from bounding box inspection (gltf-transform inspect):
 //   sedan bbox X: 5.45  → reference, scale 1.0
@@ -164,33 +160,33 @@ export function HeroCarousel() {
         </Canvas>
       </div>
 
-      {/* Category label + CTA + dots */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
-        <h1 className="font-display font-normal text-section uppercase tracking-widest text-white text-center">
-          {active.label}
-        </h1>
-        <Link
-          href={active.href}
-          className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
-        >
-          Browse {active.label}
-        </Link>
-        <div className="flex items-center gap-3">
-          {heroCategories.map((cat, i) => (
-            <button
-              key={cat.label}
-              type="button"
-              aria-label={`Show ${cat.label}`}
-              onClick={() => setActiveIndex(i)}
-              className={`pointer-events-auto rounded-full transition-all duration-300 ${
-                i === activeIndex
-                  ? 'size-2.5 bg-on-dark'
-                  : 'size-1.5 bg-on-dark/40 hover:bg-on-dark/70'
-              }`}
-            />
-          ))}
+        {/* Category label + CTA + dots */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
+          <h1 className="font-display font-normal text-section uppercase tracking-widest text-white text-center">
+            {active.label}
+          </h1>
+          <Link
+            href={active.href}
+            className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
+          >
+            Browse {active.label}
+          </Link>
+          <div className="flex items-center gap-3">
+            {heroCategories.map((cat, i) => (
+              <button
+                key={cat.label}
+                type="button"
+                aria-label={`Show ${cat.label}`}
+                onClick={() => setActiveIndex(i)}
+                className={`pointer-events-auto rounded-full transition-all duration-300 ${
+                  i === activeIndex
+                    ? 'size-2.5 bg-on-dark'
+                    : 'size-1.5 bg-on-dark/40 hover:bg-on-dark/70'
+                }`}
+              />
+            ))}
+          </div>
         </div>
-      </div>
 
       {/* Arrow navigation */}
       <button
