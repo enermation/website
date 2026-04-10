@@ -43,6 +43,11 @@
   --spacing-cta: 46.25rem; /* 740px — CTA split section height */
 
   /* ─── Semantic Color Tokens ─── */
+  --color-heading: var(--text-heading);
+  --color-body: var(--text-body);
+  --color-muted-text: var(--text-muted);
+  --color-on-dark: var(--text-on-dark);
+  --color-on-dark-muted: var(--text-on-dark-muted);
   --color-text-heading: var(--text-heading);
   --color-text-body: var(--text-body);
   --color-text-muted: var(--text-muted);

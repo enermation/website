@@ -115,7 +115,7 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
   return (
     <div className={cn('flex-col gap-6', className)}>
       <div className="flex max-w-sm flex-col gap-4">
-        <p className="text-15 font-semibold leading-relaxed text-on-dark-muted">{content.description}</p>
+        <p className="text-15 font-semibold leading-relaxed text-on-dark">{content.description}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex max-w-sm flex-col gap-1">
@@ -130,7 +130,7 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
             if (formState === 'error') setFormState('idle')
           }}
           disabled={isDisabled}
-          className="h-auto rounded-none border-0 border-b border-white-30 bg-transparent px-0 py-1 text-lg font-semibold text-on-dark placeholder:text-on-dark-muted/60 focus-visible:border-white focus-visible:ring-0 dark:bg-transparent"
+          className="h-auto rounded-none border-0 border-b border-white-30 bg-transparent px-0 py-1 text-lg font-semibold text-on-dark placeholder:text-on-dark-muted focus-visible:border-white focus-visible:ring-0 dark:bg-transparent"
         />
 
         <button

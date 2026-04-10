@@ -9,7 +9,7 @@ function FooterWordmark() {
   return (
     <Link
       href="/"
-      className="col-span-full mx-auto w-full border-b border-white-30 pb-2 text-white transition-colors hover:text-white/80 lg:pb-4"
+      className="col-span-full mx-auto w-full border-b border-white-30 pb-2 text-on-dark transition-colors hover:text-on-dark-muted lg:pb-4"
       aria-label="Enermation home"
     >
       {/* Mobile wordmark */}
@@ -45,14 +45,14 @@ function FooterWordmark() {
 
 function FooterSocialLinks({ className }: { className?: string }) {
   return (
-    <div className={cn('flex flex-row flex-wrap gap-x-1 text-13 text-on-dark-muted', className)}>
+    <div className={cn('flex flex-row flex-wrap gap-x-1 text-13 text-on-dark', className)}>
       {footerSocialLinks.map(({ label, href }, index) => (
         <span key={label} className="flex items-center gap-x-1">
           <Link
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-on-dark-muted transition-colors hover:text-on-dark"
+            className="text-on-dark transition-colors hover:text-on-dark-muted"
           >
             {label}
           </Link>
@@ -65,7 +65,7 @@ function FooterSocialLinks({ className }: { className?: string }) {
 
 function FooterCopyright({ className }: { className?: string }) {
   return (
-    <p className={cn('text-13 text-on-dark-muted', className)}>
+    <p className={cn('text-13 text-on-dark', className)}>
       © Enermation {new Date().getFullYear()} all rights reserved
     </p>
   )
