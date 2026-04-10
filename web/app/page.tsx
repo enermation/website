@@ -1,16 +1,14 @@
 import {
   mdiCalendar,
-  mdiCar,
-  mdiCarShiftPattern,
   mdiChevronRight,
   mdiEmail,
   mdiInstagram,
-  mdiSpeedometer,
 } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { HeroCarousel } from '@/components/hero-carousel-wrapper'
+import { LatestArrivalsCarousel } from '@/components/latest-arrivals-carousel'
 import { SiteHeader } from '@/components/site-header'
 import { StripeBar } from '@/components/stripe-bar'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
@@ -59,68 +57,6 @@ function SectionHeading({ title, dark = false }: { title: string; dark?: boolean
 }
 
 // ── Collection card (desktop) ─────────────────────────────────────────────────
-
-function metaValue(field: { value: string | null } | null): string | null {
-  return field?.value ?? null
-}
-
-function formatPrice(product: ShopifyProduct): string {
-  const { amount, currencyCode } = product.priceRange.minVariantPrice
-
-  return new Intl.NumberFormat('en-GB', {
-    style: 'currency',
-    currency: currencyCode,
-  }).format(parseFloat(amount))
-}
-
-function LatestArrivalCard({ product }: { product: ShopifyProduct }) {
-  const image = product.images.edges[0]?.node
-  const details = [
-    { icon: mdiCalendar, label: metaValue(product.year) },
-    { icon: mdiCar, label: metaValue(product.colour) },
-    { icon: mdiSpeedometer, label: metaValue(product.mileage) },
-    { icon: mdiCarShiftPattern, label: metaValue(product.transmission) },
-  ].filter(detail => detail.label)
-
-  return (
-    <Link href={`/products/${product.handle}`} className="group flex flex-col">
-      <AspectRatio ratio={3 / 2} className="overflow-hidden bg-surface-elevated">
-        {image && (
-          <Image
-            src={image.url}
-            alt={image.altText ?? product.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(min-width: 1280px) 416px, (min-width: 768px) 33vw, 100vw"
-          />
-        )}
-      </AspectRatio>
-
-      <div className="flex flex-1 flex-col gap-3 px-1 pt-4">
-        <h3 className="font-display text-xl leading-snug text-heading">{product.title}</h3>
-        <p className="line-clamp-3 font-body text-15 leading-relaxed text-body">
-          {product.description}
-        </p>
-        <p className="font-heading text-lg font-semibold text-foreground">
-          {product.availableForSale ? formatPrice(product) : productPage.labels.reservedMoreWanted}
-        </p>
-      </div>
-
-      {details.length > 0 && (
-        <div className="mt-4 grid grid-cols-2 gap-y-3 border-t border-subtle px-1 pt-3">
-          {details.map(({ icon: iconPath, label }) => (
-            <div key={label} className="flex items-center gap-2 pr-2">
-              <Icon path={iconPath} size={1} className="size-3.5 shrink-0 text-heading" />
-              <span className="truncate font-body text-13 font-medium text-foreground">
-                {label}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-    </Link>
-  )
-}
 
 function CollectionCard({ collection }: { collection: ShopifyCollection }) {
   return (
@@ -210,11 +146,7 @@ export default async function Home() {
           <SectionHeading title="Latest Arrivals for Sale" />
 
           <div className="mx-auto max-w-site px-4 pb-14 md:px-6 md:pb-16">
-            <div className="grid grid-cols-1 gap-y-10 md:grid-cols-3 md:gap-x-8 md:gap-y-12">
-              {latestArrivals.map(product => (
-                <LatestArrivalCard key={product.id} product={product} />
-              ))}
-            </div>
+            <LatestArrivalsCarousel products={latestArrivals} />
             <div className="mt-12 flex justify-center">
               <Link
                 href={primaryShowroomCollectionHref}
