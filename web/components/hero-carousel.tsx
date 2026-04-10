@@ -1,17 +1,14 @@
 'use client'
 
-import { useGSAP } from '@gsap/react'
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import { Center, ContactShadows, Environment, useGLTF } from '@react-three/drei'
 import { Canvas, useFrame } from '@react-three/fiber'
-import gsap from 'gsap'
 import Link from 'next/link'
 import { Suspense, useEffect, useRef, useState } from 'react'
-import type { Group, Mesh, MeshStandardMaterial } from 'three'
+import type { Group } from 'three'
 import { heroCategories } from '@/lib/data'
-
-gsap.registerPlugin(useGSAP)
+import { useIsMobile } from '@/hooks/use-mobile'
 
 const TOTAL = heroCategories.length
 
@@ -28,7 +25,6 @@ const MODEL_SCALES = [1.0, 0.85, 0.62]
 const MODEL_ROTATIONS = [0, Math.PI / 2, Math.PI / 2]
 
 // Per-model vertical nudge to visually center each model in the viewport.
-// Positive = up, negative = down.
 const MODEL_OFFSETS_Y = [-0.4, 0, 0]
 
 useGLTF.preload('/models/sedan.glb')
@@ -61,23 +57,8 @@ function CategoryMesh({
   reducedMotion: boolean
 }) {
   const groupRef = useRef<Group>(null)
-  const materialsRef = useRef<MeshStandardMaterial[]>([])
   const { scene } = useGLTF(MODEL_PATHS[index])
   const nativeScale = MODEL_SCALES[index]
-
-  // Collect materials once and enable transparency
-  useEffect(() => {
-    const mats: MeshStandardMaterial[] = []
-    scene.traverse(obj => {
-      const mesh = obj as Mesh
-      if (mesh.isMesh && mesh.material) {
-        const mat = mesh.material as MeshStandardMaterial
-        mat.transparent = true
-        mats.push(mat)
-      }
-    })
-    materialsRef.current = mats
-  }, [scene])
 
   // Slow idle rotation
   useFrame((_, delta) => {
@@ -104,6 +85,7 @@ export function HeroCarousel() {
   const [activeIndex, setActiveIndex] = useState(0)
   const dragStartX = useRef<number | null>(null)
   const reducedMotion = useReducedMotion()
+  const isMobile = useIsMobile()
 
   const navigate = (dir: 1 | -1) => setActiveIndex(i => (i + dir + TOTAL) % TOTAL)
 
@@ -127,7 +109,7 @@ export function HeroCarousel() {
 
   return (
     <section
-      className="relative min-h-screen overflow-hidden select-none touch-manipulation"
+      className="relative min-h-screen overflow-hidden select-none touch-manipulation max-md:h-screen-mobile max-md:min-h-0"
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onKeyDown={onKeyDown}
@@ -135,7 +117,7 @@ export function HeroCarousel() {
     >
       {/* Three.js canvas */}
       <div className="absolute inset-0">
-        <Canvas camera={{ position: [0, 2, 5], fov: 45 }} dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
+        <Canvas camera={{ position: [0, 2, isMobile ? 7 : 5], fov: 45 }} dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
           <color attach="background" args={['#1a1a1a']} />
           <Suspense fallback={null}>
             <Environment
@@ -154,7 +136,6 @@ export function HeroCarousel() {
             resolution={256}
             frames={1}
           />
-          {/* key forces unmount/remount on index change — preloaded so swap is instant */}
           <Suspense fallback={null}>
             <CategoryMesh key={activeIndex} index={activeIndex} reducedMotion={reducedMotion} />
           </Suspense>

@@ -42,6 +42,7 @@
 
   /* ─── Custom spacing ─── */
   --spacing-cta: 46.25rem; /* 740px — CTA split section height */
+  --h-screen-mobile: 70svh; /* hero section height on mobile */
 
   /* ─── Semantic Color Tokens ─── */
   --color-heading: var(--text-heading);
