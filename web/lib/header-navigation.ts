@@ -30,9 +30,10 @@ type HeaderMenuResponse = {
 }
 
 const DEFAULT_MENU_HANDLE = 'main-menu'
-type AllowedTopLevelLabel = 'Inventory' | 'About' | 'Contact'
+type AllowedTopLevelLabel = 'Home' | 'Inventory' | 'About' | 'Contact'
 
 const TOP_LEVEL_ALIASES: Record<string, AllowedTopLevelLabel> = {
+  home: 'Home',
   inventory: 'Inventory',
   catalog: 'Inventory',
   showroom: 'Inventory',
@@ -108,7 +109,7 @@ function childrenForInventory(items: ShopifyMenuItem[]): HeaderNavChild[] {
 
 function fallbackHref(label: AllowedTopLevelLabel): string {
   const match = headerNavFallbackItems.find(item => item.label === label)
-  return match?.href ?? '#'
+  return match?.href ?? '/'
 }
 
 function toItem(item: ShopifyMenuItem): HeaderNavItem | null {
