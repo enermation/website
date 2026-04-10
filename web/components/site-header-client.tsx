@@ -16,6 +16,7 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import type { HeaderNavItem, HeaderNavigation } from '@/lib/header-navigation'
+import { headerDropdownCopy } from '@/lib/data'
 import { cn } from '@/lib/utils'
 
 type SiteHeaderClientProps = {
@@ -102,10 +103,10 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                 href={featured.href}
                 className="mt-2 rounded-xl border border-white-30 bg-gray-20 p-3 transition-colors hover:bg-gray-33"
               >
-                <p className="font-heading text-13 text-gray-60">Featured category</p>
+                <p className="font-heading text-13 text-gray-60">{headerDropdownCopy.featuredLabel}</p>
                 <p className="mt-1 font-body text-sm text-gray-93">{featured.label}</p>
                 <span className="mt-2 inline-flex items-center gap-1 font-heading text-13 text-background">
-                  Browse
+                  {headerDropdownCopy.browseLabel}
                   <Icon path={mdiArrowRight} size={1} className="size-3.5" aria-hidden="true" />
                 </span>
               </Link>
@@ -123,7 +124,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
   const isHomePage = pathname === '/'
 
   return (
-    <header className={cn('z-50', isHomePage ? 'fixed inset-x-0 top-0' : 'sticky top-0')}>
+    <header data-slot="site-header" className={cn('z-50', isHomePage ? 'fixed inset-x-0 top-0' : 'sticky top-0')}>
       <div className="mx-auto max-w-site px-3 py-3 md:px-6 md:py-4">
         <div className="flex h-12 items-center rounded-full border border-black-40 bg-black-50 px-3 md:h-12 md:px-7">
           <Link href="/" aria-label="Enermation home" className="shrink-0">

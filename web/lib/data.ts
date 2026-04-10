@@ -152,6 +152,13 @@ export const headerActions: { primary: HeaderAction; secondary: HeaderAction } =
   secondary: { label: 'Contact Sales', href: '/#contact' },
 }
 
+// ── Header dropdown copy ─────────────────────────────────────────────────────
+
+export const headerDropdownCopy = {
+  featuredLabel: 'Featured category',
+  browseLabel: 'Browse',
+} as const
+
 // ── Cars page sub-navigation ─────────────────────────────────────────────────
 
 // ── Footer data ──────────────────────────────────────────────────────────────

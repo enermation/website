@@ -11,7 +11,7 @@ A **Next.js 16** application built with the App Router, serving as a website wit
 - **Styling**: Tailwind CSS v4 with shadcn/ui components (base-nova style)
 - **Language**: TypeScript (strict mode)
 - **Package Manager**: Bun (preferred)
-- **UI Components**: shadcn/ui (base-nova style) with `@base-ui/react` primitives, Lucide icons
+- **UI Components**: shadcn/ui (base-nova style) with `@base-ui/react` primitives, Material Design Icons (`@mdi/js` + `@mdi/react`)
 - **State/Animation**: embla-carousel, vaul (dialogs), recharts (data viz)
 - **AI Integration**: Vercel AI SDK (`ai` package)
 - **API Client**: Shopify Storefront API client (v2026-04)
@@ -111,7 +111,7 @@ bun run lint
 - **Style**: base-nova
 - **RSC**: Enabled
 - **CSS Variables**: Enabled
-- **Icon Library**: Lucide
+- **Icon Library**: Material Design Icons (`@mdi/js` + `@mdi/react`)
 - **Component Path**: `@/components/ui`
 
 ## Development Conventions
@@ -271,11 +271,11 @@ function MyComponent({
 
 ### Icon System
 
-- **Library**: `lucide-react` (v1.7+)
-- **Import**: `import { IconName } from "lucide-react"`
-- **Default size**: SVGs without an explicit `size-*` class default to `size-4` (set by parent component styles via `[&_svg:not([class*='size-'])]:size-4`)
-- IMPORTANT: Do NOT install additional icon packages — use only `lucide-react`
-- IMPORTANT: If Figma MCP returns a localhost asset URL for an SVG icon, use it directly — do not substitute a Lucide icon unless it is a clear match
+- **Library**: `@mdi/js` (icon paths) + `@mdi/react` (Icon component)
+- **Import**: `import { mdiIconName } from '@mdi/js'` and `import { Icon } from '@mdi/react'`
+- **Usage**: `<Icon path={mdiIconName} size={1} className="size-4" />` — `size={1}` renders at 24px; use Tailwind `size-*` classes on the Icon for other sizes
+- **Default size**: Icons without an explicit `size-*` class default to `size-4` (set by parent component styles via `[&_svg:not([class*='size-'])]:size-4`)
+- IMPORTANT: If Figma MCP returns a localhost asset URL for an SVG icon, use it directly — do not substitute an MDI icon unless it is a clear match
 
 ### Styling Rules
 
@@ -318,7 +318,7 @@ When the Figma MCP returns React + Tailwind output, apply these transformations:
 1. **Colors**: Replace any hex/rgb/hsl values with the semantic token equivalents from the table above
 2. **Radius**: Replace hardcoded `rounded-*` with the token-based radius classes (`rounded-lg` = `var(--radius)`)
 3. **Components**: Replace generic `<div>` / `<button>` implementations with existing `@/components/ui` equivalents
-4. **Icons**: Map Figma icon names to the nearest `lucide-react` icon; use localhost asset if provided
+4. **Icons**: Map Figma icon names to the nearest `@mdi/js` icon; use localhost asset if provided
 5. **Fonts**: Do not add new font imports — use `font-sans` / `font-mono` / `font-heading`
 6. **Spacing**: Use Tailwind's default spacing scale (4px base); do not hardcode px values
 7. **`"use client"`**: Add only if the component requires interactivity (state, effects, event handlers)
