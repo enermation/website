@@ -48,8 +48,8 @@ jobs:
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          git tag "v${VERSION}"
-          git push origin "v${VERSION}"
+          git tag "v${VERSION}" 2>/dev/null || true
+          git push origin "v${VERSION}" 2>/dev/null || true
           echo "TAG=v${VERSION}" >> "$GITHUB_ENV"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
