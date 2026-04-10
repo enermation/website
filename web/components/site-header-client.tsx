@@ -12,6 +12,7 @@ import {
 import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import type { HeaderNavItem, HeaderNavigation } from '@/lib/header-navigation'
@@ -43,7 +44,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
       {hasHref(item.href) ? (
         <Link
           href={item.href}
-          className="inline-flex items-center gap-1 font-heading text-13 font-semibold uppercase tracking-wide text-gray-93 transition-colors hover:text-background"
+          className="inline-flex items-center gap-1 rounded-md px-2 py-1 font-heading text-13 font-semibold uppercase tracking-wide text-gray-93 transition-colors hover:bg-gray-20 hover:text-background"
         >
           {item.label}
           {hasChildren && (
@@ -51,7 +52,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
           )}
         </Link>
       ) : (
-        <span className="inline-flex items-center gap-1 font-heading text-13 font-semibold uppercase tracking-wide text-gray-93">
+        <span className="inline-flex items-center gap-1 rounded-md px-2 py-1 font-heading text-13 font-semibold uppercase tracking-wide text-gray-93">
           {item.label}
           {hasChildren && (
             <Icon path={mdiChevronDown} size={1} className="size-3" aria-hidden="true" />
@@ -67,7 +68,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
             'group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100'
           )}
         >
-          <div className="flex flex-col gap-1 rounded-2xl border border-white-20 bg-gray-7 p-4 shadow-xl">
+          <div className="flex flex-col gap-1 rounded-2xl border border-white-20 bg-gray-16 p-4 shadow-xl">
             <p className="pb-1 font-heading text-sm font-semibold text-gray-93">{item.label}</p>
             {item.children.map(child => {
               const iconPath = menuItemIcon(child.label)
@@ -76,9 +77,9 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                 <Link
                   key={`${item.label}-${child.label}`}
                   href={child.href}
-                  className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-gray-93 transition-colors hover:bg-white-20 hover:text-background"
+                  className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-gray-93 transition-colors hover:bg-gray-20 hover:text-background"
                 >
-                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-20 bg-gray-16">
+                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-gray-20">
                     <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
                   </span>
                   <span>{child.label}</span>
@@ -88,7 +89,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                   key={`${item.label}-${child.label}`}
                   className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-gray-60"
                 >
-                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-20 bg-gray-16">
+                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-gray-20">
                     <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
                   </span>
                   <span>{child.label}</span>
@@ -99,7 +100,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
             {featured && hasHref(featured.href) && (
               <Link
                 href={featured.href}
-                className="mt-2 rounded-xl border border-white-20 bg-gray-16 p-3 transition-colors hover:bg-gray-20"
+                className="mt-2 rounded-xl border border-white-30 bg-gray-20 p-3 transition-colors hover:bg-gray-33"
               >
                 <p className="font-heading text-13 text-gray-60">Featured category</p>
                 <p className="mt-1 font-body text-sm text-gray-93">{featured.label}</p>
@@ -118,11 +119,13 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
 
 export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const pathname = usePathname()
+  const isHomePage = pathname === '/'
 
   return (
-    <header className="sticky top-0 z-50">
+    <header className={cn('z-50', isHomePage ? 'fixed inset-x-0 top-0' : 'sticky top-0')}>
       <div className="mx-auto max-w-site px-3 py-3 md:px-6 md:py-4">
-        <div className="flex h-12 items-center rounded-full border border-white-20 bg-gray-7 px-3 md:h-12 md:px-7">
+        <div className="flex h-12 items-center rounded-full border border-black-40 bg-black-50 px-3 md:h-12 md:px-7">
           <Link href="/" aria-label="Enermation home" className="shrink-0">
             <Image
               src="/logo.jpg"
@@ -164,7 +167,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
             </SheetTrigger>
             <SheetContent
               side="left"
-              className="w-full max-w-none border-r border-white-20 bg-gray-7 p-0 text-background sm:max-w-none"
+              className="w-full max-w-none border-r border-white-20 bg-gray-16 p-0 text-background backdrop-blur-md sm:max-w-none"
             >
               <div className="flex h-full flex-col pt-12">
                 <SheetTitle className="sr-only">Site navigation</SheetTitle>
