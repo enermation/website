@@ -1,4 +1,5 @@
-import { Calendar, ChevronRight, Gauge, Mail, Palette, Wrench } from 'lucide-react'
+import { mdiCalendar, mdiCar, mdiCarShiftPattern, mdiChevronRight, mdiEmail, mdiSpeedometer } from '@mdi/js'
+import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { SiteHeader } from '@/components/site-header'
@@ -66,10 +67,10 @@ function formatPrice(product: ShopifyProduct): string {
 function LatestArrivalCard({ product }: { product: ShopifyProduct }) {
   const image = product.images.edges[0]?.node
   const details = [
-    { icon: Calendar, label: metaValue(product.year) },
-    { icon: Palette, label: metaValue(product.colour) },
-    { icon: Gauge, label: metaValue(product.mileage) },
-    { icon: Wrench, label: metaValue(product.transmission) },
+    { icon: mdiCalendar, label: metaValue(product.year) },
+    { icon: mdiCar, label: metaValue(product.colour) },
+    { icon: mdiSpeedometer, label: metaValue(product.mileage) },
+    { icon: mdiCarShiftPattern, label: metaValue(product.transmission) },
   ].filter(detail => detail.label)
 
   return (
@@ -98,10 +99,12 @@ function LatestArrivalCard({ product }: { product: ShopifyProduct }) {
 
       {details.length > 0 && (
         <div className="mt-4 grid grid-cols-2 gap-y-3 border-t border-gray-87 px-1 pt-3">
-          {details.map(({ icon: Icon, label }) => (
+          {details.map(({ icon: iconPath, label }) => (
             <div key={label} className="flex items-center gap-2 pr-2">
-              <Icon className="size-3.5 shrink-0 text-gray-7" />
-              <span className="truncate font-body text-13 font-medium text-foreground">{label}</span>
+              <Icon path={iconPath} size={1} className="size-3.5 shrink-0 text-gray-7" />
+              <span className="truncate font-body text-13 font-medium text-foreground">
+                {label}
+              </span>
             </div>
           ))}
         </div>
@@ -159,7 +162,7 @@ function MobileCollectionCard({ collection }: { collection: ShopifyCollection })
         {collection.title}
       </h3>
       <div className="flex items-center gap-2 px-1 font-heading text-13 text-gray-33">
-        <ChevronRight className="size-3 shrink-0" />
+        <Icon path={mdiChevronRight} size={1} className="size-3 shrink-0" />
         <span>Discover More</span>
       </div>
     </Link>
@@ -381,7 +384,7 @@ export default async function Home() {
 
                 <div className="flex items-center gap-3 mb-4 font-heading text-13 text-black tracking-wide">
                   <span className="flex items-center gap-1.5">
-                    <Calendar className="size-3 shrink-0" />
+                    <Icon path={mdiCalendar} size={1} className="size-3 shrink-0" />
                     {newsArticle.date}
                   </span>
                   <span className="opacity-40">|</span>
@@ -442,7 +445,7 @@ export default async function Home() {
                 className="mt-3 inline-flex items-center gap-1.5 shrink-0 justify-center rounded-none border-2 border-black bg-black h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-white transition-colors duration-200 hover:bg-gray-16 hover:border-gray-16"
               >
                 Mailing list sign up
-                <Mail className="size-3.5" />
+                <Icon path={mdiEmail} size={1} className="size-3.5" />
               </Link>
             </div>
           </div>

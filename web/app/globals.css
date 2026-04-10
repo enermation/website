@@ -60,6 +60,7 @@
   --color-select-border: var(--select-border);
   --color-black-30: var(--black-30);
   --color-black-40: var(--black-40);
+  --color-black-50: var(--black-50);
   --color-white-solid: var(--white-solid);
   --color-white-30: var(--white-30);
   --color-white-20: var(--white-20);
@@ -159,6 +160,7 @@
   /* Opacity overlays */
   --black-30: oklch(0 0 0 / 30%);
   --black-40: oklch(0 0 0 / 40%);
+  --black-50: oklch(0 0 0 / 50%);
   --white-solid: oklch(1 0 0);
   --white-20: oklch(1 0 0 / 20%);
   --white-30: oklch(1 0 0 / 30%);

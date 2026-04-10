@@ -33,6 +33,16 @@ export type NavLink = {
   hasDropdown?: boolean
 }
 
+export type HeaderAction = {
+  label: string
+  href: string
+}
+
+export type HeaderNavFallbackItem = {
+  label: 'Inventory' | 'About' | 'Contact'
+  href: string
+}
+
 export type SubNavItem = {
   label: string
   href: string
@@ -123,6 +133,31 @@ export const navLinks: NavLink[] = [
   { label: 'About', href: '#', hasDropdown: true },
   { label: 'Contact', href: '#' },
 ]
+
+export const inventoryCollectionLinks: { label: string; href: string }[] = [
+  { label: 'Used Cars', href: '/collections/residential-automobiles' },
+  { label: 'Commercial Vehicles', href: '/collections/commercial-vehicles' },
+  { label: 'Motorcycles', href: '/collections/motorcycles' },
+  { label: 'Spare Parts', href: '/collections/spare-parts' },
+]
+
+export const headerNavFallbackItems: HeaderNavFallbackItem[] = [
+  { label: 'Inventory', href: '/collections/shop-all' },
+  { label: 'About', href: '/#about' },
+  { label: 'Contact', href: '/#contact' },
+]
+
+export const headerActions: { primary: HeaderAction; secondary: HeaderAction } = {
+  primary: { label: 'Request Quote', href: '/#contact' },
+  secondary: { label: 'Contact Sales', href: '/#contact' },
+}
+
+// ── Header dropdown copy ─────────────────────────────────────────────────────
+
+export const headerDropdownCopy = {
+  featuredLabel: 'Featured category',
+  browseLabel: 'Browse',
+} as const
 
 // ── Cars page sub-navigation ─────────────────────────────────────────────────
 
