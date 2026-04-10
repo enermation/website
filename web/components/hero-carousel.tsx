@@ -87,9 +87,8 @@ export function HeroCarousel() {
 
   return (
     <section
-      aria-label="Hero image carousel"
-      className="relative min-h-screen overflow-hidden select-none touch-manipulation"
       aria-label="Product showcase carousel"
+      className="relative min-h-screen overflow-hidden select-none touch-manipulation"
       aria-roledescription="carousel"
     >
       <fieldset
@@ -108,56 +107,38 @@ export function HeroCarousel() {
           >
             <color attach="background" args={['#1a1a1a']} />
             <Suspense fallback={null}>
-              <Environment
-                preset="city"
-                background
-                backgroundBlurriness={0.3}
-                environmentIntensity={1.2}
-              />
-            </Suspense>
-            <ContactShadows
-              position={[0, -0.55, 0]}
-              opacity={0.6}
-              scale={12}
-              blur={2.5}
-              far={4}
-              resolution={256}
-              frames={1}
-            />
-            {/* key forces unmount/remount on index change — preloaded so swap is instant */}
-            <Suspense fallback={null}>
               <CategoryMesh key={activeIndex} index={activeIndex} reducedMotion={reducedMotion} />
             </Suspense>
           </Canvas>
         </div>
 
-      {/* Category label + CTA + dots */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
-        <h1 className="font-display font-normal text-section uppercase tracking-widest text-white text-center">
-          {active.label}
-        </h1>
-        <Link
-          href={active.href}
-          className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
-        >
-          Browse {active.label}
-        </Link>
-        <div className="flex items-center gap-3">
-          {heroCategories.map((cat, i) => (
-            <button
-              key={cat.label}
-              type="button"
-              aria-label={`Show ${cat.label}`}
-              onClick={() => setActiveIndex(i)}
-              className={`pointer-events-auto rounded-full transition-all duration-300 ${
-                i === activeIndex
-                  ? 'size-2.5 bg-on-dark'
-                  : 'size-1.5 bg-on-dark/40 hover:bg-on-dark/70'
-              }`}
-            />
-          ))}
+        {/* Category label + CTA + dots */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
+          <h1 className="font-display font-normal text-section uppercase tracking-widest text-white text-center">
+            {active.label}
+          </h1>
+          <Link
+            href={active.href}
+            className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
+          >
+            Browse {active.label}
+          </Link>
+          <div className="flex items-center gap-3">
+            {heroCategories.map((cat, i) => (
+              <button
+                key={cat.label}
+                type="button"
+                aria-label={`Show ${cat.label}`}
+                onClick={() => setActiveIndex(i)}
+                className={`pointer-events-auto rounded-full transition-all duration-300 ${
+                  i === activeIndex
+                    ? 'size-2.5 bg-on-dark'
+                    : 'size-1.5 bg-on-dark/40 hover:bg-on-dark/70'
+                }`}
+              />
+            ))}
+          </div>
         </div>
-      </div>
 
         {/* Arrow navigation */}
         <button
