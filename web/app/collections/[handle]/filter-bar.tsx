@@ -1,6 +1,7 @@
 'use client'
 
-import { Heart, LayoutGrid, SlidersHorizontal } from 'lucide-react'
+import { mdiFilter, mdiGrid, mdiHeart } from '@mdi/js'
+import { Icon } from '@mdi/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
@@ -125,7 +126,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
               disabled={isPending}
               className="h-10 justify-center rounded-none border-2 border-foreground bg-background font-heading text-xs font-semibold uppercase tracking-wide text-foreground"
             >
-              <LayoutGrid className="size-3.5" />
+              <Icon path={mdiGrid} size={1} className="size-3.5" />
               View All
             </Button>
             <Button
@@ -133,7 +134,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
               disabled
               className="h-10 justify-center rounded-none border-2 border-foreground bg-background font-heading text-xs font-semibold uppercase tracking-wide text-foreground disabled:opacity-100"
             >
-              <Heart className="size-3.5" />
+              <Icon path={mdiHeart} size={1} className="size-3.5" />
               Wishlist (0)
             </Button>
             <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
@@ -142,7 +143,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
                   <Button className="h-10 justify-center rounded-none border-2 border-foreground bg-foreground font-heading text-xs font-semibold uppercase tracking-wide text-background hover:bg-gray-16" />
                 }
               >
-                <SlidersHorizontal className="size-3.5" />
+                <Icon path={mdiFilter} size={1} className="size-3.5" />
                 Filter Stock
               </SheetTrigger>
               <SheetContent
@@ -256,7 +257,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
             disabled={isPending}
             className="h-10 px-5 border-2 border-foreground font-heading font-semibold text-xs uppercase tracking-wider"
           >
-            <LayoutGrid className="size-3.5 shrink-0" />
+            <Icon path={mdiGrid} size={1} className="size-3.5 shrink-0" />
             View All
           </Button>
           <Button
@@ -264,7 +265,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
             size="sm"
             className="h-10 px-5 border-2 border-l-0 border-foreground font-heading font-semibold text-xs uppercase tracking-wider"
           >
-            <Heart className="size-3.5 shrink-0" />
+            <Icon path={mdiHeart} size={1} className="size-3.5 shrink-0" />
             Wishlist (0)
           </Button>
           <Button
@@ -272,7 +273,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
             size="sm"
             className="h-10 px-5 border-2 border-foreground bg-foreground text-background hover:bg-gray-16 font-heading font-semibold text-xs uppercase tracking-wider"
           >
-            <SlidersHorizontal className="size-3.5 shrink-0" />
+            <Icon path={mdiFilter} size={1} className="size-3.5 shrink-0" />
             Filter Stock
           </Button>
         </div>

@@ -1,7 +1,8 @@
 'use client'
 
+import { mdiArrowTopRight, mdiMenu } from '@mdi/js'
+import { Icon } from '@mdi/react'
 import { gsap } from 'gsap'
-import { ArrowUpRight, Menu } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
@@ -210,7 +211,7 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
             onClick={onMenuClick}
             aria-label="Open full menu"
           >
-            <Menu className="size-6" />
+            <Icon path={mdiMenu} size={1} className="size-6" />
           </button>
         </div>
 
@@ -243,7 +244,12 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
                     className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
                     onClick={() => isExpanded && toggleMenu()}
                   >
-                    <ArrowUpRight className="size-3.5 shrink-0" aria-hidden="true" />
+                    <Icon
+                      path={mdiArrowTopRight}
+                      size={1}
+                      className="size-3.5 shrink-0"
+                      aria-hidden="true"
+                    />
                     {lnk.label}
                   </Link>
                 ))}

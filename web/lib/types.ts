@@ -82,6 +82,27 @@ export type ShopifyCollection = {
   image: ShopifyImage | null
 }
 
+export type ShopifyMenuResource =
+  | { __typename: 'Collection'; handle: string }
+  | { __typename: 'Product'; handle: string }
+  | { __typename: 'Page'; handle: string }
+  | { __typename: 'Blog'; handle: string }
+
+export type ShopifyMenuItem = {
+  id: string
+  title: string
+  url: string | null
+  type: string | null
+  resource: ShopifyMenuResource | null
+  items: ShopifyMenuItem[]
+}
+
+export type ShopifyMenu = {
+  id: string
+  title: string
+  items: ShopifyMenuItem[]
+}
+
 export type ShopifyCartLine = {
   id: string
   quantity: number

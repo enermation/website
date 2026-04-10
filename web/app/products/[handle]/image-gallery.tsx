@@ -1,6 +1,7 @@
 'use client'
 
-import { ChevronLeft, ChevronRight, Heart, Images, X } from 'lucide-react'
+import { mdiChevronLeft, mdiChevronRight, mdiClose, mdiHeart, mdiImageMultiple } from '@mdi/js'
+import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -208,21 +209,21 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
           <div className="flex items-center gap-2">
             <div className="flex size-11 items-center justify-center rounded-full border border-white-20 bg-white">
-              <Heart className="size-5 text-gray-7" strokeWidth={1.75} />
+              <Icon path={mdiHeart} size={1} className="size-5 text-gray-7" />
             </div>
             <div className="flex size-11 items-center justify-center rounded-full bg-white">
-              <Images className="size-5 text-gray-7" strokeWidth={1.75} />
+              <Icon path={mdiImageMultiple} size={1} className="size-5 text-gray-7" />
             </div>
           </div>
           <div className="flex items-center gap-1.5 rounded-full bg-black-40 px-3 py-1.5 font-heading text-12 text-white">
-            <Images className="size-3.5" strokeWidth={1.75} />
+            <Icon path={mdiImageMultiple} size={1} className="size-3.5" />
             <span>Tap to expand</span>
           </div>
         </div>
 
         <div className="absolute inset-x-0 bottom-0 flex justify-end p-4">
           <div className="flex items-center gap-2 rounded-full border border-white-20 bg-black-40 px-4 py-2 font-heading text-13 text-white">
-            <Images className="size-4" strokeWidth={1.75} />
+            <Icon path={mdiImageMultiple} size={1} className="size-4" />
             <span>
               {activeIndex + 1}/{images.length} Photos
             </span>
@@ -247,7 +248,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black-30 opacity-0 transition-opacity group-hover:opacity-100">
               <div className="flex items-center gap-2 rounded-full bg-black-40 px-4 py-2 font-heading text-13 text-white">
-                <Images className="size-4" strokeWidth={1.75} />
+                <Icon path={mdiImageMultiple} size={1} className="size-4" />
                 <span>Click to expand</span>
               </div>
             </div>
@@ -275,7 +276,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                   />
                   <div className="absolute inset-0 flex items-center justify-center bg-black-30 opacity-0 transition-opacity group-hover:opacity-100">
                     <div className="flex items-center gap-2 rounded-full bg-black-40 px-4 py-2 font-heading text-13 text-white">
-                      <Images className="size-4" strokeWidth={1.75} />
+                      <Icon path={mdiImageMultiple} size={1} className="size-4" />
                       <span>Click to expand</span>
                     </div>
                   </div>
@@ -302,7 +303,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 rounded-full border border-gray-90 px-4 py-2 font-heading text-13 text-gray-7">
-              <Images className="size-4" strokeWidth={1.75} />
+              <Icon path={mdiImageMultiple} size={1} className="size-4" />
               <span>
                 {desktopPageStart + 1}-{desktopPageEnd} of {images.length} Photos
               </span>
@@ -312,7 +313,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
               className="flex items-center gap-2 rounded-full bg-gray-90 px-4 py-2 font-heading text-13 text-gray-7 transition-colors hover:text-foreground"
               onClick={() => openLightbox(0)}
             >
-              <Images className="size-4" strokeWidth={1.75} />
+              <Icon path={mdiImageMultiple} size={1} className="size-4" />
               <span>View All {images.length} Photos</span>
             </button>
           </div>
@@ -326,7 +327,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                 className="h-11 rounded-full border-2 px-4 font-heading text-13 font-semibold uppercase tracking-wide"
                 onClick={showPreviousDesktopPage}
               >
-                <ChevronLeft className="size-4" />
+                <Icon path={mdiChevronLeft} size={1} className="size-4" />
                 <span>Prev</span>
                 <span className="sr-only">Previous images</span>
               </Button>
@@ -338,7 +339,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                 onClick={showNextDesktopPage}
               >
                 <span>Next</span>
-                <ChevronRight className="size-4" />
+                <Icon path={mdiChevronRight} size={1} className="size-4" />
                 <span className="sr-only">Next images</span>
               </Button>
             </div>
@@ -386,7 +387,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
               }
             }}
           >
-            <X className="size-5" strokeWidth={2} />
+            <Icon path={mdiClose} size={1} className="size-5" />
           </button>
 
           <button
@@ -409,7 +410,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
               }
             }}
           >
-            <ChevronLeft className="size-6" strokeWidth={2} />
+            <Icon path={mdiChevronLeft} size={1} className="size-6" />
           </button>
 
           <button
@@ -432,7 +433,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
               }
             }}
           >
-            <ChevronRight className="size-6" strokeWidth={2} />
+            <Icon path={mdiChevronRight} size={1} className="size-6" />
           </button>
 
           <button
@@ -463,7 +464,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
             }`}
             style={{ bottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))' }}
           >
-            <Images className="size-4" strokeWidth={1.75} />
+            <Icon path={mdiImageMultiple} size={1} className="size-4" />
             <span>
               {lightboxIndex + 1} / {images.length} Photos
             </span>

@@ -1,8 +1,9 @@
 'use client'
 
 import { useGSAP } from '@gsap/react'
+import { mdiArrowRight } from '@mdi/js'
+import { Icon } from '@mdi/react'
 import gsap from 'gsap'
-import { ArrowRight } from 'lucide-react'
 import { useActionState, useCallback, useEffect, useRef, useState } from 'react'
 
 import { subscribeEmail } from '@/app/actions/subscribe'
@@ -32,7 +33,7 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
   const [email, setEmail] = useState('')
 
   const buttonLabelRef = useRef<HTMLSpanElement>(null)
-  const arrowRef = useRef<SVGSVGElement>(null)
+  const arrowRef = useRef<HTMLDivElement>(null)
 
   useGSAP(
     () => {
@@ -141,7 +142,9 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
           )}
         >
           <span ref={buttonLabelRef}>{content.actionLabel}</span>
-          <ArrowRight ref={arrowRef} className="size-5" />
+          <span ref={arrowRef}>
+            <Icon path={mdiArrowRight} size={1} className="size-5" />
+          </span>
         </button>
       </form>
     </div>

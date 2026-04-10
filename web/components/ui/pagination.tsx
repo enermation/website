@@ -1,4 +1,5 @@
-import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from 'lucide-react'
+import { Icon } from '@mdi/react'
+import { mdiChevronLeft, mdiChevronRight, mdiDotsHorizontal } from '@mdi/js'
 import type * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -65,7 +66,7 @@ function PaginationPrevious({
       className={cn('pl-1.5!', className)}
       {...props}
     >
-      <ChevronLeftIcon data-icon="inline-start" />
+      <Icon path={mdiChevronLeft} data-icon="inline-start" />
       <span className="hidden sm:block">{text}</span>
     </PaginationLink>
   )
@@ -84,7 +85,7 @@ function PaginationNext({
       {...props}
     >
       <span className="hidden sm:block">{text}</span>
-      <ChevronRightIcon data-icon="inline-end" />
+      <Icon path={mdiChevronRight} data-icon="inline-end" />
     </PaginationLink>
   )
 }
@@ -100,7 +101,7 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<'span'
       )}
       {...props}
     >
-      <MoreHorizontalIcon />
+      <Icon path={mdiDotsHorizontal} />
       <span className="sr-only">More pages</span>
     </span>
   )

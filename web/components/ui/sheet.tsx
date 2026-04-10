@@ -1,7 +1,8 @@
 'use client'
 
+import { Icon } from '@mdi/react'
+import { mdiClose } from '@mdi/js'
 import { Dialog as SheetPrimitive } from '@base-ui/react/dialog'
-import { XIcon } from 'lucide-react'
 import type * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -63,7 +64,7 @@ function SheetContent({
             data-slot="sheet-close"
             render={<Button variant="ghost" className="absolute top-3 right-3" size="icon-sm" />}
           >
-            <XIcon />
+            <Icon path={mdiClose} />
             <span className="sr-only">Close</span>
           </SheetPrimitive.Close>
         )}

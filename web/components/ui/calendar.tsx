@@ -1,6 +1,7 @@
 'use client'
 
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import { Icon } from '@mdi/react'
+import { mdiChevronDown, mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import * as React from 'react'
 import { type DayButton, DayPicker, getDefaultClassNames, type Locale } from 'react-day-picker'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -117,14 +118,14 @@ function Calendar({
         },
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === 'left') {
-            return <ChevronLeftIcon className={cn('size-4', className)} {...props} />
+            return <Icon path={mdiChevronLeft} size={1} className={cn('size-4', className)} {...props} />
           }
 
           if (orientation === 'right') {
-            return <ChevronRightIcon className={cn('size-4', className)} {...props} />
+            return <Icon path={mdiChevronRight} size={1} className={cn('size-4', className)} {...props} />
           }
 
-          return <ChevronDownIcon className={cn('size-4', className)} {...props} />
+          return <Icon path={mdiChevronDown} size={1} className={cn('size-4', className)} {...props} />
         },
         DayButton: ({ ...props }) => <CalendarDayButton locale={locale} {...props} />,
         WeekNumber: ({ children, ...props }) => {

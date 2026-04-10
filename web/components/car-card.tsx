@@ -1,4 +1,5 @@
-import { Calendar, Gauge, Palette, Wrench } from 'lucide-react'
+import { mdiCalendar, mdiCar, mdiCarShiftPattern, mdiSpeedometer } from '@mdi/js'
+import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { productPage } from '@/lib/data'
@@ -33,13 +34,13 @@ export function CarCard({ product }: CarCardProps) {
 
   // Desktop detail rows
   const desktopDetails = [
-    { icon: Palette, label: make },
-    { icon: Wrench, label: transmissionFuel },
+    { icon: mdiCar, label: make },
+    { icon: mdiCarShiftPattern, label: transmissionFuel },
     {
-      icon: Gauge,
+      icon: mdiSpeedometer,
       label: product.availableForSale ? productPage.labels.available : productPage.labels.sold,
     },
-    { icon: Calendar, label: year },
+    { icon: mdiCalendar, label: year },
   ].filter(row => row.label)
 
   // Mobile detail list (up to 4 items)
@@ -92,9 +93,9 @@ export function CarCard({ product }: CarCardProps) {
       </div>
 
       <div className="mt-3 hidden grid-cols-2 gap-y-1 border-t border-gray-87 pt-2 md:grid">
-        {desktopDetails.map(({ icon: Icon, label }) => (
+        {desktopDetails.map(({ icon: iconPath, label }) => (
           <div key={label} className="flex items-center gap-2 px-2 py-1">
-            <Icon className="size-3.5 text-gray-7 shrink-0" />
+            <Icon path={iconPath} size={1} className="size-3.5 text-gray-7 shrink-0" />
             <span className="font-body font-medium text-13 text-foreground truncate">{label}</span>
           </div>
         ))}

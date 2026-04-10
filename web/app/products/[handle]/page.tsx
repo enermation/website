@@ -1,13 +1,13 @@
 import {
-  Armchair,
-  Calendar,
-  ChevronRight,
-  Gauge,
-  type LucideIcon,
-  Palette,
-  Phone,
-  User,
-} from 'lucide-react'
+  mdiAccount,
+  mdiCalendar,
+  mdiCar,
+  mdiChevronRight,
+  mdiPhone,
+  mdiSpeedometer,
+  mdiTableChair,
+} from '@mdi/js'
+import { Icon } from '@mdi/react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -41,11 +41,11 @@ type ShopResponse = {
   shop: ShopifyShopInfo | null
 }
 
-function getSpecIcon(name: string): LucideIcon {
+function getSpecIcon(name: string): string {
   const normalizedName = name.toLowerCase()
 
   if (normalizedName.includes('year') || normalizedName.includes('reg')) {
-    return Calendar
+    return mdiCalendar
   }
 
   if (
@@ -53,7 +53,7 @@ function getSpecIcon(name: string): LucideIcon {
     normalizedName.includes('miles') ||
     normalizedName.includes('odometer')
   ) {
-    return Gauge
+    return mdiSpeedometer
   }
 
   if (
@@ -61,10 +61,10 @@ function getSpecIcon(name: string): LucideIcon {
     normalizedName.includes('trim') ||
     normalizedName.includes('upholstery')
   ) {
-    return Armchair
+    return mdiTableChair
   }
 
-  return Palette
+  return mdiCar
 }
 
 export async function generateMetadata({
@@ -162,11 +162,11 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
           <Link href="/" className="transition-colors hover:text-foreground">
             {productPage.breadcrumb.home}
           </Link>
-          <ChevronRight className="size-3 text-gray-60" />
+          <Icon path={mdiChevronRight} size={1} className="size-3 text-gray-60" />
           <Link href={showroomHref} className="transition-colors hover:text-foreground">
             {showroomLabel}
           </Link>
-          <ChevronRight className="size-3 text-gray-60" />
+          <Icon path={mdiChevronRight} size={1} className="size-3 text-gray-60" />
           <span className="truncate text-foreground">{product.title}</span>
         </div>
       </nav>
@@ -211,7 +211,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 <>
                   <div className="grid grid-cols-2 gap-px border-y border-gray-90 bg-gray-90 md:hidden">
                     {mobileSpecs.map(option => {
-                      const Icon = getSpecIcon(option.name)
+                      const iconPath = getSpecIcon(option.name)
 
                       return (
                         <div
@@ -219,7 +219,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                           className="flex items-start gap-3 bg-background px-4 py-3"
                         >
                           <div className="mt-0.5 flex size-9 items-center justify-center rounded-full bg-gray-98">
-                            <Icon className="size-4 text-gray-33" strokeWidth={1.8} />
+                            <Icon path={iconPath} size={1} className="size-4 text-gray-33" />
                           </div>
                           <div className="flex min-w-0 flex-col gap-0.5">
                             <span className="font-heading text-13 uppercase tracking-wide text-gray-33">
@@ -312,7 +312,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 </h2>
                 <div className="flex items-start gap-4">
                   <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-90">
-                    <User className="size-5 text-gray-33" />
+                    <Icon path={mdiAccount} size={1} className="size-5 text-gray-33" />
                   </div>
                   <div className="flex flex-col gap-1">
                     <p className="font-body text-13 font-medium text-foreground">{sellerName}</p>
@@ -323,7 +323,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                       href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
                       className="mt-1 flex items-center gap-1.5 font-body text-13 text-brand-green transition-opacity hover:opacity-80"
                     >
-                      <Phone className="size-3.5" />
+                      <Icon path={mdiPhone} size={1} className="size-3.5" />
                       {productPage.labels.callUs}
                     </a>
                   </div>
@@ -337,7 +337,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 </h2>
                 <div className="flex items-start gap-4">
                   <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-90">
-                    <User className="size-5 text-gray-33" />
+                    <Icon path={mdiAccount} size={1} className="size-5 text-gray-33" />
                   </div>
                   <div className="flex flex-col gap-1">
                     <p className="font-body text-13 font-medium text-foreground">{sellerName}</p>
@@ -348,7 +348,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                       href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
                       className="mt-1 flex items-center gap-1.5 font-body text-13 text-brand-green transition-opacity hover:opacity-80"
                     >
-                      <Phone className="size-3.5" />
+                      <Icon path={mdiPhone} size={1} className="size-3.5" />
                       {productPage.labels.callUs}
                     </a>
                   </div>
@@ -428,7 +428,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
             <aside className="sticky top-6 hidden flex-col gap-5 border border-gray-90 p-6 md:col-span-1 md:flex">
               <div className="flex items-start gap-3 border-b border-gray-90 pb-4">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-90">
-                  <User className="size-5 text-gray-33" />
+                  <Icon path={mdiAccount} size={1} className="size-5 text-gray-33" />
                 </div>
                 <div className="flex flex-col gap-0.5">
                   <p className="font-body text-13 font-medium text-foreground">{sellerName}</p>
@@ -439,7 +439,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                     href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
                     className="mt-1 flex items-center gap-1.5 font-body text-13 text-brand-green transition-opacity hover:opacity-80"
                   >
-                    <Phone className="size-3.5" />
+                    <Icon path={mdiPhone} size={1} className="size-3.5" />
                     {productPage.labels.callAgent}
                   </a>
                 </div>
