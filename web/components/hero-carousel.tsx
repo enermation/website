@@ -53,13 +53,7 @@ function useReducedMotion() {
 
 // ── Single model, centered ────────────────────────────────────────────────────
 
-function CategoryMesh({
-  index,
-  reducedMotion,
-}: {
-  index: number
-  reducedMotion: boolean
-}) {
+function CategoryMesh({ index, reducedMotion }: { index: number; reducedMotion: boolean }) {
   const groupRef = useRef<Group>(null)
   const materialsRef = useRef<MeshStandardMaterial[]>([])
   const { scene } = useGLTF(MODEL_PATHS[index])
@@ -128,38 +122,47 @@ export function HeroCarousel() {
   return (
     <section
       className="relative min-h-screen overflow-hidden select-none touch-manipulation"
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      onKeyDown={onKeyDown}
-      tabIndex={0}
+      aria-label="Product showcase carousel"
+      aria-roledescription="carousel"
     >
-      {/* Three.js canvas */}
-      <div className="absolute inset-0">
-        <Canvas camera={{ position: [0, 2, 5], fov: 45 }} dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
-          <color attach="background" args={['#1a1a1a']} />
-          <Suspense fallback={null}>
-            <Environment
-              preset="city"
-              background
-              backgroundBlurriness={0.3}
-              environmentIntensity={1.2}
+      <fieldset
+        aria-label="Use arrow keys to navigate slides"
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
+        onKeyDown={onKeyDown}
+        className="contents"
+      >
+        {/* Three.js canvas */}
+        <div className="absolute inset-0">
+          <Canvas
+            camera={{ position: [0, 2, 5], fov: 45 }}
+            dpr={[1, 2]}
+            gl={{ antialias: true, alpha: true }}
+          >
+            <color attach="background" args={['#1a1a1a']} />
+            <Suspense fallback={null}>
+              <Environment
+                preset="city"
+                background
+                backgroundBlurriness={0.3}
+                environmentIntensity={1.2}
+              />
+            </Suspense>
+            <ContactShadows
+              position={[0, -0.55, 0]}
+              opacity={0.6}
+              scale={12}
+              blur={2.5}
+              far={4}
+              resolution={256}
+              frames={1}
             />
-          </Suspense>
-          <ContactShadows
-            position={[0, -0.55, 0]}
-            opacity={0.6}
-            scale={12}
-            blur={2.5}
-            far={4}
-            resolution={256}
-            frames={1}
-          />
-          {/* key forces unmount/remount on index change — preloaded so swap is instant */}
-          <Suspense fallback={null}>
-            <CategoryMesh key={activeIndex} index={activeIndex} reducedMotion={reducedMotion} />
-          </Suspense>
-        </Canvas>
-      </div>
+            {/* key forces unmount/remount on index change — preloaded so swap is instant */}
+            <Suspense fallback={null}>
+              <CategoryMesh key={activeIndex} index={activeIndex} reducedMotion={reducedMotion} />
+            </Suspense>
+          </Canvas>
+        </div>
 
         {/* Category label + CTA + dots */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
@@ -189,23 +192,24 @@ export function HeroCarousel() {
           </div>
         </div>
 
-      {/* Arrow navigation */}
-      <button
-        type="button"
-        aria-label="Previous category"
-        onClick={() => navigate(-1)}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200"
-      >
-        <Icon path={mdiChevronLeft} size={1} className="size-6" />
-      </button>
-      <button
-        type="button"
-        aria-label="Next category"
-        onClick={() => navigate(1)}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200"
-      >
-        <Icon path={mdiChevronRight} size={1} className="size-6" />
-      </button>
+        {/* Arrow navigation */}
+        <button
+          type="button"
+          aria-label="Previous category"
+          onClick={() => navigate(-1)}
+          className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200"
+        >
+          <Icon path={mdiChevronLeft} size={1} className="size-6" />
+        </button>
+        <button
+          type="button"
+          aria-label="Next category"
+          onClick={() => navigate(1)}
+          className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200"
+        >
+          <Icon path={mdiChevronRight} size={1} className="size-6" />
+        </button>
+      </fieldset>
     </section>
   )
 }
