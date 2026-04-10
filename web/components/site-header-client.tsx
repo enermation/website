@@ -48,7 +48,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
         <Link
           href={item.href}
           className={cn(
-            'inline-flex items-center gap-1 rounded-md px-2 py-1 font-heading text-13 font-semibold uppercase tracking-wide text-gray-93 transition-colors hover:bg-gray-20 hover:text-background',
+            'inline-flex items-center gap-1 rounded-md px-2 py-1 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-white-20',
             focusRing
           )}
         >
@@ -58,7 +58,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
           )}
         </Link>
       ) : (
-        <span className="inline-flex items-center gap-1 rounded-md px-2 py-1 font-heading text-13 font-semibold uppercase tracking-wide text-gray-93">
+        <span className="inline-flex items-center gap-1 rounded-md px-2 py-1 font-heading text-13 font-semibold uppercase tracking-wide text-background">
           {item.label}
           {hasChildren && (
             <Icon path={mdiChevronDown} size={1} className="size-3" aria-hidden="true" />
@@ -75,7 +75,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
           )}
         >
           <div className="flex flex-col gap-1 rounded-2xl border border-white-20 bg-gray-16 p-4 shadow-xl">
-            <p className="pb-1 font-heading text-sm font-semibold text-gray-93">{item.label}</p>
+            <p className="pb-1 font-heading text-sm font-semibold text-background">{item.label}</p>
             {item.children.map(child => {
               const iconPath = menuItemIcon(child.label)
 
@@ -84,7 +84,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                   key={`${item.label}-${child.label}`}
                   href={child.href}
                   className={cn(
-                    'inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-gray-93 transition-colors hover:bg-gray-20 hover:text-background',
+                    'inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-background transition-colors hover:bg-white-20',
                     focusRing
                   )}
                 >
@@ -117,7 +117,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                 <p className="font-heading text-13 text-gray-60">
                   {headerDropdownCopy.featuredLabel}
                 </p>
-                <p className="mt-1 font-body text-sm text-gray-93">{featured.label}</p>
+                <p className="mt-1 font-body text-sm text-background">{featured.label}</p>
                 <span className="mt-2 inline-flex items-center gap-1 font-heading text-13 text-background">
                   {headerDropdownCopy.browseLabel}
                   <Icon path={mdiArrowRight} size={1} className="size-3.5" aria-hidden="true" />
@@ -167,7 +167,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
             <Link
               href={navigation.actions.secondary.href}
               className={cn(
-                'inline-flex h-8 items-center justify-center rounded-full border border-white-30 px-4 font-heading text-13 font-semibold uppercase tracking-wide text-gray-93 transition-colors hover:border-background hover:bg-white-20 hover:text-background',
+                'inline-flex h-8 items-center justify-center rounded-full border border-white-30 px-4 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-white-20',
                 focusRing
               )}
             >
@@ -187,7 +187,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger
               className={cn(
-                'ml-auto inline-flex size-11 items-center justify-center rounded-full text-gray-93 md:hidden',
+                'ml-auto inline-flex size-11 items-center justify-center rounded-full text-background md:hidden',
                 focusRing
               )}
               aria-label="Open menu"
@@ -220,7 +220,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
                         <Link
                           href={item.href}
                           className={cn(
-                            'font-heading text-13 font-semibold uppercase tracking-wide text-gray-93 transition-colors hover:text-background',
+                            'font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:text-gray-60',
                             focusRing
                           )}
                           onClick={() => setMobileOpen(false)}
@@ -228,7 +228,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
                           {item.label}
                         </Link>
                       ) : (
-                        <p className="font-heading text-13 font-semibold uppercase tracking-wide text-gray-93">
+                        <p className="font-heading text-13 font-semibold uppercase tracking-wide text-background">
                           {item.label}
                         </p>
                       )}
@@ -241,7 +241,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
                                 key={`${item.label}-${child.label}`}
                                 href={child.href}
                                 className={cn(
-                                  'font-body text-sm text-gray-93 transition-colors hover:text-background',
+                                  'font-body text-sm text-background transition-colors hover:text-gray-60',
                                   focusRing
                                 )}
                                 onClick={() => setMobileOpen(false)}
@@ -267,7 +267,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
                   <Link
                     href={navigation.actions.secondary.href}
                     className={cn(
-                      'inline-flex h-9 items-center justify-center rounded-full border border-white-30 px-4 font-heading text-13 font-semibold uppercase tracking-wide text-gray-93 transition-colors hover:bg-white-20 hover:text-background',
+                      'inline-flex h-9 items-center justify-center rounded-full border border-white-30 px-4 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-white-20',
                       focusRing
                     )}
                     onClick={() => setMobileOpen(false)}
