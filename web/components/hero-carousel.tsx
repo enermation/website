@@ -21,10 +21,19 @@ const MODEL_PATHS = [
   '/models/commercial.glb',
 ]
 
-// Per-model scale multipliers to normalize wildly different native sizes
-// Empirical scales — gltf-transform flatten didn't fully bake root scale matrices,
-// so actual render size is ~1/5 of inspect bbox. Tuned so each model fills ~70% of horizontal at fov=20, z=5.
-const MODEL_SCALES = [2.0, 2.2, 1.9]
+// Scale multipliers derived from bounding box inspection (gltf-transform inspect):
+//   sedan bbox X: 5.45  → reference, scale 1.0
+//   suv   bbox Z: 5.04  → rotated 90°, scale = 5.45/5.04 = 1.08
+//   commercial Z: 5.74  → rotated 90°, scale = 5.45/5.74 = 0.95
+const MODEL_SCALES = [1.0, 0.85, 0.62]
+
+// SUV and commercial models are oriented length-along-Z (front faces camera).
+// Rotate 90° around Y so the side profile faces the camera, matching the sedan.
+const MODEL_ROTATIONS = [0, Math.PI / 2, Math.PI / 2]
+
+// Per-model vertical nudge to visually center each model in the viewport.
+// Positive = up, negative = down.
+const MODEL_OFFSETS_Y = [-0.4, 0, 0]
 
 useGLTF.preload('/models/sedan.glb')
 useGLTF.preload('/models/suv.glb')
@@ -81,7 +90,11 @@ function CategoryMesh({
   })
 
   return (
-    <group scale={[nativeScale, nativeScale, nativeScale]}>
+    <group
+      scale={[nativeScale, nativeScale, nativeScale]}
+      rotation-y={MODEL_ROTATIONS[index]}
+      position-y={MODEL_OFFSETS_Y[index]}
+    >
       <Center>
         <primitive ref={groupRef} object={scene} />
       </Center>
@@ -118,22 +131,26 @@ export function HeroCarousel() {
 
   return (
     <section
-      className="relative min-h-screen overflow-hidden select-none touch-manipulation bg-white"
+      className="relative min-h-screen overflow-hidden select-none touch-manipulation"
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onKeyDown={onKeyDown}
       tabIndex={0}
     >
-      {/* Three.js canvas — canvas is transparent, white bg comes from section */}
+      {/* Three.js canvas */}
       <div className="absolute inset-0">
-        <Canvas camera={{ position: [0, 0.5, 5], fov: 20 }} dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
-          {/* Environment for IBL lighting only — no background */}
+        <Canvas camera={{ position: [0, 2, 12], fov: 75 }} dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
           <Suspense fallback={null}>
-            <Environment preset="city" environmentIntensity={1.2} />
+            <Environment
+              preset="city"
+              background
+              backgroundBlurriness={0.3}
+              environmentIntensity={1.2}
+            />
           </Suspense>
           <ContactShadows
-            position={[0, -1.1, 0]}
-            opacity={0.4}
+            position={[0, -0.55, 0]}
+            opacity={0.6}
             scale={12}
             blur={2.5}
             far={4}
@@ -147,17 +164,14 @@ export function HeroCarousel() {
         </Canvas>
       </div>
 
-      {/* Bottom fade — white gradient so text sits on clean base */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-white via-white/80 to-transparent" />
-
       {/* Category label + CTA + dots */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
-        <h1 className="font-display font-normal text-section uppercase tracking-widest text-foreground text-center">
+        <h1 className="font-display font-normal text-section uppercase tracking-widest text-white text-center">
           {active.label}
         </h1>
         <Link
           href={active.href}
-          className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-foreground bg-transparent px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
+          className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
         >
           Browse {active.label}
         </Link>
@@ -170,8 +184,8 @@ export function HeroCarousel() {
               onClick={() => setActiveIndex(i)}
               className={`pointer-events-auto rounded-full transition-all duration-300 ${
                 i === activeIndex
-                  ? 'size-2.5 bg-foreground'
-                  : 'size-1.5 bg-foreground/30 hover:bg-foreground/60'
+                  ? 'size-2.5 bg-on-dark'
+                  : 'size-1.5 bg-on-dark/40 hover:bg-on-dark/70'
               }`}
             />
           ))}
@@ -183,17 +197,17 @@ export function HeroCarousel() {
         type="button"
         aria-label="Previous category"
         onClick={() => navigate(-1)}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 flex size-10 items-center justify-center text-foreground/40 hover:text-foreground transition-colors duration-200"
+        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200"
       >
-        <Icon path={mdiChevronLeft} size={1} className="size-7" />
+        <Icon path={mdiChevronLeft} size={1} className="size-6" />
       </button>
       <button
         type="button"
         aria-label="Next category"
         onClick={() => navigate(1)}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex size-10 items-center justify-center text-foreground/40 hover:text-foreground transition-colors duration-200"
+        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200"
       >
-        <Icon path={mdiChevronRight} size={1} className="size-7" />
+        <Icon path={mdiChevronRight} size={1} className="size-6" />
       </button>
     </section>
   )
