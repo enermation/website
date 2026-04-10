@@ -1,4 +1,11 @@
-import { mdiCalendar, mdiCar, mdiCarShiftPattern, mdiChevronRight, mdiEmail, mdiSpeedometer } from '@mdi/js'
+import {
+  mdiCalendar,
+  mdiCar,
+  mdiCarShiftPattern,
+  mdiChevronRight,
+  mdiEmail,
+  mdiSpeedometer,
+} from '@mdi/js'
 import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
