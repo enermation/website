@@ -82,7 +82,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
     return () => {
       if (timer) clearTimeout(timer)
     }
-  }, [lightboxOpen, lightboxIndex, lightboxControlsVisible])
+  }, [lightboxOpen, lightboxControlsVisible, autoHideTimer])
 
   function handleLightboxActivity() {
     setLightboxControlsVisible(true)
@@ -187,7 +187,8 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
         <CarouselContent className="-ml-0">
           {images.map((image, index) => (
             <CarouselItem key={image.url} className="pl-0">
-              <div
+              <button
+                type="button"
                 className="product-gallery-mobile relative overflow-hidden bg-gray-94 cursor-zoom-in transition-opacity duration-150 active:opacity-30"
                 onClick={() => openLightbox(index)}
               >
@@ -199,7 +200,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                   className="object-cover"
                   sizes="100vw"
                 />
-              </div>
+              </button>
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -231,7 +232,8 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
 
       <div data-slot="image-gallery" className="hidden md:flex md:flex-col md:gap-4">
         <div className="h-96 gap-px md:flex">
-          <div
+          <button
+            type="button"
             className="group relative flex-1 overflow-hidden bg-gray-94 cursor-zoom-in"
             onClick={() => openLightbox(desktopPageStart)}
           >
@@ -249,52 +251,53 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                 <span>Click to expand</span>
               </div>
             </div>
-          </div>
-
-          {sideImages.length > 0 && (
-            <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-px">
-              {sideImages.map((image, i) => {
-                const isLast = i === sideImages.length - 1
-                const imageIndex = desktopPageStart + 1 + i
-                return (
-                  <div
-                    key={image.url}
-                    className="group relative overflow-hidden bg-gray-94 cursor-zoom-in"
-                    onClick={() => openLightbox(imageIndex)}
-                  >
-                    <Image
-                      src={image.url}
-                      alt={image.altText ?? ''}
-                      fill
-                      className="object-cover transition-opacity group-hover:opacity-90"
-                      sizes="(min-width: 1320px) 330px, 25vw"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black-30 opacity-0 transition-opacity group-hover:opacity-100">
-                      <div className="flex items-center gap-2 rounded-full bg-black-40 px-4 py-2 font-heading text-13 text-white">
-                        <Images className="size-4" strokeWidth={1.75} />
-                        <span>Click to expand</span>
-                      </div>
-                    </div>
-                    {isLast && remainingCount > 0 && (
-                      <button
-                        type="button"
-                        className="absolute inset-0 flex cursor-pointer items-end justify-end bg-black-30 p-3 transition-opacity hover:bg-black-40"
-                        onClick={e => {
-                          e.stopPropagation()
-                          openLightbox(desktopPageStart + 1)
-                        }}
-                      >
-                        <span className="bg-black-40 px-3 py-1 font-heading text-13 text-white">
-                          +{remainingCount} Photos
-                        </span>
-                      </button>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          )}
+          </button>
         </div>
+
+        {sideImages.length > 0 && (
+          <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-px">
+            {sideImages.map((image, i) => {
+              const isLast = i === sideImages.length - 1
+              const imageIndex = desktopPageStart + 1 + i
+              return (
+                <button
+                  key={image.url}
+                  type="button"
+                  className="group relative overflow-hidden bg-gray-94 cursor-zoom-in"
+                  onClick={() => openLightbox(imageIndex)}
+                >
+                  <Image
+                    src={image.url}
+                    alt={image.altText ?? ''}
+                    fill
+                    className="object-cover transition-opacity group-hover:opacity-90"
+                    sizes="(min-width: 1320px) 330px, 25vw"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black-30 opacity-0 transition-opacity group-hover:opacity-100">
+                    <div className="flex items-center gap-2 rounded-full bg-black-40 px-4 py-2 font-heading text-13 text-white">
+                      <Images className="size-4" strokeWidth={1.75} />
+                      <span>Click to expand</span>
+                    </div>
+                  </div>
+                  {isLast && remainingCount > 0 && (
+                    <button
+                      type="button"
+                      className="absolute inset-0 flex cursor-pointer items-end justify-end bg-black-30 p-3 transition-opacity hover:bg-black-40"
+                      onClick={e => {
+                        e.stopPropagation()
+                        openLightbox(desktopPageStart + 1)
+                      }}
+                    >
+                      <span className="bg-black-40 px-3 py-1 font-heading text-13 text-white">
+                        +{remainingCount} Photos
+                      </span>
+                    </button>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )}
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -357,12 +360,21 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           onMouseMove={() => handleLightboxActivity()}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              handleLightboxActivity()
+            }
+          }}
         >
           <button
             type="button"
             aria-label="Close lightbox"
             className="absolute top-4 right-4 z-20 flex size-11 items-center justify-center rounded-full bg-black-30 text-white transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-            style={{ top: 'max(1rem, env(safe-area-inset-top, 1rem))', right: 'max(1rem, env(safe-area-inset-right, 1rem))' }}
+            style={{
+              top: 'max(1rem, env(safe-area-inset-top, 1rem))',
+              right: 'max(1rem, env(safe-area-inset-right, 1rem))',
+            }}
             onClick={e => {
               e.stopPropagation()
               closeLightbox()
@@ -423,10 +435,17 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
             <ChevronRight className="size-6" strokeWidth={2} />
           </button>
 
-          <div
+          <button
+            type="button"
             className="relative flex items-center justify-center"
             style={{ width: '100%', height: '100%' }}
             onClick={e => e.stopPropagation()}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                e.stopPropagation()
+              }
+            }}
           >
             <Image
               src={images[lightboxIndex].url}
@@ -436,7 +455,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
               sizes="100vw"
               priority
             />
-          </div>
+          </button>
 
           <div
             className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 rounded-full bg-black-30 px-4 py-2 font-heading text-13 text-white transition-all duration-300 ${

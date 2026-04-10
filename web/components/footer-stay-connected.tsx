@@ -3,7 +3,7 @@
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ArrowRight } from 'lucide-react'
-import { startTransition, useActionState, useEffect, useRef, useState } from 'react'
+import { useActionState, useCallback, useEffect, useRef, useState } from 'react'
 
 import { subscribeEmail } from '@/app/actions/subscribe'
 import { Input } from '@/components/ui/input'
@@ -34,36 +34,42 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
   const buttonLabelRef = useRef<HTMLSpanElement>(null)
   const arrowRef = useRef<SVGSVGElement>(null)
 
-  useGSAP(() => {
-    if (!arrowRef.current) return
-    const el = arrowRef.current
-    el.addEventListener('mouseenter', () => {
-      gsap.to(el, { x: 4, duration: 0.2, ease: 'power2.out' })
-    })
-    el.addEventListener('mouseleave', () => {
-      gsap.to(el, { x: 0, duration: 0.2, ease: 'power2.out' })
-    })
-  })
+  useGSAP(
+    () => {
+      if (!arrowRef.current) return
+      const el = arrowRef.current
+      el.addEventListener('mouseenter', () => {
+        gsap.to(el, { x: 4, duration: 0.2, ease: 'power2.out' })
+      })
+      el.addEventListener('mouseleave', () => {
+        gsap.to(el, { x: 0, duration: 0.2, ease: 'power2.out' })
+      })
+    },
+    { scope: arrowRef }
+  )
 
-  const animateLabel = (incoming: string | null) => {
+  const animateLabel = useCallback((incoming: string | null) => {
     if (!buttonLabelRef.current) return
-    const tl = gsap.timeline()
-    tl.to(buttonLabelRef.current, {
-      y: -20,
-      opacity: 0,
-      duration: 0.15,
-      ease: 'power2.in',
-    }).call(() => {
-      if (buttonLabelRef.current) {
-        buttonLabelRef.current.textContent = incoming
-      }
-    }).to(buttonLabelRef.current, {
-      y: 0,
-      opacity: 1,
-      duration: 0.2,
-      ease: 'power2.out',
-    })
-  }
+    const _tl = gsap
+      .timeline()
+      .to(buttonLabelRef.current, {
+        y: -20,
+        opacity: 0,
+        duration: 0.15,
+        ease: 'power2.in',
+      })
+      .call(() => {
+        if (buttonLabelRef.current) {
+          buttonLabelRef.current.textContent = incoming
+        }
+      })
+      .to(buttonLabelRef.current, {
+        y: 0,
+        opacity: 1,
+        duration: 0.2,
+        ease: 'power2.out',
+      })
+  }, [])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -72,9 +78,7 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
     animateLabel('Sending...')
     const formData = new FormData()
     formData.append('email', email)
-    startTransition(() => {
-      formAction(formData)
-    })
+    formAction(formData)
   }
 
   useEffect(() => {
@@ -95,8 +99,7 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
     }, 2500)
 
     return () => clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state])
+  }, [state, formState, animateLabel, content.actionLabel])
 
   const isDisabled = formState !== 'idle'
   const buttonColor =
@@ -111,22 +114,17 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
   return (
     <div className={cn('flex-col gap-6', className)}>
       <div className="flex max-w-sm flex-col gap-4">
-        <p className="text-15 font-semibold leading-relaxed text-gray-87">
-          {content.description}
-        </p>
+        <p className="text-15 font-semibold leading-relaxed text-gray-87">{content.description}</p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="flex max-w-sm flex-col gap-1"
-      >
+      <form onSubmit={handleSubmit} className="flex max-w-sm flex-col gap-1">
         <Input
           type="email"
           placeholder={content.inputPlaceholder}
           aria-label={content.inputPlaceholder}
           required
           value={email}
-          onChange={(e) => {
+          onChange={e => {
             setEmail(e.target.value)
             if (formState === 'error') setFormState('idle')
           }}
@@ -139,7 +137,7 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
           disabled={isDisabled || !email}
           className={cn(
             'ml-px inline-flex w-fit translate-y-1 items-center gap-1.5 font-heading text-xl font-semibold uppercase tracking-tight transition-colors',
-            buttonColor,
+            buttonColor
           )}
         >
           <span ref={buttonLabelRef}>{content.actionLabel}</span>

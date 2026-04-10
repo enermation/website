@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!../graphql", "!.claude", "!.qwen", "!components/ui"]
+    "includes": ["**", "!../graphql", "!.claude", "!.qwen", "!components/ui", "!**/*.svg"]
   },
   "formatter": {
     "enabled": true,

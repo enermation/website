@@ -7,7 +7,7 @@ type SubscribeResult = {
 
 export async function subscribeEmail(
   _prevState: SubscribeResult,
-  formData: FormData,
+  formData: FormData
 ): Promise<SubscribeResult> {
   const email = formData.get('email')
 

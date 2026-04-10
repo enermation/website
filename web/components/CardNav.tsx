@@ -1,11 +1,12 @@
-"use client"
+'use client'
 
-import { ArrowUpRight, Menu } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { useLayoutEffect, useRef, useState } from "react"
-import { gsap } from "gsap"
-import { cn } from "@/lib/utils"
+import { gsap } from 'gsap'
+import { ArrowUpRight, Menu } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
+
+import { cn } from '@/lib/utils'
 
 export type CardNavLink = {
   label: string
@@ -30,23 +31,23 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
   const cardsRef = useRef<HTMLDivElement[]>([])
   const tlRef = useRef<gsap.core.Timeline | null>(null)
 
-  const calculateHeight = () => {
+  const calculateHeight = useCallback(() => {
     const navEl = navRef.current
     if (!navEl) return 260
 
-    const isMobile = window.matchMedia("(max-width: 768px)").matches
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
     if (isMobile) {
-      const contentEl = navEl.querySelector(".card-nav-content") as HTMLElement
+      const contentEl = navEl.querySelector('.card-nav-content') as HTMLElement
       if (contentEl) {
         const wasVisible = contentEl.style.visibility
         const wasPointerEvents = contentEl.style.pointerEvents
         const wasPosition = contentEl.style.position
         const wasHeight = contentEl.style.height
 
-        contentEl.style.visibility = "visible"
-        contentEl.style.pointerEvents = "auto"
-        contentEl.style.position = "static"
-        contentEl.style.height = "auto"
+        contentEl.style.visibility = 'visible'
+        contentEl.style.pointerEvents = 'auto'
+        contentEl.style.position = 'static'
+        contentEl.style.height = 'auto'
 
         contentEl.offsetHeight
 
@@ -63,13 +64,13 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
       }
     }
     return 260
-  }
+  }, [])
 
-  const createTimeline = () => {
+  const createTimeline = useCallback(() => {
     const navEl = navRef.current
     if (!navEl) return null
 
-    gsap.set(navEl, { height: 60, overflow: "hidden" })
+    gsap.set(navEl, { height: 60, overflow: 'hidden' })
     gsap.set(cardsRef.current, { y: 50, opacity: 0 })
 
     const tl = gsap.timeline({ paused: true })
@@ -77,17 +78,17 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
     tl.to(navEl, {
       height: calculateHeight,
       duration: 0.4,
-      ease: "power3.out",
+      ease: 'power3.out',
     })
 
     tl.to(
       cardsRef.current,
-      { y: 0, opacity: 1, duration: 0.4, ease: "power3.out", stagger: 0.08 },
-      "-=0.1"
+      { y: 0, opacity: 1, duration: 0.4, ease: 'power3.out', stagger: 0.08 },
+      '-=0.1'
     )
 
     return tl
-  }
+  }, [calculateHeight])
 
   useLayoutEffect(() => {
     const tl = createTimeline()
@@ -97,8 +98,7 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
       tl?.kill()
       tlRef.current = null
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items])
+  }, [createTimeline])
 
   useLayoutEffect(() => {
     const handleResize = () => {
@@ -123,9 +123,9 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
       }
     }
 
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [isExpanded])
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [isExpanded, calculateHeight, createTimeline])
 
   const toggleMenu = () => {
     const tl = tlRef.current
@@ -134,7 +134,7 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
       setIsExpanded(true)
       tl.play(0)
     } else {
-      tl.eventCallback("onReverseComplete", () => setIsExpanded(false))
+      tl.eventCallback('onReverseComplete', () => setIsExpanded(false))
       tl.reverse()
     }
   }
@@ -147,13 +147,16 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
     <div
       data-slot="card-nav"
       className={cn(
-        "absolute left-1/2 top-3 z-50 w-[90%] max-w-[800px] -translate-x-1/2 md:top-5",
+        'absolute left-1/2 top-3 z-50 w-[90%] max-w-[800px] -translate-x-1/2 md:top-5',
         className
       )}
     >
       <nav
         ref={navRef}
-        className={cn("relative h-[60px] overflow-hidden rounded-xl border border-gray-90 bg-white shadow-md will-change-[height]", isExpanded && "open")}
+        className={cn(
+          'relative h-[60px] overflow-hidden rounded-xl border border-gray-90 bg-white shadow-md will-change-[height]',
+          isExpanded && 'open'
+        )}
       >
         {/* Top bar */}
         <div className="absolute inset-x-0 top-0 z-10 flex h-[60px] items-center justify-between px-4 md:pl-[1.1rem]">
@@ -161,22 +164,28 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
           <button
             type="button"
             className={cn(
-              "group flex h-full flex-col items-center justify-center gap-1.5 cursor-pointer",
-              isExpanded && "open"
+              'group flex h-full flex-col items-center justify-center gap-1.5 cursor-pointer',
+              isExpanded && 'open'
             )}
             onClick={toggleMenu}
-            aria-label={isExpanded ? "Close menu" : "Open menu"}
+            aria-label={isExpanded ? 'Close menu' : 'Open menu'}
           >
-            <span className="block h-[2px] w-[30px] bg-foreground transition-[transform,opacity] duration-300 [transform-origin:50%_50%] group-hover:opacity-75"
-              style={{ transform: isExpanded ? "translateY(4px) rotate(45deg)" : "none" }}
+            <span
+              className="block h-[2px] w-[30px] bg-foreground transition-[transform,opacity] duration-300 [transform-origin:50%_50%] group-hover:opacity-75"
+              style={{ transform: isExpanded ? 'translateY(4px) rotate(45deg)' : 'none' }}
             />
-            <span className="block h-[2px] w-[30px] bg-foreground transition-[transform,opacity] duration-300 [transform-origin:50%_50%] group-hover:opacity-75"
-              style={{ transform: isExpanded ? "translateY(-4px) rotate(-45deg)" : "none" }}
+            <span
+              className="block h-[2px] w-[30px] bg-foreground transition-[transform,opacity] duration-300 [transform-origin:50%_50%] group-hover:opacity-75"
+              style={{ transform: isExpanded ? 'translateY(-4px) rotate(-45deg)' : 'none' }}
             />
           </button>
 
           {/* Logo */}
-          <Link href="/" aria-label="Enermation home" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-0">
+          <Link
+            href="/"
+            aria-label="Enermation home"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-0"
+          >
             <Image
               src="/logo.jpg"
               alt="Enermation"
@@ -208,8 +217,8 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
         {/* Cards content */}
         <div
           className={cn(
-            "card-nav-content absolute left-0 right-0 top-[60px] bottom-0 z-0 flex flex-col items-stretch gap-2 justify-start p-2 invisible pointer-events-none md:flex-row md:items-end md:gap-3",
-            isExpanded && "visible pointer-events-auto"
+            'card-nav-content absolute left-0 right-0 top-[60px] bottom-0 z-0 flex flex-col items-stretch gap-2 justify-start p-2 invisible pointer-events-none md:flex-row md:items-end md:gap-3',
+            isExpanded && 'visible pointer-events-auto'
           )}
           aria-hidden={!isExpanded}
         >
@@ -227,7 +236,7 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
                 {item.label}
               </Link>
               <div className="mt-auto flex flex-col gap-1">
-                {item.links?.map((lnk) => (
+                {item.links?.map(lnk => (
                   <Link
                     key={lnk.label}
                     href={lnk.href}

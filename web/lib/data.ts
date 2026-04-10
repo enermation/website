@@ -85,30 +85,30 @@ export type CardNavItem = {
 
 export const cardNavItems: CardNavItem[] = [
   {
-    label: "Showroom",
-    href: "#",
+    label: 'Showroom',
+    href: '#',
     links: [
-      { label: "All Stock", href: primaryShowroomCollectionHref },
-      { label: "Latest Arrivals", href: "#" },
-      { label: "Reserved", href: "#" },
+      { label: 'All Stock', href: primaryShowroomCollectionHref },
+      { label: 'Latest Arrivals', href: '#' },
+      { label: 'Reserved', href: '#' },
     ],
   },
   {
-    label: "Sell Your Car",
-    href: "#",
+    label: 'Sell Your Car',
+    href: '#',
     links: [
-      { label: "Get a Valuation", href: "#" },
-      { label: "How It Works", href: "#" },
-      { label: "FAQ", href: "#" },
+      { label: 'Get a Valuation', href: '#' },
+      { label: 'How It Works', href: '#' },
+      { label: 'FAQ', href: '#' },
     ],
   },
   {
-    label: "Services",
-    href: "#",
+    label: 'Services',
+    href: '#',
     links: [
-      { label: "Vehicle Sourcing", href: "#" },
-      { label: "Finance", href: "#" },
-      { label: "Delivery", href: "#" },
+      { label: 'Vehicle Sourcing', href: '#' },
+      { label: 'Finance', href: '#' },
+      { label: 'Delivery', href: '#' },
     ],
   },
 ]

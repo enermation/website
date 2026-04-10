@@ -34,7 +34,7 @@ export function FooterNavLinks({ links, className }: FooterNavLinksProps) {
         },
       })
     },
-    { scope: containerRef },
+    { scope: containerRef }
   )
 
   return (

@@ -1,25 +1,25 @@
-"use client"
+'use client'
 
-import { Phone } from "lucide-react"
-import Link from "next/link"
-import { useState } from "react"
-import { CardNav } from "@/components/CardNav"
+import { Phone } from 'lucide-react'
+import Link from 'next/link'
+import { useState } from 'react'
+import { CardNav } from '@/components/CardNav'
 import {
   FacebookIcon,
   InstagramIcon,
   TikTokIcon,
   TwitterIcon,
   YoutubeIcon,
-} from "@/components/social-icons"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { cardNavItems, navLinks } from "@/lib/data"
+} from '@/components/social-icons'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { cardNavItems, navLinks } from '@/lib/data'
 
 const socialLinks = [
-  { label: "Instagram", Icon: InstagramIcon, href: "#" },
-  { label: "Facebook", Icon: FacebookIcon, href: "#" },
-  { label: "TikTok", Icon: TikTokIcon, href: "#" },
-  { label: "Twitter", Icon: TwitterIcon, href: "#" },
-  { label: "YouTube", Icon: YoutubeIcon, href: "#" },
+  { label: 'Instagram', Icon: InstagramIcon, href: '#' },
+  { label: 'Facebook', Icon: FacebookIcon, href: '#' },
+  { label: 'TikTok', Icon: TikTokIcon, href: '#' },
+  { label: 'Twitter', Icon: TwitterIcon, href: '#' },
+  { label: 'YouTube', Icon: YoutubeIcon, href: '#' },
 ]
 
 export function SiteHeader() {
@@ -33,11 +33,7 @@ export function SiteHeader() {
       {/* Mobile full nav sheet */}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetTrigger className="hidden" aria-label="Open menu" />
-        <SheetContent
-          side="right"
-          className="bg-black border-gray-18 w-3/4 p-0"
-          showCloseButton
-        >
+        <SheetContent side="right" className="bg-black border-gray-18 w-3/4 p-0" showCloseButton>
           <nav className="flex flex-col pt-16 pb-8">
             {navLinks.map(({ label, href }) => (
               <Link
