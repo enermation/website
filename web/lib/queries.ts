@@ -13,6 +13,24 @@ const PRODUCT_METAFIELDS = `
   engine: metafield(namespace: "vehicle", key: "engine") { value type }
 `
 
+const MENU_RESOURCE_FRAGMENT = `
+  resource {
+    __typename
+    ... on Collection {
+      handle
+    }
+    ... on Product {
+      handle
+    }
+    ... on Page {
+      handle
+    }
+    ... on Blog {
+      handle
+    }
+  }
+`
+
 // ── Products ──────────────────────────────────────────────────────────────────
 
 export const GET_ALL_PRODUCTS = `
@@ -141,6 +159,29 @@ export const GET_SHOP_INFO = `
       name
       primaryDomain {
         url
+      }
+    }
+  }
+`
+
+export const GET_HEADER_MENU = `
+  query getHeaderMenu($handle: String!) {
+    menu(handle: $handle) {
+      id
+      title
+      items {
+        id
+        title
+        url
+        type
+        ${MENU_RESOURCE_FRAGMENT}
+        items {
+          id
+          title
+          url
+          type
+          ${MENU_RESOURCE_FRAGMENT}
+        }
       }
     }
   }
