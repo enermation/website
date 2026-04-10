@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Barlow_Semi_Condensed, Bebas_Neue, Inter, Playfair_Display } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 import { SiteFooter } from '@/components/site-footer'
 
@@ -21,6 +22,12 @@ const body = Inter({
   variable: '--font-body',
   weight: ['400', '500'],
   subsets: ['latin'],
+  display: 'swap',
+})
+
+const flauta = localFont({
+  src: '../public/fonts/flauta.ttf',
+  variable: '--font-flauta',
   display: 'swap',
 })
 
@@ -52,7 +59,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${display.variable} ${heading.variable} ${body.variable} ${luxury.variable} h-full antialiased`}
+      className={`${display.variable} ${heading.variable} ${body.variable} ${luxury.variable} ${flauta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {children}

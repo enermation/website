@@ -29,6 +29,12 @@
   /* ─── Max widths ─── */
   --max-w-site: 82.5rem; /* 1320px — main container */
 
+  /* ─── Wordmark font ─── */
+  --font-flauta: var(--font-flauta);
+
+  /* ─── Footer wordmark size (fills container width for ENERMATION) ─── */
+  --text-footer-wordmark: 15.5vw;
+
   /* ─── Lightbox dimensions ─── */
   --w-lightbox: 95vw;
   --h-lightbox: 85vh;
@@ -133,6 +139,7 @@
 
   /* Gray palette */
   --gray-7: oklch(0.17 0 0); /* #111111 Cod Gray */
+  --gray-9: oklch(0.2 0 0); /* ~#1a1a1a — card nav cards */
   --gray-16: oklch(0.27 0 0); /* #282828 Mine Shaft */
   --gray-18: oklch(0.3 0 0); /* #2e2e2e */
   --gray-20: oklch(0.32 0 0); /* #333333 Mine Shaft */
@@ -196,6 +203,28 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer utilities {
+  .grid-layout {
+    @apply mx-auto grid w-full max-w-full grid-cols-4 gap-3 px-4 lg:grid-cols-12;
+  }
+
+  .footer-grid {
+    grid-template-rows: auto auto 28px;
+    row-gap: 2.5rem; /* 40px = gap-y-10 */
+  }
+
+  @media (min-width: 1024px) {
+    .footer-grid {
+      grid-template-rows: auto;
+      row-gap: 0.5rem; /* 8px = gap-y-2 */
+    }
+  }
+
+  .translate-y-footer-meta {
+    transform: translateY(3px);
+  }
 }
 
 @layer base {

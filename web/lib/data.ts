@@ -72,6 +72,47 @@ export const carsForSaleImage =
 export const sellYourCarImage =
   'https://www.figma.com/api/mcp/asset/e9c949d8-d2fb-40e1-842b-0c8220145bce'
 
+export type CardNavLink = {
+  label: string
+  href: string
+}
+
+export type CardNavItem = {
+  label: string
+  href: string
+  links: CardNavLink[]
+}
+
+export const cardNavItems: CardNavItem[] = [
+  {
+    label: "Showroom",
+    href: "#",
+    links: [
+      { label: "All Stock", href: primaryShowroomCollectionHref },
+      { label: "Latest Arrivals", href: "#" },
+      { label: "Reserved", href: "#" },
+    ],
+  },
+  {
+    label: "Sell Your Car",
+    href: "#",
+    links: [
+      { label: "Get a Valuation", href: "#" },
+      { label: "How It Works", href: "#" },
+      { label: "FAQ", href: "#" },
+    ],
+  },
+  {
+    label: "Services",
+    href: "#",
+    links: [
+      { label: "Vehicle Sourcing", href: "#" },
+      { label: "Finance", href: "#" },
+      { label: "Delivery", href: "#" },
+    ],
+  },
+]
+
 // ── Navigation ───────────────────────────────────────────────────────────────
 
 export const navLinks: NavLink[] = [
