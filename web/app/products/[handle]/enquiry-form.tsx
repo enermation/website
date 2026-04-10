@@ -1,6 +1,7 @@
 'use client'
 
-import { ChevronDown, Phone, User } from 'lucide-react'
+import { mdiAccount, mdiChevronDown, mdiPhone } from '@mdi/js'
+import { Icon } from '@mdi/react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -49,7 +50,7 @@ export function EnquiryForm({
     <form data-slot="enquiry-form" onSubmit={handleSubmit} className="border border-gray-90">
       <div className="flex items-start gap-5 border-b border-gray-90 p-6">
         <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-gray-98">
-          <User className="size-7 text-gray-33" />
+          <Icon path={mdiAccount} size={1} className="size-7 text-gray-33" />
         </div>
         <div className="flex flex-col gap-1">
           <p className="font-body text-15 font-medium text-foreground">{sellerName}</p>
@@ -58,7 +59,7 @@ export function EnquiryForm({
             href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
             className="mt-2 inline-flex items-center gap-1.5 font-body text-13 text-brand-green transition-opacity hover:opacity-80"
           >
-            <Phone className="size-4" />
+            <Icon path={mdiPhone} size={1} className="size-4" />
             {productPage.labels.callAgent}
           </a>
         </div>
@@ -88,7 +89,7 @@ export function EnquiryForm({
             <span className="font-body text-13 text-foreground">
               {productPage.labels.countryCode}
             </span>
-            <ChevronDown className="size-3.5 text-gray-33" />
+            <Icon path={mdiChevronDown} size={1} className="size-3.5 text-gray-33" />
           </div>
           <Input
             type="tel"

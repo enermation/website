@@ -8,7 +8,6 @@ import Link from 'next/link'
 import { Suspense, useEffect, useRef, useState } from 'react'
 import type { Group } from 'three'
 import { heroCategories } from '@/lib/data'
-import { useIsMobile } from '@/hooks/use-mobile'
 
 const TOTAL = heroCategories.length
 
@@ -85,7 +84,6 @@ export function HeroCarousel() {
   const [activeIndex, setActiveIndex] = useState(0)
   const dragStartX = useRef<number | null>(null)
   const reducedMotion = useReducedMotion()
-  const isMobile = useIsMobile()
 
   const navigate = (dir: 1 | -1) => setActiveIndex(i => (i + dir + TOTAL) % TOTAL)
 
@@ -109,7 +107,7 @@ export function HeroCarousel() {
 
   return (
     <section
-      className="relative min-h-screen overflow-hidden select-none touch-manipulation max-md:h-screen-mobile max-md:min-h-0"
+      className="relative min-h-screen overflow-hidden select-none touch-manipulation"
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onKeyDown={onKeyDown}
@@ -117,7 +115,7 @@ export function HeroCarousel() {
     >
       {/* Three.js canvas */}
       <div className="absolute inset-0">
-        <Canvas camera={{ position: [0, 2, isMobile ? 7 : 5], fov: 45 }} dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
+        <Canvas camera={{ position: [0, 2, 5], fov: 45 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}>
           <color attach="background" args={['#1a1a1a']} />
           <Suspense fallback={null}>
             <Environment
