@@ -92,48 +92,7 @@ export const carsForSaleImage = '/images/cars-for-sale.webp'
 
 export const sellYourCarImage = '/images/sell-your-car.webp'
 
-export type CardNavLink = {
-  label: string
-  href: string
-}
-
-export type CardNavItem = {
-  label: string
-  href: string
-  links: CardNavLink[]
-}
-
-export const cardNavItems: CardNavItem[] = [
-  {
-    label: 'Showroom',
-    href: '#',
-    links: [
-      { label: 'All Stock', href: primaryShowroomCollectionHref },
-      { label: 'Latest Arrivals', href: '#' },
-      { label: 'Reserved', href: '#' },
-    ],
-  },
-  {
-    label: 'Sell Your Car',
-    href: '#',
-    links: [
-      { label: 'Get a Valuation', href: '#' },
-      { label: 'How It Works', href: '#' },
-      { label: 'FAQ', href: '#' },
-    ],
-  },
-  {
-    label: 'Services',
-    href: '#',
-    links: [
-      { label: 'Vehicle Sourcing', href: '#' },
-      { label: 'Finance', href: '#' },
-      { label: 'Delivery', href: '#' },
-    ],
-  },
-]
-
-// â”€â”€ Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€ Navigation â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 export const navLinks: NavLink[] = [
   { label: 'Home', href: '/' },
@@ -418,7 +377,7 @@ export const dealerInfo = {
   listingAgentValue: 'License #LU977TT',
   registeredYear: '2026',
   about:
-    "Based in Preston in Lancashire, close to Junction 31A of the M6 Motorway, Enermation are internationally renowned for offering a unique selection of some of the world's finest automobiles. With literally hundreds of beautiful cars supplied to a diverse customer base, Enermation is the premier supercar dealer in the UK.",
+    "Based in Preston in Lancashire, close to Junction 31A of the M6 Motorway, Enermation stock a wide range of contemporary and classic Super Cars and sports cars for sale from such marques as Aston Martin, Bentley, Bugatti, Ferrari, Lamborghini, Pagani, Porsche and a great many more. Enermation Supercars are internationally renowned for offering a unique selection of some of the world's finest automobiles. With literally hundreds of beautiful cars supplied to a diverse customer base, Enermation is the premier and Number 1 Supercar dealer in the UK.",
 }
 
 // â”€â”€ Product page copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
