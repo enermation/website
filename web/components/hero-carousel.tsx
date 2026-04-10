@@ -2,7 +2,7 @@
 
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { Icon } from '@mdi/react'
-import { Center, ContactShadows, Environment, useGLTF } from '@react-three/drei'
+import { Bounds, ContactShadows, Environment, useGLTF } from '@react-three/drei'
 import { Canvas, useFrame } from '@react-three/fiber'
 import Link from 'next/link'
 import { Suspense, useEffect, useRef, useState } from 'react'
@@ -13,18 +13,9 @@ const TOTAL = heroCategories.length
 
 const MODEL_PATHS = ['/models/sedan.glb', '/models/suv.glb', '/models/commercial.glb']
 
-// Scale multipliers derived from bounding box inspection (gltf-transform inspect):
-//   sedan bbox X: 5.45  → reference, scale 1.0
-//   suv   bbox Z: 5.04  → rotated 90°, scale = 5.45/5.04 = 1.08
-//   commercial Z: 5.74  → rotated 90°, scale = 5.45/5.74 = 0.95
-const MODEL_SCALES = [1.0, 0.85, 0.62]
-
 // SUV and commercial models are oriented length-along-Z (front faces camera).
 // Rotate 90° around Y so the side profile faces the camera, matching the sedan.
 const MODEL_ROTATIONS = [0, Math.PI / 2, Math.PI / 2]
-
-// Per-model vertical nudge to visually center each model in the viewport.
-const MODEL_OFFSETS_Y = [-0.4, 0, 0]
 
 useGLTF.preload('/models/sedan.glb')
 useGLTF.preload('/models/suv.glb')
@@ -46,7 +37,7 @@ function useReducedMotion() {
   return reduced
 }
 
-// ── Single model, centered ────────────────────────────────────────────────────
+// ── Single model, auto-framed ─────────────────────────────────────────────────
 
 function CategoryMesh({
   index,
@@ -57,7 +48,6 @@ function CategoryMesh({
 }) {
   const groupRef = useRef<Group>(null)
   const { scene } = useGLTF(MODEL_PATHS[index])
-  const nativeScale = MODEL_SCALES[index]
 
   // Slow idle rotation
   useFrame((_, delta) => {
@@ -66,15 +56,14 @@ function CategoryMesh({
   })
 
   return (
-    <group
-      scale={[nativeScale, nativeScale, nativeScale]}
-      rotation-y={MODEL_ROTATIONS[index]}
-      position-y={MODEL_OFFSETS_Y[index]}
-    >
-      <Center>
-        <primitive ref={groupRef} object={scene} />
-      </Center>
-    </group>
+    <Bounds fit clip observe margin={1.5}>
+      <group
+        ref={groupRef}
+        rotation-y={MODEL_ROTATIONS[index]}
+      >
+        <primitive object={scene} />
+      </group>
+    </Bounds>
   )
 }
 
@@ -115,7 +104,7 @@ export function HeroCarousel() {
     >
       {/* Three.js canvas */}
       <div className="absolute inset-0">
-        <Canvas camera={{ position: [0, 2, 5], fov: 45 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}>
+        <Canvas camera={{ position: [0, 2, 5], fov: 45 }} dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
           <color attach="background" args={['#1a1a1a']} />
           <Suspense fallback={null}>
             <Environment
