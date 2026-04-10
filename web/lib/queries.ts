@@ -89,6 +89,7 @@ export const GET_PRODUCT_BY_HANDLE = `
       title
       description
       handle
+      createdAt
       vendor
       tags
       availableForSale
@@ -226,6 +227,57 @@ export const GET_PRODUCTS_IN_COLLECTION = `
             description
             availableForSale
             images(first: 1) {
+              edges {
+                node {
+                  url
+                  altText
+                  width
+                  height
+                }
+              }
+            }
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            variants(first: 3) {
+              edges {
+                node {
+                  id
+                  title
+                  availableForSale
+                  price {
+                    amount
+                    currencyCode
+                  }
+                }
+              }
+            }
+            ${PRODUCT_METAFIELDS}
+          }
+        }
+      }
+    }
+  }
+`
+
+export const GET_RELATED_PRODUCTS_IN_COLLECTION = `
+  query getRelatedProductsInCollection($handle: String!, $sortKey: ProductCollectionSortKeys!, $reverse: Boolean, $filter: [ProductFilter!], $first: Int = 4) {
+    collection(handle: $handle) {
+      id
+      title
+      products(first: $first, sortKey: $sortKey, reverse: $reverse, filters: $filter) {
+        edges {
+          node {
+            id
+            title
+            handle
+            vendor
+            description
+            availableForSale
+            images(first: 10) {
               edges {
                 node {
                   url
