@@ -73,7 +73,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
             'group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100'
           )}
         >
-          <div className="flex flex-col gap-1 rounded-2xl border border-white-20 bg-gray-16 p-4 shadow-xl">
+          <div className="flex flex-col gap-1 rounded-2xl border border-white-20 bg-surface-elevated p-4 shadow-xl">
             <p className="pb-1 font-heading text-sm font-semibold text-background">{item.label}</p>
             {item.children.map(child => {
               const iconPath = menuItemIcon(child.label)
@@ -87,7 +87,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                     focusRing
                   )}
                 >
-                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-gray-20">
+                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-surface">
                     <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
                   </span>
                   <span>{child.label}</span>
@@ -95,9 +95,9 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
               ) : (
                 <span
                   key={`${item.label}-${child.label}`}
-                  className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-gray-60"
+                  className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-muted-foreground"
                 >
-                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-gray-20">
+                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-surface">
                     <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
                   </span>
                   <span>{child.label}</span>
@@ -109,11 +109,11 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
               <Link
                 href={featured.href}
                 className={cn(
-                  'mt-2 rounded-xl border border-white-30 bg-gray-20 p-3 transition-colors hover:bg-gray-33',
+                  'mt-2 rounded-xl border border-white-30 bg-surface p-3 transition-colors hover:bg-accent',
                   focusRing
                 )}
               >
-                <p className="font-heading text-13 text-gray-60">
+                <p className="font-heading text-13 text-muted-foreground">
                   {headerDropdownCopy.featuredLabel}
                 </p>
                 <p className="mt-1 font-body text-sm text-background">{featured.label}</p>
@@ -195,7 +195,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
             </SheetTrigger>
             <SheetContent
               side="left"
-              className="w-full max-w-none border-r border-white-20 bg-gray-16 p-0 text-background backdrop-blur-md sm:max-w-none"
+              className="w-full max-w-none border-r border-white-20 bg-surface-dark p-0 text-background backdrop-blur-md sm:max-w-none"
             >
               <div className="flex h-full flex-col pt-12">
                 <SheetTitle className="sr-only">Site navigation</SheetTitle>
@@ -219,7 +219,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
                         <Link
                           href={item.href}
                           className={cn(
-                            'font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:text-gray-60',
+                            'font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:text-muted-foreground',
                             focusRing
                           )}
                           onClick={() => setMobileOpen(false)}
@@ -240,7 +240,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
                                 key={`${item.label}-${child.label}`}
                                 href={child.href}
                                 className={cn(
-                                  'font-body text-sm text-background transition-colors hover:text-gray-60',
+                                  'font-body text-sm text-background transition-colors hover:text-muted-foreground',
                                   focusRing
                                 )}
                                 onClick={() => setMobileOpen(false)}
@@ -250,7 +250,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
                             ) : (
                               <span
                                 key={`${item.label}-${child.label}`}
-                                className="font-body text-sm text-gray-60"
+                                className="font-body text-sm text-muted-foreground"
                               >
                                 {child.label}
                               </span>

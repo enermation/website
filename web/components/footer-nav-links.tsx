@@ -44,12 +44,12 @@ export function FooterNavLinks({ links, className }: FooterNavLinksProps) {
       className={cn('flex flex-col gap-y-2 overflow-hidden', className)}
       aria-label="Footer navigation"
     >
-      <ul className="flex flex-col gap-y-2 text-gray-90">
+      <ul className="flex flex-col gap-y-2 text-on-dark">
         {links.map(({ label, href }) => (
           <li key={label}>
             <Link
               href={href}
-              className="inline-flex w-fit font-heading text-4xl font-semibold uppercase leading-none tracking-tight text-gray-90 transition-colors hover:text-white"
+              className="inline-flex w-fit font-heading text-4xl font-semibold uppercase leading-none tracking-tight text-on-dark transition-colors hover:text-on-dark"
             >
               {label}
             </Link>

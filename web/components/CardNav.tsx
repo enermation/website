@@ -155,7 +155,7 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
       <nav
         ref={navRef}
         className={cn(
-          'relative h-[60px] overflow-hidden rounded-xl border border-gray-90 bg-white shadow-md will-change-[height]',
+          'relative h-[60px] overflow-hidden rounded-xl border border-subtle bg-card shadow-md will-change-[height]',
           isExpanded && 'open'
         )}
       >
@@ -199,7 +199,7 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
           {/* Phone CTA — desktop only */}
           <Link
             href="tel:+441772663777"
-            className="hidden md:inline-flex items-center gap-2 rounded-full bg-gray-16 px-4 py-2 font-body font-bold text-white text-xs tracking-wide transition-colors hover:bg-gray-18"
+            className="hidden md:inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2 font-body font-bold text-background text-xs tracking-wide transition-colors hover:bg-muted"
           >
             +44 (0)1772 663777
           </Link>
@@ -227,7 +227,7 @@ const CardNav = ({ items, className, onMenuClick }: CardNavProps) => {
             <div
               key={item.label}
               ref={setCardRef(idx)}
-              className="flex flex-col gap-2 p-3 rounded-lg bg-gray-98 min-w-0 flex-1 h-auto min-h-[60px] md:h-full select-none"
+              className="flex flex-col gap-2 p-3 rounded-lg bg-muted min-w-0 flex-1 h-auto min-h-[60px] md:h-full select-none"
             >
               <Link
                 href={item.href}

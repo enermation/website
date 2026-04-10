@@ -39,7 +39,7 @@ function SectionHeading({ title, dark = false }: { title: string; dark?: boolean
       <h2
         className={cn(
           'font-display font-normal text-section uppercase tracking-widest text-center',
-          dark ? 'text-gray-93' : 'text-gray-7'
+          dark ? 'text-on-dark' : 'text-heading'
         )}
       >
         {title}
@@ -75,7 +75,7 @@ function LatestArrivalCard({ product }: { product: ShopifyProduct }) {
 
   return (
     <Link href={`/products/${product.handle}`} className="group flex flex-col">
-      <AspectRatio ratio={3 / 2} className="overflow-hidden bg-gray-94">
+      <AspectRatio ratio={3 / 2} className="overflow-hidden bg-surface-elevated">
         {image && (
           <Image
             src={image.url}
@@ -88,8 +88,8 @@ function LatestArrivalCard({ product }: { product: ShopifyProduct }) {
       </AspectRatio>
 
       <div className="flex flex-1 flex-col gap-3 px-1 pt-4">
-        <h3 className="font-display text-xl leading-snug text-gray-7">{product.title}</h3>
-        <p className="line-clamp-3 font-body text-15 leading-relaxed text-gray-33">
+        <h3 className="font-display text-xl leading-snug text-heading">{product.title}</h3>
+        <p className="line-clamp-3 font-body text-15 leading-relaxed text-body">
           {product.description}
         </p>
         <p className="font-heading text-lg font-semibold text-foreground">
@@ -98,10 +98,10 @@ function LatestArrivalCard({ product }: { product: ShopifyProduct }) {
       </div>
 
       {details.length > 0 && (
-        <div className="mt-4 grid grid-cols-2 gap-y-3 border-t border-gray-87 px-1 pt-3">
+        <div className="mt-4 grid grid-cols-2 gap-y-3 border-t border-subtle px-1 pt-3">
           {details.map(({ icon: iconPath, label }) => (
             <div key={label} className="flex items-center gap-2 pr-2">
-              <Icon path={iconPath} size={1} className="size-3.5 shrink-0 text-gray-7" />
+              <Icon path={iconPath} size={1} className="size-3.5 shrink-0 text-heading" />
               <span className="truncate font-body text-13 font-medium text-foreground">
                 {label}
               </span>
@@ -118,7 +118,7 @@ function CollectionCard({ collection }: { collection: ShopifyCollection }) {
     <Link href={`/collections/${collection.handle}`} className="flex flex-col group">
       <Card className="overflow-hidden p-0 ring-0">
         {collection.image && (
-          <AspectRatio ratio={3 / 2} className="bg-gray-94">
+          <AspectRatio ratio={3 / 2} className="bg-surface-elevated">
             <Image
               src={collection.image.url}
               alt={collection.image.altText ?? collection.title}
@@ -128,11 +128,11 @@ function CollectionCard({ collection }: { collection: ShopifyCollection }) {
             />
           </AspectRatio>
         )}
-        <CardContent className="px-1 pt-3 pb-4 border-b border-gray-87">
-          <h3 className="font-display font-normal text-xl text-gray-7 leading-snug">
+        <CardContent className="px-1 pt-3 pb-4 border-b border-subtle">
+          <h3 className="font-display font-normal text-xl text-heading leading-snug">
             {collection.title}
           </h3>
-          <p className="font-heading text-13 text-gray-33 mt-1 tracking-wide">Discover More</p>
+          <p className="font-heading text-13 text-body mt-1 tracking-wide">Discover More</p>
         </CardContent>
       </Card>
     </Link>
@@ -145,9 +145,9 @@ function MobileCollectionCard({ collection }: { collection: ShopifyCollection })
   return (
     <Link
       href={`/collections/${collection.handle}`}
-      className="block border-b border-gray-87 py-6 last:border-b-0"
+      className="block border-b border-subtle py-6 last:border-b-0"
     >
-      <AspectRatio ratio={3 / 2} className="bg-gray-94 mb-4">
+      <AspectRatio ratio={3 / 2} className="bg-surface-elevated mb-4">
         {collection.image && (
           <Image
             src={collection.image.url}
@@ -158,10 +158,10 @@ function MobileCollectionCard({ collection }: { collection: ShopifyCollection })
           />
         )}
       </AspectRatio>
-      <h3 className="mb-2 px-1 font-display text-2xl font-normal text-gray-7">
+      <h3 className="mb-2 px-1 font-display text-2xl font-normal text-heading">
         {collection.title}
       </h3>
-      <div className="flex items-center gap-2 px-1 font-heading text-13 text-gray-33">
+      <div className="flex items-center gap-2 px-1 font-heading text-13 text-body">
         <Icon path={mdiChevronRight} size={1} className="size-3 shrink-0" />
         <span>Discover More</span>
       </div>
@@ -199,7 +199,7 @@ export default async function Home() {
         </section>
 
         {/* ── LATEST ARRIVALS / COLLECTIONS ─────────────────────────────── */}
-        <section className="bg-white">
+        <section className="bg-card">
           <SectionHeading title="Latest Arrivals for Sale" />
 
           <div className="mx-auto max-w-site px-4 pb-14 md:px-6 md:pb-16">
@@ -211,7 +211,7 @@ export default async function Home() {
             <div className="mt-12 flex justify-center">
               <Link
                 href={primaryShowroomCollectionHref}
-                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-foreground bg-background px-8 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
+                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-strong bg-background px-8 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
               >
                 {productPage.labels.viewAllStockForSale}
               </Link>
@@ -219,7 +219,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="bg-white">
+        <section className="bg-card">
           <SectionHeading title="Browse Our Collections" />
 
           {/* Mobile: collections list */}
@@ -230,7 +230,7 @@ export default async function Home() {
             <div className="flex justify-center mt-10">
               <Link
                 href={primaryShowroomCollectionHref}
-                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-black bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-black transition-colors duration-200 hover:bg-black hover:text-white"
+                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-strong bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
               >
                 View all collections
               </Link>
@@ -247,7 +247,7 @@ export default async function Home() {
             <div className="flex justify-center mt-12">
               <Link
                 href={primaryShowroomCollectionHref}
-                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-black bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-black transition-colors duration-200 hover:bg-black hover:text-white"
+                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-strong bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
               >
                 View all collections
               </Link>
@@ -256,7 +256,7 @@ export default async function Home() {
         </section>
 
         {/* ── SUPPLYING THE FINEST SUPERCARS ────────────────────────────────── */}
-        <section className="relative bg-gray-7 overflow-hidden">
+        <section className="relative bg-surface-dark overflow-hidden">
           <Image
             src={supplyingImage}
             alt=""
@@ -267,7 +267,7 @@ export default async function Home() {
 
           {/* Mobile layout: left-aligned, stacked heading */}
           <div className="md:hidden relative z-10 px-4 py-28">
-            <h2 className="font-display font-normal text-banner uppercase tracking-widest text-white leading-tight mb-8">
+            <h2 className="font-display font-normal text-banner uppercase tracking-widest text-on-dark leading-tight mb-8">
               Supplying
               <br />
               the
@@ -276,7 +276,7 @@ export default async function Home() {
               <br />
               Supercars
             </h2>
-            <p className="font-body text-15 text-white leading-relaxed mb-8">
+            <p className="font-body text-15 text-on-dark leading-relaxed mb-8">
               Based in Preston in Lancashire, close to Junction 31A of the M6 Motorway, Enermation
               stock a wide range of contemporary and classic Super Cars and sports cars for sale
               from such marques as Aston Martin, Bentley, Bugatti, Ferrari, Lamborghini, Pagani,
@@ -287,7 +287,7 @@ export default async function Home() {
             </p>
             <Link
               href="#"
-              className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-white bg-transparent h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-white transition-colors duration-200 hover:bg-white hover:text-gray-7"
+              className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-on-dark bg-transparent h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-on-dark transition-colors duration-200 hover:bg-on-dark hover:text-surface-dark"
             >
               Our Story
             </Link>
@@ -296,12 +296,12 @@ export default async function Home() {
           {/* Desktop layout: right-aligned half-width */}
           <div className="hidden md:flex relative z-10 max-w-site mx-auto py-32 px-20 justify-end">
             <div className="w-1/2 text-right">
-              <h2 className="font-display font-normal text-banner uppercase tracking-widest text-white leading-tight mb-8">
+              <h2 className="font-display font-normal text-banner uppercase tracking-widest text-on-dark leading-tight mb-8">
                 Supplying the
                 <br />
                 finest Supercars
               </h2>
-              <p className="font-body text-15 text-white leading-relaxed mb-8">
+              <p className="font-body text-15 text-on-dark leading-relaxed mb-8">
                 Based in Preston in Lancashire, close to Junction 31A of the M6 Motorway, Enermation
                 stock a wide range of contemporary and classic Super Cars and sports cars for sale
                 from such marques as Aston Martin, Bentley, Bugatti, Ferrari, Lamborghini, Pagani,
@@ -312,7 +312,7 @@ export default async function Home() {
               </p>
               <Link
                 href="#"
-                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-white bg-transparent h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-white transition-colors duration-200 hover:bg-white hover:text-gray-7"
+                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-on-dark bg-transparent h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-on-dark transition-colors duration-200 hover:bg-on-dark hover:text-surface-dark"
               >
                 Our Story
               </Link>
@@ -337,7 +337,7 @@ export default async function Home() {
             },
           ].map(({ image, title, alt, href }) => (
             <Link key={title} href={href} className="relative overflow-hidden block">
-              <div className="relative aspect-square md:aspect-video bg-gray-94">
+              <div className="relative aspect-square md:aspect-video bg-surface-elevated">
                 <Image
                   src={image}
                   alt={alt}
@@ -348,10 +348,10 @@ export default async function Home() {
                 <div className="absolute inset-0 bg-black-40" />
               </div>
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-                <h2 className="font-display font-normal text-section uppercase tracking-widest text-gray-93">
+                <h2 className="font-display font-normal text-section uppercase tracking-widest text-on-dark">
                   {title}
                 </h2>
-                <p className="font-heading text-15 text-white-70 tracking-widest">Discover More</p>
+                <p className="font-heading text-15 text-on-dark-muted tracking-widest">Discover More</p>
                 <div className="mt-4">
                   <StripeBar dark />
                 </div>
@@ -361,12 +361,12 @@ export default async function Home() {
         </section>
 
         {/* ── LATEST COMPANY NEWS ───────────────────────────────────────────── */}
-        <section className="bg-white">
+        <section className="bg-card">
           <SectionHeading title="Latest Company News" />
         </section>
 
         {/* ── NEWS + INSTAGRAM + NEWSLETTER ────────────────────────────────── */}
-        <section className="bg-gray-98 py-16 px-4 md:pt-24 md:pb-16 md:px-20">
+        <section className="bg-muted py-16 px-4 md:pt-24 md:pb-16 md:px-20">
           <div className="max-w-site mx-auto">
             {/* Two-column layout on desktop, stacked on mobile */}
             <div className="flex flex-col gap-10 md:grid md:grid-cols-12 mb-16 md:mb-20">
@@ -382,7 +382,7 @@ export default async function Home() {
                   />
                 </AspectRatio>
 
-                <div className="flex items-center gap-3 mb-4 font-heading text-13 text-black tracking-wide">
+                <div className="flex items-center gap-3 mb-4 font-heading text-13 text-muted tracking-wide">
                   <span className="flex items-center gap-1.5">
                     <Icon path={mdiCalendar} size={1} className="size-3 shrink-0" />
                     {newsArticle.date}
@@ -391,34 +391,34 @@ export default async function Home() {
                   <span>{newsArticle.category}</span>
                 </div>
 
-                <h3 className="font-display font-normal text-3xl text-gray-7 leading-tight mb-4">
+                <h3 className="font-display font-normal text-3xl text-heading leading-tight mb-4">
                   {newsArticle.title}
                 </h3>
-                <p className="font-body text-15 text-gray-33 leading-relaxed mb-8">
+                <p className="font-body text-15 text-body leading-relaxed mb-8">
                   {newsArticle.excerpt}
                 </p>
 
                 <Link
                   href="#"
-                  className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-black bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-black transition-colors duration-200 hover:bg-black hover:text-white"
+                  className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-strong bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
                 >
                   Read More
                 </Link>
               </article>
 
               {/* Instagram feed */}
-              <div className="md:col-span-5 md:border-l md:border-gray-90 md:pl-8">
-                <h3 className="font-display font-medium text-2xl text-gray-7 uppercase tracking-widest mb-3 text-center md:text-left">
+              <div className="md:col-span-5 md:border-l md:border-border md:pl-8">
+                <h3 className="font-display font-medium text-2xl text-heading uppercase tracking-widest mb-3 text-center md:text-left">
                   Enermation on Instagram
                 </h3>
                 <div className="flex items-center gap-2 mb-5 justify-center md:justify-start">
-                  <InstagramIcon className="size-3 text-black shrink-0" />
-                  <span className="font-heading text-13 text-black">Follow us @enermation</span>
+                  <InstagramIcon className="size-3 text-foreground shrink-0" />
+                  <span className="font-heading text-13 text-foreground">Follow us @enermation</span>
                 </div>
                 {/* 3-col on mobile, 4-col on desktop */}
                 <div className="grid grid-cols-3 md:grid-cols-4 gap-px">
                   {instagramPosts.map(post => (
-                    <AspectRatio key={post.id} ratio={1} className="overflow-hidden bg-gray-94">
+                    <AspectRatio key={post.id} ratio={1} className="overflow-hidden bg-surface-elevated">
                       <Image
                         src={post.image}
                         alt=""
@@ -433,16 +433,16 @@ export default async function Home() {
             </div>
 
             {/* Newsletter */}
-            <div className="border-t border-gray-90 pt-12 flex flex-col items-center gap-3">
-              <h3 className="font-display font-medium text-2xl text-gray-7 uppercase tracking-widest">
+            <div className="border-t border-border pt-12 flex flex-col items-center gap-3">
+              <h3 className="font-display font-medium text-2xl text-heading uppercase tracking-widest">
                 Newsletter
               </h3>
-              <p className="font-heading text-13 text-gray-33 text-center">
+              <p className="font-heading text-13 text-body text-center">
                 Stay up to date with our news and latest stock
               </p>
               <Link
                 href="#"
-                className="mt-3 inline-flex items-center gap-1.5 shrink-0 justify-center rounded-none border-2 border-black bg-black h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-white transition-colors duration-200 hover:bg-gray-16 hover:border-gray-16"
+                className="mt-3 inline-flex items-center gap-1.5 shrink-0 justify-center rounded-none border-2 border-strong bg-foreground h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-background transition-colors duration-200 hover:bg-muted hover:border-muted"
               >
                 Mailing list sign up
                 <Icon path={mdiEmail} size={1} className="size-3.5" />

@@ -45,14 +45,14 @@ function FooterWordmark() {
 
 function FooterSocialLinks({ className }: { className?: string }) {
   return (
-    <div className={cn('flex flex-row flex-wrap gap-x-1 text-13 text-gray-60', className)}>
+    <div className={cn('flex flex-row flex-wrap gap-x-1 text-13 text-on-dark-muted', className)}>
       {footerSocialLinks.map(({ label, href }, index) => (
         <span key={label} className="flex items-center gap-x-1">
           <Link
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-87 transition-colors hover:text-white"
+            className="text-on-dark-muted transition-colors hover:text-on-dark"
           >
             {label}
           </Link>
@@ -65,7 +65,7 @@ function FooterSocialLinks({ className }: { className?: string }) {
 
 function FooterCopyright({ className }: { className?: string }) {
   return (
-    <p className={cn('text-13 text-gray-60', className)}>
+    <p className={cn('text-13 text-on-dark-muted', className)}>
       © Enermation {new Date().getFullYear()} all rights reserved
     </p>
   )

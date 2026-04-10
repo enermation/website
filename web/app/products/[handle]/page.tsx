@@ -137,8 +137,8 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
     <>
       <SiteHeader />
 
-      <nav className="hidden border-b border-gray-90 bg-background md:block">
-        <div className="mx-auto flex max-w-site items-center gap-2 px-6 py-3 font-heading text-13 text-gray-33">
+      <nav className="hidden border-b border-border bg-background md:block">
+        <div className="mx-auto flex max-w-site items-center gap-2 px-6 py-3 font-heading text-13 text-body">
           <Link href="/" className="transition-colors hover:text-foreground">
             {productPage.breadcrumb.home}
           </Link>
@@ -157,16 +157,16 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
         </div>
       </div>
 
-      <nav className="border-b border-gray-90 bg-background md:hidden">
-        <div className="mx-auto flex max-w-site items-center gap-1 px-4 py-3 font-heading text-13 text-gray-33">
+      <nav className="border-b border-border bg-background md:hidden">
+        <div className="mx-auto flex max-w-site items-center gap-1 px-4 py-3 font-heading text-13 text-body">
           <Link href="/" className="transition-colors hover:text-foreground">
             {productPage.breadcrumb.home}
           </Link>
-          <Icon path={mdiChevronRight} size={1} className="size-3 text-gray-60" />
+          <Icon path={mdiChevronRight} size={1} className="size-3 text-muted-foreground" />
           <Link href={showroomHref} className="transition-colors hover:text-foreground">
             {showroomLabel}
           </Link>
-          <Icon path={mdiChevronRight} size={1} className="size-3 text-gray-60" />
+          <Icon path={mdiChevronRight} size={1} className="size-3 text-muted-foreground" />
           <span className="truncate text-foreground">{product.title}</span>
         </div>
       </nav>
@@ -178,11 +178,11 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-6">
                 <div className="flex flex-col gap-1">
                   {product.vendor && (
-                    <p className="font-body text-13 uppercase tracking-widest text-gray-33">
+                    <p className="font-body text-13 uppercase tracking-widest text-body">
                       {product.vendor}
                     </p>
                   )}
-                  <h1 className="font-display text-2xl leading-tight text-gray-7 md:text-3xl md:leading-snug">
+                  <h1 className="font-display text-2xl leading-tight text-heading md:text-3xl md:leading-snug">
                     {product.title}
                   </h1>
                 </div>
@@ -197,7 +197,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                       'h-auto rounded-none px-3 py-1 font-heading text-13 font-semibold uppercase tracking-wide',
                       product.availableForSale
                         ? 'border-brand-green text-brand-green'
-                        : 'border-gray-33 text-gray-33'
+                        : 'border-muted-foreground text-muted-foreground'
                     )}
                   >
                     {product.availableForSale
@@ -209,7 +209,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
 
               {specOptions.length > 0 && (
                 <>
-                  <div className="grid grid-cols-2 gap-px border-y border-gray-90 bg-gray-90 md:hidden">
+                  <div className="grid grid-cols-2 gap-px border-y border-border bg-surface md:hidden">
                     {mobileSpecs.map(option => {
                       const iconPath = getSpecIcon(option.name)
 
@@ -218,11 +218,11 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                           key={option.name}
                           className="flex items-start gap-3 bg-background px-4 py-3"
                         >
-                          <div className="mt-0.5 flex size-9 items-center justify-center rounded-full bg-gray-98">
-                            <Icon path={iconPath} size={1} className="size-4 text-gray-33" />
+                          <div className="mt-0.5 flex size-9 items-center justify-center rounded-full bg-muted">
+                            <Icon path={iconPath} size={1} className="size-4 text-muted-foreground" />
                           </div>
                           <div className="flex min-w-0 flex-col gap-0.5">
-                            <span className="font-heading text-13 uppercase tracking-wide text-gray-33">
+                            <span className="font-heading text-13 uppercase tracking-wide text-body">
                               {option.name}
                             </span>
                             <span className="truncate font-body text-15 text-foreground">
@@ -234,18 +234,18 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                     })}
                   </div>
 
-                  <div className="hidden border-y border-gray-90 md:flex">
+                  <div className="hidden border-y border-border md:flex">
                     {specOptions.map((option, index) => (
                       <div
                         key={option.name}
                         className={cn(
                           'flex flex-1 flex-col gap-0.5 px-6 py-4',
-                          index > 0 && 'border-l border-gray-90',
+                          index > 0 && 'border-l border-border',
                           index === 0 && 'pl-0'
                         )}
                       >
-                        <span className="font-display text-lg text-gray-7">{option.value}</span>
-                        <span className="font-body text-13 text-gray-33">{option.name}</span>
+                        <span className="font-display text-lg text-heading">{option.value}</span>
+                        <span className="font-body text-13 text-body">{option.name}</span>
                       </div>
                     ))}
                   </div>
@@ -254,23 +254,23 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
 
               {product.description && (
                 <div className="flex flex-col gap-3">
-                  <h2 className="font-display text-xl text-gray-7">
+                  <h2 className="font-display text-xl text-heading">
                     {productPage.sections.aboutThisListing}
                   </h2>
-                  <p className="whitespace-pre-line font-body text-15 leading-relaxed text-gray-33">
+                  <p className="whitespace-pre-line font-body text-15 leading-relaxed text-body">
                     {product.description}
                   </p>
                 </div>
               )}
 
               <div className="flex flex-col gap-3">
-                <h2 className="font-display text-xl text-gray-7">
+                <h2 className="font-display text-xl text-heading">
                   {productPage.sections.listingDetails}
                 </h2>
-                <dl className="divide-y divide-gray-90 border-y border-gray-90 md:border-y-0">
+                <dl className="divide-y divide-border border-y border-border md:border-y-0">
                   {product.vendor && (
                     <div className="flex items-start justify-between gap-4 py-3">
-                      <dt className="font-body text-13 text-gray-33">{productPage.labels.brand}</dt>
+                      <dt className="font-body text-13 text-body">{productPage.labels.brand}</dt>
                       <dd className="text-right font-body text-13 text-foreground">
                         {product.vendor}
                       </dd>
@@ -278,18 +278,18 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                   )}
                   {specOptions.map(option => (
                     <div key={option.name} className="flex items-start justify-between gap-4 py-3">
-                      <dt className="font-body text-13 text-gray-33">{option.name}</dt>
+                      <dt className="font-body text-13 text-body">{option.name}</dt>
                       <dd className="text-right font-body text-13 text-foreground">
                         {option.value}
                       </dd>
                     </div>
                   ))}
                   <div className="flex items-start justify-between gap-4 py-3">
-                    <dt className="font-body text-13 text-gray-33">{productPage.labels.status}</dt>
+                    <dt className="font-body text-13 text-body">{productPage.labels.status}</dt>
                     <dd
                       className={cn(
                         'text-right font-body text-13',
-                        product.availableForSale ? 'text-brand-green' : 'text-gray-33'
+                        product.availableForSale ? 'text-brand-green' : 'text-body'
                       )}
                     >
                       {product.availableForSale
@@ -298,7 +298,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                     </dd>
                   </div>
                   <div className="flex items-start justify-between gap-4 py-3">
-                    <dt className="font-body text-13 text-gray-33">{productPage.labels.price}</dt>
+                    <dt className="font-body text-13 text-body">{productPage.labels.price}</dt>
                     <dd className="text-right font-heading text-13 font-semibold text-foreground">
                       {product.availableForSale ? price : productPage.labels.reserved}
                     </dd>
@@ -307,16 +307,16 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
               </div>
 
               <div className="flex flex-col gap-4 md:hidden">
-                <h2 className="font-display text-xl text-gray-7">
+                <h2 className="font-display text-xl text-heading">
                   {productPage.sections.askAQuestion}
                 </h2>
                 <div className="flex items-start gap-4">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-90">
-                    <Icon path={mdiAccount} size={1} className="size-5 text-gray-33" />
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface">
+                    <Icon path={mdiAccount} size={1} className="size-5 text-muted-foreground" />
                   </div>
                   <div className="flex flex-col gap-1">
                     <p className="font-body text-13 font-medium text-foreground">{sellerName}</p>
-                    <p className="font-body text-13 text-gray-33">
+                    <p className="font-body text-13 text-body">
                       {productPage.labels.specialistExportBroker}
                     </p>
                     <a
@@ -332,16 +332,16 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
               </div>
 
               <div className="hidden flex-col gap-4 md:flex">
-                <h2 className="font-display text-xl text-gray-7">
+                <h2 className="font-display text-xl text-heading">
                   {productPage.sections.askAQuestion}
                 </h2>
                 <div className="flex items-start gap-4">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-90">
-                    <Icon path={mdiAccount} size={1} className="size-5 text-gray-33" />
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface">
+                    <Icon path={mdiAccount} size={1} className="size-5 text-muted-foreground" />
                   </div>
                   <div className="flex flex-col gap-1">
                     <p className="font-body text-13 font-medium text-foreground">{sellerName}</p>
-                    <p className="font-body text-13 text-gray-33">
+                    <p className="font-body text-13 text-body">
                       {productPage.labels.specialistExportBroker}
                     </p>
                     <a
@@ -356,14 +356,14 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
               </div>
 
               <div className="hidden flex-col gap-3 md:flex">
-                <h2 className="font-display text-xl text-gray-7">
+                <h2 className="font-display text-xl text-heading">
                   {productPage.sections.contactAgent}
                 </h2>
                 <ContactSection productTitle={product.title} />
               </div>
 
-              <div className="flex flex-col gap-4 border-t border-gray-90 pt-6 md:pt-8">
-                <h2 className="font-display text-xl text-gray-7">
+              <div className="flex flex-col gap-4 border-t border-border pt-6 md:pt-8">
+                <h2 className="font-display text-xl text-heading">
                   {productPage.sections.forSaleBy}
                 </h2>
 
@@ -377,16 +377,16 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <p className="font-body text-13 font-medium text-gray-33">Collection</p>
+                  <p className="font-body text-13 font-medium text-body">Collection</p>
                   <p className="font-body text-13 leading-relaxed text-foreground">
                     {showroomLabel}
                   </p>
                 </div>
 
-                <dl className="divide-y divide-gray-90">
+                <dl className="divide-y divide-border">
                   {sellerWebsite && (
                     <div className="flex flex-col gap-0.5 py-3">
-                      <dt className="font-body text-13 text-gray-33">Website</dt>
+                      <dt className="font-body text-13 text-body">Website</dt>
                       <dd>
                         <a
                           href={sellerWebsite}
@@ -398,7 +398,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                     </div>
                   )}
                   <div className="flex flex-col gap-0.5 py-3">
-                    <dt className="font-body text-13 text-gray-33">
+                    <dt className="font-body text-13 text-body">
                       {productPage.labels.phoneNumber}
                     </dt>
                     <dd>
@@ -411,7 +411,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                     </dd>
                   </div>
                   <div className="flex flex-col gap-0.5 py-3">
-                    <dt className="font-body text-13 text-gray-33">{productPage.labels.email}</dt>
+                    <dt className="font-body text-13 text-body">{productPage.labels.email}</dt>
                     <dd>
                       <a
                         href={`mailto:${footerContactInfo.email}`}
@@ -425,14 +425,14 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
               </div>
             </div>
 
-            <aside className="sticky top-6 hidden flex-col gap-5 border border-gray-90 p-6 md:col-span-1 md:flex">
-              <div className="flex items-start gap-3 border-b border-gray-90 pb-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-90">
-                  <Icon path={mdiAccount} size={1} className="size-5 text-gray-33" />
+            <aside className="sticky top-6 hidden flex-col gap-5 border border-border p-6 md:col-span-1 md:flex">
+              <div className="flex items-start gap-3 border-b border-border pb-4">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface">
+                  <Icon path={mdiAccount} size={1} className="size-5 text-muted-foreground" />
                 </div>
                 <div className="flex flex-col gap-0.5">
                   <p className="font-body text-13 font-medium text-foreground">{sellerName}</p>
-                  <p className="font-body text-13 text-gray-33">
+                  <p className="font-body text-13 text-body">
                     {productPage.labels.specialistDealer}
                   </p>
                   <a
@@ -447,7 +447,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
 
               <EnquiryForm productTitle={product.title} />
 
-              <div className="border-t border-gray-90 pt-4">
+              <div className="border-t border-border pt-4">
                 <Link
                   href={showroomHref}
                   className="font-body text-13 text-foreground transition-colors hover:text-brand-green"
@@ -461,10 +461,10 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       </section>
 
       {similarCars.length > 0 && (
-        <section className="bg-gray-98 py-12 md:py-16">
+        <section className="bg-muted py-12 md:py-16">
           <div className="mx-auto max-w-site px-4 md:px-6">
             <div className="mb-8 flex items-center justify-between md:mb-10">
-              <h2 className="font-display text-2xl uppercase tracking-widest text-gray-7 md:text-section">
+              <h2 className="font-display text-2xl uppercase tracking-widest text-heading md:text-section">
                 {productPage.sections.youMayAlsoLike}
               </h2>
               <div className="hidden md:block">
@@ -488,15 +488,15 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
         </section>
       )}
 
-      <section className="border-t border-gray-90 bg-background py-12 md:py-16">
+      <section className="border-t border-border bg-background py-12 md:py-16">
         <div className="mx-auto max-w-site px-4 md:px-6">
-          <h2 className="mb-8 font-display text-2xl uppercase tracking-widest text-gray-7 md:mb-10 md:text-section">
+          <h2 className="mb-8 font-display text-2xl uppercase tracking-widest text-heading md:mb-10 md:text-section">
             {productPage.sections.relatedStories}
           </h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {relatedStories.map(story => (
               <Link key={story.id} href={story.href} className="group flex flex-col gap-3">
-                <div className="car-card-media relative overflow-hidden bg-gray-94">
+                <div className="car-card-media relative overflow-hidden bg-surface-elevated">
                   <Image
                     src={story.image}
                     alt={story.title}
@@ -505,12 +505,12 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                     sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 100vw"
                   />
                 </div>
-                <div className="flex items-center gap-2 font-heading text-13 text-gray-33">
+                <div className="flex items-center gap-2 font-heading text-13 text-body">
                   <span>{story.date}</span>
                   <span>|</span>
                   <span>{story.category}</span>
                 </div>
-                <h3 className="font-display text-base leading-snug text-gray-7 transition-colors group-hover:text-brand-green">
+                <h3 className="font-display text-base leading-snug text-heading transition-colors group-hover:text-brand-green">
                   {story.title}
                 </h3>
               </Link>
