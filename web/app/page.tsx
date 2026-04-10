@@ -86,7 +86,7 @@ function LatestArrivalCard({ product }: { product: ShopifyProduct }) {
       <AspectRatio ratio={3 / 2} className="overflow-hidden bg-surface-elevated">
         {image && (
           <Image
-src={image.url}
+            src={image.url}
             alt={image.altText ?? product.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -128,7 +128,7 @@ function CollectionCard({ collection }: { collection: ShopifyCollection }) {
         {collection.image && (
           <AspectRatio ratio={3 / 2} className="bg-surface-elevated">
             <Image
-    src={collection.image.url}
+              src={collection.image.url}
               alt={collection.image.altText ?? collection.title}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -158,7 +158,7 @@ function MobileCollectionCard({ collection }: { collection: ShopifyCollection })
       <AspectRatio ratio={3 / 2} className="bg-surface-elevated mb-4">
         {collection.image && (
           <Image
-src={collection.image.url}
+            src={collection.image.url}
             alt={collection.image.altText ?? collection.title}
             fill
             className="object-cover"
@@ -263,14 +263,11 @@ export default async function Home() {
 
         {/* ── SUPPLYING THE FINEST SUPERCARS ────────────────────────────────── */}
         <section className="relative bg-surface-dark overflow-hidden">
-          <Image
-            src={supplyingImage}
-            alt=""
-            fill
-            className="object-cover"
+          <Image src={supplyingImage} alt="" fill className="object-cover" aria-hidden="true" />
+          <div
+            className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/30"
             aria-hidden="true"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/30" aria-hidden="true" />
 
           {/* Mobile layout: left-aligned, stacked heading */}
           <div className="md:hidden relative z-10 px-4 py-28">
@@ -293,7 +290,7 @@ export default async function Home() {
               is the premier and Number 1 Supercar dealer in the UK.
             </p>
             <Link
-              href="#"
+              href="/#about"
               className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-on-dark bg-transparent h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-on-dark transition-colors duration-200 hover:bg-on-dark hover:text-surface-dark"
             >
               Our Story
@@ -318,7 +315,7 @@ export default async function Home() {
                 is the premier and Number 1 Supercar dealer in the UK.
               </p>
               <Link
-                href="#"
+                href="/#about"
                 className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-on-dark bg-transparent h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-on-dark transition-colors duration-200 hover:bg-on-dark hover:text-surface-dark"
               >
                 Our Story
@@ -340,7 +337,7 @@ export default async function Home() {
               image: sellYourCarImage,
               title: 'Sell Us Your Car',
               alt: 'A red Ferrari F40 — we buy supercars',
-              href: '#',
+              href: '/#sell-your-car',
             },
           ].map(({ image, title, alt, href }) => (
             <Link key={title} href={href} className="relative overflow-hidden block">
@@ -358,7 +355,9 @@ export default async function Home() {
                 <h2 className="font-display font-normal text-section uppercase tracking-widest text-on-dark">
                   {title}
                 </h2>
-                <p className="font-heading text-15 text-on-dark-muted tracking-widest">Discover More</p>
+                <p className="font-heading text-15 text-on-dark-muted tracking-widest">
+                  Discover More
+                </p>
                 <div className="mt-4">
                   <StripeBar dark />
                 </div>
@@ -406,7 +405,7 @@ export default async function Home() {
                 </p>
 
                 <Link
-                  href="#"
+                  href="/news"
                   className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-strong bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
                 >
                   Read More
@@ -420,12 +419,18 @@ export default async function Home() {
                 </h3>
                 <div className="flex items-center gap-2 mb-5 justify-center md:justify-start">
                   <InstagramIcon className="size-3 text-foreground shrink-0" />
-                  <span className="font-heading text-13 text-foreground">Follow us @enermation</span>
+                  <span className="font-heading text-13 text-foreground">
+                    Follow us @enermation
+                  </span>
                 </div>
                 {/* 3-col on mobile, 4-col on desktop */}
                 <div className="grid grid-cols-3 md:grid-cols-4 gap-px">
                   {instagramPosts.map(post => (
-                    <AspectRatio key={post.id} ratio={1} className="overflow-hidden bg-surface-elevated">
+                    <AspectRatio
+                      key={post.id}
+                      ratio={1}
+                      className="overflow-hidden bg-surface-elevated"
+                    >
                       <Image
                         src={post.image}
                         alt=""
@@ -448,7 +453,7 @@ export default async function Home() {
                 Stay up to date with our news and latest stock
               </p>
               <Link
-                href="#"
+                href="/#newsletter"
                 className="mt-3 inline-flex items-center gap-1.5 shrink-0 justify-center rounded-none border-2 border-strong bg-foreground h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-background transition-colors duration-200 hover:bg-muted hover:border-muted"
               >
                 Mailing list sign up
