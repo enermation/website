@@ -330,6 +330,7 @@ export type RelatedStory = {
   date: string
   category: string
   title: string
+  excerpt: string
   href: string
 }
 
@@ -340,6 +341,7 @@ export const relatedStories: RelatedStory[] = [
     date: '06 March 2024',
     category: 'Latest News',
     title: "Enermation's Top 5 Supercar Picks to Grace Your Driveway in 2024",
+    excerpt: 'A quick look at the performance machines defining this year\'s collector market.',
     href: '#',
   },
   {
@@ -348,6 +350,8 @@ export const relatedStories: RelatedStory[] = [
     date: '15 January 2024',
     category: 'Cars',
     title: 'Why the Ferrari SF90 Stradale Remains the Ultimate Hybrid Supercar',
+    excerpt:
+      'Engineering, hybrid response, and long-term desirability keep the SF90 at the top.',
     href: '#',
   },
   {
@@ -356,6 +360,8 @@ export const relatedStories: RelatedStory[] = [
     date: '22 November 2023',
     category: 'News',
     title: 'Lamborghini Aventador Ultimae: The Last of a Legendary V12 Era',
+    excerpt:
+      'How the final naturally aspirated V12 flagship secured its place among modern icons.',
     href: '#',
   },
 ]
@@ -365,6 +371,9 @@ export const relatedStories: RelatedStory[] = [
 export const dealerInfo = {
   name: 'Enermation Supercars',
   address: 'Preston, Lancashire, UK',
+  memberSinceLabel: 'Joined 3 months ago',
+  listingAgentValue: 'License #LU977TT',
+  registeredYear: '2026',
   about:
     "Based in Preston in Lancashire, close to Junction 31A of the M6 Motorway, Enermation are internationally renowned for offering a unique selection of some of the world's finest automobiles. With literally hundreds of beautiful cars supplied to a diverse customer base, Enermation is the premier supercar dealer in the UK.",
 }
@@ -377,12 +386,12 @@ export const productPage = {
     showroom: 'Showroom',
   },
   sections: {
-    aboutThisListing: 'About This Listing',
-    listingDetails: 'Listing Details',
+    aboutThisListing: 'About This Car',
+    listingDetails: 'Car Details',
     askAQuestion: 'Ask a Question',
     contactAgent: 'Contact Agent',
-    forSaleBy: 'For Sale By',
-    youMayAlsoLike: 'You May Also Like',
+    forSaleBy: 'For Sale by',
+    youMayAlsoLike: 'You Might Also Like',
     relatedStories: 'Related Stories',
   },
   labels: {
@@ -403,5 +412,60 @@ export const productPage = {
     soldOrReserved: 'Sold / Reserved',
     reserved: 'Reserved',
     reservedMoreWanted: 'Reserved — More Wanted',
+    notSpecified: 'Not specified',
+    vatType: 'VAT Type',
+    noDutyPaid: 'No Duty Paid',
+    year: 'Year',
+    mileage: 'Mileage',
+    location: 'Location',
+    website: 'Website',
+    engine: 'Engine',
+    gearbox: 'Gearbox',
+    carType: 'Car type',
+    driveTrain: 'Drive train',
+    fuelType: 'Fuel type',
+    power: 'Power',
+    condition: 'Condition',
+    vin: 'VIN',
+    color: 'Color',
+    interiorColor: 'Interior color',
+    internalReference: 'Internal Reference',
+    licenseNumber: 'License number',
+    aboutDealer: 'About',
+    viewMore: 'View more',
+    listingAgent: 'Listing agent',
+    registeredOnPlatform: 'Registered on Enermation',
+    showPhoneNumber: 'Show phone number',
+    listed: 'Listed',
+    reportListing: 'Report Listing',
+    reportListingSubjectPrefix: 'Report listing:',
+    askSellerPlaceholder: 'Ask the seller for more information about this car...',
+    askQuestionCta: 'Ask a question',
+    sendMessage: 'Send message',
+    yourMessage: 'Your message',
+    yourName: 'Your name',
+    yourEmail: 'Your email address',
+    enquiryMessagePrefix: 'Please contact me regarding',
+    phoneOptional: 'Phone number (optional)',
+    countryCode: '+44',
+    notifySimilar: 'Notify me via email when similar listings appear',
+    agreePrefix: 'I agree to',
+    agreeMiddle: 'and',
+    agreeSuffix: 'including sharing my activity and interests with the seller',
+    termsOfUse: 'Terms of Use',
+    privacyPolicy: 'Privacy Policy',
+    tapToExpand: 'Tap to expand',
+    clickToExpand: 'Click to expand',
+    save: 'Save',
+    share: 'Share',
+    copyLinkPrompt: 'Copy this link',
+    lightboxHelp: 'Arrow keys navigate | Esc close',
+    photos: 'Photos',
+    listingForSaleSingular: 'listing for sale',
+    listingsForSalePlural: 'listings for sale',
+  },
+  links: {
+    termsOfUse: '#',
+    privacyPolicy: '#',
   },
 } as const

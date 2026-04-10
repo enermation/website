@@ -1,20 +1,22 @@
 'use client'
 
-import { ChevronLeft, ChevronRight, Heart, Images, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Heart, Images, Share2, X } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { Carousel, type CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel'
+import { productPage } from '@/lib/data'
 import type { ShopifyImage } from '@/lib/types'
+
+const desktopGallerySlots = ['top-left', 'top-right', 'bottom-left', 'bottom-right'] as const
 
 export function ImageGallery({ images }: { images: ShopifyImage[] }) {
   const [api, setApi] = useState<CarouselApi>()
   const [activeIndex, setActiveIndex] = useState(0)
-  const [desktopPage, setDesktopPage] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [lightboxControlsVisible, setLightboxControlsVisible] = useState(true)
-  const [autoHideTimer, setAutoHideTimer] = useState<NodeJS.Timeout | null>(null)
+  const [saved, setSaved] = useState(false)
+  const autoHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lightboxRef = useRef<HTMLDivElement>(null)
   const touchStartX = useRef(0)
   const touchEndX = useRef(0)
@@ -22,13 +24,10 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
   const touchEndY = useRef(0)
   const touchStartTime = useRef(0)
   const lastTapTime = useRef(0)
-  const pageSize = 5
-  const pageCount = Math.max(1, Math.ceil(images.length / pageSize))
-  const desktopPageStart = desktopPage * pageSize
-  const desktopPageEnd = Math.min(images.length, desktopPageStart + pageSize)
-  const mainImage = images[desktopPageStart] ?? images[0] ?? null
-  const sideImages = images.slice(desktopPageStart + 1, desktopPageStart + pageSize)
-  const remainingCount = images.length - (desktopPageStart + pageSize)
+
+  const mainImage = images[0] ?? null
+  const sideImages = images.slice(1, 5)
+  const remainingCount = Math.max(0, images.length - 5)
   const currentImage = images[activeIndex] ?? mainImage
 
   useEffect(() => {
@@ -51,13 +50,13 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
   useEffect(() => {
     if (!lightboxOpen) return
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
         setLightboxOpen(false)
-      } else if (e.key === 'ArrowLeft') {
+      } else if (event.key === 'ArrowLeft') {
         setLightboxControlsVisible(true)
         setLightboxIndex(prev => (prev === 0 ? images.length - 1 : prev - 1))
-      } else if (e.key === 'ArrowRight') {
+      } else if (event.key === 'ArrowRight') {
         setLightboxControlsVisible(true)
         setLightboxIndex(prev => (prev === images.length - 1 ? 0 : prev + 1))
       }
@@ -70,37 +69,39 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
   useEffect(() => {
     if (!lightboxOpen || !lightboxControlsVisible) return
 
-    // Auto-hide controls after 3 seconds of inactivity
-    if (autoHideTimer) clearTimeout(autoHideTimer)
+    if (autoHideTimer.current) clearTimeout(autoHideTimer.current)
 
-    const timer = setTimeout(() => {
+    autoHideTimer.current = setTimeout(() => {
       setLightboxControlsVisible(false)
     }, 3000)
 
-    setAutoHideTimer(timer)
-
     return () => {
-      if (timer) clearTimeout(timer)
+      if (autoHideTimer.current) clearTimeout(autoHideTimer.current)
     }
-  }, [lightboxOpen, lightboxControlsVisible, autoHideTimer])
+  }, [lightboxOpen, lightboxControlsVisible])
 
   function handleLightboxActivity() {
     setLightboxControlsVisible(true)
-    if (autoHideTimer) {
-      clearTimeout(autoHideTimer)
-      setAutoHideTimer(null)
+
+    if (autoHideTimer.current) {
+      clearTimeout(autoHideTimer.current)
+      autoHideTimer.current = null
     }
   }
 
-  function handleTouchStart(e: React.TouchEvent) {
-    touchStartX.current = e.touches[0].clientX
-    touchStartY.current = e.touches[0].clientY
+  function handleTouchStart(event: React.TouchEvent) {
+    const x = event.touches[0].clientX
+    const y = event.touches[0].clientY
+    touchStartX.current = x
+    touchEndX.current = x
+    touchStartY.current = y
+    touchEndY.current = y
     touchStartTime.current = Date.now()
   }
 
-  function handleTouchMove(e: React.TouchEvent) {
-    touchEndX.current = e.touches[0].clientX
-    touchEndY.current = e.touches[0].clientY
+  function handleTouchMove(event: React.TouchEvent) {
+    touchEndX.current = event.touches[0].clientX
+    touchEndY.current = event.touches[0].clientY
   }
 
   function handleTouchEnd() {
@@ -113,7 +114,6 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
     const diffY = touchEndY.current - touchStartY.current
     const duration = Date.now() - touchStartTime.current
 
-    // Check for vertical drag (pull down to close)
     if (diffY > closeThreshold && Math.abs(diffX) < closeThreshold / 2) {
       setLightboxOpen(false)
       touchStartX.current = 0
@@ -123,28 +123,21 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
       return
     }
 
-    // Check for horizontal swipe (navigation)
     if (Math.abs(diffX) >= swipeThreshold && Math.abs(diffY) < swipeThreshold / 2) {
       if (diffX > 0) {
-        // Swipe left - next image
         setLightboxIndex(prev => (prev === images.length - 1 ? 0 : prev + 1))
       } else {
-        // Swipe right - previous image
         setLightboxIndex(prev => (prev === 0 ? images.length - 1 : prev - 1))
       }
     }
 
-    // Check for tap (toggle controls)
     if (Math.abs(diffX) < 10 && Math.abs(diffY) < 10 && duration < tapThreshold) {
       const now = Date.now()
       const timeSinceLastTap = now - lastTapTime.current
 
-      // Double-tap detected
       if (timeSinceLastTap < doubleTapThreshold && timeSinceLastTap > 0) {
-        // Double-tap action: could zoom (future enhancement)
         lastTapTime.current = 0
       } else {
-        // Single tap: toggle controls visibility
         setLightboxControlsVisible(prev => !prev)
         lastTapTime.current = now
       }
@@ -166,15 +159,33 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
     setLightboxOpen(false)
   }
 
+  async function handleShare(event: React.MouseEvent<HTMLButtonElement>) {
+    event.stopPropagation()
+
+    const url = window.location.href
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: document.title, url })
+        return
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(url)
+    } catch {
+      window.prompt(productPage.labels.copyLinkPrompt, url)
+    }
+  }
+
+  function handleSave(event: React.MouseEvent<HTMLButtonElement>) {
+    event.stopPropagation()
+    setSaved(current => !current)
+  }
+
   if (!mainImage || !currentImage) return null
-
-  function showPreviousDesktopPage() {
-    setDesktopPage(currentPage => (currentPage === 0 ? pageCount - 1 : currentPage - 1))
-  }
-
-  function showNextDesktopPage() {
-    setDesktopPage(currentPage => (currentPage + 1) % pageCount)
-  }
 
   return (
     <>
@@ -189,8 +200,9 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
             <CarouselItem key={image.url} className="pl-0">
               <button
                 type="button"
-                className="product-gallery-mobile relative overflow-hidden bg-gray-94 cursor-zoom-in transition-opacity duration-150 active:opacity-30"
+                className="product-gallery-mobile relative cursor-zoom-in overflow-hidden bg-gray-94 transition-opacity duration-150 active:opacity-30"
                 onClick={() => openLightbox(index)}
+                aria-label={`${productPage.labels.clickToExpand} ${index + 1}`}
               >
                 <Image
                   src={image.url}
@@ -207,35 +219,49 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
 
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
           <div className="flex items-center gap-2">
-            <div className="flex size-11 items-center justify-center rounded-full border border-white-20 bg-white">
-              <Heart className="size-5 text-gray-7" strokeWidth={1.75} />
-            </div>
-            <div className="flex size-11 items-center justify-center rounded-full bg-white">
-              <Images className="size-5 text-gray-7" strokeWidth={1.75} />
-            </div>
+            <button
+              type="button"
+              aria-label={productPage.labels.save}
+              aria-pressed={saved}
+              className="flex size-11 items-center justify-center rounded-full border border-white-20 bg-white-solid"
+              onClick={handleSave}
+            >
+              <Heart
+                className={saved ? 'size-5 fill-current text-gray-7' : 'size-5 text-gray-7'}
+                strokeWidth={1.75}
+              />
+            </button>
+            <button
+              type="button"
+              aria-label={productPage.labels.share}
+              className="flex size-11 items-center justify-center rounded-full bg-white-solid"
+              onClick={handleShare}
+            >
+              <Share2 className="size-5 text-gray-7" strokeWidth={1.75} />
+            </button>
           </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-black-40 px-3 py-1.5 font-heading text-12 text-white">
+          <div className="flex items-center gap-1.5 rounded-full bg-black-40 px-3 py-1.5 font-heading text-12 text-white-solid">
             <Images className="size-3.5" strokeWidth={1.75} />
-            <span>Tap to expand</span>
+            <span>{productPage.labels.tapToExpand}</span>
           </div>
         </div>
 
         <div className="absolute inset-x-0 bottom-0 flex justify-end p-4">
-          <div className="flex items-center gap-2 rounded-full border border-white-20 bg-black-40 px-4 py-2 font-heading text-13 text-white">
+          <div className="flex items-center gap-2 rounded-full border border-white-20 bg-black-40 px-4 py-2 font-heading text-13 text-white-solid">
             <Images className="size-4" strokeWidth={1.75} />
             <span>
-              {activeIndex + 1}/{images.length} Photos
+              {activeIndex + 1}/{images.length} {productPage.labels.photos}
             </span>
           </div>
         </div>
       </Carousel>
 
-      <div data-slot="image-gallery" className="hidden md:flex md:flex-col md:gap-4">
-        <div className="h-96 gap-px md:flex">
+      <div data-slot="image-gallery" className="relative hidden md:block">
+        <div className="product-gallery-desktop grid grid-cols-2 gap-px overflow-hidden bg-gray-90">
           <button
             type="button"
-            className="group relative flex-1 overflow-hidden bg-gray-94 cursor-zoom-in"
-            onClick={() => openLightbox(desktopPageStart)}
+            className="group relative h-full cursor-zoom-in overflow-hidden bg-gray-94"
+            onClick={() => openLightbox(0)}
           >
             <Image
               src={mainImage.url}
@@ -243,27 +269,31 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
               fill
               priority
               className="object-cover transition-opacity group-hover:opacity-90"
-              sizes="(min-width: 1320px) 660px, 50vw"
+              sizes="(min-width: 1920px) 862px, 50vw"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black-30 opacity-0 transition-opacity group-hover:opacity-100">
-              <div className="flex items-center gap-2 rounded-full bg-black-40 px-4 py-2 font-heading text-13 text-white">
+              <div className="flex items-center gap-2 rounded-full bg-black-40 px-4 py-2 font-heading text-13 text-white-solid">
                 <Images className="size-4" strokeWidth={1.75} />
-                <span>Click to expand</span>
+                <span>{productPage.labels.clickToExpand}</span>
               </div>
             </div>
           </button>
-        </div>
 
-        {sideImages.length > 0 && (
-          <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-px">
-            {sideImages.map((image, i) => {
-              const isLast = i === sideImages.length - 1
-              const imageIndex = desktopPageStart + 1 + i
+          <div className="grid grid-cols-2 grid-rows-2 gap-px">
+            {desktopGallerySlots.map((slotName, slotIndex) => {
+              const image = sideImages[slotIndex]
+              const imageIndex = slotIndex + 1
+              const isLastTile = slotIndex === 3
+
+              if (!image) {
+                return <div key={slotName} className="bg-gray-94" />
+              }
+
               return (
                 <button
-                  key={image.url}
+                  key={`${slotName}-${image.url}`}
                   type="button"
-                  className="group relative overflow-hidden bg-gray-94 cursor-zoom-in"
+                  className="group relative cursor-zoom-in overflow-hidden bg-gray-94 text-left"
                   onClick={() => openLightbox(imageIndex)}
                 >
                   <Image
@@ -271,78 +301,61 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                     alt={image.altText ?? ''}
                     fill
                     className="object-cover transition-opacity group-hover:opacity-90"
-                    sizes="(min-width: 1320px) 330px, 25vw"
+                    sizes="(min-width: 1920px) 429px, 25vw"
                   />
+
                   <div className="absolute inset-0 flex items-center justify-center bg-black-30 opacity-0 transition-opacity group-hover:opacity-100">
-                    <div className="flex items-center gap-2 rounded-full bg-black-40 px-4 py-2 font-heading text-13 text-white">
+                    <div className="flex items-center gap-2 rounded-full bg-black-40 px-4 py-2 font-heading text-13 text-white-solid">
                       <Images className="size-4" strokeWidth={1.75} />
-                      <span>Click to expand</span>
+                      <span>{productPage.labels.clickToExpand}</span>
                     </div>
                   </div>
-                  {isLast && remainingCount > 0 && (
-                    <button
-                      type="button"
-                      className="absolute inset-0 flex cursor-pointer items-end justify-end bg-black-30 p-3 transition-opacity hover:bg-black-40"
-                      onClick={e => {
-                        e.stopPropagation()
-                        openLightbox(desktopPageStart + 1)
-                      }}
-                    >
-                      <span className="bg-black-40 px-3 py-1 font-heading text-13 text-white">
-                        +{remainingCount} Photos
-                      </span>
-                    </button>
+
+                  {isLastTile && remainingCount > 0 && (
+                    <span className="absolute bottom-3 right-3 rounded-md bg-black-40 px-3 py-1 font-heading text-13 text-white-solid">
+                      +{remainingCount} {productPage.labels.photos}
+                    </span>
                   )}
                 </button>
               )
             })}
           </div>
-        )}
+        </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 rounded-full border border-gray-90 px-4 py-2 font-heading text-13 text-gray-7">
-              <Images className="size-4" strokeWidth={1.75} />
-              <span>
-                {desktopPageStart + 1}-{desktopPageEnd} of {images.length} Photos
-              </span>
-            </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between p-4">
+          <div className="pointer-events-auto flex items-center gap-2">
             <button
               type="button"
-              className="flex items-center gap-2 rounded-full bg-gray-90 px-4 py-2 font-heading text-13 text-gray-7 transition-colors hover:text-foreground"
-              onClick={() => openLightbox(0)}
+              aria-pressed={saved}
+              className="flex items-center gap-2 rounded-full border border-gray-90 bg-white-solid px-4 py-2 font-heading text-13 text-gray-7"
+              onClick={handleSave}
             >
-              <Images className="size-4" strokeWidth={1.75} />
-              <span>View All {images.length} Photos</span>
+              <Heart
+                className={saved ? 'size-4 fill-current text-gray-7' : 'size-4 text-gray-7'}
+                strokeWidth={1.75}
+              />
+              <span>{productPage.labels.save}</span>
+            </button>
+            <button
+              type="button"
+              className="flex items-center gap-2 rounded-full border border-gray-90 bg-white-solid px-4 py-2 font-heading text-13 text-gray-7"
+              onClick={handleShare}
+            >
+              <Share2 className="size-4" strokeWidth={1.75} />
+              <span>{productPage.labels.share}</span>
             </button>
           </div>
 
-          {pageCount > 1 && (
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-11 rounded-full border-2 px-4 font-heading text-13 font-semibold uppercase tracking-wide"
-                onClick={showPreviousDesktopPage}
-              >
-                <ChevronLeft className="size-4" />
-                <span>Prev</span>
-                <span className="sr-only">Previous images</span>
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-11 rounded-full border-2 px-4 font-heading text-13 font-semibold uppercase tracking-wide"
-                onClick={showNextDesktopPage}
-              >
-                <span>Next</span>
-                <ChevronRight className="size-4" />
-                <span className="sr-only">Next images</span>
-              </Button>
-            </div>
-          )}
+          <button
+            type="button"
+            className="pointer-events-auto flex items-center gap-2 rounded-full border border-white-20 bg-black-40 px-4 py-2 font-heading text-13 text-white-solid"
+            onClick={() => openLightbox(0)}
+          >
+            <Images className="size-4" strokeWidth={1.75} />
+            <span>
+              {images.length} {productPage.labels.photos}
+            </span>
+          </button>
         </div>
       </div>
 
@@ -353,37 +366,23 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
           role="dialog"
           aria-modal="true"
           aria-label="Image lightbox"
-          className="fixed left-0 top-0 z-50 flex items-center justify-center overflow-hidden overscroll-contain bg-black-40 touch-pan-y"
-          style={{ width: '100vw', height: '100dvh' }}
+          className="fixed inset-0 z-50 flex h-dvh w-screen items-center justify-center overflow-hidden overscroll-contain bg-black-40 touch-pan-y"
           onClick={closeLightbox}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          onMouseMove={() => handleLightboxActivity()}
-          onKeyDown={e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              handleLightboxActivity()
-            }
+          onMouseMove={handleLightboxActivity}
+          onKeyDown={event => {
+            if (event.key === 'Escape') closeLightbox()
           }}
         >
           <button
             type="button"
             aria-label="Close lightbox"
-            className="absolute top-4 right-4 z-20 flex size-11 items-center justify-center rounded-full bg-black-30 text-white transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-            style={{
-              top: 'max(1rem, env(safe-area-inset-top, 1rem))',
-              right: 'max(1rem, env(safe-area-inset-right, 1rem))',
-            }}
-            onClick={e => {
-              e.stopPropagation()
+            className="absolute right-4 top-4 z-20 flex size-11 items-center justify-center rounded-full bg-black-30 text-white-solid transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white-solid"
+            onClick={event => {
+              event.stopPropagation()
               closeLightbox()
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                closeLightbox()
-              }
             }}
           >
             <X className="size-5" strokeWidth={2} />
@@ -392,21 +391,11 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
           <button
             type="button"
             aria-label="Previous image"
-            className={`absolute left-2 top-1/2 z-20 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-black-30 text-white transition-all duration-300 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
-              lightboxControlsVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-            style={{ left: 'max(0.5rem, env(safe-area-inset-left, 0.5rem))' }}
-            onClick={e => {
-              e.stopPropagation()
+            className={cnLightboxControl(lightboxControlsVisible, 'left-2')}
+            onClick={event => {
+              event.stopPropagation()
               setLightboxControlsVisible(true)
               setLightboxIndex(prev => (prev === 0 ? images.length - 1 : prev - 1))
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                setLightboxControlsVisible(true)
-                setLightboxIndex(prev => (prev === 0 ? images.length - 1 : prev - 1))
-              }
             }}
           >
             <ChevronLeft className="size-6" strokeWidth={2} />
@@ -415,21 +404,11 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
           <button
             type="button"
             aria-label="Next image"
-            className={`absolute right-2 top-1/2 z-20 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-black-30 text-white transition-all duration-300 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
-              lightboxControlsVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-            style={{ right: 'max(0.5rem, env(safe-area-inset-right, 0.5rem))' }}
-            onClick={e => {
-              e.stopPropagation()
+            className={cnLightboxControl(lightboxControlsVisible, 'right-2')}
+            onClick={event => {
+              event.stopPropagation()
               setLightboxControlsVisible(true)
               setLightboxIndex(prev => (prev === images.length - 1 ? 0 : prev + 1))
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                setLightboxControlsVisible(true)
-                setLightboxIndex(prev => (prev === images.length - 1 ? 0 : prev + 1))
-              }
             }}
           >
             <ChevronRight className="size-6" strokeWidth={2} />
@@ -437,14 +416,10 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
 
           <button
             type="button"
-            className="relative flex items-center justify-center"
-            style={{ width: '100%', height: '100%' }}
-            onClick={e => e.stopPropagation()}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                e.stopPropagation()
-              }
+            className="relative size-full"
+            aria-label={`${productPage.labels.clickToExpand} ${lightboxIndex + 1}`}
+            onClick={event => {
+              event.stopPropagation()
             }}
           >
             <Image
@@ -458,21 +433,26 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
           </button>
 
           <div
-            className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 rounded-full bg-black-30 px-4 py-2 font-heading text-13 text-white transition-all duration-300 ${
-              lightboxControlsVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            className={`absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black-30 px-4 py-2 font-heading text-13 text-white-solid transition-all duration-300 ${
+              lightboxControlsVisible ? 'opacity-100' : 'pointer-events-none opacity-0'
             }`}
-            style={{ bottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))' }}
           >
             <Images className="size-4" strokeWidth={1.75} />
             <span>
-              {lightboxIndex + 1} / {images.length} Photos
+              {lightboxIndex + 1} / {images.length} {productPage.labels.photos}
             </span>
-            <span className="hidden md:inline-block ml-2 pl-2 border-l border-white-20 text-11 text-white-70">
-              ← → Navigate · Esc Close
+            <span className="ml-2 hidden border-l border-white-20 pl-2 text-11 text-white-70 md:inline-block">
+              {productPage.labels.lightboxHelp}
             </span>
           </div>
         </div>
       )}
     </>
   )
+}
+
+function cnLightboxControl(visible: boolean, edgeClass: string): string {
+  return `absolute ${edgeClass} top-1/2 z-20 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-black-30 text-white-solid transition-all duration-300 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white-solid ${
+    visible ? 'opacity-100' : 'pointer-events-none opacity-0'
+  }`
 }

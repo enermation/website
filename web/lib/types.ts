@@ -51,6 +51,7 @@ export type ShopifyProduct = {
   id: string
   title: string
   handle: string
+  createdAt?: string
   vendor: string
   description: string
   availableForSale: boolean
