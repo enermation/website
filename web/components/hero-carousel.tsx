@@ -2,7 +2,7 @@
 
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { Icon } from '@mdi/react'
-import { Bounds, ContactShadows, Environment, useGLTF } from '@react-three/drei'
+import { Stage, useGLTF } from '@react-three/drei'
 import { Canvas, useFrame } from '@react-three/fiber'
 import Link from 'next/link'
 import { Suspense, useEffect, useRef, useState } from 'react'
@@ -37,7 +37,7 @@ function useReducedMotion() {
   return reduced
 }
 
-// ── Single model, auto-framed ─────────────────────────────────────────────────
+// ── Single model, auto-framed with Stage ──────────────────────────────────────
 
 function CategoryMesh({
   index,
@@ -56,14 +56,19 @@ function CategoryMesh({
   })
 
   return (
-    <Bounds fit clip observe margin={1.5}>
+    <Stage
+      adjustCamera={1.5}
+      environment="city"
+      shadows="contact"
+      intensity={1.2}
+    >
       <group
         ref={groupRef}
         rotation-y={MODEL_ROTATIONS[index]}
       >
         <primitive object={scene} />
       </group>
-    </Bounds>
+    </Stage>
   )
 }
 
@@ -106,23 +111,6 @@ export function HeroCarousel() {
       <div className="absolute inset-0">
         <Canvas camera={{ position: [0, 2, 5], fov: 45 }} dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
           <color attach="background" args={['#1a1a1a']} />
-          <Suspense fallback={null}>
-            <Environment
-              preset="city"
-              background
-              backgroundBlurriness={0.3}
-              environmentIntensity={1.2}
-            />
-          </Suspense>
-          <ContactShadows
-            position={[0, -0.55, 0]}
-            opacity={0.6}
-            scale={12}
-            blur={2.5}
-            far={4}
-            resolution={256}
-            frames={1}
-          />
           <Suspense fallback={null}>
             <CategoryMesh key={activeIndex} index={activeIndex} reducedMotion={reducedMotion} />
           </Suspense>
