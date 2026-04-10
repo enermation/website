@@ -133,6 +133,8 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       .filter(collectionProduct => collectionProduct.handle !== handle)
       .slice(0, 3) ?? []
 
+  const listingCountLabel = `${collectionData?.data?.collection?.products.edges.length ?? 0} listings`
+
   return (
     <>
       <SiteHeader />
@@ -445,7 +447,12 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 </div>
               </div>
 
-              <EnquiryForm productTitle={product.title} />
+              <EnquiryForm
+                productTitle={product.title}
+                sellerName={sellerName}
+                showroomHref={showroomHref}
+                listingCountLabel={listingCountLabel}
+              />
 
               <div className="border-t border-border pt-4">
                 <Link
