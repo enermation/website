@@ -17,11 +17,7 @@ const TOTAL = heroCategories.length
 const STEP = Math.PI / 2 // 90° between each of the 4 items
 const RADIUS = 3.2
 
-const MODEL_PATHS = [
-  '/models/sedan.glb',
-  '/models/suv.glb',
-  '/models/commercial.glb',
-]
+const MODEL_PATHS = ['/models/sedan.glb', '/models/suv.glb', '/models/commercial.glb']
 
 // Per-model scale multipliers to normalize wildly different native sizes
 // Based on bounding box: sedan=5.45w, suv=2.20w, commercial=3.03w
@@ -179,82 +175,92 @@ export function HeroCarousel() {
   return (
     <section
       className="relative min-h-screen overflow-hidden select-none touch-manipulation"
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      onKeyDown={onKeyDown}
-      tabIndex={0}
+      aria-label="Product showcase carousel"
+      aria-roledescription="carousel"
     >
-      {/* Three.js canvas — fills the section absolutely */}
-      <div className="absolute inset-0">
-        <Canvas camera={{ position: [0, 2, 12], fov: 75 }} dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
-          <Suspense fallback={null}>
-            <Environment
-              preset="city"
-              background
-              backgroundBlurriness={0.3}
-              environmentIntensity={1.2}
+      <fieldset
+        aria-label="Use arrow keys to navigate slides"
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
+        onKeyDown={onKeyDown}
+        className="contents"
+      >
+        {/* Three.js canvas — fills the section absolutely */}
+        <div className="absolute inset-0">
+          <Canvas
+            camera={{ position: [0, 2, 12], fov: 75 }}
+            dpr={[1, 2]}
+            gl={{ antialias: true, alpha: true }}
+          >
+            <Suspense fallback={null}>
+              <Environment
+                preset="city"
+                background
+                backgroundBlurriness={0.3}
+                environmentIntensity={1.2}
+              />
+            </Suspense>
+            <ContactShadows
+              position={[0, -0.55, 0]}
+              opacity={0.6}
+              scale={12}
+              blur={2.5}
+              far={4}
+              resolution={256}
             />
-          </Suspense>
-          <ContactShadows
-            position={[0, -0.55, 0]}
-            opacity={0.6}
-            scale={12}
-            blur={2.5}
-            far={4}
-            resolution={256}
-          />
-          <CarouselScene activeIndex={activeIndex} reducedMotion={reducedMotion} />
-        </Canvas>
-      </div>
-
-      {/* Bottom fade — tall dark gradient so text is always readable over 3D models */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-black via-black/80 to-transparent" />
-
-      {/* Category label + CTA + dots */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
-        <h1 className="font-display font-normal text-section uppercase tracking-widest text-white text-center">
-          {active.label}
-        </h1>
-        <Link
-          href={active.href}
-          className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
-        >
-          Browse {active.label}
-        </Link>
-        <div className="flex items-center gap-3">
-          {heroCategories.map((cat, i) => (
-            <button
-              key={cat.label}
-              type="button"
-              aria-label={`Show ${cat.label}`}
-              onClick={() => setActiveIndex(i)}
-              className={`pointer-events-auto rounded-full transition-all duration-300 ${
-                i === activeIndex
-                  ? 'size-2.5 bg-on-dark'
-                  : 'size-1.5 bg-on-dark/40 hover:bg-on-dark/70'
-              }`}
-            />
-          ))}
+            <CarouselScene activeIndex={activeIndex} reducedMotion={reducedMotion} />
+          </Canvas>
         </div>
-      </div>
 
-      {/* Arrow navigation */}
-      <button
-        type="button"
-        aria-label="Previous category"
-        onClick={() => navigate(-1)}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 flex size-10 items-center justify-center text-on-dark/50 hover:text-on-dark transition-colors duration-200"
-      >
-        <Icon path={mdiChevronLeft} size={1} className="size-7" />
-      </button>
-      <button
-        type="button"
-        aria-label="Next category"
-        onClick={() => navigate(1)}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex size-10 items-center justify-center text-on-dark/50 hover:text-on-dark transition-colors duration-200"
-      >
-        <Icon path={mdiChevronRight} size={1} className="size-7" />
-      </button>
+        {/* Bottom fade — tall dark gradient so text is always readable over 3D models */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-black via-black/80 to-transparent" />
+
+        {/* Category label + CTA + dots */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
+          <h1 className="font-display font-normal text-section uppercase tracking-widest text-white text-center">
+            {active.label}
+          </h1>
+          <Link
+            href={active.href}
+            className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
+          >
+            Browse {active.label}
+          </Link>
+          <div className="flex items-center gap-3">
+            {heroCategories.map((cat, i) => (
+              <button
+                key={cat.label}
+                type="button"
+                aria-label={`Show ${cat.label}`}
+                onClick={() => setActiveIndex(i)}
+                className={`pointer-events-auto rounded-full transition-all duration-300 ${
+                  i === activeIndex
+                    ? 'size-2.5 bg-on-dark'
+                    : 'size-1.5 bg-on-dark/40 hover:bg-on-dark/70'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Arrow navigation */}
+        <button
+          type="button"
+          aria-label="Previous category"
+          onClick={() => navigate(-1)}
+          className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 flex size-10 items-center justify-center text-on-dark/50 hover:text-on-dark transition-colors duration-200"
+        >
+          <Icon path={mdiChevronLeft} size={1} className="size-7" />
+        </button>
+        <button
+          type="button"
+          aria-label="Next category"
+          onClick={() => navigate(1)}
+          className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex size-10 items-center justify-center text-on-dark/50 hover:text-on-dark transition-colors duration-200"
+        >
+          <Icon path={mdiChevronRight} size={1} className="size-7" />
+        </button>
+      </fieldset>
     </section>
   )
 }

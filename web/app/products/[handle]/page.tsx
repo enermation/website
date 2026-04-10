@@ -221,7 +221,11 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                           className="flex items-start gap-3 bg-background px-4 py-3"
                         >
                           <div className="mt-0.5 flex size-9 items-center justify-center rounded-full bg-muted">
-                            <Icon path={iconPath} size={1} className="size-4 text-muted-foreground" />
+                            <Icon
+                              path={iconPath}
+                              size={1}
+                              className="size-4 text-muted-foreground"
+                            />
                           </div>
                           <div className="flex min-w-0 flex-col gap-0.5">
                             <span className="font-heading text-13 uppercase tracking-wide text-body">
