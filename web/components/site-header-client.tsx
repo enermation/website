@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  mdiArrowBottomRight,
   mdiArrowRight,
   mdiBike,
   mdiCar,
@@ -41,6 +42,8 @@ const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible
 function DesktopNavItem({ item }: { item: HeaderNavItem }) {
   const hasChildren = item.children.length > 0
   const featured = item.children[0]
+  const isInventory = item.label === 'Inventory'
+  const childIcon = isInventory ? mdiArrowBottomRight : mdiChevronDown
 
   return (
     <div className={cn('relative', hasChildren && 'group')}>
@@ -53,16 +56,12 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
           )}
         >
           {item.label}
-          {hasChildren && (
-            <Icon path={mdiChevronDown} size={1} className="size-3" aria-hidden="true" />
-          )}
+          {hasChildren && <Icon path={childIcon} size={1} className="size-3" aria-hidden="true" />}
         </Link>
       ) : (
         <span className="inline-flex items-center gap-1 rounded-md px-2 py-1 font-heading text-13 font-semibold uppercase tracking-wide text-background">
           {item.label}
-          {hasChildren && (
-            <Icon path={mdiChevronDown} size={1} className="size-3" aria-hidden="true" />
-          )}
+          {hasChildren && <Icon path={childIcon} size={1} className="size-3" aria-hidden="true" />}
         </span>
       )}
 
