@@ -69,6 +69,20 @@ export const primaryShowroomCollectionHandle = 'shop-all'
 export const primaryShowroomCollectionHref =
   `/collections/${primaryShowroomCollectionHandle}` as const
 
+// ── Hero carousel categories ─────────────────────────────────────────────────
+
+export type HeroCategory = {
+  label: string
+  href: string
+}
+
+export const heroCategories: HeroCategory[] = [
+  { label: 'Sedan',       href: '/collections/sedans' },
+  { label: 'SUV',         href: '/collections/suvs' },
+  { label: 'Commercial',  href: '/collections/commercial-vehicles' },
+  { label: 'Spare Parts', href: '/collections/spare-parts' },
+]
+
 // ── Section images ──────────────────────────────────────────────────────────
 
 export const heroImage = 'https://www.figma.com/api/mcp/asset/69543879-8d40-44dd-a43a-e23acc9ee728'

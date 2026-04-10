@@ -2,6 +2,7 @@ import { mdiCalendar, mdiCar, mdiCarShiftPattern, mdiChevronRight, mdiEmail, mdi
 import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { HeroCarousel } from '@/components/hero-carousel-wrapper'
 import { SiteHeader } from '@/components/site-header'
 import { InstagramIcon } from '@/components/social-icons'
 import { StripeBar } from '@/components/stripe-bar'
@@ -9,7 +10,6 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   carsForSaleImage,
-  heroImage,
   instagramPosts,
   newsArticle,
   primaryShowroomCollectionHandle,
@@ -18,6 +18,7 @@ import {
   sellYourCarImage,
   supplyingImage,
 } from '@/lib/data'
+
 import { GET_COLLECTIONS, GET_PRODUCTS_IN_COLLECTION } from '@/lib/queries'
 import { getClient } from '@/lib/shopify'
 import type { ShopifyCollection, ShopifyProduct } from '@/lib/types'
@@ -78,7 +79,7 @@ function LatestArrivalCard({ product }: { product: ShopifyProduct }) {
       <AspectRatio ratio={3 / 2} className="overflow-hidden bg-surface-elevated">
         {image && (
           <Image
-            src={image.url}
+src={image.url}
             alt={image.altText ?? product.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -120,7 +121,7 @@ function CollectionCard({ collection }: { collection: ShopifyCollection }) {
         {collection.image && (
           <AspectRatio ratio={3 / 2} className="bg-surface-elevated">
             <Image
-              src={collection.image.url}
+    src={collection.image.url}
               alt={collection.image.altText ?? collection.title}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -150,7 +151,7 @@ function MobileCollectionCard({ collection }: { collection: ShopifyCollection })
       <AspectRatio ratio={3 / 2} className="bg-surface-elevated mb-4">
         {collection.image && (
           <Image
-            src={collection.image.url}
+src={collection.image.url}
             alt={collection.image.altText ?? collection.title}
             fill
             className="object-cover"
@@ -194,9 +195,7 @@ export default async function Home() {
       <SiteHeader />
       <main>
         {/* ── HERO ─────────────────────────────────────────────────────────── */}
-        <section className="relative h-56 md:min-h-screen bg-gray-7 overflow-hidden">
-          <Image src={heroImage} alt="" fill className="object-cover" priority aria-hidden="true" />
-        </section>
+        <HeroCarousel />
 
         {/* ── LATEST ARRIVALS / COLLECTIONS ─────────────────────────────── */}
         <section className="bg-card">
@@ -261,9 +260,10 @@ export default async function Home() {
             src={supplyingImage}
             alt=""
             fill
-            className="object-cover opacity-50"
+            className="object-cover"
             aria-hidden="true"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/30" aria-hidden="true" />
 
           {/* Mobile layout: left-aligned, stacked heading */}
           <div className="md:hidden relative z-10 px-4 py-28">
