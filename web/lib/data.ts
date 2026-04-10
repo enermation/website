@@ -77,10 +77,9 @@ export type HeroCategory = {
 }
 
 export const heroCategories: HeroCategory[] = [
-  { label: 'Sedan',       href: '/collections/sedans' },
-  { label: 'SUV',         href: '/collections/suvs' },
-  { label: 'Commercial',  href: '/collections/commercial-vehicles' },
-  { label: 'Spare Parts', href: '/collections/spare-parts' },
+  { label: 'Sedan',      href: '/collections/sedans' },
+  { label: 'SUV',        href: '/collections/suvs' },
+  { label: 'Commercial', href: '/collections/commercial-vehicles' },
 ]
 
 // ── Section images ──────────────────────────────────────────────────────────

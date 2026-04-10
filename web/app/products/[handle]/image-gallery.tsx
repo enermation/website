@@ -232,7 +232,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
       </Carousel>
 
       <div data-slot="image-gallery" className="hidden md:flex md:flex-col md:gap-4">
-        <div className="h-96 gap-px md:flex">
+        <div className="flex h-96 gap-px">
           <button
             type="button"
             className="group relative flex-1 overflow-hidden bg-gray-94 cursor-zoom-in"
@@ -253,52 +253,52 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
               </div>
             </div>
           </button>
-        </div>
 
-        {sideImages.length > 0 && (
-          <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-px">
-            {sideImages.map((image, i) => {
-              const isLast = i === sideImages.length - 1
-              const imageIndex = desktopPageStart + 1 + i
-              return (
-                <button
-                  key={image.url}
-                  type="button"
-                  className="group relative overflow-hidden bg-gray-94 cursor-zoom-in"
-                  onClick={() => openLightbox(imageIndex)}
-                >
-                  <Image
-                    src={image.url}
-                    alt={image.altText ?? ''}
-                    fill
-                    className="object-cover transition-opacity group-hover:opacity-90"
-                    sizes="(min-width: 1320px) 330px, 25vw"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black-30 opacity-0 transition-opacity group-hover:opacity-100">
-                    <div className="flex items-center gap-2 rounded-full bg-black-40 px-4 py-2 font-heading text-13 text-white">
-                      <Icon path={mdiImageMultiple} size={1} className="size-4" />
-                      <span>Click to expand</span>
+          {sideImages.length > 0 && (
+            <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-px">
+              {sideImages.map((image, i) => {
+                const isLast = i === sideImages.length - 1
+                const imageIndex = desktopPageStart + 1 + i
+                return (
+                  <button
+                    key={image.url}
+                    type="button"
+                    className="group relative overflow-hidden bg-gray-94 cursor-zoom-in"
+                    onClick={() => openLightbox(imageIndex)}
+                  >
+                    <Image
+                      src={image.url}
+                      alt={image.altText ?? ''}
+                      fill
+                      className="object-cover transition-opacity group-hover:opacity-90"
+                      sizes="(min-width: 1320px) 330px, 25vw"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black-30 opacity-0 transition-opacity group-hover:opacity-100">
+                      <div className="flex items-center gap-2 rounded-full bg-black-40 px-4 py-2 font-heading text-13 text-white">
+                        <Icon path={mdiImageMultiple} size={1} className="size-4" />
+                        <span>Click to expand</span>
+                      </div>
                     </div>
-                  </div>
-                  {isLast && remainingCount > 0 && (
-                    <button
-                      type="button"
-                      className="absolute inset-0 flex cursor-pointer items-end justify-end bg-black-30 p-3 transition-opacity hover:bg-black-40"
-                      onClick={e => {
-                        e.stopPropagation()
-                        openLightbox(desktopPageStart + 1)
-                      }}
-                    >
-                      <span className="bg-black-40 px-3 py-1 font-heading text-13 text-white">
-                        +{remainingCount} Photos
-                      </span>
-                    </button>
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        )}
+                    {isLast && remainingCount > 0 && (
+                      <div
+                        role="presentation"
+                        className="absolute inset-0 flex cursor-pointer items-end justify-end bg-black-30 p-3 transition-opacity hover:bg-black-40"
+                        onClick={e => {
+                          e.stopPropagation()
+                          openLightbox(desktopPageStart + 1)
+                        }}
+                      >
+                        <span className="bg-black-40 px-3 py-1 font-heading text-13 text-white">
+                          +{remainingCount} Photos
+                        </span>
+                      </div>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </div>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

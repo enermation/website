@@ -73,7 +73,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
             'group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100'
           )}
         >
-          <div className="flex flex-col gap-1 rounded-2xl border border-white-20 bg-surface-elevated p-4 shadow-xl">
+          <div className="flex flex-col gap-1 rounded-2xl border border-white-20 bg-surface-dark p-4 shadow-xl">
             <p className="pb-1 font-heading text-sm font-semibold text-background">{item.label}</p>
             {item.children.map(child => {
               const iconPath = menuItemIcon(child.label)
@@ -87,7 +87,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                     focusRing
                   )}
                 >
-                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-surface">
+                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
                     <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
                   </span>
                   <span>{child.label}</span>
@@ -95,9 +95,9 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
               ) : (
                 <span
                   key={`${item.label}-${child.label}`}
-                  className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-muted-foreground"
+                  className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-on-dark-muted"
                 >
-                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-surface">
+                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
                     <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
                   </span>
                   <span>{child.label}</span>
@@ -109,11 +109,11 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
               <Link
                 href={featured.href}
                 className={cn(
-                  'mt-2 rounded-xl border border-white-30 bg-surface p-3 transition-colors hover:bg-accent',
+                  'mt-2 rounded-xl border border-white-30 bg-white-20 p-3 transition-colors hover:bg-white-30',
                   focusRing
                 )}
               >
-                <p className="font-heading text-13 text-muted-foreground">
+                <p className="font-heading text-13 text-on-dark-muted">
                   {headerDropdownCopy.featuredLabel}
                 </p>
                 <p className="mt-1 font-body text-sm text-background">{featured.label}</p>
