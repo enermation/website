@@ -59,7 +59,10 @@ function optionValue(options: ShopifySelectedOption[], keys: string[]): string |
 }
 
 function normalizeToken(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
 }
 
 function firstDefined(...values: Array<string | null | undefined>): string | null {
@@ -185,7 +188,11 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
   const vehicleVin = optionValue(selectedOptions, ['vin'])
   const vehicleInteriorColor = optionValue(selectedOptions, ['interior color', 'interior', 'trim'])
   const vehicleVatType = optionValue(selectedOptions, ['vat']) ?? productPage.labels.noDutyPaid
-  const vehicleLicense = optionValue(selectedOptions, ['license number', 'licence number', 'license'])
+  const vehicleLicense = optionValue(selectedOptions, [
+    'license number',
+    'licence number',
+    'license',
+  ])
   const listingReference = buildListingReference(product.handle)
   const listedDate = formatListedDate(product.createdAt)
   const fallbackValue = productPage.labels.notSpecified
@@ -288,7 +295,9 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                   <h1 className="font-display text-2xl leading-tight text-gray-7 md:text-section md:leading-tight">
                     {product.title}
                   </h1>
-                  <p className="font-body text-15 text-gray-33">{vehicleLocation ?? showroomLabel}</p>
+                  <p className="font-body text-15 text-gray-33">
+                    {vehicleLocation ?? showroomLabel}
+                  </p>
                 </div>
 
                 <div className="flex shrink-0 flex-col items-start gap-2 md:items-end">
@@ -304,7 +313,9 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                         : 'border-gray-33 text-gray-33'
                     )}
                   >
-                    {product.availableForSale ? productPage.labels.available : productPage.labels.sold}
+                    {product.availableForSale
+                      ? productPage.labels.available
+                      : productPage.labels.sold}
                   </Badge>
                 </div>
               </div>
@@ -391,7 +402,9 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 </div>
 
                 <div className="mt-6 flex flex-col gap-2">
-                  <h3 className="font-body text-15 text-gray-33">{productPage.labels.aboutDealer}</h3>
+                  <h3 className="font-body text-15 text-gray-33">
+                    {productPage.labels.aboutDealer}
+                  </h3>
                   <p className="line-clamp-3 font-body text-15 leading-relaxed text-foreground">
                     {dealerInfo.about}
                   </p>
@@ -405,15 +418,21 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
 
                 <div className="mt-6 flex flex-col gap-4">
                   <div>
-                    <h3 className="font-body text-15 text-gray-33">{productPage.labels.listingAgent}</h3>
-                    <p className="mt-1 font-body text-15 text-foreground">{dealerInfo.listingAgentValue}</p>
+                    <h3 className="font-body text-15 text-gray-33">
+                      {productPage.labels.listingAgent}
+                    </h3>
+                    <p className="mt-1 font-body text-15 text-foreground">
+                      {dealerInfo.listingAgentValue}
+                    </p>
                   </div>
 
                   <div>
                     <h3 className="font-body text-15 text-gray-33">
                       {productPage.labels.registeredOnPlatform}
                     </h3>
-                    <p className="mt-1 font-body text-15 text-foreground">{dealerInfo.registeredYear}</p>
+                    <p className="mt-1 font-body text-15 text-foreground">
+                      {dealerInfo.registeredYear}
+                    </p>
                   </div>
 
                   <div>
@@ -424,7 +443,9 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                   </div>
 
                   <div>
-                    <h3 className="font-body text-15 text-gray-33">{productPage.labels.phoneNumber}</h3>
+                    <h3 className="font-body text-15 text-gray-33">
+                      {productPage.labels.phoneNumber}
+                    </h3>
                     <a
                       href={phoneHref}
                       className="mt-2 inline-flex items-center rounded-none border border-gray-90 px-4 py-2 font-heading text-13 font-semibold uppercase tracking-wide text-foreground transition-colors hover:bg-gray-98"
@@ -434,8 +455,12 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                   </div>
 
                   <div>
-                    <h3 className="font-body text-15 text-gray-33">{productPage.labels.internalReference}</h3>
-                    <p className="mt-1 font-body text-15 text-foreground">{listingReference || fallbackValue}</p>
+                    <h3 className="font-body text-15 text-gray-33">
+                      {productPage.labels.internalReference}
+                    </h3>
+                    <p className="mt-1 font-body text-15 text-foreground">
+                      {listingReference || fallbackValue}
+                    </p>
                   </div>
 
                   <div>
@@ -445,7 +470,9 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
 
                   {sellerWebsite && (
                     <div>
-                      <h3 className="font-body text-15 text-gray-33">{productPage.labels.website}</h3>
+                      <h3 className="font-body text-15 text-gray-33">
+                        {productPage.labels.website}
+                      </h3>
                       <a
                         href={sellerWebsite}
                         className="mt-1 inline-block font-body text-15 text-foreground underline transition-colors hover:text-brand-green"

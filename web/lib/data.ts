@@ -376,7 +376,7 @@ export const relatedStories: RelatedStory[] = [
     date: '06 March 2024',
     category: 'Latest News',
     title: "Enermation's Top 5 Supercar Picks to Grace Your Driveway in 2024",
-    excerpt: 'A quick look at the performance machines defining this year\'s collector market.',
+    excerpt: "A quick look at the performance machines defining this year's collector market.",
     href: '#',
   },
   {
@@ -385,8 +385,7 @@ export const relatedStories: RelatedStory[] = [
     date: '15 January 2024',
     category: 'Cars',
     title: 'Why the Ferrari SF90 Stradale Remains the Ultimate Hybrid Supercar',
-    excerpt:
-      'Engineering, hybrid response, and long-term desirability keep the SF90 at the top.',
+    excerpt: 'Engineering, hybrid response, and long-term desirability keep the SF90 at the top.',
     href: '#',
   },
   {
@@ -395,8 +394,7 @@ export const relatedStories: RelatedStory[] = [
     date: '22 November 2023',
     category: 'News',
     title: 'Lamborghini Aventador Ultimae: The Last of a Legendary V12 Era',
-    excerpt:
-      'How the final naturally aspirated V12 flagship secured its place among modern icons.',
+    excerpt: 'How the final naturally aspirated V12 flagship secured its place among modern icons.',
     href: '#',
   },
 ]

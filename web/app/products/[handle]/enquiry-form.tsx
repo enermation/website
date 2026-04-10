@@ -85,7 +85,9 @@ export function EnquiryForm({
 
         <div className="flex items-stretch">
           <div className="flex w-20 items-center justify-between border border-gray-90 px-3">
-            <span className="font-body text-13 text-foreground">{productPage.labels.countryCode}</span>
+            <span className="font-body text-13 text-foreground">
+              {productPage.labels.countryCode}
+            </span>
             <ChevronDown className="size-3.5 text-gray-33" />
           </div>
           <Input
