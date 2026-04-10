@@ -39,13 +39,7 @@ function useReducedMotion() {
 
 // ── Single model, auto-framed with Stage ──────────────────────────────────────
 
-function CategoryMesh({
-  index,
-  reducedMotion,
-}: {
-  index: number
-  reducedMotion: boolean
-}) {
+function CategoryMesh({ index, reducedMotion }: { index: number; reducedMotion: boolean }) {
   const groupRef = useRef<Group>(null)
   const { scene } = useGLTF(MODEL_PATHS[index])
 
@@ -56,16 +50,8 @@ function CategoryMesh({
   })
 
   return (
-    <Stage
-      adjustCamera={1.5}
-      environment="city"
-      shadows="contact"
-      intensity={1.2}
-    >
-      <group
-        ref={groupRef}
-        rotation-y={MODEL_ROTATIONS[index]}
-      >
+    <Stage adjustCamera={1.5} environment="city" shadows="contact" intensity={1.2}>
+      <group ref={groupRef} rotation-y={MODEL_ROTATIONS[index]}>
         <primitive object={scene} />
       </group>
     </Stage>
@@ -101,15 +87,21 @@ export function HeroCarousel() {
 
   return (
     <section
+      aria-label="Hero image carousel"
       className="relative min-h-screen overflow-hidden select-none touch-manipulation"
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onKeyDown={onKeyDown}
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: Carousel requires keyboard navigation for accessibility
       tabIndex={0}
     >
       {/* Three.js canvas */}
       <div className="absolute inset-0">
-        <Canvas camera={{ position: [0, 2, 5], fov: 45 }} dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
+        <Canvas
+          camera={{ position: [0, 2, 5], fov: 45 }}
+          dpr={[1, 2]}
+          gl={{ antialias: true, alpha: true }}
+        >
           <color attach="background" args={['#1a1a1a']} />
           <Suspense fallback={null}>
             <CategoryMesh key={activeIndex} index={activeIndex} reducedMotion={reducedMotion} />
@@ -117,33 +109,33 @@ export function HeroCarousel() {
         </Canvas>
       </div>
 
-        {/* Category label + CTA + dots */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
-          <h1 className="font-display font-normal text-section uppercase tracking-widest text-white text-center">
-            {active.label}
-          </h1>
-          <Link
-            href={active.href}
-            className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
-          >
-            Browse {active.label}
-          </Link>
-          <div className="flex items-center gap-3">
-            {heroCategories.map((cat, i) => (
-              <button
-                key={cat.label}
-                type="button"
-                aria-label={`Show ${cat.label}`}
-                onClick={() => setActiveIndex(i)}
-                className={`pointer-events-auto rounded-full transition-all duration-300 ${
-                  i === activeIndex
-                    ? 'size-2.5 bg-on-dark'
-                    : 'size-1.5 bg-on-dark/40 hover:bg-on-dark/70'
-                }`}
-              />
-            ))}
-          </div>
+      {/* Category label + CTA + dots */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
+        <h1 className="font-display font-normal text-section uppercase tracking-widest text-white text-center">
+          {active.label}
+        </h1>
+        <Link
+          href={active.href}
+          className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
+        >
+          Browse {active.label}
+        </Link>
+        <div className="flex items-center gap-3">
+          {heroCategories.map((cat, i) => (
+            <button
+              key={cat.label}
+              type="button"
+              aria-label={`Show ${cat.label}`}
+              onClick={() => setActiveIndex(i)}
+              className={`pointer-events-auto rounded-full transition-all duration-300 ${
+                i === activeIndex
+                  ? 'size-2.5 bg-on-dark'
+                  : 'size-1.5 bg-on-dark/40 hover:bg-on-dark/70'
+              }`}
+            />
+          ))}
         </div>
+      </div>
 
       {/* Arrow navigation */}
       <button

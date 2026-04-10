@@ -1,9 +1,4 @@
-import {
-  mdiCalendar,
-  mdiChevronRight,
-  mdiEmail,
-  mdiInstagram,
-} from '@mdi/js'
+import { mdiCalendar, mdiChevronRight, mdiEmail, mdiInstagram } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'

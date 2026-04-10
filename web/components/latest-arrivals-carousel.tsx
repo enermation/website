@@ -1,5 +1,10 @@
 'use client'
 
+import { mdiCalendar, mdiCar, mdiCarShiftPattern, mdiSpeedometer } from '@mdi/js'
+import { Icon } from '@mdi/react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
 import {
   Carousel,
   CarouselContent,
@@ -7,18 +12,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
-import type { ShopifyProduct } from '@/lib/types'
-import {
-  mdiCalendar,
-  mdiCar,
-  mdiCarShiftPattern,
-  mdiSpeedometer,
-} from '@mdi/js'
-import { Icon } from '@mdi/react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { productPage } from '@/lib/data'
+import type { ShopifyProduct } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 function metaValue(field: { value: string | null } | null): string | null {
@@ -64,12 +59,19 @@ function LatestArrivalCard({ product }: { product: ShopifyProduct }) {
             {product.description}
           </p>
           <p className="font-heading text-lg font-semibold text-foreground">
-            {product.availableForSale ? formatPrice(product) : productPage.labels.reservedMoreWanted}
+            {product.availableForSale
+              ? formatPrice(product)
+              : productPage.labels.reservedMoreWanted}
           </p>
         </div>
 
         {details.length > 0 && (
-          <div className={cn('mt-4 grid grid-cols-2 gap-y-3 border-t border-subtle px-1 pt-3', details.length === 3 && 'md:grid-cols-3')}>
+          <div
+            className={cn(
+              'mt-4 grid grid-cols-2 gap-y-3 border-t border-subtle px-1 pt-3',
+              details.length === 3 && 'md:grid-cols-3'
+            )}
+          >
             {details.map(({ icon: iconPath, label }) => (
               <div key={label} className="flex items-center gap-2 pr-2">
                 <Icon path={iconPath} size={1} className="size-3.5 shrink-0 text-heading" />
