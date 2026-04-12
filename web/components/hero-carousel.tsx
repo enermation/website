@@ -188,7 +188,7 @@ function Scene({
   return (
     <>
       {/* Dark background like PPF workshop */}
-      <color attach="background" args={['#2a2a35']} />
+      <color attach="background" args={['#15151a']} />
 
       <spotLight
         position={[0, 15, 0]}
@@ -218,9 +218,9 @@ function Scene({
         far={20}
       />
 
-      {/* HDR environment for realistic lighting and background */}
+      {/* HDR environment for realistic lighting and reflections */}
       <Environment
-        files="/old_depot_2k.hdr"
+        files="/models/parking_garage_2k.hdr"
         frames={Infinity}
         resolution={envResolution}
         background
