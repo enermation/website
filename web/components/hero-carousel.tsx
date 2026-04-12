@@ -262,9 +262,9 @@ function Scene({
 
       {/* Active model */}
       {activeIndex === 0 ? (
-        <LamboModel onLoaded={onModelLoaded} />
-      ) : (
         <PorscheModel onLoaded={onModelLoaded} />
+      ) : (
+        <LamboModel onLoaded={onModelLoaded} />
       )}
 
       {/* Contact shadows for floor reflection effect */}
