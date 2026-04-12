@@ -2,13 +2,7 @@
 
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { Icon } from '@mdi/react'
-import {
-  ContactShadows,
-  Environment,
-  PerformanceMonitor,
-  useGLTF,
-  usePerformanceMonitor,
-} from '@react-three/drei'
+import { ContactShadows, Environment, PerformanceMonitor, useGLTF } from '@react-three/drei'
 import { applyProps, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { Bloom, EffectComposer, LUT } from '@react-three/postprocessing'
 import Link from 'next/link'

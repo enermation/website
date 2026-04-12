@@ -169,16 +169,16 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 </div>
               </div>
 
-              {product.description && (
+              {product.description ? (
                 <div className="flex flex-col gap-3">
-                  <h2 className="font-display text-xl text-heading">
+                  <h2 className="font-display text-xl text-balance text-heading">
                     {productPage.sections.aboutThisListing}
                   </h2>
-                  <p className="whitespace-pre-line font-body text-15 leading-relaxed text-body">
+                  <p className="whitespace-pre-line break-words font-body text-15 leading-relaxed text-body">
                     {product.description}
                   </p>
                 </div>
-              )}
+              ) : null}
 
               {(() => {
                 const specs = [
