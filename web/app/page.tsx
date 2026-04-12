@@ -33,6 +33,10 @@ type CollectionProductsResponse = {
   } | null
 }
 
+type HomePageProps = {
+  searchParams: Promise<{ slide?: string }>
+}
+
 // ── Shared primitives ────────────────────────────────────────────────────────
 
 function SectionHeading({ title, dark = false }: { title: string; dark?: boolean }) {
@@ -111,7 +115,10 @@ function MobileCollectionCard({ collection }: { collection: ShopifyCollection })
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-export default async function Home() {
+export default async function Home({ searchParams }: HomePageProps) {
+  const params = await searchParams
+  const slideIndex = Math.min(Math.max(Number(params.slide) || 0, 0), 2)
+
   const shopify = await getClient()
   const [{ data: collectionsData }, { data: latestArrivalsData }] = await Promise.all([
     shopify.request<{
@@ -134,7 +141,7 @@ export default async function Home() {
       <SiteHeader />
       <main>
         {/* ── HERO ─────────────────────────────────────────────────────────── */}
-        <HeroCarousel />
+        <HeroCarousel initialIndex={slideIndex} />
 
         {/* ── LATEST ARRIVALS / COLLECTIONS ─────────────────────────────── */}
         <section className="bg-card">

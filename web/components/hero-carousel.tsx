@@ -2,11 +2,13 @@
 
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { Icon } from '@mdi/react'
-import { Stage, useGLTF } from '@react-three/drei'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { PerformanceMonitor, Stage, useGLTF } from '@react-three/drei'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import Link from 'next/link'
-import { Suspense, useEffect, useRef, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import type { Group } from 'three'
+import { HeroLoadingSkeleton } from '@/components/hero-loading-skeleton'
 import { heroCategories } from '@/lib/data'
 
 const TOTAL = heroCategories.length
@@ -37,11 +39,79 @@ function useReducedMotion() {
   return reduced
 }
 
+// ── WebGL context loss hook ──────────────────────────────────────────────────
+
+function useWebGLContextLoss(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
+  const [isContextLost, setIsContextLost] = useState(false)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const handleContextLost = (e: Event) => {
+      e.preventDefault()
+      setIsContextLost(true)
+    }
+
+    const handleContextRestored = () => {
+      setIsContextLost(false)
+    }
+
+    canvas.addEventListener('webglcontextlost', handleContextLost)
+    canvas.addEventListener('webglcontextrestored', handleContextRestored)
+
+    return () => {
+      canvas.removeEventListener('webglcontextlost', handleContextLost)
+      canvas.removeEventListener('webglcontextrestored', handleContextRestored)
+    }
+  }, [canvasRef])
+
+  return isContextLost
+}
+
+// ── Adaptive DPR controller ──────────────────────────────────────────────────
+
+function AdaptiveDPRController() {
+  const setDpr = useThree(state => state.setDpr)
+
+  const handleFallback = useCallback(() => {
+    setDpr(1)
+  }, [setDpr])
+
+  const handleChange = useCallback(
+    ({ factor }: { factor: number }) => {
+      const newDpr = Math.round((0.5 + 1.5 * factor) * 10) / 10
+      setDpr(newDpr)
+    },
+    [setDpr]
+  )
+
+  return <PerformanceMonitor flipflops={3} onFallback={handleFallback} onChange={handleChange} />
+}
+
 // ── Single model, auto-framed with Stage ──────────────────────────────────────
 
-function CategoryMesh({ index, reducedMotion }: { index: number; reducedMotion: boolean }) {
+function CategoryMesh({
+  index,
+  reducedMotion,
+  onModelLoad,
+}: {
+  index: number
+  reducedMotion: boolean
+  onModelLoad?: () => void
+}) {
   const groupRef = useRef<Group>(null)
+  const [hasLoaded, setHasLoaded] = useState(false)
+
   const { scene } = useGLTF(MODEL_PATHS[index])
+
+  // Report load for skeleton removal
+  useEffect(() => {
+    if (!hasLoaded) {
+      setHasLoaded(true)
+      onModelLoad?.()
+    }
+  }, [hasLoaded, onModelLoad])
 
   // Slow idle rotation
   useFrame((_, delta) => {
@@ -60,12 +130,38 @@ function CategoryMesh({ index, reducedMotion }: { index: number; reducedMotion: 
 
 // ── Hero carousel ─────────────────────────────────────────────────────────────
 
-export function HeroCarousel() {
-  const [activeIndex, setActiveIndex] = useState(0)
+export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
+  const [activeIndex, setActiveIndex] = useState(initialIndex)
+  const [isLoading, setIsLoading] = useState(true)
   const dragStartX = useRef<number | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const reducedMotion = useReducedMotion()
+  const isContextLost = useWebGLContextLoss(canvasRef)
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-  const navigate = (dir: 1 | -1) => setActiveIndex(i => (i + dir + TOTAL) % TOTAL)
+  const navigate = useCallback(
+    (dir: 1 | -1) => {
+      const newIndex = (activeIndex + dir + TOTAL) % TOTAL
+      setActiveIndex(newIndex)
+      // Update URL without reload
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('slide', String(newIndex))
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+    },
+    [activeIndex, searchParams, pathname, router]
+  )
+
+  const goToSlide = useCallback(
+    (index: number) => {
+      setActiveIndex(index)
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('slide', String(index))
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+    },
+    [searchParams, pathname, router]
+  )
 
   const onPointerDown = (e: React.PointerEvent) => {
     dragStartX.current = e.clientX
@@ -83,7 +179,41 @@ export function HeroCarousel() {
     if (e.key === 'ArrowRight') navigate(1)
   }
 
+  const handleModelLoad = useCallback(() => {
+    setIsLoading(false)
+  }, [])
+
+  // Sync initialIndex prop
+  useEffect(() => {
+    setActiveIndex(initialIndex)
+  }, [initialIndex])
+
   const active = heroCategories[activeIndex]
+
+  // WebGL context lost → static fallback
+  if (isContextLost) {
+    return (
+      <section
+        aria-label="Product showcase"
+        className="relative min-h-screen bg-surface-dark flex items-center justify-center"
+      >
+        <div className="text-center px-4">
+          <h1 className="font-display font-normal text-section uppercase tracking-widest text-on-dark mb-6">
+            {active.label}
+          </h1>
+          <p className="font-body text-15 text-on-dark-muted mb-8 max-w-md mx-auto">
+            Interactive 3D viewer is unavailable. Please browse our collection directly.
+          </p>
+          <Link
+            href={active.href}
+            className="inline-flex items-center justify-center rounded-none border-2 border-on-dark bg-transparent px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-on-dark transition-colors duration-200 hover:bg-on-dark hover:text-surface-dark"
+          >
+            Browse {active.label}
+          </Link>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section
@@ -101,15 +231,30 @@ export function HeroCarousel() {
         {/* Three.js canvas */}
         <div className="absolute inset-0">
           <Canvas
+            ref={canvasRef}
             camera={{ position: [0, 2, 5], fov: 45 }}
             dpr={[1, 2]}
+            frameloop="demand"
             gl={{ antialias: true, alpha: true }}
           >
-            <color attach="background" args={['#1a1a1a']} />
+            <color attach="background" args={['oklch(var(--surface-dark))']} />
+            <AdaptiveDPRController />
             <Suspense fallback={null}>
-              <CategoryMesh key={activeIndex} index={activeIndex} reducedMotion={reducedMotion} />
+              <CategoryMesh
+                key={activeIndex}
+                index={activeIndex}
+                reducedMotion={reducedMotion}
+                onModelLoad={handleModelLoad}
+              />
             </Suspense>
           </Canvas>
+
+          {/* Loading skeleton overlay */}
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-surface-dark">
+              <HeroLoadingSkeleton />
+            </div>
+          )}
         </div>
 
         {/* Category label + CTA + dots */}
@@ -129,7 +274,7 @@ export function HeroCarousel() {
                 key={cat.label}
                 type="button"
                 aria-label={`Show ${cat.label}`}
-                onClick={() => setActiveIndex(i)}
+                onClick={() => goToSlide(i)}
                 className={`pointer-events-auto rounded-full transition-all duration-300 ${
                   i === activeIndex
                     ? 'size-2.5 bg-on-dark'
