@@ -45,8 +45,8 @@ export const TimelineAnimation = <T extends keyof HTMLElementTagNameMap = 'div'>
     once,
   })
 
-  const MotionComponent = motion[as || 'div'] as React.ElementType<
-    React.PropsWithChildren<Record<string, unknown>>
+  const MotionComponent = motion[as || 'div'] as unknown as React.FC<
+    Record<string, unknown> & { children?: React.ReactNode }
   >
 
   return (
