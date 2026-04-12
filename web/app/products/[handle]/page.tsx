@@ -51,6 +51,60 @@ export async function generateMetadata({
   }
 }
 
+async function SimilarCarsSection({
+  collectionHandle,
+  currentProductHandle,
+  showroomHref,
+}: {
+  collectionHandle: string
+  currentProductHandle: string
+  showroomHref: string
+}) {
+  const shopify = await getClient()
+  const { data: collectionData } = await shopify.request<CollectionResponse>(
+    GET_PRODUCTS_IN_COLLECTION,
+    {
+      variables: { handle: collectionHandle, sortKey: 'BEST_SELLING', reverse: false },
+    }
+  )
+
+  const similarCars =
+    collectionData?.collection?.products.edges
+      .map(edge => edge.node)
+      .filter(product => product.handle !== currentProductHandle)
+      .slice(0, 3) ?? []
+
+  if (similarCars.length === 0) return null
+
+  return (
+    <section className="bg-muted py-12 md:py-16">
+      <div className="mx-auto max-w-site px-4 md:px-6">
+        <div className="mb-8 flex items-center justify-between md:mb-10">
+          <h2 className="font-display text-2xl uppercase tracking-widest text-heading md:text-section">
+            {productPage.sections.youMayAlsoLike}
+          </h2>
+          <div className="hidden md:block">
+            <StripeBar />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {similarCars.map(car => (
+            <CarCard key={car.id} product={car} />
+          ))}
+        </div>
+        <div className="mt-8 flex justify-center md:mt-12">
+          <Link
+            href={showroomHref}
+            className="border-2 border-foreground px-8 py-3 text-center font-heading text-13 font-semibold uppercase tracking-wider text-foreground transition-colors hover:bg-foreground hover:text-background"
+          >
+            {productPage.labels.viewAllStockForSale}
+          </Link>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default async function ProductPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
   const shopify = await getClient()
@@ -83,18 +137,6 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       option => option.name !== 'Title' && option.value !== 'Default Title'
     ) ?? []
 
-  const collectionData = primaryCollection
-    ? await shopify.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
-        variables: { handle: primaryCollection.handle, sortKey: 'BEST_SELLING', reverse: false },
-      })
-    : null
-
-  const similarCars =
-    collectionData?.data?.collection?.products.edges
-      .map(edge => edge.node)
-      .filter(collectionProduct => collectionProduct.handle !== handle)
-      .slice(0, 3) ?? []
-
   return (
     <>
       <SiteHeader />
@@ -124,11 +166,21 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
           <Link href="/" className="transition-colors hover:text-foreground">
             {productPage.breadcrumb.home}
           </Link>
-          <Icon path={mdiChevronRight} size={1} className="size-3 text-muted-foreground" />
+          <Icon
+            path={mdiChevronRight}
+            size={1}
+            className="size-3 text-muted-foreground"
+            aria-hidden="true"
+          />
           <Link href={showroomHref} className="transition-colors hover:text-foreground">
             {showroomLabel}
           </Link>
-          <Icon path={mdiChevronRight} size={1} className="size-3 text-muted-foreground" />
+          <Icon
+            path={mdiChevronRight}
+            size={1}
+            className="size-3 text-muted-foreground"
+            aria-hidden="true"
+          />
           <span className="truncate text-foreground">{product.title}</span>
         </div>
       </nav>
@@ -214,32 +266,12 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
         </div>
       </section>
 
-      {similarCars.length > 0 && (
-        <section className="bg-muted py-12 md:py-16">
-          <div className="mx-auto max-w-site px-4 md:px-6">
-            <div className="mb-8 flex items-center justify-between md:mb-10">
-              <h2 className="font-display text-2xl uppercase tracking-widest text-heading md:text-section">
-                {productPage.sections.youMayAlsoLike}
-              </h2>
-              <div className="hidden md:block">
-                <StripeBar />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              {similarCars.map(car => (
-                <CarCard key={car.id} product={car} />
-              ))}
-            </div>
-            <div className="mt-8 flex justify-center md:mt-12">
-              <Link
-                href={showroomHref}
-                className="border-2 border-foreground px-8 py-3 text-center font-heading text-13 font-semibold uppercase tracking-wider text-foreground transition-colors hover:bg-foreground hover:text-background"
-              >
-                {productPage.labels.viewAllStockForSale}
-              </Link>
-            </div>
-          </div>
-        </section>
+      {primaryCollection && (
+        <SimilarCarsSection
+          collectionHandle={primaryCollection.handle}
+          currentProductHandle={product.handle}
+          showroomHref={showroomHref}
+        />
       )}
 
       <section className="border-t border-border bg-background py-12 md:py-16">
