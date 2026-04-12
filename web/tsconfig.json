@@ -30,5 +30,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "components/ui", "../graphql"]
+  "exclude": ["node_modules", "components/ui", "../graphql", "_temp-hero-old"]
 }

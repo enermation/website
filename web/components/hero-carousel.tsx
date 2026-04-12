@@ -2,26 +2,21 @@
 
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { Icon } from '@mdi/react'
-import { PerformanceMonitor, Stage, useGLTF } from '@react-three/drei'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { ContactShadows, Environment, Lightformer, OrbitControls, useGLTF } from '@react-three/drei'
+import { applyProps, Canvas, useFrame, useLoader } from '@react-three/fiber'
+import { Bloom, EffectComposer, LUT } from '@react-three/postprocessing'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { LUTCubeLoader } from 'postprocessing'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Group } from 'three'
+import * as THREE from 'three'
 import { HeroLoadingSkeleton } from '@/components/hero-loading-skeleton'
 import { heroCategories } from '@/lib/data'
 
-const TOTAL = heroCategories.length
+const MODEL_PATH = '/models/lambo.glb'
 
-const MODEL_PATHS = ['/models/sedan.glb', '/models/suv.glb', '/models/commercial.glb']
-
-// SUV and commercial models are oriented length-along-Z (front faces camera).
-// Rotate 90° around Y so the side profile faces the camera, matching the sedan.
-const MODEL_ROTATIONS = [0, Math.PI / 2, Math.PI / 2]
-
-useGLTF.preload('/models/sedan.glb')
-useGLTF.preload('/models/suv.glb')
-useGLTF.preload('/models/commercial.glb')
+useGLTF.preload(MODEL_PATH)
 
 // ── Reduced motion hook ───────────────────────────────────────────────────────
 
@@ -39,92 +34,191 @@ function useReducedMotion() {
   return reduced
 }
 
-// ── WebGL context loss hook ──────────────────────────────────────────────────
+// ── Car model (lambo-style material tweaks) ───────────────────────────────────
 
-function useWebGLContextLoss(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
-  const [isContextLost, setIsContextLost] = useState(false)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const handleContextLost = (e: Event) => {
-      e.preventDefault()
-      setIsContextLost(true)
-    }
-
-    const handleContextRestored = () => {
-      setIsContextLost(false)
-    }
-
-    canvas.addEventListener('webglcontextlost', handleContextLost)
-    canvas.addEventListener('webglcontextrestored', handleContextRestored)
-
-    return () => {
-      canvas.removeEventListener('webglcontextlost', handleContextLost)
-      canvas.removeEventListener('webglcontextrestored', handleContextRestored)
-    }
-  }, [canvasRef])
-
-  return isContextLost
-}
-
-// ── Adaptive DPR controller ──────────────────────────────────────────────────
-
-function AdaptiveDPRController() {
-  const setDpr = useThree(state => state.setDpr)
-
-  const handleFallback = useCallback(() => {
-    setDpr(1)
-  }, [setDpr])
-
-  const handleChange = useCallback(
-    ({ factor }: { factor: number }) => {
-      const newDpr = Math.round((0.5 + 1.5 * factor) * 10) / 10
-      setDpr(newDpr)
-    },
-    [setDpr]
-  )
-
-  return <PerformanceMonitor flipflops={3} onFallback={handleFallback} onChange={handleChange} />
-}
-
-// ── Single model, auto-framed with Stage ──────────────────────────────────────
-
-function CategoryMesh({
-  index,
+function CarModel({
+  rotation = [0, Math.PI / 1.5, 0] as [number, number, number],
+  scale = 0.015,
   reducedMotion,
-  onModelLoad,
+  onLoaded,
 }: {
-  index: number
+  rotation?: [number, number, number]
+  scale?: number
   reducedMotion: boolean
-  onModelLoad?: () => void
+  onLoaded?: () => void
 }) {
   const groupRef = useRef<Group>(null)
-  const [hasLoaded, setHasLoaded] = useState(false)
+  const { scene, nodes, materials } = useGLTF(MODEL_PATH)
 
-  const { scene } = useGLTF(MODEL_PATHS[index])
-
-  // Report load for skeleton removal
-  useEffect(() => {
-    if (!hasLoaded) {
-      setHasLoaded(true)
-      onModelLoad?.()
+  // Lambo-style material fixes
+  useMemo(() => {
+    Object.values(nodes).forEach(node => {
+      if (node.isMesh) {
+        // Fix glass normals
+        if (node.name.startsWith('glass')) node.geometry.computeVertexNormals()
+        // Fix logo, too dark
+        if (node.name === 'silver_001_BreakDiscs_0')
+          node.material = applyProps(materials.BreakDiscs.clone(), { color: '#ddd' })
+      }
+    })
+    // Fix windows
+    if (nodes.glass_003) nodes.glass_003.scale.setScalar(2.7)
+    // Fix inner frame
+    if (materials.FrameBlack)
+      applyProps(materials.FrameBlack, { metalness: 0.75, roughness: 0, color: 'black' })
+    // Wheels: chrome to black matte
+    if (materials.Chrome)
+      applyProps(materials.Chrome, { metalness: 1, roughness: 0, color: '#333' })
+    if (materials.BreakDiscs)
+      applyProps(materials.BreakDiscs, { metalness: 0.2, roughness: 0.2, color: '#555' })
+    if (materials.TiresGum)
+      applyProps(materials.TiresGum, { metalness: 0, roughness: 0.4, color: '#181818' })
+    if (materials.GreyElements)
+      applyProps(materials.GreyElements, { metalness: 0, color: '#292929' })
+    // Make front and tail LEDs emit light
+    if (materials.emitbrake)
+      applyProps(materials.emitbrake, { emissiveIntensity: 3, toneMapped: false })
+    if (materials.LightsFrontLed)
+      applyProps(materials.LightsFrontLed, { emissiveIntensity: 3, toneMapped: false })
+    // Paint: yellow to black with clearcoat
+    const paintNode = nodes.yellow_WhiteCar_0
+    if (paintNode) {
+      paintNode.material = new THREE.MeshPhysicalMaterial({
+        roughness: 0.3,
+        metalness: 0.05,
+        color: '#111',
+        envMapIntensity: 0.75,
+        clearcoatRoughness: 0,
+        clearcoat: 1,
+      })
     }
-  }, [hasLoaded, onModelLoad])
+  }, [nodes, materials])
 
-  // Slow idle rotation
+  useEffect(() => {
+    onLoaded?.()
+  }, [onLoaded])
+
   useFrame((_, delta) => {
     if (!groupRef.current || reducedMotion) return
     groupRef.current.rotation.y += delta * 0.35
   })
 
   return (
-    <Stage adjustCamera={1.5} environment="city" shadows="contact" intensity={1.2}>
-      <group ref={groupRef} rotation-y={MODEL_ROTATIONS[index]}>
-        <primitive object={scene} />
-      </group>
-    </Stage>
+    <group ref={groupRef} rotation={rotation}>
+      <primitive object={scene} scale={scale} />
+    </group>
+  )
+}
+
+// ── Post-processing (Bloom + LUT color grading) ──────────────────────────────
+// Note: SSR was removed from @react-three/postprocessing v3.
+// Reflections come from the Environment + Lightformer setup instead.
+
+function PostProcessing() {
+  const lut = useLoader(LUTCubeLoader, '/F-6800-STD.cube')
+
+  return (
+    <EffectComposer enableNormalPass={false}>
+      <Bloom luminanceThreshold={0.2} mipmapBlur luminanceSmoothing={0} intensity={1.75} />
+      <LUT lut={lut} />
+    </EffectComposer>
+  )
+}
+
+// ── Environment (lambo-style: custom Lightformer panels) ──────────────────────
+
+function StudioEnvironment() {
+  return (
+    <Environment resolution={512}>
+      {/* Ceiling panels */}
+      <Lightformer
+        intensity={2}
+        rotation-x={Math.PI / 2}
+        position={[0, 4, -9]}
+        scale={[10, 1, 1]}
+      />
+      <Lightformer
+        intensity={2}
+        rotation-x={Math.PI / 2}
+        position={[0, 4, -6]}
+        scale={[10, 1, 1]}
+      />
+      <Lightformer
+        intensity={2}
+        rotation-x={Math.PI / 2}
+        position={[0, 4, -3]}
+        scale={[10, 1, 1]}
+      />
+      <Lightformer intensity={2} rotation-x={Math.PI / 2} position={[0, 4, 0]} scale={[10, 1, 1]} />
+      <Lightformer intensity={2} rotation-x={Math.PI / 2} position={[0, 4, 3]} scale={[10, 1, 1]} />
+      <Lightformer intensity={2} rotation-x={Math.PI / 2} position={[0, 4, 6]} scale={[10, 1, 1]} />
+      <Lightformer intensity={2} rotation-x={Math.PI / 2} position={[0, 4, 9]} scale={[10, 1, 1]} />
+      {/* Side walls */}
+      <Lightformer
+        intensity={2}
+        rotation-y={Math.PI / 2}
+        position={[-50, 2, 0]}
+        scale={[100, 2, 1]}
+      />
+      <Lightformer
+        intensity={2}
+        rotation-y={-Math.PI / 2}
+        position={[50, 2, 0]}
+        scale={[100, 2, 1]}
+      />
+      {/* Key light - subtle accent */}
+      <Lightformer
+        form="ring"
+        color="#ff4444"
+        intensity={10}
+        scale={2}
+        position={[10, 5, 10]}
+        onUpdate={self => self.lookAt(0, 0, 0)}
+      />
+    </Environment>
+  )
+}
+
+// ── 3D Scene ──────────────────────────────────────────────────────────────────
+
+function Scene({
+  reducedMotion,
+  onModelLoaded,
+}: {
+  reducedMotion: boolean
+  onModelLoaded: () => void
+}) {
+  return (
+    <>
+      <StudioEnvironment />
+      <hemisphereLight intensity={0.5} />
+      <CarModel reducedMotion={reducedMotion} onLoaded={onModelLoaded} />
+      {/* Decorative floor rings */}
+      <mesh scale={4} position={[3, -1.161, -1.5]} rotation={[-Math.PI / 2, 0, Math.PI / 2.5]}>
+        <ringGeometry args={[0.9, 1, 4, 1]} />
+        <meshStandardMaterial color="white" roughness={0.75} />
+      </mesh>
+      <mesh scale={4} position={[-3, -1.161, -1]} rotation={[-Math.PI / 2, 0, Math.PI / 2.5]}>
+        <ringGeometry args={[0.9, 1, 3, 1]} />
+        <meshStandardMaterial color="white" roughness={0.75} />
+      </mesh>
+      <ContactShadows
+        resolution={1024}
+        frames={1}
+        position={[0, -1.16, 0]}
+        scale={15}
+        blur={0.5}
+        opacity={1}
+        far={20}
+      />
+      <PostProcessing />
+      <OrbitControls
+        enablePan={false}
+        enableZoom={false}
+        minPolarAngle={Math.PI / 2.2}
+        maxPolarAngle={Math.PI / 2.2}
+      />
+    </>
   )
 }
 
@@ -134,9 +228,7 @@ export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
   const [activeIndex, setActiveIndex] = useState(initialIndex)
   const [isLoading, setIsLoading] = useState(true)
   const dragStartX = useRef<number | null>(null)
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const reducedMotion = useReducedMotion()
-  const isContextLost = useWebGLContextLoss(canvasRef)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -145,7 +237,7 @@ export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
     (dir: 1 | -1) => {
       const newIndex = (activeIndex + dir + TOTAL) % TOTAL
       setActiveIndex(newIndex)
-      // Update URL without reload
+      setIsLoading(true)
       const params = new URLSearchParams(searchParams.toString())
       params.set('slide', String(newIndex))
       router.replace(`${pathname}?${params.toString()}`, { scroll: false })
@@ -156,6 +248,7 @@ export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
   const goToSlide = useCallback(
     (index: number) => {
       setActiveIndex(index)
+      setIsLoading(true)
       const params = new URLSearchParams(searchParams.toString())
       params.set('slide', String(index))
       router.replace(`${pathname}?${params.toString()}`, { scroll: false })
@@ -179,41 +272,15 @@ export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
     if (e.key === 'ArrowRight') navigate(1)
   }
 
-  const handleModelLoad = useCallback(() => {
+  const handleModelLoaded = useCallback(() => {
     setIsLoading(false)
   }, [])
 
-  // Sync initialIndex prop
   useEffect(() => {
     setActiveIndex(initialIndex)
   }, [initialIndex])
 
   const active = heroCategories[activeIndex]
-
-  // WebGL context lost → static fallback
-  if (isContextLost) {
-    return (
-      <section
-        aria-label="Product showcase"
-        className="relative min-h-screen bg-surface-dark flex items-center justify-center"
-      >
-        <div className="text-center px-4">
-          <h1 className="font-display font-normal text-section uppercase tracking-widest text-on-dark mb-6">
-            {active.label}
-          </h1>
-          <p className="font-body text-15 text-on-dark-muted mb-8 max-w-md mx-auto">
-            Interactive 3D viewer is unavailable. Please browse our collection directly.
-          </p>
-          <Link
-            href={active.href}
-            className="inline-flex items-center justify-center rounded-none border-2 border-on-dark bg-transparent px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-on-dark transition-colors duration-200 hover:bg-on-dark hover:text-surface-dark"
-          >
-            Browse {active.label}
-          </Link>
-        </div>
-      </section>
-    )
-  }
 
   return (
     <section
@@ -231,27 +298,23 @@ export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
         {/* Three.js canvas */}
         <div className="absolute inset-0">
           <Canvas
-            ref={canvasRef}
-            camera={{ position: [0, 2, 5], fov: 45 }}
-            dpr={[1, 2]}
-            frameloop="demand"
-            gl={{ antialias: true, alpha: true }}
+            camera={{ position: [0, 0, 15], fov: 25 }}
+            dpr={[1, 1.5]}
+            gl={{ logarithmicDepthBuffer: true, antialias: false }}
           >
-            <color attach="background" args={['oklch(var(--surface-dark))']} />
-            <AdaptiveDPRController />
+            <color attach="background" args={['#15151a']} />
             <Suspense fallback={null}>
-              <CategoryMesh
-                key={activeIndex}
-                index={activeIndex}
+              <Scene
+                activeIndex={activeIndex}
                 reducedMotion={reducedMotion}
-                onModelLoad={handleModelLoad}
+                onModelLoaded={handleModelLoaded}
               />
             </Suspense>
           </Canvas>
 
           {/* Loading skeleton overlay */}
           {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-surface-dark">
+            <div className="absolute inset-0 flex items-center justify-center bg-[#15151a]">
               <HeroLoadingSkeleton />
             </div>
           )}
