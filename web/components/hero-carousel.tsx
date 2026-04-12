@@ -2,9 +2,18 @@
 
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { Icon } from '@mdi/react'
-import { ContactShadows, Environment, Lightformer, OrbitControls, useGLTF } from '@react-three/drei'
+import {
+  AccumulativeShadows,
+  Environment,
+  Float,
+  Lightformer,
+  PerformanceMonitor,
+  RandomizedLight,
+  useGLTF,
+} from '@react-three/drei'
 import { applyProps, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { Bloom, EffectComposer, LUT } from '@react-three/postprocessing'
+import { Color, Depth, LayerMaterial } from 'lamina'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { LUTCubeLoader } from 'postprocessing'
@@ -14,59 +23,42 @@ import * as THREE from 'three'
 import { HeroLoadingSkeleton } from '@/components/hero-loading-skeleton'
 import { heroCategories } from '@/lib/data'
 
-const MODEL_PATH = '/models/lambo.glb'
+const TOTAL = heroCategories.length
 
-useGLTF.preload(MODEL_PATH)
+const MODELS = [
+  {
+    path: '/models/lambo.glb',
+    scale: 0.015,
+    rotation: [0, Math.PI / 1.5, 0] as [number, number, number],
+  },
+  {
+    path: '/models/911-transformed.glb',
+    scale: 1.6,
+    rotation: [0, Math.PI / 5, 0] as [number, number, number],
+  },
+]
 
-// ── Reduced motion hook ───────────────────────────────────────────────────────
+useGLTF.preload(MODELS[0].path)
+useGLTF.preload(MODELS[1].path)
 
-function useReducedMotion() {
-  const [reduced, setReduced] = useState(false)
+// ── Lambo model ──────────────────────────────────────────────────────────────
 
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReduced(mq.matches)
-    const handler = (e: MediaQueryListEvent) => setReduced(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [])
-
-  return reduced
-}
-
-// ── Car model (lambo-style material tweaks) ───────────────────────────────────
-
-function CarModel({
-  rotation = [0, Math.PI / 1.5, 0] as [number, number, number],
-  scale = 0.015,
-  reducedMotion,
-  onLoaded,
-}: {
-  rotation?: [number, number, number]
-  scale?: number
-  reducedMotion: boolean
-  onLoaded?: () => void
-}) {
+function LamboModel({ onLoaded }: { onLoaded?: () => void }) {
   const groupRef = useRef<Group>(null)
-  const { scene, nodes, materials } = useGLTF(MODEL_PATH)
+  const { scene, nodes, materials } = useGLTF(MODELS[0].path)
 
-  // Lambo-style material fixes
   useMemo(() => {
     Object.values(nodes).forEach(node => {
-      if (node.isMesh) {
-        // Fix glass normals
-        if (node.name.startsWith('glass')) node.geometry.computeVertexNormals()
-        // Fix logo, too dark
-        if (node.name === 'silver_001_BreakDiscs_0')
-          node.material = applyProps(materials.BreakDiscs.clone(), { color: '#ddd' })
+      if ((node as THREE.Mesh).isMesh) {
+        const mesh = node as THREE.Mesh
+        if (mesh.name.startsWith('glass')) mesh.geometry.computeVertexNormals()
+        if (mesh.name === 'silver_001_BreakDiscs_0')
+          mesh.material = applyProps(materials.BreakDiscs.clone(), { color: '#ddd' })
       }
     })
-    // Fix windows
     if (nodes.glass_003) nodes.glass_003.scale.setScalar(2.7)
-    // Fix inner frame
     if (materials.FrameBlack)
       applyProps(materials.FrameBlack, { metalness: 0.75, roughness: 0, color: 'black' })
-    // Wheels: chrome to black matte
     if (materials.Chrome)
       applyProps(materials.Chrome, { metalness: 1, roughness: 0, color: '#333' })
     if (materials.BreakDiscs)
@@ -75,15 +67,13 @@ function CarModel({
       applyProps(materials.TiresGum, { metalness: 0, roughness: 0.4, color: '#181818' })
     if (materials.GreyElements)
       applyProps(materials.GreyElements, { metalness: 0, color: '#292929' })
-    // Make front and tail LEDs emit light
     if (materials.emitbrake)
       applyProps(materials.emitbrake, { emissiveIntensity: 3, toneMapped: false })
     if (materials.LightsFrontLed)
       applyProps(materials.LightsFrontLed, { emissiveIntensity: 3, toneMapped: false })
-    // Paint: yellow to black with clearcoat
     const paintNode = nodes.yellow_WhiteCar_0
     if (paintNode) {
-      paintNode.material = new THREE.MeshPhysicalMaterial({
+      ;(paintNode as THREE.Mesh).material = new THREE.MeshPhysicalMaterial({
         roughness: 0.3,
         metalness: 0.05,
         color: '#111',
@@ -98,21 +88,57 @@ function CarModel({
     onLoaded?.()
   }, [onLoaded])
 
-  useFrame((_, delta) => {
-    if (!groupRef.current || reducedMotion) return
-    groupRef.current.rotation.y += delta * 0.35
-  })
-
   return (
-    <group ref={groupRef} rotation={rotation}>
-      <primitive object={scene} scale={scale} />
+    <group ref={groupRef} rotation={MODELS[0].rotation}>
+      <primitive object={scene} scale={MODELS[0].scale} />
     </group>
   )
 }
 
-// ── Post-processing (Bloom + LUT color grading) ──────────────────────────────
-// Note: SSR was removed from @react-three/postprocessing v3.
-// Reflections come from the Environment + Lightformer setup instead.
+// ── Porsche model ────────────────────────────────────────────────────────────
+
+function PorscheModel({ onLoaded }: { onLoaded?: () => void }) {
+  const groupRef = useRef<Group>(null)
+  const { scene, nodes, materials } = useGLTF(MODELS[1].path)
+
+  useMemo(() => {
+    Object.values(nodes).forEach(node => {
+      if ((node as THREE.Mesh).isMesh) {
+        ;(node as THREE.Mesh).receiveShadow = (node as THREE.Mesh).castShadow = true
+      }
+    })
+    if (materials.rubber)
+      applyProps(materials.rubber, {
+        color: '#222',
+        roughness: 0.6,
+        roughnessMap: null,
+        normalScale: [4, 4],
+      })
+    if (materials.window)
+      applyProps(materials.window, { color: 'black', roughness: 0, clearcoat: 0.1 })
+    if (materials.coat)
+      applyProps(materials.coat, { envMapIntensity: 4, roughness: 0.5, metalness: 1 })
+    if (materials.paint)
+      applyProps(materials.paint, {
+        envMapIntensity: 2,
+        roughness: 0.45,
+        metalness: 0.8,
+        color: '#555',
+      })
+  }, [nodes, materials])
+
+  useEffect(() => {
+    onLoaded?.()
+  }, [onLoaded])
+
+  return (
+    <group ref={groupRef} rotation={MODELS[1].rotation}>
+      <primitive object={scene} scale={MODELS[1].scale} />
+    </group>
+  )
+}
+
+// ── Post-processing (Bloom + LUT) ────────────────────────────────────────────
 
 function PostProcessing() {
   const lut = useLoader(LUTCubeLoader, '/F-6800-STD.cube')
@@ -125,99 +151,134 @@ function PostProcessing() {
   )
 }
 
-// ── Environment (lambo-style: custom Lightformer panels) ──────────────────────
+// ── Animated Lightformers (Porsche-style) ────────────────────────────────────
 
-function StudioEnvironment() {
+function AnimatedLightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
+  const group = useRef<THREE.Group>(null)
+  useFrame((_state, delta) => {
+    if (!group.current) return
+    group.current.position.z += delta * 10
+    if (group.current.position.z > 20) group.current.position.z = -60
+  })
+
   return (
-    <Environment resolution={512}>
-      {/* Ceiling panels */}
+    <>
+      {/* Ceiling */}
       <Lightformer
-        intensity={2}
+        intensity={0.75}
         rotation-x={Math.PI / 2}
-        position={[0, 4, -9]}
-        scale={[10, 1, 1]}
+        position={[0, 5, -9]}
+        scale={[10, 10, 1]}
       />
+      <group rotation={[0, 0.5, 0]}>
+        <group ref={group}>
+          {positions.map((x, i) => (
+            <Lightformer
+              // biome-ignore lint/suspicious/noArrayIndexKey: static positions array, order never changes
+              key={`light-${x}-${i}`}
+              form="circle"
+              intensity={2}
+              rotation={[Math.PI / 2, 0, 0]}
+              position={[x, 4, i * 4]}
+              scale={[3, 1, 1]}
+            />
+          ))}
+        </group>
+      </group>
+      {/* Sides */}
       <Lightformer
-        intensity={2}
-        rotation-x={Math.PI / 2}
-        position={[0, 4, -6]}
-        scale={[10, 1, 1]}
-      />
-      <Lightformer
-        intensity={2}
-        rotation-x={Math.PI / 2}
-        position={[0, 4, -3]}
-        scale={[10, 1, 1]}
-      />
-      <Lightformer intensity={2} rotation-x={Math.PI / 2} position={[0, 4, 0]} scale={[10, 1, 1]} />
-      <Lightformer intensity={2} rotation-x={Math.PI / 2} position={[0, 4, 3]} scale={[10, 1, 1]} />
-      <Lightformer intensity={2} rotation-x={Math.PI / 2} position={[0, 4, 6]} scale={[10, 1, 1]} />
-      <Lightformer intensity={2} rotation-x={Math.PI / 2} position={[0, 4, 9]} scale={[10, 1, 1]} />
-      {/* Side walls */}
-      <Lightformer
-        intensity={2}
+        intensity={4}
         rotation-y={Math.PI / 2}
-        position={[-50, 2, 0]}
-        scale={[100, 2, 1]}
+        position={[-5, 1, -1]}
+        scale={[20, 0.1, 1]}
       />
-      <Lightformer
-        intensity={2}
-        rotation-y={-Math.PI / 2}
-        position={[50, 2, 0]}
-        scale={[100, 2, 1]}
-      />
-      {/* Key light - subtle accent */}
-      <Lightformer
-        form="ring"
-        color="#ff4444"
-        intensity={10}
-        scale={2}
-        position={[10, 5, 10]}
-        onUpdate={self => self.lookAt(0, 0, 0)}
-      />
-    </Environment>
+      <Lightformer rotation-y={Math.PI / 2} position={[-5, -1, -1]} scale={[20, 0.5, 1]} />
+      <Lightformer rotation-y={-Math.PI / 2} position={[10, 1, 0]} scale={[20, 1, 1]} />
+      {/* Accent (red floating ring) */}
+      <Float speed={5} floatIntensity={2} rotationIntensity={2}>
+        <Lightformer
+          form="ring"
+          color="red"
+          intensity={1}
+          scale={10}
+          position={[-15, 4, -18]}
+          target={[0, 0, 0]}
+        />
+      </Float>
+    </>
   )
+}
+
+// ── Gradient background sphere (Porsche-style) ───────────────────────────────
+
+function GradientBackground() {
+  return (
+    <mesh scale={100}>
+      <sphereGeometry args={[1, 64, 64]} />
+      <LayerMaterial side={THREE.BackSide}>
+        <Color color="#444" alpha={1} mode="normal" />
+        <Depth
+          colorA="blue"
+          colorB="black"
+          alpha={0.5}
+          mode="normal"
+          near={0}
+          far={300}
+          origin={[100, 100, 100]}
+        />
+      </LayerMaterial>
+    </mesh>
+  )
+}
+
+// ── Auto-orbiting camera rig (Porsche-style) ─────────────────────────────────
+
+function CameraRig({ v = new THREE.Vector3() }: { v?: THREE.Vector3 }) {
+  return useFrame(state => {
+    const t = state.clock.elapsedTime
+    state.camera.position.lerp(v.set(Math.sin(t / 5), 0, 12 + Math.cos(t / 5) / 2), 0.05)
+    state.camera.lookAt(0, 0, 0)
+  })
 }
 
 // ── 3D Scene ──────────────────────────────────────────────────────────────────
 
-function Scene({
-  reducedMotion,
-  onModelLoaded,
-}: {
-  reducedMotion: boolean
-  onModelLoaded: () => void
-}) {
+function Scene({ activeIndex, onModelLoaded }: { activeIndex: number; onModelLoaded: () => void }) {
   return (
     <>
-      <StudioEnvironment />
-      <hemisphereLight intensity={0.5} />
-      <CarModel reducedMotion={reducedMotion} onLoaded={onModelLoaded} />
-      {/* Decorative floor rings */}
-      <mesh scale={4} position={[3, -1.161, -1.5]} rotation={[-Math.PI / 2, 0, Math.PI / 2.5]}>
-        <ringGeometry args={[0.9, 1, 4, 1]} />
-        <meshStandardMaterial color="white" roughness={0.75} />
-      </mesh>
-      <mesh scale={4} position={[-3, -1.161, -1]} rotation={[-Math.PI / 2, 0, Math.PI / 2.5]}>
-        <ringGeometry args={[0.9, 1, 3, 1]} />
-        <meshStandardMaterial color="white" roughness={0.75} />
-      </mesh>
-      <ContactShadows
-        resolution={1024}
-        frames={1}
-        position={[0, -1.16, 0]}
-        scale={15}
-        blur={0.5}
-        opacity={1}
-        far={20}
+      <spotLight
+        position={[0, 15, 0]}
+        angle={0.3}
+        penumbra={1}
+        castShadow
+        intensity={2}
+        shadow-bias={-0.0001}
       />
+      <ambientLight intensity={0.5} />
+
+      {/* Active model */}
+      {activeIndex === 0 ? (
+        <LamboModel onLoaded={onModelLoaded} />
+      ) : (
+        <PorscheModel onLoaded={onModelLoaded} />
+      )}
+
+      {/* Accumulative soft shadows */}
+      <AccumulativeShadows position={[0, -1.16, 0]} frames={100} alphaTest={0.9} scale={10}>
+        <RandomizedLight amount={8} radius={10} ambient={0.5} position={[1, 5, -1]} />
+      </AccumulativeShadows>
+
+      {/* Animated environment */}
+      <Environment frames={Infinity} resolution={256} background blur={1}>
+        <AnimatedLightformers />
+        <GradientBackground />
+      </Environment>
+
+      {/* Auto-orbiting camera */}
+      <CameraRig />
+
+      {/* Post-processing */}
       <PostProcessing />
-      <OrbitControls
-        enablePan={false}
-        enableZoom={false}
-        minPolarAngle={Math.PI / 2.2}
-        maxPolarAngle={Math.PI / 2.2}
-      />
     </>
   )
 }
@@ -227,8 +288,8 @@ function Scene({
 export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
   const [activeIndex, setActiveIndex] = useState(initialIndex)
   const [isLoading, setIsLoading] = useState(true)
+  const [_degraded, setDegraded] = useState(false)
   const dragStartX = useRef<number | null>(null)
-  const reducedMotion = useReducedMotion()
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -298,23 +359,20 @@ export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
         {/* Three.js canvas */}
         <div className="absolute inset-0">
           <Canvas
-            camera={{ position: [0, 0, 15], fov: 25 }}
+            shadows
+            camera={{ position: [5, 0, 15], fov: 30 }}
             dpr={[1, 1.5]}
-            gl={{ logarithmicDepthBuffer: true, antialias: false }}
+            gl={{ logarithmicDepthBuffer: true }}
           >
-            <color attach="background" args={['#15151a']} />
             <Suspense fallback={null}>
-              <Scene
-                activeIndex={activeIndex}
-                reducedMotion={reducedMotion}
-                onModelLoaded={handleModelLoaded}
-              />
+              <Scene activeIndex={activeIndex} onModelLoaded={handleModelLoaded} />
             </Suspense>
+            <PerformanceMonitor onDecline={() => setDegraded(true)} />
           </Canvas>
 
           {/* Loading skeleton overlay */}
           {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#15151a]">
+            <div className="absolute inset-0 flex items-center justify-center bg-black">
               <HeroLoadingSkeleton />
             </div>
           )}
