@@ -299,6 +299,46 @@
   }
 }
 
+/* ── yet-another-react-lightbox overrides ──────────────────────────────────── */
+
+/* CSS variable tokens — applied on root so they cascade into all yarl elements */
+.yarl__root {
+  --yarl__color_backdrop: var(--black-50);
+  --yarl__color_button: var(--white-70);
+  --yarl__color_button_active: var(--white-solid);
+  --yarl__color_button_disabled: var(--white-20);
+  --yarl__button_background_color: var(--black-30);
+  --yarl__button_border: 0;
+  --yarl__button_padding: 0.625rem;
+  --yarl__button_filter: none;
+  --yarl__icon_size: 1.25rem;
+  --yarl__toolbar_padding: 1rem;
+  --yarl__navigation_button_padding: 0.625rem;
+}
+
+/* Double-class specificity (0,2,0) overrides yarl's single-class rules (0,1,0)
+   regardless of CSS load order — needed because yarl CSS imports after globals */
+.yarl__root .yarl__button {
+  border-radius: 9999px;
+}
+
+.yarl__root .yarl__counter {
+  top: auto;
+  bottom: 1rem;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 0.5rem 1rem;
+  filter: none;
+  color: oklch(1 0 0);
+  background-color: oklch(0 0 0 / 30%);
+  border-radius: 9999px;
+  font-family: var(--font-heading);
+  font-size: var(--text-13);
+  line-height: 1.5;
+}
+
 @layer components {
   .car-card-media {
     aspect-ratio: 3 / 2;

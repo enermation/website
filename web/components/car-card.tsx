@@ -82,7 +82,7 @@ export function CarCard({ product }: CarCardProps) {
         </p>
       </div>
 
-      <div className="mt-4 border-t border-subtle px-2 pt-3 pb-1 md:hidden">
+      <div className="mt-4 border-t border-border-subtle px-2 pt-3 pb-1 md:hidden">
         <div className="flex flex-col gap-3">
           {mobileDetails.map(detail => (
             <p key={detail} className="font-body text-13 font-medium text-foreground">
@@ -92,7 +92,7 @@ export function CarCard({ product }: CarCardProps) {
         </div>
       </div>
 
-      <div className="mt-3 hidden grid-cols-2 gap-y-1 border-t border-subtle pt-2 md:grid">
+      <div className="mt-3 hidden grid-cols-2 gap-y-1 border-t border-border-subtle pt-2 md:grid">
         {desktopDetails.map(({ icon: iconPath, label }) => (
           <div key={label} className="flex items-center gap-2 px-2 py-1">
             <Icon path={iconPath} size={1} className="size-3.5 text-heading shrink-0" />
