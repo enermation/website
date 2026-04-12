@@ -3,17 +3,15 @@
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import {
-  AccumulativeShadows,
+  ContactShadows,
   Environment,
   Float,
   Lightformer,
   PerformanceMonitor,
-  RandomizedLight,
   useGLTF,
 } from '@react-three/drei'
 import { applyProps, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { Bloom, EffectComposer, LUT } from '@react-three/postprocessing'
-import { Color, Depth, LayerMaterial } from 'lamina'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { LUTCubeLoader } from 'postprocessing'
@@ -210,28 +208,6 @@ function AnimatedLightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
   )
 }
 
-// ── Gradient background sphere (Porsche-style) ───────────────────────────────
-
-function GradientBackground() {
-  return (
-    <mesh scale={100}>
-      <sphereGeometry args={[1, 64, 64]} />
-      <LayerMaterial side={THREE.BackSide}>
-        <Color color="#444" alpha={1} mode="normal" />
-        <Depth
-          colorA="blue"
-          colorB="black"
-          alpha={0.5}
-          mode="normal"
-          near={0}
-          far={300}
-          origin={[100, 100, 100]}
-        />
-      </LayerMaterial>
-    </mesh>
-  )
-}
-
 // ── Auto-orbiting camera rig (Porsche-style) ─────────────────────────────────
 
 function CameraRig({ v = new THREE.Vector3() }: { v?: THREE.Vector3 }) {
@@ -247,6 +223,9 @@ function CameraRig({ v = new THREE.Vector3() }: { v?: THREE.Vector3 }) {
 function Scene({ activeIndex, onModelLoaded }: { activeIndex: number; onModelLoaded: () => void }) {
   return (
     <>
+      {/* Dark background like PPF workshop */}
+      <color attach="background" args={['#15151a']} />
+
       <spotLight
         position={[0, 15, 0]}
         angle={0.3}
@@ -264,15 +243,20 @@ function Scene({ activeIndex, onModelLoaded }: { activeIndex: number; onModelLoa
         <PorscheModel onLoaded={onModelLoaded} />
       )}
 
-      {/* Accumulative soft shadows */}
-      <AccumulativeShadows position={[0, -1.16, 0]} frames={100} alphaTest={0.9} scale={10}>
-        <RandomizedLight amount={8} radius={10} ambient={0.5} position={[1, 5, -1]} />
-      </AccumulativeShadows>
+      {/* Contact shadows for floor reflection effect */}
+      <ContactShadows
+        resolution={1024}
+        frames={1}
+        position={[0, -1.16, 0]}
+        scale={15}
+        blur={0.5}
+        opacity={1}
+        far={20}
+      />
 
-      {/* Animated environment */}
-      <Environment frames={Infinity} resolution={256} background blur={1}>
+      {/* Animated environment with light reflections */}
+      <Environment frames={Infinity} resolution={512}>
         <AnimatedLightformers />
-        <GradientBackground />
       </Environment>
 
       {/* Auto-orbiting camera */}
