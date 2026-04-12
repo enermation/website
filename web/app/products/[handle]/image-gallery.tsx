@@ -79,7 +79,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
             <CarouselItem key={image.url} className="pl-0">
               <button
                 type="button"
-                className="product-gallery-mobile relative overflow-hidden bg-surface-elevated cursor-zoom-in transition-opacity duration-150 active:opacity-30"
+                className="product-gallery-mobile relative w-full overflow-hidden bg-surface-elevated cursor-zoom-in transition-opacity duration-150 active:opacity-30"
                 onClick={() => openLightbox(index)}
               >
                 <Image
