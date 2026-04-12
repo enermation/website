@@ -23,7 +23,8 @@ import * as THREE from 'three'
 import { HeroLoadingSkeleton } from '@/components/hero-loading-skeleton'
 import { heroCategories } from '@/lib/data'
 
-const TOTAL = heroCategories.length
+const MAX_3D_SLIDES = 2
+const TOTAL = Math.min(heroCategories.length, MAX_3D_SLIDES)
 
 const MODELS = [
   {
