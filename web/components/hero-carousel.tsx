@@ -9,6 +9,7 @@ import {
   Lightformer,
   PerformanceMonitor,
   useGLTF,
+  usePerformanceMonitor,
 } from '@react-three/drei'
 import { applyProps, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { Bloom, EffectComposer, LUT } from '@react-three/postprocessing'
@@ -23,6 +24,15 @@ import { heroCategories } from '@/lib/data'
 
 const MAX_3D_SLIDES = 2
 const TOTAL = Math.min(heroCategories.length, MAX_3D_SLIDES)
+
+// Performance thresholds
+const DPR_MIN = 1
+const DPR_MAX = 2
+const DPR_START = 1.5
+const ENV_RES_HIGH = 512
+const ENV_RES_LOW = 256
+const SHADOW_RES_HIGH = 1024
+const SHADOW_RES_LOW = 512
 
 const MODELS = [
   {
@@ -139,8 +149,10 @@ function PorscheModel({ onLoaded }: { onLoaded?: () => void }) {
 
 // ── Post-processing (Bloom + LUT) ────────────────────────────────────────────
 
-function PostProcessing() {
+function PostProcessing({ enabled }: { enabled: boolean }) {
   const lut = useLoader(LUTCubeLoader, '/F-6800-STD.cube')
+
+  if (!enabled) return null
 
   return (
     <EffectComposer enableNormalPass={false}>
@@ -220,7 +232,19 @@ function CameraRig({ v = new THREE.Vector3() }: { v?: THREE.Vector3 }) {
 
 // ── 3D Scene ──────────────────────────────────────────────────────────────────
 
-function Scene({ activeIndex, onModelLoaded }: { activeIndex: number; onModelLoaded: () => void }) {
+function Scene({
+  activeIndex,
+  onModelLoaded,
+  effectsEnabled,
+  envResolution,
+  shadowResolution,
+}: {
+  activeIndex: number
+  onModelLoaded: () => void
+  effectsEnabled: boolean
+  envResolution: number
+  shadowResolution: number
+}) {
   return (
     <>
       {/* Dark background like PPF workshop */}
@@ -245,7 +269,7 @@ function Scene({ activeIndex, onModelLoaded }: { activeIndex: number; onModelLoa
 
       {/* Contact shadows for floor reflection effect */}
       <ContactShadows
-        resolution={1024}
+        resolution={shadowResolution}
         frames={1}
         position={[0, -1.16, 0]}
         scale={15}
@@ -255,7 +279,7 @@ function Scene({ activeIndex, onModelLoaded }: { activeIndex: number; onModelLoa
       />
 
       {/* Animated environment with light reflections */}
-      <Environment frames={Infinity} resolution={512}>
+      <Environment frames={Infinity} resolution={envResolution}>
         <AnimatedLightformers />
       </Environment>
 
@@ -263,7 +287,7 @@ function Scene({ activeIndex, onModelLoaded }: { activeIndex: number; onModelLoa
       <CameraRig />
 
       {/* Post-processing */}
-      <PostProcessing />
+      <PostProcessing enabled={effectsEnabled} />
     </>
   )
 }
@@ -273,7 +297,11 @@ function Scene({ activeIndex, onModelLoaded }: { activeIndex: number; onModelLoa
 export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
   const [activeIndex, setActiveIndex] = useState(initialIndex)
   const [isLoading, setIsLoading] = useState(true)
-  const [_degraded, setDegraded] = useState(false)
+  const [dpr, setDpr] = useState(DPR_START)
+  const [effectsEnabled, setEffectsEnabled] = useState(true)
+  const [envResolution, setEnvResolution] = useState(ENV_RES_HIGH)
+  const [shadowResolution, setShadowResolution] = useState(SHADOW_RES_HIGH)
+  const [shadowsEnabled, setShadowsEnabled] = useState(true)
   const dragStartX = useRef<number | null>(null)
   const router = useRouter()
   const pathname = usePathname()
@@ -344,15 +372,48 @@ export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
         {/* Three.js canvas */}
         <div className="absolute inset-0">
           <Canvas
-            shadows
+            shadows={shadowsEnabled}
             camera={{ position: [5, 0, 15], fov: 30 }}
-            dpr={[1, 1.5]}
+            dpr={dpr}
             gl={{ logarithmicDepthBuffer: true }}
           >
             <Suspense fallback={null}>
-              <Scene activeIndex={activeIndex} onModelLoaded={handleModelLoaded} />
+              <Scene
+                activeIndex={activeIndex}
+                onModelLoaded={handleModelLoaded}
+                effectsEnabled={effectsEnabled}
+                envResolution={envResolution}
+                shadowResolution={shadowResolution}
+              />
             </Suspense>
-            <PerformanceMonitor onDecline={() => setDegraded(true)} />
+            <PerformanceMonitor
+              factor={1}
+              bounds={refreshrate => (refreshrate > 90 ? [50, 90] : [50, 60])}
+              flipflops={3}
+              onChange={({ factor }) => {
+                // Gradual DPR adjustment: clamp between DPR_MIN and DPR_MAX
+                setDpr(Math.max(DPR_MIN, Math.min(DPR_MAX, DPR_MIN + (DPR_MAX - DPR_MIN) * factor)))
+              }}
+              onIncline={() => {
+                setEffectsEnabled(true)
+                setEnvResolution(ENV_RES_HIGH)
+                setShadowResolution(SHADOW_RES_HIGH)
+                setShadowsEnabled(true)
+              }}
+              onDecline={() => {
+                setEffectsEnabled(false)
+                setEnvResolution(ENV_RES_LOW)
+                setShadowResolution(SHADOW_RES_LOW)
+              }}
+              onFallback={() => {
+                // Guaranteed baseline: minimal quality
+                setDpr(DPR_MIN)
+                setEffectsEnabled(false)
+                setEnvResolution(ENV_RES_LOW)
+                setShadowResolution(SHADOW_RES_LOW)
+                setShadowsEnabled(false)
+              }}
+            />
           </Canvas>
 
           {/* Loading skeleton overlay */}
