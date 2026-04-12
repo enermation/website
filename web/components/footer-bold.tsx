@@ -15,7 +15,7 @@ export function BoldFooter({ className }: { className?: string }) {
     <footer
       data-slot="footer-bold"
       className={cn(
-        'w-full overflow-hidden bg-black font-sans text-on-dark border-t border-white-30',
+        'w-full overflow-hidden bg-surface-dark font-sans text-on-dark border-t border-white-30',
         className
       )}
     >
@@ -87,14 +87,14 @@ export function BoldFooter({ className }: { className?: string }) {
         </div>
 
         {/* Bottom section */}
-        <div className="relative w-full">
+        <div className="relative w-full overflow-hidden">
           <p
             aria-hidden="true"
-            className="pointer-events-none select-none font-heading text-footer-wordmark font-black leading-none tracking-tighter opacity-20 -mb-4"
+            className="pointer-events-none select-none truncate pb-2 font-heading text-footer-wordmark font-black leading-none tracking-tighter opacity-20"
           >
             Enermation
           </p>
-          <div className="relative z-10 flex items-end justify-between border-t border-white-30 pb-6 pt-8">
+          <div className="relative z-10 flex items-end justify-between border-t border-white-30 pt-6">
             <span className="text-xs font-medium uppercase tracking-widest text-on-dark-muted">
               &copy; {new Date().getFullYear()} Enermation. All rights reserved.
             </span>
