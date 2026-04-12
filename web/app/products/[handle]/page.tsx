@@ -1,28 +1,19 @@
-import {
-  mdiAccount,
-  mdiCalendar,
-  mdiCar,
-  mdiChevronRight,
-  mdiPhone,
-  mdiSpeedometer,
-  mdiTableChair,
-} from '@mdi/js'
+import { mdiCar, mdiChevronRight } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { CarCard } from '@/components/car-card'
+import { ProductSpecs1 } from '@/components/product-specs1'
 import { SiteHeader } from '@/components/site-header'
 import { StripeBar } from '@/components/stripe-bar'
 import { Badge } from '@/components/ui/badge'
-import { footerContactInfo, productPage, relatedStories } from '@/lib/data'
+import { productPage, relatedStories } from '@/lib/data'
 import { GET_PRODUCT_BY_HANDLE, GET_PRODUCTS_IN_COLLECTION, GET_SHOP_INFO } from '@/lib/queries'
 import { getClient } from '@/lib/shopify'
 import type { ShopifyProduct, ShopifyShopInfo } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { ContactSection } from './contact-section'
-import { EnquiryForm } from './enquiry-form'
 import { ImageGallery } from './image-gallery'
 
 type ProductResponse = {
@@ -39,32 +30,6 @@ type CollectionResponse = {
 
 type ShopResponse = {
   shop: ShopifyShopInfo | null
-}
-
-function getSpecIcon(name: string): string {
-  const normalizedName = name.toLowerCase()
-
-  if (normalizedName.includes('year') || normalizedName.includes('reg')) {
-    return mdiCalendar
-  }
-
-  if (
-    normalizedName.includes('mileage') ||
-    normalizedName.includes('miles') ||
-    normalizedName.includes('odometer')
-  ) {
-    return mdiSpeedometer
-  }
-
-  if (
-    normalizedName.includes('interior') ||
-    normalizedName.includes('trim') ||
-    normalizedName.includes('upholstery')
-  ) {
-    return mdiTableChair
-  }
-
-  return mdiCar
 }
 
 export async function generateMetadata({
@@ -100,13 +65,11 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
   if (!productData?.product) notFound()
 
   const product = productData.product
-  const shop = shopData?.shop ?? null
+  const _shop = shopData?.shop ?? null
   const images = product.images.edges.map(edge => edge.node)
   const primaryCollection = product.collections?.edges[0]?.node ?? null
   const showroomHref = primaryCollection ? `/collections/${primaryCollection.handle}` : '/'
   const showroomLabel = primaryCollection?.title ?? productPage.breadcrumb.showroom
-  const sellerName = product.vendor?.trim() || shop?.name || productPage.breadcrumb.showroom
-  const sellerWebsite = shop?.primaryDomain?.url ?? null
 
   const { amount, currencyCode } = product.priceRange.minVariantPrice
   const price = new Intl.NumberFormat('en-GB', {
@@ -119,7 +82,6 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
     firstVariant?.selectedOptions?.filter(
       option => option.name !== 'Title' && option.value !== 'Default Title'
     ) ?? []
-  const mobileSpecs = specOptions.slice(0, 4)
 
   const collectionData = primaryCollection
     ? await shopify.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
@@ -132,8 +94,6 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       .map(edge => edge.node)
       .filter(collectionProduct => collectionProduct.handle !== handle)
       .slice(0, 3) ?? []
-
-  const listingCountLabel = `${collectionData?.data?.collection?.products.edges.length ?? 0} listings`
 
   return (
     <>
@@ -175,8 +135,8 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
 
       <section className="bg-background">
         <div className="mx-auto max-w-site px-4 py-6 md:px-6 md:py-10">
-          <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-4">
-            <div className="col-span-3 flex flex-col gap-6 md:gap-8">
+          <div className="grid grid-cols-1 items-start gap-10">
+            <div className="flex flex-col gap-6 md:gap-8">
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-6">
                 <div className="flex flex-col gap-1">
                   {product.vendor && (
@@ -209,55 +169,6 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 </div>
               </div>
 
-              {specOptions.length > 0 && (
-                <>
-                  <div className="grid grid-cols-2 gap-px border-y border-border bg-surface md:hidden">
-                    {mobileSpecs.map(option => {
-                      const iconPath = getSpecIcon(option.name)
-
-                      return (
-                        <div
-                          key={option.name}
-                          className="flex items-start gap-3 bg-background px-4 py-3"
-                        >
-                          <div className="mt-0.5 flex size-9 items-center justify-center rounded-full bg-muted">
-                            <Icon
-                              path={iconPath}
-                              size={1}
-                              className="size-4 text-muted-foreground"
-                            />
-                          </div>
-                          <div className="flex min-w-0 flex-col gap-0.5">
-                            <span className="font-heading text-13 uppercase tracking-wide text-body">
-                              {option.name}
-                            </span>
-                            <span className="truncate font-body text-15 text-foreground">
-                              {option.value}
-                            </span>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-
-                  <div className="hidden border-y border-border md:flex">
-                    {specOptions.map((option, index) => (
-                      <div
-                        key={option.name}
-                        className={cn(
-                          'flex flex-1 flex-col gap-0.5 px-6 py-4',
-                          index > 0 && 'border-l border-border',
-                          index === 0 && 'pl-0'
-                        )}
-                      >
-                        <span className="font-display text-lg text-heading">{option.value}</span>
-                        <span className="font-body text-13 text-body">{option.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-
               {product.description && (
                 <div className="flex flex-col gap-3">
                   <h2 className="font-display text-xl text-heading">
@@ -269,204 +180,36 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 </div>
               )}
 
-              <div className="flex flex-col gap-3">
-                <h2 className="font-display text-xl text-heading">
-                  {productPage.sections.listingDetails}
-                </h2>
-                <dl className="divide-y divide-border border-y border-border md:border-y-0">
-                  {product.vendor && (
-                    <div className="flex items-start justify-between gap-4 py-3">
-                      <dt className="font-body text-13 text-body">{productPage.labels.brand}</dt>
-                      <dd className="text-right font-body text-13 text-foreground">
-                        {product.vendor}
-                      </dd>
-                    </div>
-                  )}
-                  {specOptions.map(option => (
-                    <div key={option.name} className="flex items-start justify-between gap-4 py-3">
-                      <dt className="font-body text-13 text-body">{option.name}</dt>
-                      <dd className="text-right font-body text-13 text-foreground">
-                        {option.value}
-                      </dd>
-                    </div>
-                  ))}
-                  <div className="flex items-start justify-between gap-4 py-3">
-                    <dt className="font-body text-13 text-body">{productPage.labels.status}</dt>
-                    <dd
-                      className={cn(
-                        'text-right font-body text-13',
-                        product.availableForSale ? 'text-brand-green' : 'text-body'
-                      )}
-                    >
-                      {product.availableForSale
-                        ? productPage.labels.available
-                        : productPage.labels.soldOrReserved}
-                    </dd>
-                  </div>
-                  <div className="flex items-start justify-between gap-4 py-3">
-                    <dt className="font-body text-13 text-body">{productPage.labels.price}</dt>
-                    <dd className="text-right font-heading text-13 font-semibold text-foreground">
-                      {product.availableForSale ? price : productPage.labels.reserved}
-                    </dd>
-                  </div>
-                </dl>
-              </div>
+              {(() => {
+                const specs = [
+                  ...(product.vendor
+                    ? [{ label: productPage.labels.brand, value: product.vendor }]
+                    : []),
+                  ...specOptions.map(option => ({ label: option.name, value: option.value })),
+                  {
+                    label: productPage.labels.status,
+                    value: product.availableForSale
+                      ? productPage.labels.available
+                      : productPage.labels.soldOrReserved,
+                  },
+                  {
+                    label: productPage.labels.price,
+                    value: product.availableForSale ? price : productPage.labels.reserved,
+                  },
+                ]
 
-              <div className="flex flex-col gap-4 md:hidden">
-                <h2 className="font-display text-xl text-heading">
-                  {productPage.sections.askAQuestion}
-                </h2>
-                <div className="flex items-start gap-4">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface">
-                    <Icon path={mdiAccount} size={1} className="size-5 text-muted-foreground" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <p className="font-body text-13 font-medium text-foreground">{sellerName}</p>
-                    <p className="font-body text-13 text-body">
-                      {productPage.labels.specialistExportBroker}
-                    </p>
-                    <a
-                      href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
-                      className="mt-1 flex items-center gap-1.5 font-body text-13 text-brand-green transition-opacity hover:opacity-80"
-                    >
-                      <Icon path={mdiPhone} size={1} className="size-3.5" />
-                      {productPage.labels.callUs}
-                    </a>
-                  </div>
-                </div>
-                <ContactSection productTitle={product.title} />
-              </div>
+                const categories = [
+                  {
+                    id: 'details',
+                    name: productPage.sections.listingDetails,
+                    icon: <Icon path={mdiCar} size={1} className="size-4" />,
+                    specs,
+                  },
+                ]
 
-              <div className="hidden flex-col gap-4 md:flex">
-                <h2 className="font-display text-xl text-heading">
-                  {productPage.sections.askAQuestion}
-                </h2>
-                <div className="flex items-start gap-4">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface">
-                    <Icon path={mdiAccount} size={1} className="size-5 text-muted-foreground" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <p className="font-body text-13 font-medium text-foreground">{sellerName}</p>
-                    <p className="font-body text-13 text-body">
-                      {productPage.labels.specialistExportBroker}
-                    </p>
-                    <a
-                      href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
-                      className="mt-1 flex items-center gap-1.5 font-body text-13 text-brand-green transition-opacity hover:opacity-80"
-                    >
-                      <Icon path={mdiPhone} size={1} className="size-3.5" />
-                      {productPage.labels.callUs}
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <div className="hidden flex-col gap-3 md:flex">
-                <h2 className="font-display text-xl text-heading">
-                  {productPage.sections.contactAgent}
-                </h2>
-                <ContactSection productTitle={product.title} />
-              </div>
-
-              <div className="flex flex-col gap-4 border-t border-border pt-6 md:pt-8">
-                <h2 className="font-display text-xl text-heading">
-                  {productPage.sections.forSaleBy}
-                </h2>
-
-                <div className="flex flex-col gap-1">
-                  <Link
-                    href={showroomHref}
-                    className="font-body text-13 font-medium text-foreground transition-colors hover:text-brand-green"
-                  >
-                    {sellerName}
-                  </Link>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <p className="font-body text-13 font-medium text-body">Collection</p>
-                  <p className="font-body text-13 leading-relaxed text-foreground">
-                    {showroomLabel}
-                  </p>
-                </div>
-
-                <dl className="divide-y divide-border">
-                  {sellerWebsite && (
-                    <div className="flex flex-col gap-0.5 py-3">
-                      <dt className="font-body text-13 text-body">Website</dt>
-                      <dd>
-                        <a
-                          href={sellerWebsite}
-                          className="font-body text-13 text-foreground transition-colors hover:text-brand-green"
-                        >
-                          {sellerWebsite}
-                        </a>
-                      </dd>
-                    </div>
-                  )}
-                  <div className="flex flex-col gap-0.5 py-3">
-                    <dt className="font-body text-13 text-body">
-                      {productPage.labels.phoneNumber}
-                    </dt>
-                    <dd>
-                      <a
-                        href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
-                        className="font-body text-13 text-foreground transition-colors hover:text-brand-green"
-                      >
-                        {footerContactInfo.phone}
-                      </a>
-                    </dd>
-                  </div>
-                  <div className="flex flex-col gap-0.5 py-3">
-                    <dt className="font-body text-13 text-body">{productPage.labels.email}</dt>
-                    <dd>
-                      <a
-                        href={`mailto:${footerContactInfo.email}`}
-                        className="font-body text-13 text-foreground transition-colors hover:text-brand-green"
-                      >
-                        {footerContactInfo.email}
-                      </a>
-                    </dd>
-                  </div>
-                </dl>
-              </div>
+                return <ProductSpecs1 categories={categories} title="" className="py-0" />
+              })()}
             </div>
-
-            <aside className="sticky top-6 hidden flex-col gap-5 border border-border p-6 md:col-span-1 md:flex">
-              <div className="flex items-start gap-3 border-b border-border pb-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface">
-                  <Icon path={mdiAccount} size={1} className="size-5 text-muted-foreground" />
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <p className="font-body text-13 font-medium text-foreground">{sellerName}</p>
-                  <p className="font-body text-13 text-body">
-                    {productPage.labels.specialistDealer}
-                  </p>
-                  <a
-                    href={`tel:${footerContactInfo.phone.replace(/\s/g, '')}`}
-                    className="mt-1 flex items-center gap-1.5 font-body text-13 text-brand-green transition-opacity hover:opacity-80"
-                  >
-                    <Icon path={mdiPhone} size={1} className="size-3.5" />
-                    {productPage.labels.callAgent}
-                  </a>
-                </div>
-              </div>
-
-              <EnquiryForm
-                productTitle={product.title}
-                sellerName={sellerName}
-                showroomHref={showroomHref}
-                listingCountLabel={listingCountLabel}
-              />
-
-              <div className="border-t border-border pt-4">
-                <Link
-                  href={showroomHref}
-                  className="font-body text-13 text-foreground transition-colors hover:text-brand-green"
-                >
-                  {sellerName} - {productPage.labels.viewAllStock}
-                </Link>
-              </div>
-            </aside>
           </div>
         </div>
       </section>
