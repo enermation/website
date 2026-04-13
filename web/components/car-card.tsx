@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { productPage } from '@/lib/data'
 import type { ShopifyProduct } from '@/lib/types'
+import { formatPrice } from '@/lib/utils'
 
 type CarCardProps = {
   product: ShopifyProduct
@@ -16,10 +17,7 @@ function metaValue(field: { value: string | null } | null): string | null {
 export function CarCard({ product }: CarCardProps) {
   const image = product.images.edges[0]?.node
   const { amount, currencyCode } = product.priceRange.minVariantPrice
-  const price = new Intl.NumberFormat('en-GB', {
-    style: 'currency',
-    currency: currencyCode,
-  }).format(parseFloat(amount))
+  const price = formatPrice(amount, currencyCode)
 
   // Structured metafield values
   const make = metaValue(product.make) ?? product.vendor

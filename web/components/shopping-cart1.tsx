@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/lib/cart-context'
 import { cart } from '@/lib/data'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice } from '@/lib/utils'
 
 type ShoppingCart1Props = {
   className?: string
@@ -81,10 +81,10 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
 
               <div className="text-right">
                 <p className="font-heading text-base font-semibold text-on-dark">
-                  {new Intl.NumberFormat('en-GB', {
-                    style: 'currency',
-                    currency: line.price.currencyCode,
-                  }).format(parseFloat(line.price.amount) * line.quantity)}
+                  {formatPrice(
+                    parseFloat(line.price.amount) * line.quantity,
+                    line.price.currencyCode
+                  )}
                 </p>
               </div>
 
@@ -106,12 +106,7 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
         <div className="space-y-4">
           <div className="flex justify-between text-lg font-semibold text-on-dark">
             <span>{cart.subtotalLabel}</span>
-            <span>
-              {new Intl.NumberFormat('en-GB', {
-                style: 'currency',
-                currency: subtotal.currencyCode,
-              }).format(parseFloat(subtotal.amount))}
-            </span>
+            <span>{formatPrice(subtotal.amount, subtotal.currencyCode)}</span>
           </div>
 
           <Button

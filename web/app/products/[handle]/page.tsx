@@ -14,7 +14,7 @@ import { productPage, relatedStories } from '@/lib/data'
 import { GET_PRODUCT_BY_HANDLE, GET_PRODUCTS_IN_COLLECTION, GET_SHOP_INFO } from '@/lib/queries'
 import { getClient } from '@/lib/shopify'
 import type { ShopifyProduct, ShopifyShopInfo } from '@/lib/types'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice } from '@/lib/utils'
 import { ImageGallery } from './image-gallery'
 
 type ProductResponse = {
@@ -127,10 +127,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
   const showroomLabel = primaryCollection?.title ?? productPage.breadcrumb.showroom
 
   const { amount, currencyCode } = product.priceRange.minVariantPrice
-  const price = new Intl.NumberFormat('en-GB', {
-    style: 'currency',
-    currency: currencyCode,
-  }).format(parseFloat(amount))
+  const price = formatPrice(amount, currencyCode)
 
   const firstVariant = product.variants.edges[0]?.node
   const specOptions =
