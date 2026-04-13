@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { AddToCartButton } from '@/components/add-to-cart-button'
 import { CarCard } from '@/components/car-card'
 import { ProductSpecs1 } from '@/components/product-specs1'
 import { SiteHeader } from '@/components/site-header'
@@ -220,6 +221,11 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                   </Badge>
                 </div>
               </div>
+
+              <AddToCartButton
+                merchandiseId={firstVariant?.id ?? ''}
+                availableForSale={product.availableForSale}
+              />
 
               {product.description ? (
                 <div className="flex flex-col gap-3">

@@ -3,6 +3,7 @@ import { Barlow_Semi_Condensed, Bebas_Neue, Inter, Playfair_Display } from 'next
 import localFont from 'next/font/local'
 import './globals.css'
 import { SiteFooter } from '@/components/site-footer'
+import { CartProvider } from '@/lib/cart-context'
 
 const display = Bebas_Neue({
   variable: '--font-display',
@@ -62,8 +63,10 @@ export default function RootLayout({
       className={`${display.variable} ${heading.variable} ${body.variable} ${luxury.variable} ${flauta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
-        <SiteFooter />
+        <CartProvider>
+          {children}
+          <SiteFooter />
+        </CartProvider>
       </body>
     </html>
   )

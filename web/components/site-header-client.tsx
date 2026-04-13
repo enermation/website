@@ -6,6 +6,7 @@ import {
   mdiBike,
   mdiCar,
   mdiCarShiftPattern,
+  mdiCart,
   mdiChevronDown,
   mdiMenu,
   mdiTruck,
@@ -14,8 +15,11 @@ import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { ShoppingCart1 } from '@/components/shopping-cart1'
+import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { useCart } from '@/lib/cart-context'
 import { headerDropdownCopy } from '@/lib/data'
 import type { HeaderNavItem, HeaderNavigation } from '@/lib/header-navigation'
 import { cn } from '@/lib/utils'
@@ -132,8 +136,22 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
 
 export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [cartOpen, setCartOpen] = useState(false)
   const pathname = usePathname()
   const isHomePage = pathname === '/'
+  const { totalItemCount, closeCart, isCartOpen } = useCart()
+
+  useEffect(() => {
+    setCartOpen(isCartOpen)
+  }, [isCartOpen])
+
+  function handleCartOpenChange(open: boolean) {
+    setCartOpen(open)
+
+    if (!open) {
+      closeCart()
+    }
+  }
 
   return (
     <header
@@ -163,6 +181,34 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
           </nav>
 
           <div className="hidden items-center gap-2 md:flex">
+            <Sheet open={cartOpen} onOpenChange={handleCartOpenChange}>
+              <SheetTrigger
+                className={cn(
+                  'relative inline-flex h-8 w-8 items-center justify-center rounded-full text-background transition-colors hover:bg-white-20',
+                  focusRing
+                )}
+                aria-label="Open cart"
+              >
+                <Icon path={mdiCart} size={1} className="size-5" aria-hidden="true" />
+                {totalItemCount > 0 && (
+                  <Badge className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-green px-1 p-0 font-heading text-11 font-semibold text-background">
+                    {totalItemCount}
+                  </Badge>
+                )}
+              </SheetTrigger>
+              <SheetContent
+                side="right"
+                className="w-full max-w-md border-l border-white-20 bg-surface-dark p-0 text-background backdrop-blur-md sm:max-w-md"
+              >
+                <SheetTitle className="sr-only">Shopping cart</SheetTitle>
+                <div className="flex h-full flex-col pt-8">
+                  <div className="flex-1 overflow-y-auto px-5">
+                    <ShoppingCart1 />
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+
             <Link
               href={navigation.actions.secondary.href}
               className={cn(
@@ -183,110 +229,144 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
             </Link>
           </div>
 
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger
-              className={cn(
-                'ml-auto inline-flex size-11 items-center justify-center rounded-full text-background md:hidden',
-                focusRing
-              )}
-              aria-label="Open menu"
-            >
-              <Icon path={mdiMenu} size={1} className="size-5" />
-            </SheetTrigger>
-            <SheetContent
-              side="left"
-              className="w-full max-w-none border-r border-white-20 bg-surface-dark p-0 text-background backdrop-blur-md sm:max-w-none"
-            >
-              <div className="flex h-full flex-col pt-12">
-                <SheetTitle className="sr-only">Site navigation</SheetTitle>
-
-                <div className="px-5 pb-4">
-                  <Link href="/" aria-label="Enermation home" onClick={() => setMobileOpen(false)}>
-                    <Image
-                      src="/logo.jpg"
-                      alt="Enermation"
-                      width={132}
-                      height={34}
-                      className="h-8 w-auto rounded-sm"
-                    />
-                  </Link>
+          <div className="ml-auto flex items-center gap-1 md:hidden">
+            <Sheet open={cartOpen} onOpenChange={handleCartOpenChange}>
+              <SheetTrigger
+                className={cn(
+                  'relative inline-flex size-11 items-center justify-center rounded-full text-background',
+                  focusRing
+                )}
+                aria-label="Open cart"
+              >
+                <Icon path={mdiCart} size={1} className="size-5" aria-hidden="true" />
+                {totalItemCount > 0 && (
+                  <Badge className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-green px-1 p-0 font-heading text-11 font-semibold text-background">
+                    {totalItemCount}
+                  </Badge>
+                )}
+              </SheetTrigger>
+              <SheetContent
+                side="right"
+                className="w-full max-w-md border-l border-white-20 bg-surface-dark p-0 text-background backdrop-blur-md sm:max-w-md"
+              >
+                <SheetTitle className="sr-only">Shopping cart</SheetTitle>
+                <div className="flex h-full flex-col pt-8">
+                  <div className="flex-1 overflow-y-auto px-5">
+                    <ShoppingCart1 />
+                  </div>
                 </div>
+              </SheetContent>
+            </Sheet>
 
-                <nav className="flex flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-8">
-                  {navigation.items.map(item => (
-                    <div key={item.label} className="border-b border-white-20 py-4">
-                      {hasHref(item.href) ? (
-                        <Link
-                          href={item.href}
-                          className={cn(
-                            'font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:text-muted-foreground',
-                            focusRing
-                          )}
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          {item.label}
-                        </Link>
-                      ) : (
-                        <p className="font-heading text-13 font-semibold uppercase tracking-wide text-background">
-                          {item.label}
-                        </p>
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger
+                className={cn(
+                  'inline-flex size-11 items-center justify-center rounded-full text-background md:hidden',
+                  focusRing
+                )}
+                aria-label="Open menu"
+              >
+                <Icon path={mdiMenu} size={1} className="size-5" />
+              </SheetTrigger>
+              <SheetContent
+                side="left"
+                className="w-full max-w-none border-r border-white-20 bg-surface-dark p-0 text-background backdrop-blur-md sm:max-w-none"
+              >
+                <div className="flex h-full flex-col pt-12">
+                  <SheetTitle className="sr-only">Site navigation</SheetTitle>
+
+                  <div className="px-5 pb-4">
+                    <Link
+                      href="/"
+                      aria-label="Enermation home"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <Image
+                        src="/logo.jpg"
+                        alt="Enermation"
+                        width={132}
+                        height={34}
+                        className="h-8 w-auto rounded-sm"
+                      />
+                    </Link>
+                  </div>
+
+                  <nav className="flex flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-8">
+                    {navigation.items.map(item => (
+                      <div key={item.label} className="border-b border-white-20 py-4">
+                        {hasHref(item.href) ? (
+                          <Link
+                            href={item.href}
+                            className={cn(
+                              'font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:text-muted-foreground',
+                              focusRing
+                            )}
+                            onClick={() => setMobileOpen(false)}
+                          >
+                            {item.label}
+                          </Link>
+                        ) : (
+                          <p className="font-heading text-13 font-semibold uppercase tracking-wide text-background">
+                            {item.label}
+                          </p>
+                        )}
+
+                        {item.children.length > 0 && (
+                          <div className="mt-3 flex flex-col gap-2 pl-3">
+                            {item.children.map(child =>
+                              hasHref(child.href) ? (
+                                <Link
+                                  key={`${item.label}-${child.label}`}
+                                  href={child.href}
+                                  className={cn(
+                                    'font-body text-sm text-background transition-colors hover:text-muted-foreground',
+                                    focusRing
+                                  )}
+                                  onClick={() => setMobileOpen(false)}
+                                >
+                                  {child.label}
+                                </Link>
+                              ) : (
+                                <span
+                                  key={`${item.label}-${child.label}`}
+                                  className="font-body text-sm text-muted-foreground"
+                                >
+                                  {child.label}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </nav>
+
+                  <div className="grid grid-cols-1 gap-2 border-t border-white-20 p-5">
+                    <Link
+                      href={navigation.actions.secondary.href}
+                      className={cn(
+                        'inline-flex h-9 items-center justify-center rounded-full border border-white-30 px-4 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-white-20',
+                        focusRing
                       )}
-
-                      {item.children.length > 0 && (
-                        <div className="mt-3 flex flex-col gap-2 pl-3">
-                          {item.children.map(child =>
-                            hasHref(child.href) ? (
-                              <Link
-                                key={`${item.label}-${child.label}`}
-                                href={child.href}
-                                className={cn(
-                                  'font-body text-sm text-background transition-colors hover:text-muted-foreground',
-                                  focusRing
-                                )}
-                                onClick={() => setMobileOpen(false)}
-                              >
-                                {child.label}
-                              </Link>
-                            ) : (
-                              <span
-                                key={`${item.label}-${child.label}`}
-                                className="font-body text-sm text-muted-foreground"
-                              >
-                                {child.label}
-                              </span>
-                            )
-                          )}
-                        </div>
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {navigation.actions.secondary.label}
+                    </Link>
+                    <Link
+                      href={navigation.actions.primary.href}
+                      className={cn(
+                        'inline-flex h-9 items-center justify-center rounded-full border border-brand-green bg-brand-green px-4 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-brand-red hover:border-brand-red',
+                        focusRing
                       )}
-                    </div>
-                  ))}
-                </nav>
-
-                <div className="grid grid-cols-1 gap-2 border-t border-white-20 p-5">
-                  <Link
-                    href={navigation.actions.secondary.href}
-                    className={cn(
-                      'inline-flex h-9 items-center justify-center rounded-full border border-white-30 px-4 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-white-20',
-                      focusRing
-                    )}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    {navigation.actions.secondary.label}
-                  </Link>
-                  <Link
-                    href={navigation.actions.primary.href}
-                    className={cn(
-                      'inline-flex h-9 items-center justify-center rounded-full border border-brand-green bg-brand-green px-4 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-brand-red hover:border-brand-red',
-                      focusRing
-                    )}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    {navigation.actions.primary.label}
-                  </Link>
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {navigation.actions.primary.label}
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>
