@@ -536,17 +536,54 @@ export const ADD_CART_LINES = `
     cartLinesAdd(cartId: $cartId, lines: $lines) {
       cart {
         id
+        createdAt
+        updatedAt
+        checkoutUrl
         lines(first: 10) {
           edges {
             node {
+              id
               quantity
               merchandise {
                 ... on ProductVariant {
                   id
+                  title
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  compareAtPrice {
+                    amount
+                    currencyCode
+                  }
+                  selectedOptions {
+                    name
+                    value
+                  }
+                  product {
+                    title
+                    handle
+                    images(first: 1) {
+                      edges {
+                        node {
+                          url
+                          altText
+                        }
+                      }
+                    }
+                  }
                 }
+              }
+              attributes {
+                key
+                value
               }
             }
           }
+        }
+        attributes {
+          key
+          value
         }
         cost {
           totalAmount {
@@ -565,6 +602,14 @@ export const ADD_CART_LINES = `
             amount
             currencyCode
           }
+        }
+        buyerIdentity {
+          email
+          phone
+          customer {
+            id
+          }
+          countryCode
         }
       }
       userErrors {

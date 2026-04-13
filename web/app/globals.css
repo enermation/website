@@ -57,6 +57,7 @@
   --color-surface: var(--surface);
   --color-surface-elevated: var(--surface-elevated);
   --color-surface-dark: var(--surface-dark);
+  --color-on-dark-muted: var(--on-dark-muted);
   --color-border-subtle: var(--border-subtle);
   --color-border-strong: var(--border-strong);
 
@@ -164,6 +165,7 @@
   --text-muted: oklch(0.55 0 0);
   --text-on-dark: oklch(0.98 0 0);
   --text-on-dark-muted: oklch(0.7 0 0);
+  --on-dark-muted: oklch(0.7 0 0);
 
   /* ─── Semantic Surface Tokens ─── */
   --surface: oklch(0.96 0 0);
