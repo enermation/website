@@ -473,3 +473,15 @@ export const cart = {
   subtotalLabel: 'Subtotal',
   checkoutButton: 'Proceed to Checkout',
 } as const
+
+// ── Search ────────────────────────────────────────────────────────────────────
+
+export const searchCopy = {
+  label: 'Search products',
+  placeholder: 'Search cars, parts, accessories…',
+  clearLabel: 'Clear search',
+  closeLabel: 'Close search',
+  searchingLabel: 'Searching…',
+  noResultsLabel: 'No results found. Try a different term.',
+  seeAllLabel: 'See all results',
+} as const

@@ -16,6 +16,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { HeaderSearch } from '@/components/header-search'
 import { ShoppingCart1 } from '@/components/shopping-cart1'
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
@@ -181,6 +182,8 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
           </nav>
 
           <div className="hidden items-center gap-2 md:flex">
+            <HeaderSearch variant="desktop" />
+
             <Sheet open={cartOpen} onOpenChange={handleCartOpenChange}>
               <SheetTrigger
                 className={cn(
@@ -230,6 +233,8 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
           </div>
 
           <div className="ml-auto flex items-center gap-1 md:hidden">
+            <HeaderSearch variant="mobile" />
+
             <Sheet open={cartOpen} onOpenChange={handleCartOpenChange}>
               <SheetTrigger
                 className={cn(

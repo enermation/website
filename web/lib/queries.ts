@@ -314,6 +314,38 @@ export const GET_RELATED_PRODUCTS_IN_COLLECTION = `
   }
 `
 
+export const SEARCH_PRODUCTS = `
+  query searchProducts($query: String!, $first: Int = 10) {
+    search(query: $query, first: $first, types: PRODUCT) {
+      nodes {
+        ... on Product {
+          id
+          title
+          handle
+          vendor
+          availableForSale
+          images(first: 1) {
+            edges {
+              node {
+                url
+                altText
+                width
+                height
+              }
+            }
+          }
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
 // ── Cart ──────────────────────────────────────────────────────────────────────
 
 export const GET_CART = `

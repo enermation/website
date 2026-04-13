@@ -5,6 +5,7 @@ import {
   GET_PRODUCT_BY_HANDLE,
   GET_PRODUCTS_IN_COLLECTION,
   GET_SHOP_INFO,
+  SEARCH_PRODUCTS,
 } from '@/lib/queries'
 import type { ShopifyCollection, ShopifyProduct, ShopifyShopInfo } from '@/lib/types'
 
@@ -86,4 +87,36 @@ export async function fetchShopInfo(): Promise<ShopifyShopInfo | null> {
   const { data } = await getClient().request<{ shop: ShopifyShopInfo | null }>(GET_SHOP_INFO)
 
   return data?.shop ?? null
+}
+
+// ── Search (no caching — always dynamic) ──────────────────────────────────────
+
+export type SearchResult = {
+  id: string
+  title: string
+  handle: string
+  vendor: string
+  availableForSale: boolean
+  image: { url: string; altText: string | null } | null
+  price: { amount: string; currencyCode: string }
+}
+
+export async function searchProducts(query: string, first = 10): Promise<SearchResult[]> {
+  if (!query.trim()) return []
+
+  const { data } = await getClient().request<{
+    search: { nodes: ShopifyProduct[] }
+  }>(SEARCH_PRODUCTS, { variables: { query, first } })
+
+  return (
+    data?.search.nodes.map(node => ({
+      id: node.id,
+      title: node.title,
+      handle: node.handle,
+      vendor: node.vendor,
+      availableForSale: node.availableForSale,
+      image: node.images.edges[0]?.node ?? null,
+      price: node.priceRange.minVariantPrice,
+    })) ?? []
+  )
 }
