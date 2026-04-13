@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Barlow_Semi_Condensed, Bebas_Neue, Inter, Playfair_Display } from 'next/font/google'
 import localFont from 'next/font/local'
 import './globals.css'
-import { BoldFooter } from '@/components/footer-bold'
+import { SiteFooter } from '@/components/site-footer'
 
 const display = Bebas_Neue({
   variable: '--font-display',
@@ -63,7 +63,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         {children}
-        <BoldFooter />
+        <SiteFooter />
       </body>
     </html>
   )
