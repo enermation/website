@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
 import { gsap, useGSAP } from '@/lib/gsap'
+import { cn } from '@/lib/utils'
 
 const POSTERS = [
   '/images/porsche-911-sedan-hero.avif',
@@ -77,7 +78,10 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
     <div ref={containerRef} className="relative min-h-screen">
       <div
         ref={posterRef}
-        className={`absolute inset-0 z-10 transition-opacity duration-700 ease-in-out ${canvasReady ? 'opacity-0 pointer-events-none' : ''}`}
+        className={cn(
+          'absolute inset-0 z-10 transition-opacity duration-700 ease-in-out',
+          canvasReady && 'opacity-0 pointer-events-none'
+        )}
       >
         <Image
           src={poster}

@@ -315,10 +315,6 @@ export function HeroCarousel({
     onReady?.()
   }, [onReady])
 
-  useEffect(() => {
-    setActiveIndex(initialIndex)
-  }, [initialIndex])
-
   const active = heroCategories[activeIndex]
 
   return (
