@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Barlow_Semi_Condensed, Bebas_Neue, Inter, Playfair_Display } from 'next/font/google'
 import localFont from 'next/font/local'
+import { Suspense } from 'react'
 import './globals.css'
 import { SiteFooter } from '@/components/site-footer'
 import { CartProvider } from '@/lib/cart-context'
@@ -63,10 +64,12 @@ export default function RootLayout({
       className={`${display.variable} ${heading.variable} ${body.variable} ${luxury.variable} ${flauta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <CartProvider>
-          {children}
-          <SiteFooter />
-        </CartProvider>
+        <Suspense fallback={null}>
+          <CartProvider>
+            {children}
+            <SiteFooter />
+          </CartProvider>
+        </Suspense>
       </body>
     </html>
   )
