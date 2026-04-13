@@ -8,7 +8,6 @@ import {
   PerformanceMonitor,
   useEnvironment,
   useGLTF,
-  useProgress,
 } from '@react-three/drei'
 import { applyProps, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { Bloom, EffectComposer, LUT } from '@react-three/postprocessing'
@@ -175,14 +174,13 @@ function CameraRig({ v = new THREE.Vector3() }: { v?: THREE.Vector3 }) {
 // ── Ready gate — fires onReady after all assets loaded + N rendered frames ────
 
 function ReadyGate({ onReady }: { onReady: () => void }) {
-  const { active } = useProgress()
   const called = useRef(false)
   const frames = useRef(0)
 
   useFrame(() => {
-    if (called.current || active) return
+    if (called.current) return
     frames.current++
-    // Wait for a few frames after load so env map + reflections are GPU-uploaded
+    // Wait for a few frames after Suspense resolves so env map + reflections are GPU-uploaded
     if (frames.current >= 4) {
       called.current = true
       onReady()

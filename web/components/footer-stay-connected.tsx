@@ -113,7 +113,7 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
           : 'text-on-dark hover:text-on-dark'
 
   return (
-    <div className={cn('flex-col gap-6', className)}>
+    <div data-slot="footer-stay-connected" className={cn('flex-col gap-6', className)}>
       <div className="flex max-w-sm flex-col gap-4">
         <p className="text-15 font-semibold leading-relaxed text-on-dark">{content.description}</p>
       </div>
