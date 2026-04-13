@@ -266,9 +266,11 @@ function Scene({
 export function HeroCarousel({
   initialIndex = 0,
   onReady,
+  onSlideChange,
 }: {
   initialIndex?: number
   onReady?: () => void
+  onSlideChange?: (index: number) => void
 }) {
   const [activeIndex, setActiveIndex] = useState(initialIndex)
   const [dpr, setDpr] = useState(DPR_START)
@@ -286,21 +288,23 @@ export function HeroCarousel({
     (dir: 1 | -1) => {
       const newIndex = (activeIndex + dir + TOTAL) % TOTAL
       setActiveIndex(newIndex)
+      onSlideChange?.(newIndex)
       const params = new URLSearchParams(searchParams.toString())
       params.set('slide', String(newIndex))
       router.replace(`${pathname}?${params.toString()}`, { scroll: false })
     },
-    [activeIndex, searchParams, pathname, router]
+    [activeIndex, searchParams, pathname, router, onSlideChange]
   )
 
   const goToSlide = useCallback(
     (index: number) => {
       setActiveIndex(index)
+      onSlideChange?.(index)
       const params = new URLSearchParams(searchParams.toString())
       params.set('slide', String(index))
       router.replace(`${pathname}?${params.toString()}`, { scroll: false })
     },
-    [searchParams, pathname, router]
+    [searchParams, pathname, router, onSlideChange]
   )
 
   const onPointerDown = (e: React.PointerEvent) => {
@@ -410,6 +414,7 @@ export function HeroCarousel({
               <button
                 key={cat.label}
                 type="button"
+                data-hero-dot
                 role="tab"
                 aria-label={`Show ${cat.label}`}
                 aria-selected={i === activeIndex}

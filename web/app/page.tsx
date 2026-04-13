@@ -11,12 +11,12 @@ import { StripeBar } from '@/components/stripe-bar'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Card, CardContent } from '@/components/ui/card'
 import {
-  instagramPosts,
   newsArticle,
   primaryShowroomCollectionHandle,
   primaryShowroomCollectionHref,
   productPage,
 } from '@/lib/data'
+import { getInstagramPosts } from '@/lib/instagram'
 
 import { fetchCollectionProducts, fetchCollections } from '@/lib/shopify'
 import type { ShopifyCollection } from '@/lib/types'
@@ -125,13 +125,14 @@ async function HomePageContent({ searchParams }: HomePageProps) {
   const params = await searchParams
   const slideIndex = Math.min(Math.max(Number(params.slide) || 0, 0), 2)
 
-  const [collections, latestArrivalsCollection] = await Promise.all([
+  const [collections, latestArrivalsCollection, instagramPosts] = await Promise.all([
     fetchCollections(),
     fetchCollectionProducts(primaryShowroomCollectionHandle, {
       sortKey: 'CREATED',
       reverse: true,
       first: 6,
     }),
+    getInstagramPosts(),
   ])
   const latestArrivals = latestArrivalsCollection?.products ?? []
 
@@ -251,26 +252,31 @@ async function HomePageContent({ searchParams }: HomePageProps) {
                 <span className="font-heading text-13 text-foreground">Follow us @enermation</span>
               </div>
               {/* 3-col on mobile, 4-col on desktop */}
-              <InstagramGrid>
-                <div className="grid grid-cols-3 md:grid-cols-4 gap-px">
-                  {instagramPosts.map(post => (
-                    <AspectRatio
-                      key={post.id}
-                      ratio={1}
-                      className="overflow-hidden bg-surface-elevated"
-                      data-instagram-item
-                    >
-                      <Image
-                        src={post.image}
-                        alt=""
-                        fill
-                        className="object-cover hover:opacity-80 transition-opacity"
-                        sizes="(max-width: 767px) 33vw, (min-width: 1280px) 120px, 10vw"
-                      />
-                    </AspectRatio>
-                  ))}
-                </div>
-              </InstagramGrid>
+              {instagramPosts.length > 0 && (
+                <InstagramGrid>
+                  <div className="grid grid-cols-3 md:grid-cols-4 gap-px">
+                    {instagramPosts.map(post => (
+                      <a
+                        key={post.id}
+                        href={post.permalink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-instagram-item
+                      >
+                        <AspectRatio ratio={1} className="overflow-hidden bg-surface-elevated">
+                          <Image
+                            src={post.sizes?.medium?.mediaUrl ?? post.mediaUrl}
+                            alt={post.altText ?? post.prunedCaption ?? ''}
+                            fill
+                            className="object-cover hover:opacity-80 transition-opacity"
+                            sizes="(max-width: 767px) 33vw, (min-width: 1280px) 120px, 10vw"
+                          />
+                        </AspectRatio>
+                      </a>
+                    ))}
+                  </div>
+                </InstagramGrid>
+              )}
             </div>
           </div>
         </div>

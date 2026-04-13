@@ -22,11 +22,13 @@ type Props = {
 
 export function HeroCarousel({ initialIndex = 0 }: Props) {
   const [canvasReady, setCanvasReady] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(initialIndex)
+  const [isTransitioning, setIsTransitioning] = useState(false)
   const poster = POSTERS[initialIndex] ?? POSTERS[0]
   const containerRef = useRef<HTMLDivElement>(null)
   const posterRef = useRef<HTMLDivElement>(null)
 
-  // Hero entrance animations
+  // Hero entrance animations (initial load only)
   useGSAP(
     () => {
       if (!containerRef.current || !canvasReady) return
@@ -55,6 +57,44 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
     { scope: containerRef, dependencies: [canvasReady] }
   )
 
+  // Slide transition animations (title, CTA, dots crossfade)
+  useGSAP(
+    () => {
+      if (!containerRef.current || canvasReady === false) return
+
+      const titleEl = containerRef.current.querySelector('[data-hero-title]')
+      const ctaEl = containerRef.current.querySelector('[data-hero-cta]')
+      const dotsEl = containerRef.current.querySelectorAll('[data-hero-dot]')
+
+      if (!titleEl || !ctaEl) return
+
+      const tl = gsap.timeline({
+        defaults: { ease: 'power2.inOut' },
+        onComplete: () => setIsTransitioning(false),
+      })
+
+      setIsTransitioning(true)
+
+      // Exit current content
+      tl.to([titleEl, ctaEl], { opacity: 0, y: -20, duration: 0.3, stagger: 0.05 }).to(
+        dotsEl,
+        { opacity: 0, scale: 0.5, duration: 0.2 },
+        0
+      )
+
+      // Enter new content
+      tl.fromTo(titleEl, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5 })
+        .fromTo(ctaEl, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '-=0.3')
+        .fromTo(
+          dotsEl,
+          { opacity: 0, scale: 0 },
+          { opacity: 1, scale: 1, duration: 0.3, stagger: 0.08, ease: 'back.out(1.7)' },
+          '-=0.2'
+        )
+    },
+    { scope: containerRef, dependencies: [activeIndex, canvasReady] }
+  )
+
   // Hero parallax on scroll
   useGSAP(
     () => {
@@ -80,7 +120,8 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
         ref={posterRef}
         className={cn(
           'absolute inset-0 z-10 transition-opacity duration-700 ease-in-out',
-          canvasReady && 'opacity-0 pointer-events-none'
+          canvasReady && !isTransitioning && 'opacity-0 pointer-events-none',
+          isTransitioning && 'opacity-100'
         )}
       >
         <Image
@@ -93,7 +134,11 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
           className="object-cover"
         />
       </div>
-      <HeroCarouselInner initialIndex={initialIndex} onReady={() => setCanvasReady(true)} />
+      <HeroCarouselInner
+        initialIndex={initialIndex}
+        onReady={() => setCanvasReady(true)}
+        onSlideChange={setActiveIndex}
+      />
     </div>
   )
 }

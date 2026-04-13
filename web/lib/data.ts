@@ -14,11 +14,6 @@ export type Car = {
   spec: CarSpec
 }
 
-export type InstagramPost = {
-  id: string
-  image: string
-}
-
 export type NewsArticle = {
   image: string
   date: string
@@ -283,31 +278,6 @@ export const cars: Car[] = [
       interior: 'Black Alcantara',
     },
   },
-]
-
-// â”€â”€ Instagram feed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-export const instagramPosts: InstagramPost[] = [
-  { id: '1', image: '/images/instagram/1.webp' },
-  { id: '2', image: '/images/instagram/2.webp' },
-  { id: '3', image: '/images/instagram/3.webp' },
-  { id: '4', image: '/images/instagram/4.webp' },
-  { id: '5', image: '/images/instagram/5.webp' },
-  { id: '6', image: '/images/instagram/6.webp' },
-  { id: '7', image: '/images/instagram/7.webp' },
-  { id: '8', image: '/images/instagram/8.webp' },
-  { id: '9', image: '/images/instagram/9.webp' },
-  { id: '10', image: '/images/instagram/10.webp' },
-  { id: '11', image: '/images/instagram/11.webp' },
-  { id: '12', image: '/images/instagram/12.webp' },
-  { id: '13', image: '/images/instagram/13.webp' },
-  { id: '14', image: '/images/instagram/14.webp' },
-  { id: '15', image: '/images/instagram/15.webp' },
-  { id: '16', image: '/images/instagram/16.webp' },
-  { id: '17', image: '/images/instagram/17.webp' },
-  { id: '18', image: '/images/instagram/18.webp' },
-  { id: '19', image: '/images/instagram/19.webp' },
-  { id: '20', image: '/images/instagram/20.webp' },
 ]
 
 // â”€â”€ Latest company news â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

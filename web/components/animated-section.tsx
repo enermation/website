@@ -24,7 +24,7 @@ export function AnimatedSection({ children, className, stagger = 0.15 }: Animate
       ScrollTrigger.batch(items, {
         start: 'top 85%',
         once: true,
-        onEnter: elements => {
+        onEnter: (elements: Element[]) => {
           gsap.to(elements, {
             opacity: 1,
             y: 0,
@@ -60,7 +60,7 @@ export function InstagramGrid({ children }: { children: React.ReactNode }) {
       ScrollTrigger.batch(items, {
         start: 'top 85%',
         once: true,
-        onEnter: elements => {
+        onEnter: (elements: Element[]) => {
           gsap.to(elements, {
             opacity: 1,
             scale: 1,
