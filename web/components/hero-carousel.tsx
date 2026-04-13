@@ -154,12 +154,12 @@ function PostProcessing({ enabled }: { enabled: boolean }) {
   )
 }
 
-// ── Auto-orbiting camera rig (Porsche-style) ─────────────────────────────────
+// ── Auto-orbiting camera rig ──────────────────────────────────────────────────
 
 function CameraRig({ v = new THREE.Vector3() }: { v?: THREE.Vector3 }) {
   return useFrame(state => {
     const t = state.clock.elapsedTime
-    state.camera.position.lerp(v.set(Math.sin(t / 5) * 12, 0, Math.cos(t / 5) * 12), 0.05)
+    state.camera.position.lerp(v.set(Math.sin(t / 5) * 12, 1, Math.cos(t / 5) * 12), 0.05)
     state.camera.lookAt(0, 0, 0)
   })
 }
@@ -206,15 +206,15 @@ function Scene({
         resolution={shadowResolution}
         frames={1}
         position={[0, -1.16, 0]}
-        scale={15}
-        blur={0.5}
-        opacity={1}
-        far={20}
+        scale={10}
+        blur={2.5}
+        opacity={0.8}
+        far={4}
       />
 
       {/* HDR environment for realistic lighting and reflections */}
       <Environment
-        files="/models/parking_garage_2k.hdr"
+        files="/models/factory-road-turnaround_1K.exr"
         frames={Infinity}
         resolution={envResolution}
         background
@@ -310,7 +310,7 @@ export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
         <div className="absolute inset-0">
           <Canvas
             shadows={shadowsEnabled}
-            camera={{ position: [5, 0, 15], fov: 30 }}
+            camera={{ position: [0, 1, 14], fov: 40 }}
             dpr={dpr}
             gl={{ logarithmicDepthBuffer: true }}
           >
