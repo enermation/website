@@ -53,7 +53,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
 
       {/* ── Desktop grid ── */}
       <div data-slot="image-gallery" className="hidden md:flex md:flex-col md:gap-4">
-        <div className="flex h-96 gap-px">
+        <div className="flex h-128 gap-px">
           <button
             type="button"
             className="group relative flex-1 overflow-hidden bg-surface-elevated cursor-zoom-in"

@@ -17,18 +17,9 @@ import {
   productPage,
 } from '@/lib/data'
 
-import { GET_COLLECTIONS, GET_PRODUCTS_IN_COLLECTION } from '@/lib/queries'
-import { getClient } from '@/lib/shopify'
+import { fetchCollectionProducts, fetchCollections } from '@/lib/shopify'
 import type { ShopifyCollection, ShopifyProduct } from '@/lib/types'
 import { cn } from '@/lib/utils'
-
-type CollectionProductsResponse = {
-  collection: {
-    id: string
-    title: string
-    products: { edges: { node: ShopifyProduct }[] }
-  } | null
-}
 
 type HomePageProps = {
   searchParams: Promise<{ slide?: string }>
@@ -116,22 +107,15 @@ export default async function Home({ searchParams }: HomePageProps) {
   const params = await searchParams
   const slideIndex = Math.min(Math.max(Number(params.slide) || 0, 0), 2)
 
-  const shopify = await getClient()
-  const [{ data: collectionsData }, { data: latestArrivalsData }] = await Promise.all([
-    shopify.request<{
-      collections: { edges: { node: ShopifyCollection }[] }
-    }>(GET_COLLECTIONS),
-    shopify.request<CollectionProductsResponse>(GET_PRODUCTS_IN_COLLECTION, {
-      variables: {
-        handle: primaryShowroomCollectionHandle,
-        sortKey: 'CREATED',
-        reverse: true,
-        first: 6,
-      },
+  const [collections, latestArrivalsCollection] = await Promise.all([
+    fetchCollections(),
+    fetchCollectionProducts(primaryShowroomCollectionHandle, {
+      sortKey: 'CREATED',
+      reverse: true,
+      first: 6,
     }),
   ])
-  const collections = collectionsData?.collections.edges.map(e => e.node) ?? []
-  const latestArrivals = latestArrivalsData?.collection?.products.edges.map(edge => edge.node) ?? []
+  const latestArrivals = latestArrivalsCollection?.products ?? []
 
   return (
     <>

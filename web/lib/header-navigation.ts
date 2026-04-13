@@ -1,4 +1,4 @@
-import { cache } from 'react'
+import { cacheLife, cacheTag } from 'next/cache'
 import {
   type HeaderNavFallbackItem,
   headerActions,
@@ -148,10 +148,13 @@ function fallbackItems(): HeaderNavItem[] {
   return headerNavFallbackItems.map(toFallbackItem)
 }
 
-export const getHeaderNavigation = cache(async (): Promise<HeaderNavigation> => {
+export async function getHeaderNavigation(): Promise<HeaderNavigation> {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('navigation')
+
   const menuHandle = process.env.SHOPIFY_HEADER_MENU_HANDLE?.trim() || DEFAULT_MENU_HANDLE
-  const client = await getClient()
-  const { data } = await client.request<HeaderMenuResponse>(GET_HEADER_MENU, {
+  const { data } = await getClient().request<HeaderMenuResponse>(GET_HEADER_MENU, {
     variables: { handle: menuHandle },
   })
 
@@ -161,4 +164,4 @@ export const getHeaderNavigation = cache(async (): Promise<HeaderNavigation> => 
     items: shopifyItems.length > 0 ? shopifyItems : fallbackItems(),
     actions: headerActions,
   }
-})
+}

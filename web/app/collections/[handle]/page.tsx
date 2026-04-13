@@ -3,27 +3,12 @@ import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { CarCard } from '@/components/car-card'
 import { SiteHeader } from '@/components/site-header'
-import { GET_COLLECTIONS, GET_PRODUCTS_IN_COLLECTION } from '@/lib/queries'
-import { getClient } from '@/lib/shopify'
-import type { ShopifyCollection, ShopifyProduct } from '@/lib/types'
+import { fetchCollectionProducts, fetchCollections } from '@/lib/shopify'
+import type { ShopifyProduct } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { FilterBar } from './filter-bar'
 
-// ── Shopify response type ─────────────────────────────────────────────────────
-
-type CollectionResponse = {
-  collection: {
-    id: string
-    title: string
-    products: { edges: { node: ShopifyProduct }[] }
-  } | null
-}
-
-type CollectionsResponse = {
-  collections: {
-    edges: { node: ShopifyCollection }[]
-  }
-}
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 type MakeOption = {
   label: string
@@ -78,25 +63,16 @@ export default async function CollectionPage({
   const { sortKey, reverse } = getSortConfig(sort)
   const filter = make && make !== 'Show All' ? [{ vendor: make }] : undefined
 
-  const shopify = await getClient()
-
-  const [{ data: filteredData }, { data: allData }, { data: collectionsData }] = await Promise.all([
-    shopify.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
-      variables: { handle, sortKey, reverse, filter },
-    }),
-    shopify.request<CollectionResponse>(GET_PRODUCTS_IN_COLLECTION, {
-      variables: { handle, sortKey: 'BEST_SELLING', reverse: false },
-    }),
-    shopify.request<CollectionsResponse>(GET_COLLECTIONS),
+  const [filteredCollection, allCollection, collectionLinks] = await Promise.all([
+    fetchCollectionProducts(handle, { sortKey, reverse, filter }),
+    fetchCollectionProducts(handle, { sortKey: 'BEST_SELLING', reverse: false }),
+    fetchCollections(),
   ])
 
-  if (!filteredData?.collection || !allData?.collection) notFound()
+  if (!filteredCollection || !allCollection) notFound()
 
-  const { title, products: productData } = filteredData.collection
-  const products = productData.edges.map(e => e.node)
-  const allProducts = allData.collection.products.edges.map(e => e.node)
-  const makeOptions = buildMakeOptions(allProducts)
-  const collectionLinks = collectionsData?.collections.edges.map(edge => edge.node) ?? []
+  const { title, products } = filteredCollection
+  const makeOptions = buildMakeOptions(allCollection.products)
 
   return (
     <>
