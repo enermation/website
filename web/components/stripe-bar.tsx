@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { useStripeBarAnimation } from '@/hooks/use-stripe-bar-animation'
+import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap'
 import { cn } from '@/lib/utils'
 
 type StripeBarProps = {
@@ -12,7 +12,27 @@ type StripeBarProps = {
 export function StripeBar({ dark = false, className }: StripeBarProps) {
   const stripeRef = useRef<HTMLDivElement>(null)
 
-  useStripeBarAnimation({ elementRef: stripeRef })
+  useGSAP(
+    () => {
+      if (!stripeRef.current) return
+
+      gsap.fromTo(
+        stripeRef.current,
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          duration: 0.8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: stripeRef.current,
+            start: 'top 85%',
+            once: true,
+          },
+        }
+      )
+    },
+    { scope: stripeRef }
+  )
 
   return (
     <div

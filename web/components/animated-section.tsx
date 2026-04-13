@@ -1,8 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { useInstagramGridAnimation } from '@/hooks/use-instagram-grid-animation'
-import { useScrollReveal } from '@/hooks/use-scroll-reveal'
+import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap'
 import { cn } from '@/lib/utils'
 
 type AnimatedSectionProps = {
@@ -14,7 +13,31 @@ type AnimatedSectionProps = {
 export function AnimatedSection({ children, className, stagger = 0.15 }: AnimatedSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
-  useScrollReveal(containerRef, { stagger })
+  useGSAP(
+    () => {
+      if (!containerRef.current) return
+
+      const items = containerRef.current.querySelectorAll('[data-reveal]')
+
+      gsap.set(items, { opacity: 0, y: 40 })
+
+      ScrollTrigger.batch(items, {
+        start: 'top 85%',
+        once: true,
+        onEnter: elements => {
+          gsap.to(elements, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            stagger,
+            overwrite: true,
+          })
+        },
+      })
+    },
+    { scope: containerRef }
+  )
 
   return (
     <div ref={containerRef} className={cn(className)}>
@@ -26,7 +49,31 @@ export function AnimatedSection({ children, className, stagger = 0.15 }: Animate
 export function InstagramGrid({ children }: { children: React.ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null)
 
-  useInstagramGridAnimation({ containerRef })
+  useGSAP(
+    () => {
+      if (!containerRef.current) return
+
+      const items = containerRef.current.querySelectorAll('[data-instagram-item]')
+
+      gsap.set(items, { opacity: 0, scale: 0.8 })
+
+      ScrollTrigger.batch(items, {
+        start: 'top 85%',
+        once: true,
+        onEnter: elements => {
+          gsap.to(elements, {
+            opacity: 1,
+            scale: 1,
+            duration: 0.4,
+            ease: 'power2.out',
+            stagger: { each: 0.05, from: 'random' },
+            overwrite: true,
+          })
+        },
+      })
+    },
+    { scope: containerRef }
+  )
 
   return <div ref={containerRef}>{children}</div>
 }
