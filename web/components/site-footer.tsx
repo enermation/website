@@ -4,7 +4,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Link from 'next/link'
-import { useRef } from 'react'
+import { Suspense, useRef } from 'react'
 
 import { FooterStayConnected } from '@/components/footer-stay-connected'
 import type { FooterLink } from '@/lib/data'
@@ -125,13 +125,17 @@ export function SiteFooter() {
         {/* Mobile: social + copyright at bottom */}
         <div className="col-span-full row-start-3 flex flex-col justify-end gap-y-2 lg:hidden">
           <FooterSocialLinks />
-          <FooterCopyright className="text-left" />
+          <Suspense fallback={null}>
+            <FooterCopyright className="text-left" />
+          </Suspense>
         </div>
 
         {/* Desktop: social + copyright pinned far right */}
         <div className="col-start-10 col-end-13 hidden translate-y-[3px] flex-col items-end gap-y-2 lg:flex">
           <FooterSocialLinks />
-          <FooterCopyright />
+          <Suspense fallback={null}>
+            <FooterCopyright />
+          </Suspense>
         </div>
       </div>
     </footer>
