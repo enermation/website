@@ -17,7 +17,7 @@ import { LUTCubeLoader } from 'postprocessing'
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Group } from 'three'
 import * as THREE from 'three'
-import { HeroLoadingSkeleton } from '@/components/hero-loading-skeleton'
+
 import { heroCategories } from '@/lib/data'
 
 const MAX_3D_SLIDES = 2
@@ -84,7 +84,7 @@ function LamboModel({ onLoaded }: { onLoaded?: () => void }) {
       ;(paintNode as THREE.Mesh).material = new THREE.MeshPhysicalMaterial({
         roughness: 0.3,
         metalness: 0.05,
-        color: '#111',
+        color: '#A9A9A7',
         envMapIntensity: 0.75,
         clearcoatRoughness: 0,
         clearcoat: 1,
@@ -131,7 +131,7 @@ function PorscheModel({ onLoaded }: { onLoaded?: () => void }) {
         envMapIntensity: 2,
         roughness: 0.45,
         metalness: 0.8,
-        color: '#555',
+        color: '#A7A9A8',
       })
   }, [nodes, materials])
 
@@ -246,7 +246,6 @@ export function HeroCarousel({
   onReady?: () => void
 }) {
   const [activeIndex, setActiveIndex] = useState(initialIndex)
-  const [isLoading, setIsLoading] = useState(true)
   const [dpr, setDpr] = useState(DPR_START)
   const [effectsEnabled, setEffectsEnabled] = useState(true)
   const [envResolution, setEnvResolution] = useState(ENV_RES_HIGH)
@@ -261,7 +260,6 @@ export function HeroCarousel({
     (dir: 1 | -1) => {
       const newIndex = (activeIndex + dir + TOTAL) % TOTAL
       setActiveIndex(newIndex)
-      setIsLoading(true)
       const params = new URLSearchParams(searchParams.toString())
       params.set('slide', String(newIndex))
       router.replace(`${pathname}?${params.toString()}`, { scroll: false })
@@ -272,7 +270,6 @@ export function HeroCarousel({
   const goToSlide = useCallback(
     (index: number) => {
       setActiveIndex(index)
-      setIsLoading(true)
       const params = new URLSearchParams(searchParams.toString())
       params.set('slide', String(index))
       router.replace(`${pathname}?${params.toString()}`, { scroll: false })
@@ -297,7 +294,6 @@ export function HeroCarousel({
   }
 
   const handleModelLoaded = useCallback(() => {
-    setIsLoading(false)
     onReady?.()
   }, [onReady])
 
@@ -366,13 +362,6 @@ export function HeroCarousel({
               }}
             />
           </Canvas>
-
-          {/* Loading skeleton overlay */}
-          {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black">
-              <HeroLoadingSkeleton />
-            </div>
-          )}
         </div>
 
         {/* Category label + CTA + dots */}
