@@ -1,4 +1,4 @@
-import { mdiCalendar, mdiChevronRight, mdiEmail, mdiInstagram } from '@mdi/js'
+import { mdiCalendar, mdiChevronRight, mdiInstagram } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -9,15 +9,11 @@ import { StripeBar } from '@/components/stripe-bar'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Card, CardContent } from '@/components/ui/card'
 import {
-  carsForSaleImage,
-  dealerInfo,
   instagramPosts,
   newsArticle,
   primaryShowroomCollectionHandle,
   primaryShowroomCollectionHref,
   productPage,
-  sellYourCarImage,
-  supplyingImage,
 } from '@/lib/data'
 
 import { GET_COLLECTIONS, GET_PRODUCTS_IN_COLLECTION } from '@/lib/queries'
@@ -196,99 +192,6 @@ export default async function Home({ searchParams }: HomePageProps) {
           </div>
         </section>
 
-        {/* ── SUPPLYING THE FINEST SUPERCARS ────────────────────────────────── */}
-        <section className="relative bg-surface-dark overflow-hidden">
-          <Image src={supplyingImage} alt="" fill className="object-cover" aria-hidden="true" />
-          <div
-            className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/30"
-            aria-hidden="true"
-          />
-
-          {/* Mobile layout: left-aligned, stacked heading */}
-          <div className="md:hidden relative z-10 px-4 py-28">
-            <h2 className="font-display font-normal text-banner uppercase tracking-widest text-on-dark leading-tight mb-8">
-              Supplying
-              <br />
-              the
-              <br />
-              finest
-              <br />
-              Supercars
-            </h2>
-            <p className="font-body text-15 text-on-dark leading-relaxed mb-8">
-              {dealerInfo.about}
-            </p>
-            <Link
-              href="/#about"
-              className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-on-dark bg-transparent h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-on-dark transition-colors duration-200 hover:bg-on-dark hover:text-surface-dark"
-            >
-              Our Story
-            </Link>
-          </div>
-
-          {/* Desktop layout: right-aligned half-width */}
-          <div className="hidden md:flex relative z-10 max-w-site mx-auto py-32 px-20 justify-end">
-            <div className="w-1/2 text-right">
-              <h2 className="font-display font-normal text-banner uppercase tracking-widest text-on-dark leading-tight mb-8">
-                Supplying the
-                <br />
-                finest Supercars
-              </h2>
-              <p className="font-body text-15 text-on-dark leading-relaxed mb-8">
-                {dealerInfo.about}
-              </p>
-              <Link
-                href="/#about"
-                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-on-dark bg-transparent h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-on-dark transition-colors duration-200 hover:bg-on-dark hover:text-surface-dark"
-              >
-                Our Story
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ── CARS FOR SALE / SELL US YOUR CAR ─────────────────────────────── */}
-        <section className="flex flex-col md:grid md:grid-cols-2">
-          {[
-            {
-              image: carsForSaleImage,
-              title: 'Cars For Sale',
-              alt: 'A showroom floor filled with exotic supercars',
-              href: primaryShowroomCollectionHref,
-            },
-            {
-              image: sellYourCarImage,
-              title: 'Sell Us Your Car',
-              alt: 'A red Ferrari F40 — we buy supercars',
-              href: '/#sell-your-car',
-            },
-          ].map(({ image, title, alt, href }) => (
-            <Link key={title} href={href} className="relative overflow-hidden block">
-              <div className="relative aspect-square md:aspect-video bg-surface-elevated">
-                <Image
-                  src={image}
-                  alt={alt}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 767px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-black-40" />
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-                <h2 className="font-display font-normal text-section uppercase tracking-widest text-on-dark">
-                  {title}
-                </h2>
-                <p className="font-heading text-15 text-on-dark-muted tracking-widest">
-                  Discover More
-                </p>
-                <div className="mt-4">
-                  <StripeBar dark />
-                </div>
-              </div>
-            </Link>
-          ))}
-        </section>
-
         {/* ── LATEST COMPANY NEWS ───────────────────────────────────────────── */}
         <section className="bg-card">
           <SectionHeading title="Latest Company News" />
@@ -365,23 +268,6 @@ export default async function Home({ searchParams }: HomePageProps) {
                   ))}
                 </div>
               </div>
-            </div>
-
-            {/* Newsletter */}
-            <div className="border-t border-border pt-12 flex flex-col items-center gap-3">
-              <h3 className="font-display font-medium text-2xl text-heading uppercase tracking-widest">
-                Newsletter
-              </h3>
-              <p className="font-heading text-13 text-body text-center">
-                Stay up to date with our news and latest stock
-              </p>
-              <Link
-                href="/#newsletter"
-                className="mt-3 inline-flex items-center gap-1.5 shrink-0 justify-center rounded-none border-2 border-strong bg-foreground h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-background transition-colors duration-200 hover:bg-muted hover:border-muted"
-              >
-                Mailing list sign up
-                <Icon path={mdiEmail} size={1} className="size-3.5" />
-              </Link>
             </div>
           </div>
         </section>
