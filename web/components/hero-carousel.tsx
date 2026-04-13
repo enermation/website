@@ -49,6 +49,13 @@ useGLTF.preload(MODELS[0].path)
 useGLTF.preload(MODELS[1].path)
 useEnvironment.preload({ files: '/models/factory-road-turnaround_1K.hdr' })
 
+// Client-only guard to prevent hydration mismatch
+function useIsClient() {
+  const [isClient, setIsClient] = useState(false)
+  useEffect(() => setIsClient(true), [])
+  return isClient
+}
+
 // ── Lambo model ──────────────────────────────────────────────────────────────
 
 function LamboModel({ onLoaded }: { onLoaded?: () => void }) {
@@ -208,7 +215,7 @@ function Scene({
   return (
     <>
       {/* Dark background like PPF workshop */}
-      <color attach="background" args={['#15151a']} />
+      <primitive attach="background" object={new THREE.Color('#15151a')} />
 
       <spotLight
         position={[0, 15, 0]}
@@ -273,6 +280,7 @@ export function HeroCarousel({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const isClient = useIsClient()
 
   const navigate = useCallback(
     (dir: 1 | -1) => {
@@ -332,50 +340,54 @@ export function HeroCarousel({
       >
         {/* Three.js canvas */}
         <div className="absolute inset-0">
-          <Canvas
-            shadows={shadowsEnabled}
-            camera={{ position: [0, 1, 14], fov: 40 }}
-            dpr={dpr}
-            gl={{ logarithmicDepthBuffer: true }}
-          >
-            <Suspense fallback={null}>
-              <Scene
-                activeIndex={activeIndex}
-                onModelLoaded={handleModelLoaded}
-                effectsEnabled={effectsEnabled}
-                envResolution={envResolution}
-                shadowResolution={shadowResolution}
+          {isClient ? (
+            <Canvas
+              shadows={shadowsEnabled}
+              camera={{ position: [0, 1, 14], fov: 40 }}
+              dpr={dpr}
+              gl={{ logarithmicDepthBuffer: true }}
+            >
+              <Suspense fallback={null}>
+                <Scene
+                  activeIndex={activeIndex}
+                  onModelLoaded={handleModelLoaded}
+                  effectsEnabled={effectsEnabled}
+                  envResolution={envResolution}
+                  shadowResolution={shadowResolution}
+                />
+              </Suspense>
+              <PerformanceMonitor
+                factor={1}
+                bounds={refreshrate => (refreshrate > 90 ? [50, 90] : [50, 60])}
+                flipflops={3}
+                onChange={({ factor }) => {
+                  // Gradual DPR adjustment: clamp between DPR_MIN and DPR_MAX
+                  setDpr(
+                    Math.max(DPR_MIN, Math.min(DPR_MAX, DPR_MIN + (DPR_MAX - DPR_MIN) * factor))
+                  )
+                }}
+                onIncline={() => {
+                  setEffectsEnabled(true)
+                  setEnvResolution(ENV_RES_HIGH)
+                  setShadowResolution(SHADOW_RES_HIGH)
+                  setShadowsEnabled(true)
+                }}
+                onDecline={() => {
+                  setEffectsEnabled(false)
+                  setEnvResolution(ENV_RES_LOW)
+                  setShadowResolution(SHADOW_RES_LOW)
+                }}
+                onFallback={() => {
+                  // Guaranteed baseline: minimal quality
+                  setDpr(DPR_MIN)
+                  setEffectsEnabled(false)
+                  setEnvResolution(ENV_RES_LOW)
+                  setShadowResolution(SHADOW_RES_LOW)
+                  setShadowsEnabled(false)
+                }}
               />
-            </Suspense>
-            <PerformanceMonitor
-              factor={1}
-              bounds={refreshrate => (refreshrate > 90 ? [50, 90] : [50, 60])}
-              flipflops={3}
-              onChange={({ factor }) => {
-                // Gradual DPR adjustment: clamp between DPR_MIN and DPR_MAX
-                setDpr(Math.max(DPR_MIN, Math.min(DPR_MAX, DPR_MIN + (DPR_MAX - DPR_MIN) * factor)))
-              }}
-              onIncline={() => {
-                setEffectsEnabled(true)
-                setEnvResolution(ENV_RES_HIGH)
-                setShadowResolution(SHADOW_RES_HIGH)
-                setShadowsEnabled(true)
-              }}
-              onDecline={() => {
-                setEffectsEnabled(false)
-                setEnvResolution(ENV_RES_LOW)
-                setShadowResolution(SHADOW_RES_LOW)
-              }}
-              onFallback={() => {
-                // Guaranteed baseline: minimal quality
-                setDpr(DPR_MIN)
-                setEffectsEnabled(false)
-                setEnvResolution(ENV_RES_LOW)
-                setShadowResolution(SHADOW_RES_LOW)
-                setShadowsEnabled(false)
-              }}
-            />
-          </Canvas>
+            </Canvas>
+          ) : null}
         </div>
 
         {/* Category label + CTA + dots */}
