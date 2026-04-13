@@ -1,0 +1,2 @@
+cd web
+bunx --no commitlint --edit $1
