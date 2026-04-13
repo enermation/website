@@ -47,7 +47,7 @@ const MODELS = [
 
 useGLTF.preload(MODELS[0].path)
 useGLTF.preload(MODELS[1].path)
-useEnvironment.preload({ files: '/models/factory-road-turnaround_1K.exr' })
+useEnvironment.preload({ files: '/models/factory-road-turnaround_1K.hdr' })
 
 // ── Lambo model ──────────────────────────────────────────────────────────────
 
@@ -239,7 +239,7 @@ function Scene({
 
       {/* HDR environment for realistic lighting and reflections */}
       <Environment
-        files="/models/factory-road-turnaround_1K.exr"
+        files="/models/factory-road-turnaround_1K.hdr"
         frames={1}
         resolution={envResolution}
         background
