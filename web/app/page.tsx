@@ -1,22 +1,22 @@
-import { mdiCalendar, mdiChevronRight, mdiInstagram } from '@mdi/js'
+import { mdiChevronRight, mdiInstagram } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { AnimatedSection, InstagramGrid } from '@/components/animated-section'
 import { HeroCarousel } from '@/components/hero-carousel-wrapper'
+import { InstagramTile } from '@/components/instagram-tile'
 import { LatestArrivalsCarousel } from '@/components/latest-arrivals-carousel'
 import { SiteHeader } from '@/components/site-header'
 import { StripeBar } from '@/components/stripe-bar'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Card, CardContent } from '@/components/ui/card'
 import {
-  newsArticle,
   primaryShowroomCollectionHandle,
   primaryShowroomCollectionHref,
   productPage,
 } from '@/lib/data'
-import { getInstagramPosts } from '@/lib/instagram'
+import { getInstagramFeed } from '@/lib/instagram'
 
 import { fetchCollectionProducts, fetchCollections } from '@/lib/shopify'
 import type { ShopifyCollection } from '@/lib/types'
@@ -125,16 +125,17 @@ async function HomePageContent({ searchParams }: HomePageProps) {
   const params = await searchParams
   const slideIndex = Math.min(Math.max(Number(params.slide) || 0, 0), 2)
 
-  const [collections, latestArrivalsCollection, instagramPosts] = await Promise.all([
+  const [collections, latestArrivalsCollection, instagramFeed] = await Promise.all([
     fetchCollections(),
     fetchCollectionProducts(primaryShowroomCollectionHandle, {
       sortKey: 'CREATED',
       reverse: true,
       first: 6,
     }),
-    getInstagramPosts(),
+    getInstagramFeed(),
   ])
   const latestArrivals = latestArrivalsCollection?.products ?? []
+  const { posts: instagramPosts, username: igUsername, followersCount: igFollowers } = instagramFeed
 
   return (
     <>
@@ -196,91 +197,57 @@ async function HomePageContent({ searchParams }: HomePageProps) {
         </div>
       </AnimatedSection>
 
-      {/* ── LATEST COMPANY NEWS ───────────────────────────────────────────── */}
-      <AnimatedSection className="bg-card">
-        <SectionHeading title="Latest Company News" />
-      </AnimatedSection>
-
-      {/* ── NEWS + INSTAGRAM + NEWSLETTER ────────────────────────────────── */}
-      <AnimatedSection className="bg-muted py-16 px-4 md:pt-24 md:pb-16 md:px-20" stagger={0.1}>
-        <div className="max-w-site mx-auto">
-          {/* Two-column layout on desktop, stacked on mobile */}
-          <div className="flex flex-col gap-10 md:grid md:grid-cols-12 mb-16 md:mb-20">
-            {/* Featured article */}
-            <article className="md:col-span-7 md:pr-16" data-reveal>
-              <AspectRatio ratio={3 / 2} className="w-full rounded overflow-hidden mb-6">
-                <Image
-                  src={newsArticle.image}
-                  alt={newsArticle.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 767px) 100vw, (min-width: 1280px) 730px, 55vw"
-                />
-              </AspectRatio>
-
-              <div className="flex items-center gap-3 mb-4 font-heading text-13 text-muted tracking-wide">
-                <span className="flex items-center gap-1.5">
-                  <Icon path={mdiCalendar} size={1} className="size-3 shrink-0" />
-                  {newsArticle.date}
-                </span>
-                <span className="opacity-40">|</span>
-                <span>{newsArticle.category}</span>
-              </div>
-
-              <h3 className="font-display font-normal text-3xl text-heading leading-tight mb-4">
-                {newsArticle.title}
-              </h3>
-              <p className="font-body text-15 text-body leading-relaxed mb-8">
-                {newsArticle.excerpt}
-              </p>
-
-              <Link
-                href="/news"
-                className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-strong bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
-              >
-                Read More
-              </Link>
-            </article>
-
-            {/* Instagram feed */}
-            <div className="md:col-span-5 md:border-l md:border-border md:pl-8" data-reveal>
-              <h3 className="font-display font-medium text-2xl text-heading uppercase tracking-widest mb-3 text-center md:text-left">
-                Enermation on Instagram
-              </h3>
-              <div className="flex items-center gap-2 mb-5 justify-center md:justify-start">
-                <Icon path={mdiInstagram} size={1} className="size-3 text-foreground shrink-0" />
-                <span className="font-heading text-13 text-foreground">Follow us @enermation</span>
-              </div>
-              {/* 3-col on mobile, 4-col on desktop */}
-              {instagramPosts.length > 0 && (
-                <InstagramGrid>
-                  <div className="grid grid-cols-3 md:grid-cols-4 gap-px">
-                    {instagramPosts.map(post => (
-                      <a
-                        key={post.id}
-                        href={post.permalink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        data-instagram-item
-                      >
-                        <AspectRatio ratio={1} className="overflow-hidden bg-surface-elevated">
-                          <Image
-                            src={post.sizes?.medium?.mediaUrl ?? post.mediaUrl}
-                            alt={post.altText ?? post.prunedCaption ?? ''}
-                            fill
-                            className="object-cover hover:opacity-80 transition-opacity"
-                            sizes="(max-width: 767px) 33vw, (min-width: 1280px) 120px, 10vw"
-                          />
-                        </AspectRatio>
-                      </a>
-                    ))}
+      {/* ── INSTAGRAM FEED ───────────────────────────────────────────────── */}
+      {instagramPosts.length > 0 && (
+        <AnimatedSection className="bg-muted py-16 px-4 md:py-20 md:px-20" stagger={0.1}>
+          <div className="max-w-site mx-auto">
+            <InstagramGrid>
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                {/* Connect With Us + Profile — merged, spans 2 cols */}
+                <a
+                  href={`https://www.instagram.com/${igUsername}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group col-span-2 flex flex-col items-center justify-center gap-6 rounded-xl bg-card p-8 transition-colors duration-200 hover:bg-accent"
+                  data-instagram-item
+                >
+                  <p className="font-display font-normal text-2xl text-heading leading-snug">
+                    Connect With Us Online
+                  </p>
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+                      <Icon path={mdiInstagram} size={1} className="size-5 text-foreground" />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-heading font-semibold text-sm text-heading">
+                        @{igUsername}
+                      </p>
+                      <p className="font-heading text-13 text-muted-foreground">
+                        {igFollowers.toLocaleString()} Followers
+                      </p>
+                    </div>
+                    <span className="inline-flex items-center justify-center rounded-none border-2 border-strong bg-foreground px-5 py-1.5 font-heading font-semibold text-13 uppercase tracking-wider text-background transition-colors duration-200 group-hover:bg-background group-hover:text-foreground">
+                      Follow
+                    </span>
                   </div>
-                </InstagramGrid>
-              )}
-            </div>
+                </a>
+
+                {/* Post tiles */}
+                {instagramPosts.map(post => (
+                  <InstagramTile
+                    key={post.id}
+                    href={post.permalink}
+                    mediaUrl={post.mediaUrl}
+                    thumbnailUrl={post.sizes?.medium?.mediaUrl ?? post.mediaUrl}
+                    alt={post.altText ?? post.prunedCaption ?? ''}
+                    isReel={post.isReel ?? post.mediaType === 'VIDEO'}
+                  />
+                ))}
+              </div>
+            </InstagramGrid>
           </div>
-        </div>
-      </AnimatedSection>
+        </AnimatedSection>
+      )}
     </>
   )
 }
