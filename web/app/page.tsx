@@ -2,6 +2,7 @@ import { mdiCalendar, mdiChevronRight, mdiInstagram } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { AnimatedSection, InstagramGrid } from '@/components/animated-section'
 import { HeroCarousel } from '@/components/hero-carousel-wrapper'
 import { LatestArrivalsCarousel } from '@/components/latest-arrivals-carousel'
 import { SiteHeader } from '@/components/site-header'
@@ -140,12 +141,12 @@ export default async function Home({ searchParams }: HomePageProps) {
         <HeroCarousel initialIndex={slideIndex} />
 
         {/* ── LATEST ARRIVALS / COLLECTIONS ─────────────────────────────── */}
-        <section className="bg-card">
+        <AnimatedSection className="bg-card">
           <SectionHeading title="Latest Arrivals for Sale" />
 
-          <div className="mx-auto max-w-site px-4 pb-14 md:px-6 md:pb-16">
+          <div className="mx-auto max-w-site px-4 pb-14 md:px-6 md:pb-16" data-reveal>
             <LatestArrivalsCarousel products={latestArrivals} />
-            <div className="mt-12 flex justify-center">
+            <div className="mt-12 flex justify-center" data-reveal>
               <Link
                 href={primaryShowroomCollectionHref}
                 className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-strong bg-background px-8 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
@@ -154,9 +155,9 @@ export default async function Home({ searchParams }: HomePageProps) {
               </Link>
             </div>
           </div>
-        </section>
+        </AnimatedSection>
 
-        <section className="bg-card">
+        <AnimatedSection className="bg-card">
           <SectionHeading title="Browse Our Collections" />
 
           {/* Mobile: collections list */}
@@ -164,7 +165,7 @@ export default async function Home({ searchParams }: HomePageProps) {
             {collections.map(collection => (
               <MobileCollectionCard key={collection.id} collection={collection} />
             ))}
-            <div className="flex justify-center mt-10">
+            <div className="flex justify-center mt-10" data-reveal>
               <Link
                 href={primaryShowroomCollectionHref}
                 className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-strong bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
@@ -177,11 +178,13 @@ export default async function Home({ searchParams }: HomePageProps) {
           {/* Desktop: collections grid */}
           <div className="hidden md:block max-w-site mx-auto px-6 pb-16">
             <div className="grid grid-cols-3 gap-8">
-              {collections.map(collection => (
-                <CollectionCard key={collection.id} collection={collection} />
+              {collections.map((collection, index) => (
+                <div key={collection.id} data-reveal style={{ animationDelay: `${index * 0.1}s` }}>
+                  <CollectionCard collection={collection} />
+                </div>
               ))}
             </div>
-            <div className="flex justify-center mt-12">
+            <div className="flex justify-center mt-12" data-reveal>
               <Link
                 href={primaryShowroomCollectionHref}
                 className="inline-flex shrink-0 items-center justify-center rounded-none border-2 border-strong bg-background h-9 px-8 font-heading font-semibold text-13 uppercase tracking-wider text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
@@ -190,20 +193,20 @@ export default async function Home({ searchParams }: HomePageProps) {
               </Link>
             </div>
           </div>
-        </section>
+        </AnimatedSection>
 
         {/* ── LATEST COMPANY NEWS ───────────────────────────────────────────── */}
-        <section className="bg-card">
+        <AnimatedSection className="bg-card">
           <SectionHeading title="Latest Company News" />
-        </section>
+        </AnimatedSection>
 
         {/* ── NEWS + INSTAGRAM + NEWSLETTER ────────────────────────────────── */}
-        <section className="bg-muted py-16 px-4 md:pt-24 md:pb-16 md:px-20">
+        <AnimatedSection className="bg-muted py-16 px-4 md:pt-24 md:pb-16 md:px-20" stagger={0.1}>
           <div className="max-w-site mx-auto">
             {/* Two-column layout on desktop, stacked on mobile */}
             <div className="flex flex-col gap-10 md:grid md:grid-cols-12 mb-16 md:mb-20">
               {/* Featured article */}
-              <article className="md:col-span-7 md:pr-16">
+              <article className="md:col-span-7 md:pr-16" data-reveal>
                 <AspectRatio ratio={3 / 2} className="w-full rounded overflow-hidden mb-6">
                   <Image
                     src={newsArticle.image}
@@ -239,7 +242,7 @@ export default async function Home({ searchParams }: HomePageProps) {
               </article>
 
               {/* Instagram feed */}
-              <div className="md:col-span-5 md:border-l md:border-border md:pl-8">
+              <div className="md:col-span-5 md:border-l md:border-border md:pl-8" data-reveal>
                 <h3 className="font-display font-medium text-2xl text-heading uppercase tracking-widest mb-3 text-center md:text-left">
                   Enermation on Instagram
                 </h3>
@@ -250,27 +253,30 @@ export default async function Home({ searchParams }: HomePageProps) {
                   </span>
                 </div>
                 {/* 3-col on mobile, 4-col on desktop */}
-                <div className="grid grid-cols-3 md:grid-cols-4 gap-px">
-                  {instagramPosts.map(post => (
-                    <AspectRatio
-                      key={post.id}
-                      ratio={1}
-                      className="overflow-hidden bg-surface-elevated"
-                    >
-                      <Image
-                        src={post.image}
-                        alt=""
-                        fill
-                        className="object-cover hover:opacity-80 transition-opacity"
-                        sizes="(max-width: 767px) 33vw, (min-width: 1280px) 120px, 10vw"
-                      />
-                    </AspectRatio>
-                  ))}
-                </div>
+                <InstagramGrid>
+                  <div className="grid grid-cols-3 md:grid-cols-4 gap-px">
+                    {instagramPosts.map(post => (
+                      <AspectRatio
+                        key={post.id}
+                        ratio={1}
+                        className="overflow-hidden bg-surface-elevated"
+                        data-instagram-item
+                      >
+                        <Image
+                          src={post.image}
+                          alt=""
+                          fill
+                          className="object-cover hover:opacity-80 transition-opacity"
+                          sizes="(max-width: 767px) 33vw, (min-width: 1280px) 120px, 10vw"
+                        />
+                      </AspectRatio>
+                    ))}
+                  </div>
+                </InstagramGrid>
               </div>
             </div>
           </div>
-        </section>
+        </AnimatedSection>
       </main>
     </>
   )

@@ -384,10 +384,14 @@ export function HeroCarousel({
 
         {/* Category label + CTA + dots */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
-          <h1 className="font-display font-normal text-section uppercase tracking-widest text-white text-center">
+          <h1
+            data-hero-title
+            className="font-display font-normal text-section uppercase tracking-widest text-white text-center"
+          >
             {active.label}
           </h1>
           <Link
+            data-hero-cta
             href={active.href}
             className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
           >
@@ -399,6 +403,7 @@ export function HeroCarousel({
                 key={cat.label}
                 type="button"
                 aria-label={`Show ${cat.label}`}
+                data-hero-dot
                 onClick={() => goToSlide(i)}
                 className={`pointer-events-auto rounded-full transition-all duration-300 ${
                   i === activeIndex
