@@ -2,7 +2,13 @@
 
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { Icon } from '@mdi/react'
-import { ContactShadows, Environment, PerformanceMonitor, useGLTF } from '@react-three/drei'
+import {
+  ContactShadows,
+  Environment,
+  PerformanceMonitor,
+  useEnvironment,
+  useGLTF,
+} from '@react-three/drei'
 import { applyProps, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { Bloom, EffectComposer, LUT } from '@react-three/postprocessing'
 import Link from 'next/link'
@@ -41,6 +47,7 @@ const MODELS = [
 
 useGLTF.preload(MODELS[0].path)
 useGLTF.preload(MODELS[1].path)
+useEnvironment.preload({ files: '/models/factory-road-turnaround_1K.exr' })
 
 // ── Lambo model ──────────────────────────────────────────────────────────────
 
@@ -215,7 +222,7 @@ function Scene({
       {/* HDR environment for realistic lighting and reflections */}
       <Environment
         files="/models/factory-road-turnaround_1K.exr"
-        frames={Infinity}
+        frames={1}
         resolution={envResolution}
         background
       />
@@ -231,7 +238,13 @@ function Scene({
 
 // ── Hero carousel ─────────────────────────────────────────────────────────────
 
-export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
+export function HeroCarousel({
+  initialIndex = 0,
+  onReady,
+}: {
+  initialIndex?: number
+  onReady?: () => void
+}) {
   const [activeIndex, setActiveIndex] = useState(initialIndex)
   const [isLoading, setIsLoading] = useState(true)
   const [dpr, setDpr] = useState(DPR_START)
@@ -285,7 +298,8 @@ export function HeroCarousel({ initialIndex = 0 }: { initialIndex?: number }) {
 
   const handleModelLoaded = useCallback(() => {
     setIsLoading(false)
-  }, [])
+    onReady?.()
+  }, [onReady])
 
   useEffect(() => {
     setActiveIndex(initialIndex)
