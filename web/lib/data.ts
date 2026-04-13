@@ -463,3 +463,13 @@ export const productPage = {
     privacyPolicy: '#',
   },
 } as const
+
+export const cart = {
+  emptyTitle: 'Your cart is empty',
+  emptyDescription: "Looks like you haven't added anything yet.",
+  title: 'Shopping Cart',
+  quantityLabel: 'Qty',
+  noImage: 'No image',
+  subtotalLabel: 'Subtotal',
+  checkoutButton: 'Proceed to Checkout',
+} as const

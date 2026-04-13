@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/lib/cart-context'
+import { cart } from '@/lib/data'
 import { cn } from '@/lib/utils'
 
 type ShoppingCart1Props = {
@@ -28,10 +29,8 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
     return (
       <section className={cn('py-12', className)}>
         <div className="mx-auto max-w-lg text-center">
-          <p className="mb-4 font-heading text-xl text-on-dark">Your cart is empty</p>
-          <p className="mb-8 font-body text-on-dark-muted">
-            Looks like you haven&apos;t added anything yet.
-          </p>
+          <p className="mb-4 font-heading text-xl text-on-dark">{cart.emptyTitle}</p>
+          <p className="mb-8 font-body text-on-dark-muted">{cart.emptyDescription}</p>
         </div>
       </section>
     )
@@ -41,7 +40,7 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
     <section className={cn('py-12', className)}>
       <div className="mx-auto max-w-2xl">
         <h1 className="mb-8 font-display text-2xl uppercase tracking-widest text-on-dark">
-          Shopping Cart
+          {cart.title}
         </h1>
 
         <div className="space-y-4">
@@ -61,7 +60,7 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
                   />
                 ) : (
                   <div className="flex size-full items-center justify-center text-on-dark-muted">
-                    No image
+                    {cart.noImage}
                   </div>
                 )}
               </div>
@@ -75,7 +74,9 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
                     {line.selectedOptions.map(opt => opt.value).join(' / ')}
                   </p>
                 )}
-                <p className="text-sm text-on-dark-muted">Qty: {line.quantity}</p>
+                <p className="text-sm text-on-dark-muted">
+                  {cart.quantityLabel}: {line.quantity}
+                </p>
               </div>
 
               <div className="text-right">
@@ -104,7 +105,7 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
 
         <div className="space-y-4">
           <div className="flex justify-between text-lg font-semibold text-on-dark">
-            <span>Subtotal</span>
+            <span>{cart.subtotalLabel}</span>
             <span>
               {new Intl.NumberFormat('en-GB', {
                 style: 'currency',
@@ -119,7 +120,7 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
             onClick={handleCheckout}
             disabled={isUpdating}
           >
-            Proceed to Checkout
+            {cart.checkoutButton}
           </Button>
         </div>
       </div>
