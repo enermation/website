@@ -1,14 +1,6 @@
 'use client'
 
-import {
-  mdiBattery,
-  mdiChevronDown,
-  mdiHarddisk,
-  mdiMemory,
-  mdiMonitor,
-  mdiPackage,
-  mdiWifi,
-} from '@mdi/js'
+import { mdiChevronDown } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import { useState } from 'react'
 
@@ -28,69 +20,14 @@ interface SpecCategory {
   specs: Spec[]
 }
 
-const DEFAULT_CATEGORIES: SpecCategory[] = [
-  {
-    id: 'display',
-    name: 'Display',
-    icon: <Icon path={mdiMonitor} size={1} className="size-4" />,
-    specs: [
-      { label: 'Screen Size', value: '6.7" Super Retina XDR' },
-      { label: 'Resolution', value: '2796 x 1290 pixels' },
-      { label: 'Refresh Rate', value: '1-120Hz ProMotion' },
-    ],
-  },
-  {
-    id: 'performance',
-    name: 'Performance',
-    icon: <Icon path={mdiMemory} size={1} className="size-4" />,
-    specs: [
-      { label: 'Processor', value: 'A17 Pro chip' },
-      { label: 'RAM', value: '8GB' },
-    ],
-  },
-  {
-    id: 'storage',
-    name: 'Storage',
-    icon: <Icon path={mdiHarddisk} size={1} className="size-4" />,
-    specs: [{ label: 'Internal Storage', value: '256GB / 512GB / 1TB' }],
-  },
-  {
-    id: 'battery',
-    name: 'Battery & Charging',
-    icon: <Icon path={mdiBattery} size={1} className="size-4" />,
-    specs: [
-      { label: 'Video Playback', value: 'Up to 29 hours' },
-      { label: 'Wired Charging', value: '27W fast charging' },
-    ],
-  },
-  {
-    id: 'connectivity',
-    name: 'Connectivity',
-    icon: <Icon path={mdiWifi} size={1} className="size-4" />,
-    specs: [
-      { label: 'Wi-Fi', value: 'Wi-Fi 6E (802.11ax)' },
-      { label: 'Bluetooth', value: '5.3' },
-    ],
-  },
-  {
-    id: 'physical',
-    name: 'Physical Specifications',
-    icon: <Icon path={mdiPackage} size={1} className="size-4" />,
-    specs: [
-      { label: 'Weight', value: '221 g' },
-      { label: 'Water Resistance', value: 'IP68 (6m for 30 min)' },
-    ],
-  },
-]
-
 interface ProductSpecs1Props {
-  categories?: SpecCategory[]
+  categories: SpecCategory[]
   title?: string
   className?: string
 }
 
 const ProductSpecs1 = ({
-  categories = DEFAULT_CATEGORIES,
+  categories,
   title = 'Technical Specifications',
   className,
 }: ProductSpecs1Props) => {

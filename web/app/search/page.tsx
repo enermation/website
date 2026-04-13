@@ -67,7 +67,7 @@ export default async function SearchPage({
                     focusRing
                   )}
                 >
-                  <div className="relative aspect-[3/2] overflow-hidden bg-muted">
+                  <div className="relative aspect-3-2 overflow-hidden bg-muted">
                     {result.image ? (
                       <Image
                         src={result.image.url}

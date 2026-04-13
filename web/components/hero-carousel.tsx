@@ -405,13 +405,15 @@ export function HeroCarousel({
           >
             Browse {active.label}
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3" role="tablist" aria-label="Hero carousel slides">
             {heroCategories.map((cat, i) => (
               <button
                 key={cat.label}
                 type="button"
+                role="tab"
                 aria-label={`Show ${cat.label}`}
-                data-hero-dot
+                aria-selected={i === activeIndex}
+                aria-current={i === activeIndex ? 'true' : undefined}
                 onClick={() => goToSlide(i)}
                 className={`pointer-events-auto rounded-full transition-all duration-300 ${
                   i === activeIndex

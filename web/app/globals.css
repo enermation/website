@@ -276,6 +276,10 @@
     @apply mx-auto grid w-full max-w-full grid-cols-4 gap-3 px-4 lg:grid-cols-12;
   }
 
+  .aspect-3-2 {
+    aspect-ratio: 3 / 2;
+  }
+
   .footer-grid {
     grid-template-rows: auto auto 28px;
     row-gap: 2.5rem; /* 40px = gap-y-10 */

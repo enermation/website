@@ -1,6 +1,5 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import {
   ADD_CART_LINES,
   CREATE_CART,
@@ -33,7 +32,6 @@ export async function createCartAction(
 
   if (!data?.cartCreate?.cart) return null
 
-  revalidatePath('/cart')
   return data.cartCreate.cart
 }
 
@@ -56,7 +54,6 @@ export async function addCartLinesAction(
 
   if (!data?.cartLinesAdd?.cart) return null
 
-  revalidatePath('/cart')
   return data.cartLinesAdd.cart
 }
 
@@ -79,7 +76,6 @@ export async function updateCartLinesAction(
 
   if (!data?.cartLinesUpdate?.cart) return null
 
-  revalidatePath('/cart')
   return data.cartLinesUpdate.cart
 }
 
@@ -102,7 +98,6 @@ export async function removeCartLinesAction(
 
   if (!data?.cartLinesRemove?.cart) return null
 
-  revalidatePath('/cart')
   return data.cartLinesRemove.cart
 }
 

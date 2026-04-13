@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 import { AnimatedSection } from '@/components/animated-section'
 import { CarCard } from '@/components/car-card'
 import { SiteHeader } from '@/components/site-header'
@@ -171,11 +172,13 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       </section>
 
       {primaryCollection && (
-        <SimilarCarsSection
-          collectionHandle={primaryCollection.handle}
-          currentProductHandle={product.handle}
-          showroomHref={showroomHref}
-        />
+        <Suspense fallback={<div className="bg-muted py-12 md:py-16" />}>
+          <SimilarCarsSection
+            collectionHandle={primaryCollection.handle}
+            currentProductHandle={product.handle}
+            showroomHref={showroomHref}
+          />
+        </Suspense>
       )}
 
       {/* Related stories */}

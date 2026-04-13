@@ -72,6 +72,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
 
       {hasChildren && (
         <div
+          aria-hidden="true"
           className={cn(
             'pointer-events-none invisible absolute left-1/2 top-full z-50 w-72 -translate-x-1/2 pt-2 opacity-0 transition-opacity transition-[visibility] duration-150',
             'group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100',
