@@ -116,7 +116,8 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
 
   return (
     <div ref={containerRef} className="relative min-h-screen">
-      <div
+      {/* Poster overlay disabled — video background replaces static poster */}
+      {/* <div
         ref={posterRef}
         className={cn(
           'absolute inset-0 z-10 transition-opacity duration-700 ease-in-out',
@@ -133,7 +134,7 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
           sizes="100vw"
           className="object-cover"
         />
-      </div>
+      </div> */}
       <HeroCarouselInner
         initialIndex={initialIndex}
         onReady={() => setCanvasReady(true)}

@@ -47,7 +47,7 @@ const MODELS = [
 
 useGLTF.preload(MODELS[0].path)
 useGLTF.preload(MODELS[1].path)
-useEnvironment.preload({ files: '/models/factory-road-turnaround_1K.hdr' })
+useEnvironment.preload({ files: '/models/factory-road-turnaround_256.hdr' })
 
 // Client-only guard to prevent hydration mismatch
 function useIsClient() {
@@ -214,9 +214,6 @@ function Scene({
 }) {
   return (
     <>
-      {/* Dark background like PPF workshop */}
-      <primitive attach="background" object={new THREE.Color('#15151a')} />
-
       <spotLight
         position={[0, 15, 0]}
         angle={0.3}
@@ -246,10 +243,9 @@ function Scene({
 
       {/* HDR environment for realistic lighting and reflections */}
       <Environment
-        files="/models/factory-road-turnaround_1K.hdr"
+        files="/models/factory-road-turnaround_256.hdr"
         frames={1}
         resolution={envResolution}
-        background
       />
 
       {/* Auto-orbiting camera */}
@@ -338,14 +334,24 @@ export function HeroCarousel({
       onPointerUp={onPointerUp}
       onKeyDown={onKeyDown}
     >
-      {/* Three.js canvas */}
+      {/* Video background */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 size-full object-cover"
+        src="https://videos.pexels.com/video-files/34750442/14731774_1920_1080_24fps.mp4"
+      />
+
+      {/* Three.js canvas — transparent so video shows through */}
       <div className="absolute inset-0">
         {isClient ? (
           <Canvas
             shadows={shadowsEnabled}
             camera={{ position: [0, 1, 14], fov: 40 }}
             dpr={dpr}
-            gl={{ logarithmicDepthBuffer: true }}
+            gl={{ logarithmicDepthBuffer: true, alpha: true }}
           >
             <Suspense fallback={null}>
               <Scene
