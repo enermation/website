@@ -325,9 +325,33 @@ export function HeroCarousel({
   }, [onReady])
 
   const active = heroCategories[activeIndex]
+  const sectionRef = useRef<HTMLElement>(null)
+  const bgVideoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const video = bgVideoRef.current
+        if (!video) return
+        if (entry.isIntersecting) {
+          video.play().catch(() => {})
+        } else {
+          video.pause()
+        }
+      },
+      { threshold: 0 }
+    )
+
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <section
+      ref={sectionRef}
       aria-label="Product showcase carousel"
       className="relative min-h-screen overflow-hidden select-none touch-manipulation"
       aria-roledescription="carousel"
@@ -337,6 +361,7 @@ export function HeroCarousel({
     >
       {/* Video background */}
       <BackgroundVideo
+        ref={bgVideoRef}
         src={starsVideo}
         autoPlay
         muted
