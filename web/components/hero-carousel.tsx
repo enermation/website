@@ -353,7 +353,7 @@ export function HeroCarousel({
     <section
       ref={sectionRef}
       aria-label="Product showcase carousel"
-      className="relative min-h-screen overflow-hidden select-none touch-manipulation"
+      className="relative min-h-dvh overflow-hidden select-none touch-manipulation"
       aria-roledescription="carousel"
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
