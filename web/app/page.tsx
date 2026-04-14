@@ -213,9 +213,9 @@ async function HomePageContent({ searchParams }: HomePageProps) {
                   className="group col-span-2 flex flex-col items-center justify-center gap-6 rounded-xl bg-card p-8 transition-colors duration-200 hover:bg-accent"
                   data-instagram-item
                 >
-                  <p className="font-display font-normal text-2xl text-heading leading-snug">
+                  <span className="font-display font-normal text-2xl text-heading leading-snug">
                     Connect With Us Online
-                  </p>
+                  </span>
                   <div className="flex flex-col items-center gap-3">
                     <div className="flex size-12 items-center justify-center rounded-full bg-muted">
                       <Icon path={mdiInstagram} size={1} className="size-5 text-foreground" />
