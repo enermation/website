@@ -334,120 +334,113 @@ export function HeroCarousel({
       aria-label="Product showcase carousel"
       className="relative min-h-screen overflow-hidden select-none touch-manipulation"
       aria-roledescription="carousel"
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onKeyDown={onKeyDown}
     >
-      <fieldset
-        aria-label="Use arrow keys to navigate slides"
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-        onKeyDown={onKeyDown}
-        className="contents"
+      {/* Three.js canvas */}
+      <div className="absolute inset-0">
+        {isClient ? (
+          <Canvas
+            shadows={shadowsEnabled}
+            camera={{ position: [0, 1, 14], fov: 40 }}
+            dpr={dpr}
+            gl={{ logarithmicDepthBuffer: true }}
+          >
+            <Suspense fallback={null}>
+              <Scene
+                activeIndex={activeIndex}
+                onModelLoaded={handleModelLoaded}
+                effectsEnabled={effectsEnabled}
+                envResolution={envResolution}
+                shadowResolution={shadowResolution}
+              />
+            </Suspense>
+            <PerformanceMonitor
+              factor={1}
+              bounds={refreshrate => (refreshrate > 90 ? [50, 90] : [50, 60])}
+              flipflops={3}
+              onChange={({ factor }) => {
+                // Gradual DPR adjustment: clamp between DPR_MIN and DPR_MAX
+                setDpr(Math.max(DPR_MIN, Math.min(DPR_MAX, DPR_MIN + (DPR_MAX - DPR_MIN) * factor)))
+              }}
+              onIncline={() => {
+                setEffectsEnabled(true)
+                setEnvResolution(ENV_RES_HIGH)
+                setShadowResolution(SHADOW_RES_HIGH)
+                setShadowsEnabled(true)
+              }}
+              onDecline={() => {
+                setEffectsEnabled(false)
+                setEnvResolution(ENV_RES_LOW)
+                setShadowResolution(SHADOW_RES_LOW)
+              }}
+              onFallback={() => {
+                // Guaranteed baseline: minimal quality
+                setDpr(DPR_MIN)
+                setEffectsEnabled(false)
+                setEnvResolution(ENV_RES_LOW)
+                setShadowResolution(SHADOW_RES_LOW)
+                setShadowsEnabled(false)
+              }}
+            />
+          </Canvas>
+        ) : null}
+      </div>
+
+      {/* Category label + CTA + dots */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
+        <h1
+          data-hero-title
+          className="font-display font-normal text-section uppercase tracking-widest text-white text-center"
+        >
+          {active.label}
+        </h1>
+        <Link
+          data-hero-cta
+          href={active.href}
+          className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
+        >
+          Browse {active.label}
+        </Link>
+        <div className="flex items-center gap-3" role="tablist" aria-label="Hero carousel slides">
+          {heroCategories.map((cat, i) => (
+            <button
+              key={cat.label}
+              type="button"
+              data-hero-dot
+              role="tab"
+              aria-label={`Show ${cat.label}`}
+              aria-selected={i === activeIndex}
+              aria-current={i === activeIndex ? 'true' : undefined}
+              onClick={() => goToSlide(i)}
+              className={`pointer-events-auto rounded-full transition-all duration-300 ${
+                i === activeIndex
+                  ? 'size-2.5 bg-on-dark'
+                  : 'size-1.5 bg-on-dark/40 hover:bg-on-dark/70'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Arrow navigation */}
+      <button
+        type="button"
+        aria-label="Previous category"
+        onClick={() => navigate(-1)}
+        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200"
       >
-        {/* Three.js canvas */}
-        <div className="absolute inset-0">
-          {isClient ? (
-            <Canvas
-              shadows={shadowsEnabled}
-              camera={{ position: [0, 1, 14], fov: 40 }}
-              dpr={dpr}
-              gl={{ logarithmicDepthBuffer: true }}
-            >
-              <Suspense fallback={null}>
-                <Scene
-                  activeIndex={activeIndex}
-                  onModelLoaded={handleModelLoaded}
-                  effectsEnabled={effectsEnabled}
-                  envResolution={envResolution}
-                  shadowResolution={shadowResolution}
-                />
-              </Suspense>
-              <PerformanceMonitor
-                factor={1}
-                bounds={refreshrate => (refreshrate > 90 ? [50, 90] : [50, 60])}
-                flipflops={3}
-                onChange={({ factor }) => {
-                  // Gradual DPR adjustment: clamp between DPR_MIN and DPR_MAX
-                  setDpr(
-                    Math.max(DPR_MIN, Math.min(DPR_MAX, DPR_MIN + (DPR_MAX - DPR_MIN) * factor))
-                  )
-                }}
-                onIncline={() => {
-                  setEffectsEnabled(true)
-                  setEnvResolution(ENV_RES_HIGH)
-                  setShadowResolution(SHADOW_RES_HIGH)
-                  setShadowsEnabled(true)
-                }}
-                onDecline={() => {
-                  setEffectsEnabled(false)
-                  setEnvResolution(ENV_RES_LOW)
-                  setShadowResolution(SHADOW_RES_LOW)
-                }}
-                onFallback={() => {
-                  // Guaranteed baseline: minimal quality
-                  setDpr(DPR_MIN)
-                  setEffectsEnabled(false)
-                  setEnvResolution(ENV_RES_LOW)
-                  setShadowResolution(SHADOW_RES_LOW)
-                  setShadowsEnabled(false)
-                }}
-              />
-            </Canvas>
-          ) : null}
-        </div>
-
-        {/* Category label + CTA + dots */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
-          <h1
-            data-hero-title
-            className="font-display font-normal text-section uppercase tracking-widest text-white text-center"
-          >
-            {active.label}
-          </h1>
-          <Link
-            data-hero-cta
-            href={active.href}
-            className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
-          >
-            Browse {active.label}
-          </Link>
-          <div className="flex items-center gap-3" role="tablist" aria-label="Hero carousel slides">
-            {heroCategories.map((cat, i) => (
-              <button
-                key={cat.label}
-                type="button"
-                data-hero-dot
-                role="tab"
-                aria-label={`Show ${cat.label}`}
-                aria-selected={i === activeIndex}
-                aria-current={i === activeIndex ? 'true' : undefined}
-                onClick={() => goToSlide(i)}
-                className={`pointer-events-auto rounded-full transition-all duration-300 ${
-                  i === activeIndex
-                    ? 'size-2.5 bg-on-dark'
-                    : 'size-1.5 bg-on-dark/40 hover:bg-on-dark/70'
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Arrow navigation */}
-        <button
-          type="button"
-          aria-label="Previous category"
-          onClick={() => navigate(-1)}
-          className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200"
-        >
-          <Icon path={mdiChevronLeft} size={1} className="size-6" />
-        </button>
-        <button
-          type="button"
-          aria-label="Next category"
-          onClick={() => navigate(1)}
-          className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200"
-        >
-          <Icon path={mdiChevronRight} size={1} className="size-6" />
-        </button>
-      </fieldset>
+        <Icon path={mdiChevronLeft} size={1} className="size-6" />
+      </button>
+      <button
+        type="button"
+        aria-label="Next category"
+        onClick={() => navigate(1)}
+        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200"
+      >
+        <Icon path={mdiChevronRight} size={1} className="size-6" />
+      </button>
     </section>
   )
 }

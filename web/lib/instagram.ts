@@ -10,9 +10,7 @@ const EMPTY: InstagramFeed = { username: '', followersCount: 0, posts: [] }
 
 export async function getInstagramFeed(): Promise<InstagramFeed> {
   const feedId = process.env.BEHOLD_FEED_ID
-  if (!feedId) {
-    throw new Error('BEHOLD_FEED_ID environment variable is not set')
-  }
+  if (!feedId) return EMPTY
 
   try {
     const res = await fetch(`https://feeds.behold.so/${feedId}`, {
