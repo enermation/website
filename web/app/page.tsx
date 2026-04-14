@@ -111,7 +111,9 @@ function HeroCarouselSkeleton() {
 export default async function Home({ searchParams }: HomePageProps) {
   return (
     <>
-      <SiteHeader />
+      <Suspense fallback={null}>
+        <SiteHeader />
+      </Suspense>
       <main>
         <Suspense fallback={<HeroCarouselSkeleton />}>
           <HomePageContent searchParams={searchParams} />
