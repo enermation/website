@@ -9,7 +9,9 @@ import {
 } from '@/lib/queries'
 import type { ShopifyCollection, ShopifyProduct, ShopifyShopInfo } from '@/lib/types'
 
-function getRequiredEnv(name: 'SHOPIFY_STORE_DOMAIN' | 'SHOPIFY_STOREFRONT_ACCESS_TOKEN') {
+function getRequiredEnv(
+  name: 'PUBLIC_STORE_DOMAIN' | 'PUBLIC_STOREFRONT_API_TOKEN' | 'PRIVATE_STOREFRONT_API_TOKEN'
+) {
   const value = process.env[name]?.trim()
 
   if (!value) {
@@ -21,9 +23,9 @@ function getRequiredEnv(name: 'SHOPIFY_STORE_DOMAIN' | 'SHOPIFY_STOREFRONT_ACCES
 
 export function getClient() {
   return createStorefrontApiClient({
-    storeDomain: getRequiredEnv('SHOPIFY_STORE_DOMAIN'),
+    storeDomain: getRequiredEnv('PUBLIC_STORE_DOMAIN'),
     apiVersion: '2026-04',
-    publicAccessToken: getRequiredEnv('SHOPIFY_STOREFRONT_ACCESS_TOKEN'),
+    privateAccessToken: getRequiredEnv('PRIVATE_STOREFRONT_API_TOKEN'),
   })
 }
 
