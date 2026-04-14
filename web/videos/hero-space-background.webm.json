@@ -1,0 +1,23 @@
+{
+  "status": "ready",
+  "originalFilePath": "videos\\hero-space-background.webm",
+  "provider": "mux",
+  "providerMetadata": {
+    "mux": {
+      "uploadId": "8YYH97O02dU7ptHUlV00rk8jS6sOtZbKeMpJSY01y4mRiE",
+      "assetId": "Znqr1MGeXo9IF01xtbWO5tnNqKQnw6ToAe6n7Hbq4UdY",
+      "playbackId": "fBye02MqSFC01wviEHhx02Vedht4NF7DbGZMOFD9VaVmEs"
+    }
+  },
+  "createdAt": 1776173859761,
+  "updatedAt": 1776173880533,
+  "size": 11034004,
+  "sources": [
+    {
+      "src": "https://stream.mux.com/fBye02MqSFC01wviEHhx02Vedht4NF7DbGZMOFD9VaVmEs.m3u8",
+      "type": "application/x-mpegURL"
+    }
+  ],
+  "poster": "https://image.mux.com/fBye02MqSFC01wviEHhx02Vedht4NF7DbGZMOFD9VaVmEs/thumbnail.webp",
+  "blurDataURL": "data:image/webp;base64,UklGRiYAAABXRUJQVlA4IBoAAAAwAQCdASoQAAkAAQAcJaQAA3AA/v2m56WQAA=="
+}

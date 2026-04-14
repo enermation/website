@@ -19,7 +19,7 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import type { Group } from 'three'
 import * as THREE from 'three'
 import { heroCategories } from '@/lib/data'
-import starsVideo from '@/videos/stars-bg.webm'
+import starsVideo from '@/videos/hero-space-background.webm'
 
 const MAX_3D_SLIDES = 2
 const TOTAL = Math.min(heroCategories.length, MAX_3D_SLIDES)
