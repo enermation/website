@@ -40,6 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# next-video
+# next-video (raw video files live on Mux — only commit the .json mappings)
 /videos/_mux-data
-/videos/*.json
+/videos/*.mp4
+/videos/*.webm
+/videos/*.mov
+/videos/*.mkv

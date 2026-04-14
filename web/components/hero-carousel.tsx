@@ -13,12 +13,13 @@ import { applyProps, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { Bloom, EffectComposer, LUT } from '@react-three/postprocessing'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import BackgroundVideo from 'next-video/background-video'
 import { LUTCubeLoader } from 'postprocessing'
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Group } from 'three'
 import * as THREE from 'three'
-
 import { heroCategories } from '@/lib/data'
+import starsVideo from '@/videos/stars-bg.webm'
 
 const MAX_3D_SLIDES = 2
 const TOTAL = Math.min(heroCategories.length, MAX_3D_SLIDES)
@@ -335,13 +336,13 @@ export function HeroCarousel({
       onKeyDown={onKeyDown}
     >
       {/* Video background */}
-      <video
+      <BackgroundVideo
+        src={starsVideo}
         autoPlay
         muted
         loop
         playsInline
         className="absolute inset-0 size-full object-cover"
-        src="https://videos.pexels.com/video-files/34750442/14731774_1920_1080_24fps.mp4"
       />
 
       {/* Three.js canvas — transparent so video shows through */}
