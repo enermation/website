@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
 import { gsap, useGSAP } from '@/lib/gsap'
+import type { ShopifyVideo } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import starsVideo from '@/videos/hero-space-background.webm'
 
@@ -14,14 +15,18 @@ const HeroCarouselInner = dynamic(
 
 type Props = {
   initialIndex?: number
+  video?: ShopifyVideo | null
 }
 
-export function HeroCarousel({ initialIndex = 0 }: Props) {
+export function HeroCarousel({ initialIndex = 0, video }: Props) {
   const [canvasReady, setCanvasReady] = useState(false)
   const [activeIndex, setActiveIndex] = useState(initialIndex)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const posterRef = useRef<HTMLDivElement>(null)
+
+  // Use Shopify video preview if available, otherwise fallback to local poster
+  const posterUrl = video?.preview.image.url ?? (starsVideo.poster as string)
 
   // Hero entrance animations (initial load only)
   useGSAP(
@@ -115,7 +120,7 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
         )}
       >
         <Image
-          src={starsVideo.poster as string}
+          src={posterUrl}
           alt="Luxury supercar showcase background"
           fill
           priority
@@ -127,6 +132,7 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
       </div>
       <HeroCarouselInner
         initialIndex={initialIndex}
+        video={video}
         onReady={() => setCanvasReady(true)}
         onSlideChange={setActiveIndex}
       />

@@ -19,7 +19,7 @@ type HeaderSearchProps = {
 }
 
 export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(variant === 'desktop')
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
@@ -62,7 +62,9 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
-        setOpen(false)
+        if (variant === 'mobile') {
+          setOpen(false)
+        }
         setQuery('')
         setResults([])
       }
@@ -71,13 +73,15 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
       document.addEventListener('keydown', handleKeyDown)
     }
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [open])
+  }, [open, variant])
 
   // Close on click outside
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false)
+        if (variant === 'mobile') {
+          setOpen(false)
+        }
         setQuery('')
         setResults([])
       }
@@ -86,7 +90,7 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
       document.addEventListener('mousedown', handleClick)
     }
     return () => document.removeEventListener('mousedown', handleClick)
-  }, [open])
+  }, [open, variant])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -105,17 +109,17 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
           e.preventDefault()
           if (activeIndex >= 0 && results[activeIndex]) {
             router.push(`/products/${results[activeIndex].handle}`)
-            setOpen(false)
+            if (variant === 'mobile') setOpen(false)
             setQuery('')
           } else if (query.trim()) {
             router.push(`/search?q=${encodeURIComponent(query)}`)
-            setOpen(false)
+            if (variant === 'mobile') setOpen(false)
             setQuery('')
           }
           break
       }
     },
-    [results, activeIndex, query, router]
+    [results, activeIndex, query, router, variant]
   )
 
   const handleSubmit = useCallback(
@@ -123,20 +127,20 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
       e.preventDefault()
       if (query.trim()) {
         router.push(`/search?q=${encodeURIComponent(query)}`)
-        setOpen(false)
+        if (variant === 'mobile') setOpen(false)
         setQuery('')
       }
     },
-    [query, router]
+    [query, router, variant]
   )
 
   const handleResultSelect = useCallback(
     (result: SearchResult) => {
       router.push(`/products/${result.handle}`)
-      setOpen(false)
+      if (variant === 'mobile') setOpen(false)
       setQuery('')
     },
-    [router]
+    [router, variant]
   )
 
   const handleOpen = useCallback(() => {
@@ -147,105 +151,125 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
   }, [])
 
   const handleClose = useCallback(() => {
-    setOpen(false)
+    if (variant === 'mobile') {
+      setOpen(false)
+    }
     setQuery('')
     setResults([])
     setActiveIndex(-1)
-  }, [])
+  }, [variant])
 
-  // Mobile variant — full-width search input
+  // Mobile variant — toggleable search icon/input
   if (variant === 'mobile') {
     return (
-      <div ref={containerRef} className="w-full">
-        <form onSubmit={handleSubmit} className="relative">
-          <Input
-            ref={inputRef}
-            type="search"
-            placeholder={searchCopy.placeholder}
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
+      <div ref={containerRef} className={cn('relative flex items-center', open && 'w-full')}>
+        {!open ? (
+          <button
+            type="button"
+            onClick={handleOpen}
             className={cn(
-              'h-10 rounded-full border-white-30 bg-white-20 pr-10 pl-10 text-sm text-background placeholder:text-on-dark-muted focus-visible:border-brand-green',
+              'inline-flex size-11 items-center justify-center rounded-full text-background transition-colors hover:bg-white-20',
               focusRing
             )}
             aria-label={searchCopy.label}
-            aria-expanded={open && results.length > 0}
-          />
-          <Icon
-            path={mdiMagnify}
-            size={1}
-            className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-on-dark-muted"
-            aria-hidden="true"
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={() => setQuery('')}
-              className="absolute top-1/2 right-3.5 flex size-4 -translate-y-1/2 items-center justify-center text-on-dark-muted transition-colors hover:text-background"
-              aria-label={searchCopy.clearLabel}
-            >
-              <Icon path={mdiClose} size={1} className="size-3" aria-hidden="true" />
-            </button>
-          )}
-        </form>
-
-        {open && results.length > 0 && (
-          <div className="mt-2 max-h-80 overflow-y-auto rounded-2xl border border-white-20 bg-surface-dark p-2 shadow-xl">
-            {results.map((result, i) => (
-              <button
-                key={result.id}
-                type="button"
-                onClick={() => handleResultSelect(result)}
+          >
+            <Icon path={mdiMagnify} size={1} className="size-5" aria-hidden="true" />
+          </button>
+        ) : (
+          <div className="relative w-full">
+            <form onSubmit={handleSubmit} className="relative">
+              <Input
+                ref={inputRef}
+                type="search"
+                placeholder={searchCopy.placeholder}
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
                 className={cn(
-                  'flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors hover:bg-white-20',
-                  i === activeIndex && 'bg-white-20'
+                  'h-10 rounded-full border-white-30 bg-white-20 pr-10 pl-10 text-sm text-background placeholder:text-on-dark-muted focus-visible:border-brand-green',
+                  focusRing
                 )}
+                aria-label={searchCopy.label}
+                aria-expanded={results.length > 0}
+              />
+              <Icon
+                path={mdiMagnify}
+                size={1}
+                className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-on-dark-muted"
+                aria-hidden="true"
+              />
+              <button
+                type="button"
+                onClick={handleClose}
+                className="absolute top-1/2 right-3.5 flex size-4 -translate-y-1/2 items-center justify-center text-on-dark-muted transition-colors hover:text-background"
+                aria-label={searchCopy.closeLabel}
               >
-                <div className="relative size-14 shrink-0 overflow-hidden rounded-lg border border-white-30 bg-white-20">
-                  {result.image ? (
-                    <Image
-                      src={result.image.url}
-                      alt={result.image.altText ?? result.title}
-                      fill
-                      sizes="56px"
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="flex size-full items-center justify-center">
-                      <Icon path={mdiMagnify} size={1} className="size-4 text-muted-foreground" />
-                    </div>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-heading text-13 font-semibold text-background">
-                    {result.title}
-                  </p>
-                  <p className="font-body text-xs text-on-dark-muted">
-                    {result.price.currencyCode} {result.price.amount}
-                  </p>
-                </div>
+                <Icon path={mdiClose} size={1} className="size-3" aria-hidden="true" />
               </button>
-            ))}
-            <Link
-              href={`/search?q=${encodeURIComponent(query)}`}
-              className="flex items-center justify-center rounded-xl border border-white-30 bg-white-20 px-3 py-2 font-heading text-13 font-semibold text-background transition-colors hover:bg-white-30"
-              onClick={handleClose}
-            >
-              {searchCopy.seeAllLabel}
-            </Link>
-          </div>
-        )}
+            </form>
 
-        {open && loading && (
-          <div className="mt-2 rounded-2xl border border-white-20 bg-surface-dark p-4 text-center">
-            <p className="font-body text-sm text-on-dark-muted">{searchCopy.searchingLabel}</p>
-          </div>
-        )}
+            {results.length > 0 && (
+              <div className="absolute right-0 top-full z-50 mt-2 max-h-80 w-80 overflow-y-auto rounded-2xl border border-white-20 bg-surface-dark p-2 shadow-xl">
+                {results.map((result, i) => (
+                  <button
+                    key={result.id}
+                    type="button"
+                    onClick={() => handleResultSelect(result)}
+                    className={cn(
+                      'flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors hover:bg-white-20',
+                      i === activeIndex && 'bg-white-20'
+                    )}
+                  >
+                    <div className="relative size-14 shrink-0 overflow-hidden rounded-lg border border-white-30 bg-white-20">
+                      {result.image ? (
+                        <Image
+                          src={result.image.url}
+                          alt={result.image.altText ?? result.title}
+                          fill
+                          sizes="56px"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="flex size-full items-center justify-center">
+                          <Icon
+                            path={mdiMagnify}
+                            size={1}
+                            className="size-4 text-muted-foreground"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-heading text-13 font-semibold text-background">
+                        {result.title}
+                      </p>
+                      <p className="font-body text-xs text-on-dark-muted">
+                        {result.price.currencyCode} {result.price.amount}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+                <Link
+                  href={`/search?q=${encodeURIComponent(query)}`}
+                  className="flex items-center justify-center rounded-xl border border-white-30 bg-white-20 px-3 py-2 font-heading text-13 font-semibold text-background transition-colors hover:bg-white-30"
+                  onClick={handleClose}
+                >
+                  {searchCopy.seeAllLabel}
+                </Link>
+              </div>
+            )}
 
-        {open && !loading && query && results.length === 0 && (
-          <div className="mt-2 rounded-2xl border border-white-20 bg-surface-dark p-4 text-center">
-            <p className="font-body text-sm text-on-dark-muted">{searchCopy.noResultsLabel}</p>
+            {loading && (
+              <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-2xl border border-white-20 bg-surface-dark p-4 text-center shadow-xl">
+                <p className="font-body text-sm text-on-dark-muted">{searchCopy.searchingLabel}</p>
+              </div>
+            )}
+
+            {!loading && query && results.length === 0 && (
+              <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-2xl border border-white-20 bg-surface-dark p-4 text-center shadow-xl">
+                <p className="font-body text-sm text-on-dark-muted">{searchCopy.noResultsLabel}</p>
+              </div>
+            )}
           </div>
         )}
       </div>
