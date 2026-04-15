@@ -377,7 +377,7 @@ export function HeroCarousel({
             shadows={shadowsEnabled}
             camera={{ position: [0, 1, 14], fov: 40 }}
             dpr={dpr}
-            gl={{ logarithmicDepthBuffer: true, alpha: true }}
+            gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
           >
             <Suspense fallback={null}>
               <Scene
@@ -393,7 +393,7 @@ export function HeroCarousel({
               bounds={refreshrate => (refreshrate > 90 ? [50, 90] : [50, 60])}
               flipflops={3}
               onChange={({ factor }) => {
-                // Gradual DPR adjustment: clamp between DPR_MIN and DPR_MAX
+                // Gradual DPR adjustment: clamp between DPR_MIN and DPR_MAX (1.0 to 2.0)
                 setDpr(Math.max(DPR_MIN, Math.min(DPR_MAX, DPR_MIN + (DPR_MAX - DPR_MIN) * factor)))
               }}
               onIncline={() => {

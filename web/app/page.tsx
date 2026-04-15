@@ -136,7 +136,31 @@ async function HomePageContent({ searchParams }: HomePageProps) {
     }),
     getInstagramFeed(),
   ])
-  const latestArrivals = latestArrivalsCollection?.products ?? []
+
+  // vercel-react-best-practices: server-serialization
+  // Map bulky ShopifyProduct to minimal client-side format to reduce RSC payload
+  const latestArrivals = (latestArrivalsCollection?.products ?? []).map(product => ({
+    id: product.id,
+    handle: product.handle,
+    title: product.title,
+    description: product.description,
+    availableForSale: product.availableForSale,
+    priceRange: product.priceRange,
+    images: {
+      edges: product.images.edges.slice(0, 1).map(edge => ({
+        node: {
+          url: edge.node.url,
+          altText: edge.node.altText,
+        },
+      })),
+    },
+    // Only include specific metafields used by the carousel
+    year: product.year ? { value: product.year.value } : null,
+    colour: product.colour ? { value: product.colour.value } : null,
+    mileage: product.mileage ? { value: product.mileage.value } : null,
+    transmission: product.transmission ? { value: product.transmission.value } : null,
+  }))
+
   const { posts: instagramPosts, username: igUsername, followersCount: igFollowers } = instagramFeed
 
   return (

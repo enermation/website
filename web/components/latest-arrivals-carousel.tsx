@@ -13,14 +13,14 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel'
 import { productPage } from '@/lib/data'
-import type { ShopifyProduct } from '@/lib/types'
+import type { ShopifyProductMinimal } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 function metaValue(field: { value: string | null } | null): string | null {
   return field?.value ?? null
 }
 
-function formatPrice(product: ShopifyProduct): string {
+function formatPrice(product: ShopifyProductMinimal): string {
   const { amount, currencyCode } = product.priceRange.minVariantPrice
 
   return new Intl.NumberFormat('en-GB', {
@@ -29,7 +29,7 @@ function formatPrice(product: ShopifyProduct): string {
   }).format(parseFloat(amount))
 }
 
-function LatestArrivalCard({ product }: { product: ShopifyProduct }) {
+function LatestArrivalCard({ product }: { product: ShopifyProductMinimal }) {
   const image = product.images.edges[0]?.node
   const details = [
     { icon: mdiCalendar, label: metaValue(product.year) },
@@ -87,7 +87,7 @@ function LatestArrivalCard({ product }: { product: ShopifyProduct }) {
   )
 }
 
-export function LatestArrivalsCarousel({ products }: { products: ShopifyProduct[] }) {
+export function LatestArrivalsCarousel({ products }: { products: ShopifyProductMinimal[] }) {
   return (
     <Carousel
       opts={{

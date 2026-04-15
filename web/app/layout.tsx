@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
-import { Barlow_Semi_Condensed, Bebas_Neue, Inter, Playfair_Display } from 'next/font/google'
-import localFont from 'next/font/local'
+import { Barlow_Semi_Condensed, Bebas_Neue, Inter } from 'next/font/google'
 import { Suspense } from 'react'
 import './globals.css'
 import { SiteFooter } from '@/components/site-footer'
@@ -11,6 +10,7 @@ const display = Bebas_Neue({
   weight: '400',
   subsets: ['latin'],
   display: 'swap',
+  preload: true,
 })
 
 const heading = Barlow_Semi_Condensed({
@@ -18,6 +18,7 @@ const heading = Barlow_Semi_Condensed({
   weight: ['600', '700'],
   subsets: ['latin'],
   display: 'swap',
+  preload: true,
 })
 
 const body = Inter({
@@ -25,20 +26,7 @@ const body = Inter({
   weight: ['400', '500'],
   subsets: ['latin'],
   display: 'swap',
-})
-
-const flauta = localFont({
-  src: '../public/fonts/flauta.ttf',
-  variable: '--font-flauta',
-  display: 'swap',
-})
-
-const luxury = Playfair_Display({
-  variable: '--font-luxury',
-  weight: '400',
-  style: 'italic',
-  subsets: ['latin'],
-  display: 'swap',
+  preload: true,
 })
 
 export const metadata: Metadata = {
@@ -61,7 +49,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${display.variable} ${heading.variable} ${body.variable} ${luxury.variable} ${flauta.variable} h-full antialiased`}
+      className={`${display.variable} ${heading.variable} ${body.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <Suspense>

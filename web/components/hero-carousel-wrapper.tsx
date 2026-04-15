@@ -5,11 +5,7 @@ import Image from 'next/image'
 import { useRef, useState } from 'react'
 import { gsap, useGSAP } from '@/lib/gsap'
 import { cn } from '@/lib/utils'
-
-const POSTERS = [
-  '/images/porsche-911-sedan-hero.avif',
-  '/images/lamborghini-suv-hero.avif',
-] as const
+import starsVideo from '@/videos/hero-space-background.webm'
 
 const HeroCarouselInner = dynamic(
   () => import('@/components/hero-carousel').then(m => ({ default: m.HeroCarousel })),
@@ -24,7 +20,6 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
   const [canvasReady, setCanvasReady] = useState(false)
   const [activeIndex, setActiveIndex] = useState(initialIndex)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const poster = POSTERS[initialIndex] ?? POSTERS[0]
   const containerRef = useRef<HTMLDivElement>(null)
   const posterRef = useRef<HTMLDivElement>(null)
 
@@ -116,25 +111,25 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
 
   return (
     <div ref={containerRef} className="relative min-h-screen">
-      {/* Poster overlay disabled — video background replaces static poster */}
-      {/* <div
+      {/* SSR Poster Image for LCP Optimization */}
+      <div
         ref={posterRef}
         className={cn(
-          'absolute inset-0 z-10 transition-opacity duration-700 ease-in-out',
-          canvasReady && !isTransitioning && 'opacity-0 pointer-events-none',
-          isTransitioning && 'opacity-100'
+          'absolute inset-0 z-10 transition-opacity duration-1000 ease-in-out',
+          canvasReady && !isTransitioning ? 'opacity-0 pointer-events-none' : 'opacity-100'
         )}
       >
         <Image
-          src={poster}
-          alt="Luxury supercar showcase"
+          src={starsVideo.poster as string}
+          alt="Luxury supercar showcase background"
           fill
           priority
-          unoptimized
+          placeholder={starsVideo.blurDataURL ? 'blur' : 'empty'}
+          blurDataURL={starsVideo.blurDataURL}
           sizes="100vw"
           className="object-cover"
         />
-      </div> */}
+      </div>
       <HeroCarouselInner
         initialIndex={initialIndex}
         onReady={() => setCanvasReady(true)}

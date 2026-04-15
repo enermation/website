@@ -76,6 +76,17 @@ export type ShopifyProduct = {
   engine: ShopifyMetafield | null
 }
 
+export type ShopifyProductMinimal = Pick<
+  ShopifyProduct,
+  'id' | 'handle' | 'title' | 'description' | 'availableForSale' | 'priceRange'
+> & {
+  images: { edges: { node: Pick<ShopifyImage, 'url' | 'altText'> }[] }
+  year: Pick<ShopifyMetafield, 'value'> | null
+  colour: Pick<ShopifyMetafield, 'value'> | null
+  mileage: Pick<ShopifyMetafield, 'value'> | null
+  transmission: Pick<ShopifyMetafield, 'value'> | null
+}
+
 export type ShopifyCollection = {
   id: string
   handle: string
