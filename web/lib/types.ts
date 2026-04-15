@@ -150,19 +150,3 @@ export type ShopifyShopInfo = {
     url: string
   } | null
 }
-
-export type ShopifyVideoSource = {
-  url: string
-  format: string
-  mimeType: string
-}
-
-export type ShopifyVideo = {
-  id: string
-  preview: {
-    image: {
-      url: string
-    }
-  }
-  sources: ShopifyVideoSource[]
-}

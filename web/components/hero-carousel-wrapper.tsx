@@ -3,10 +3,9 @@
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
+import { heroBackgroundPosterUrl } from '@/lib/data'
 import { gsap, useGSAP } from '@/lib/gsap'
-import type { ShopifyVideo } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import starsVideo from '@/videos/hero-space-background.webm'
 
 const HeroCarouselInner = dynamic(
   () => import('@/components/hero-carousel').then(m => ({ default: m.HeroCarousel })),
@@ -15,18 +14,16 @@ const HeroCarouselInner = dynamic(
 
 type Props = {
   initialIndex?: number
-  video?: ShopifyVideo | null
 }
 
-export function HeroCarousel({ initialIndex = 0, video }: Props) {
+export function HeroCarousel({ initialIndex = 0 }: Props) {
   const [canvasReady, setCanvasReady] = useState(false)
   const [activeIndex, setActiveIndex] = useState(initialIndex)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const posterRef = useRef<HTMLDivElement>(null)
 
-  // Use Shopify video preview if available, otherwise fallback to local poster
-  const posterUrl = video?.preview.image.url ?? (starsVideo.poster as string)
+  const posterUrl = heroBackgroundPosterUrl
 
   // Hero entrance animations (initial load only)
   useGSAP(
@@ -124,15 +121,13 @@ export function HeroCarousel({ initialIndex = 0, video }: Props) {
           alt="Luxury supercar showcase background"
           fill
           priority
-          placeholder={starsVideo.blurDataURL ? 'blur' : 'empty'}
-          blurDataURL={starsVideo.blurDataURL}
+          placeholder="empty"
           sizes="100vw"
           className="object-cover"
         />
       </div>
       <HeroCarouselInner
         initialIndex={initialIndex}
-        video={video}
         onReady={() => setCanvasReady(true)}
         onSlideChange={setActiveIndex}
       />

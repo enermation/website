@@ -346,30 +346,6 @@ export const SEARCH_PRODUCTS = `
   }
 `
 
-export const GET_FILES = `
-  query getFiles($query: String!) {
-    files(first: 1, query: $query) {
-      edges {
-        node {
-          ... on Video {
-            id
-            preview {
-              image {
-                url
-              }
-            }
-            sources {
-              url
-              format
-              mimeType
-            }
-          }
-        }
-      }
-    }
-  }
-`
-
 // ── Cart ──────────────────────────────────────────────────────────────────────
 
 export const GET_CART = `

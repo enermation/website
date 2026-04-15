@@ -77,6 +77,9 @@ export const heroCategories: HeroCategory[] = [
   { label: 'Commercial', href: '/collections/commercial-vehicles' },
 ]
 
+export const heroBackgroundVideoUrl = 'https://www.pexels.com/download/video/34750442/' as const
+export const heroBackgroundPosterUrl = '/images/hero.webp' as const
+
 // â”€â”€ Section images â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const heroImage = '/images/hero.webp'
