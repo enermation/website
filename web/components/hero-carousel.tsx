@@ -226,47 +226,71 @@ function Scene({
       const lambo = lamboRef.current
       if (!porsche || !lambo) return
 
+      // Automotive Ease: A "Beauty Pass" curve that lingers slightly in the center
+      // for users to admire the side profile of the car.
+      const automotiveEase = 'cubic-bezier(0.7, 0, 0.3, 1)'
+
       // Initial state: hide everything except active
       if (isInitial.current) {
         gsap.set(porsche.position, { x: activeIndex === 0 ? 0 : 20 })
         gsap.set(lambo.position, { x: activeIndex === 1 ? 0 : 20 })
 
-        // Entrance "Bomb Drop" for the first car
+        // Entrance "Bomb Drop" with Suspension Effect for the active car
         const activeModel = activeIndex === 0 ? porsche : lambo
-        gsap.from(activeModel.position, {
-          y: 15,
-          duration: 1.4,
-          ease: 'power4.in',
-          onComplete: () => {
-            // Small subtle "impact" rebound
-            gsap.to(activeModel.position, {
-              y: 0.1,
-              duration: 0.1,
-              yoyo: true,
-              repeat: 1,
-            })
-          },
+        const tl = gsap.timeline({ delay: 0.5 })
+
+        // Accelerating fall
+        tl.from(activeModel.position, {
+          y: 20,
+          duration: 1.2,
+          ease: 'power3.in',
         })
+          // Suspension Compression (weighted impact)
+          .to(activeModel.position, {
+            y: -0.08,
+            duration: 0.1,
+            ease: 'power2.out',
+          })
+          // Suspension Rebound / Settle
+          .to(activeModel.position, {
+            y: 0,
+            duration: 0.8,
+            ease: 'elastic.out(1, 0.6)',
+          })
 
         isInitial.current = false
         return
       }
 
-      const duration = 0.8
-      const ease = 'power2.inOut'
+      const duration = 1.2
+      const ease = automotiveEase
 
       // Porsche slide (Slide 0)
       gsap.to(porsche.position, {
-        x: activeIndex === 0 ? 0 : -20,
+        x: activeIndex === 0 ? 0 : -22,
         duration,
         ease,
+        overwrite: 'auto',
+        onStart: () => {
+          if (porsche) porsche.visible = true
+        },
+        onComplete: () => {
+          if (porsche && activeIndex !== 0) porsche.visible = false
+        },
       })
 
       // Lambo slide (Slide 1)
       gsap.to(lambo.position, {
-        x: activeIndex === 1 ? 0 : 20,
+        x: activeIndex === 1 ? 0 : 22,
         duration,
         ease,
+        overwrite: 'auto',
+        onStart: () => {
+          if (lambo) lambo.visible = true
+        },
+        onComplete: () => {
+          if (lambo && activeIndex !== 1) lambo.visible = false
+        },
       })
     },
     { dependencies: [activeIndex, showSecondModel] }

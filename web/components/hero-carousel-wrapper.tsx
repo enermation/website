@@ -26,24 +26,19 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
   // Hero entrance animations (initial load only)
   useGSAP(
     () => {
-      if (!containerRef.current || !canvasReady) return
+      if (!canvasReady) return
 
       const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
 
       tl.fromTo(
-        containerRef.current.querySelector('[data-hero-title]'),
+        '[data-hero-title]',
         { opacity: 0, y: 30, scale: 0.95 },
         { opacity: 1, y: 0, scale: 1, duration: 0.8 },
         0
       )
+        .fromTo('[data-hero-cta]', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, 0.3)
         .fromTo(
-          containerRef.current.querySelector('[data-hero-cta]'),
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.6 },
-          0.3
-        )
-        .fromTo(
-          containerRef.current.querySelectorAll('[data-hero-dot]'),
+          '[data-hero-dot]',
           { opacity: 0, scale: 0 },
           { opacity: 1, scale: 1, duration: 0.4, stagger: 0.1 },
           0.4
@@ -55,13 +50,11 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
   // Slide transition animations (title, CTA, dots crossfade)
   useGSAP(
     () => {
-      if (!containerRef.current || canvasReady === false) return
+      if (canvasReady === false) return
 
-      const titleEl = containerRef.current.querySelector('[data-hero-title]')
-      const ctaEl = containerRef.current.querySelector('[data-hero-cta]')
-      const dotsEl = containerRef.current.querySelectorAll('[data-hero-dot]')
-
-      if (!titleEl || !ctaEl) return
+      const titleEl = '[data-hero-title]'
+      const ctaEl = '[data-hero-cta]'
+      const dotsEl = '[data-hero-dot]'
 
       const tl = gsap.timeline({
         defaults: { ease: 'power2.inOut' },
@@ -71,11 +64,13 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
       setIsTransitioning(true)
 
       // Exit current content
-      tl.to([titleEl, ctaEl], { opacity: 0, y: -20, duration: 0.3, stagger: 0.05 }).to(
-        dotsEl,
-        { opacity: 0, scale: 0.5, duration: 0.2 },
-        0
-      )
+      tl.to([titleEl, ctaEl], {
+        opacity: 0,
+        y: -20,
+        duration: 0.3,
+        stagger: 0.05,
+        overwrite: 'auto',
+      }).to(dotsEl, { opacity: 0, scale: 0.5, duration: 0.2, overwrite: 'auto' }, 0)
 
       // Enter new content
       tl.fromTo(titleEl, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5 })
