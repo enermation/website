@@ -17,8 +17,9 @@ import { LUTCubeLoader } from 'postprocessing'
 import { forwardRef, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Group } from 'three'
 import * as THREE from 'three'
-import { heroCategories } from '@/lib/data'
+import { HeroCategory, heroCategories } from '@/lib/data'
 import { gsap, useGSAP } from '@/lib/gsap'
+import type { ShopifyVideo } from '@/lib/types'
 import starsVideo from '@/videos/hero-space-background.webm'
 
 const MAX_3D_SLIDES = 2
@@ -346,10 +347,12 @@ function Scene({
 
 export function HeroCarousel({
   initialIndex = 0,
+  video,
   onReady,
   onSlideChange,
 }: {
   initialIndex?: number
+  video?: ShopifyVideo | null
   onReady?: () => void
   onSlideChange?: (index: number) => void
 }) {
@@ -419,6 +422,10 @@ export function HeroCarousel({
   const sectionRef = useRef<HTMLElement>(null)
   const bgVideoRef = useRef<HTMLVideoElement>(null)
 
+  // Use Shopify video source if available, otherwise fallback to local
+  const videoSrc = video?.sources[0]?.url ?? '/videos/hero-space-background.webm'
+  const posterUrl = video?.preview.image.url ?? (starsVideo.poster as string)
+
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
@@ -453,8 +460,8 @@ export function HeroCarousel({
       {/* Video background */}
       <video
         ref={bgVideoRef}
-        src="/videos/hero-space-background.webm"
-        poster={starsVideo.poster}
+        src={videoSrc}
+        poster={posterUrl}
         autoPlay
         muted
         loop

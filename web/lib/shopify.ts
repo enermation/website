@@ -2,12 +2,13 @@ import { createStorefrontApiClient } from '@shopify/storefront-api-client'
 import { cacheLife, cacheTag } from 'next/cache'
 import {
   GET_COLLECTIONS,
+  GET_FILES,
   GET_PRODUCT_BY_HANDLE,
   GET_PRODUCTS_IN_COLLECTION,
   GET_SHOP_INFO,
   SEARCH_PRODUCTS,
 } from '@/lib/queries'
-import type { ShopifyCollection, ShopifyProduct, ShopifyShopInfo } from '@/lib/types'
+import type { ShopifyCollection, ShopifyProduct, ShopifyShopInfo, ShopifyVideo } from '@/lib/types'
 
 function getRequiredEnv(
   name: 'PUBLIC_STORE_DOMAIN' | 'PUBLIC_STOREFRONT_API_TOKEN' | 'PRIVATE_STOREFRONT_API_TOKEN'
@@ -89,6 +90,18 @@ export async function fetchShopInfo(): Promise<ShopifyShopInfo | null> {
   const { data } = await getClient().request<{ shop: ShopifyShopInfo | null }>(GET_SHOP_INFO)
 
   return data?.shop ?? null
+}
+
+export async function fetchHeroVideo(filename: string): Promise<ShopifyVideo | null> {
+  'use cache'
+  cacheLife('days')
+  cacheTag('hero-video')
+
+  const { data } = await getClient().request<{
+    files: { edges: { node: ShopifyVideo }[] }
+  }>(GET_FILES, { variables: { query: filename } })
+
+  return data?.files.edges[0]?.node ?? null
 }
 
 // ── Search (no caching — always dynamic) ──────────────────────────────────────

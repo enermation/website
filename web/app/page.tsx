@@ -18,7 +18,7 @@ import {
 } from '@/lib/data'
 import { getInstagramFeed } from '@/lib/instagram'
 
-import { fetchCollectionProducts, fetchCollections } from '@/lib/shopify'
+import { fetchCollectionProducts, fetchCollections, fetchHeroVideo } from '@/lib/shopify'
 import type { ShopifyCollection } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
@@ -127,13 +127,14 @@ async function HomePageContent({ searchParams }: HomePageProps) {
   const params = await searchParams
   const slideIndex = Math.min(Math.max(Number(params.slide) || 0, 0), 2)
 
-  const [collections, latestArrivalsCollection] = await Promise.all([
+  const [collections, latestArrivalsCollection, heroVideo] = await Promise.all([
     fetchCollections(),
     fetchCollectionProducts(primaryShowroomCollectionHandle, {
       sortKey: 'CREATED',
       reverse: true,
       first: 6,
     }),
+    fetchHeroVideo('filename:hero-space-background.webm'),
   ])
 
   // vercel-react-best-practices: server-serialization
@@ -163,7 +164,7 @@ async function HomePageContent({ searchParams }: HomePageProps) {
   return (
     <>
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <HeroCarousel initialIndex={slideIndex} />
+      <HeroCarousel initialIndex={slideIndex} video={heroVideo} />
 
       {/* ── LATEST ARRIVALS / COLLECTIONS ─────────────────────────────── */}
       <AnimatedSection className="bg-card">
