@@ -124,8 +124,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
               variant="outline"
               onClick={resetFilters}
               disabled={isPending}
-              aria-label="View all products and reset filters"
-              className="h-10 justify-center rounded-none border-2 border-foreground bg-background font-heading text-xs font-semibold uppercase tracking-wide text-foreground hover:bg-accent"
+              className="h-10 justify-center rounded-none border-2 border-foreground bg-background font-heading text-xs font-semibold uppercase tracking-wide text-foreground"
             >
               <Icon path={mdiGrid} size={1} className="size-3.5" />
               View All
@@ -133,8 +132,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
             <Button
               variant="outline"
               disabled
-              aria-label="Wishlist (currently unavailable)"
-              className="h-10 justify-center rounded-none border-2 border-foreground bg-background font-heading text-xs font-semibold uppercase tracking-wide text-foreground disabled:opacity-50"
+              className="h-10 justify-center rounded-none border-2 border-foreground bg-background font-heading text-xs font-semibold uppercase tracking-wide text-foreground disabled:opacity-100"
             >
               <Icon path={mdiHeart} size={1} className="size-3.5" />
               Wishlist (0)
@@ -142,10 +140,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
             <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
               <SheetTrigger
                 render={
-                  <Button
-                    aria-label="Open filter menu"
-                    className="h-10 justify-center rounded-none border-2 border-foreground bg-foreground font-heading text-xs font-semibold uppercase tracking-wide text-background hover:bg-foreground/90"
-                  />
+                  <Button className="h-10 justify-center rounded-none border-2 border-foreground bg-foreground font-heading text-xs font-semibold uppercase tracking-wide text-background hover:bg-gray-16" />
                 }
               >
                 <Icon path={mdiFilter} size={1} className="size-3.5" />
@@ -153,15 +148,15 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
               </SheetTrigger>
               <SheetContent
                 side="right"
-                showCloseButton={true}
-                className="w-72 gap-10 border-none bg-surface-dark p-0 text-background sm:max-w-none"
+                showCloseButton={false}
+                className="w-72 gap-10 border-none bg-gray-7 p-0 text-background sm:max-w-none"
               >
                 <div className="flex flex-col gap-10 overflow-y-auto py-12">
                   <div className="px-8">
-                    <SheetTitle className="font-heading text-lg font-semibold uppercase tracking-widest text-on-dark-muted">
+                    <SheetTitle className="font-heading text-lg font-semibold uppercase tracking-widest text-gray-93">
                       Filter By Make
                     </SheetTitle>
-                    <div className="mt-4 h-0.5 w-10 bg-white/30" />
+                    <div className="mt-4 h-0.5 w-10 bg-white-30" />
                   </div>
 
                   <div className="flex flex-col">
@@ -176,14 +171,14 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
                           type="button"
                           onClick={() => selectMake(option.label)}
                           className={cn(
-                            'flex items-center justify-between px-8 py-3 text-left transition-colors',
-                            isActive ? 'bg-white/10' : 'bg-transparent hover:bg-white/5'
+                            'flex items-center justify-between px-8 py-2 text-left transition-colors',
+                            isActive ? 'bg-gray-20' : 'bg-transparent'
                           )}
                         >
                           <span className="font-heading text-13 font-semibold uppercase tracking-wider text-background">
                             {option.label}
                           </span>
-                          <span className="min-w-7 rounded-full bg-white/20 px-2 py-1 text-center font-body text-xs font-medium uppercase tracking-wide text-background">
+                          <span className="min-w-7 rounded-full bg-white-20 px-2 py-1 text-center font-body text-xs font-medium uppercase tracking-wide text-background">
                             {option.count}
                           </span>
                         </button>
@@ -197,7 +192,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
         </div>
       </div>
 
-      <div className="hidden flex-wrap items-end gap-0 border-b border-border pb-3 md:flex">
+      <div className="hidden flex-wrap items-end gap-0 border-b border-gray-90 pb-3 md:flex">
         <div className="flex min-w-0 w-1/3 shrink-0 flex-col gap-1 px-3 pt-6">
           <label
             htmlFor="brand-select"
@@ -260,8 +255,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
             size="sm"
             onClick={resetFilters}
             disabled={isPending}
-            aria-label="View all products and reset filters"
-            className="h-10 px-5 border-2 border-foreground font-heading font-semibold text-xs uppercase tracking-wider hover:bg-accent"
+            className="h-10 px-5 border-2 border-foreground font-heading font-semibold text-xs uppercase tracking-wider"
           >
             <Icon path={mdiGrid} size={1} className="size-3.5 shrink-0" />
             View All
@@ -269,9 +263,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
           <Button
             variant="outline"
             size="sm"
-            disabled
-            aria-label="Wishlist (currently unavailable)"
-            className="h-10 px-5 border-2 border-l-0 border-foreground font-heading font-semibold text-xs uppercase tracking-wider disabled:opacity-50"
+            className="h-10 px-5 border-2 border-l-0 border-foreground font-heading font-semibold text-xs uppercase tracking-wider"
           >
             <Icon path={mdiHeart} size={1} className="size-3.5 shrink-0" />
             Wishlist (0)
@@ -279,8 +271,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
           <Button
             variant="default"
             size="sm"
-            aria-label="Open filter stock menu"
-            className="h-10 px-5 border-2 border-foreground bg-foreground text-background hover:bg-foreground/90 font-heading font-semibold text-xs uppercase tracking-wider"
+            className="h-10 px-5 border-2 border-foreground bg-foreground text-background hover:bg-gray-16 font-heading font-semibold text-xs uppercase tracking-wider"
           >
             <Icon path={mdiFilter} size={1} className="size-3.5 shrink-0" />
             Filter Stock
