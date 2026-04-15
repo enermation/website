@@ -15,10 +15,11 @@ import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import BackgroundVideo from 'next-video/background-video'
 import { LUTCubeLoader } from 'postprocessing'
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { forwardRef, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Group } from 'three'
 import * as THREE from 'three'
 import { heroCategories } from '@/lib/data'
+import { gsap, useGSAP } from '@/lib/gsap'
 import starsVideo from '@/videos/hero-space-background.webm'
 
 const MAX_3D_SLIDES = 2
@@ -46,8 +47,8 @@ const MODELS = [
   },
 ]
 
+// Optimization: Initially only preload the first model to keep LCP/initial load fast
 useGLTF.preload(MODELS[0].path)
-useGLTF.preload(MODELS[1].path)
 useEnvironment.preload({ files: '/models/factory-road-turnaround_256.hdr' })
 
 // Client-only guard to prevent hydration mismatch
@@ -59,8 +60,7 @@ function useIsClient() {
 
 // ── Lambo model ──────────────────────────────────────────────────────────────
 
-function LamboModel({ onLoaded }: { onLoaded?: () => void }) {
-  const groupRef = useRef<Group>(null)
+const LamboModel = forwardRef<Group, { onLoaded?: () => void }>(({ onLoaded }, ref) => {
   const { scene, nodes, materials } = useGLTF(MODELS[0].path)
 
   useMemo(() => {
@@ -105,16 +105,16 @@ function LamboModel({ onLoaded }: { onLoaded?: () => void }) {
   }, [onLoaded])
 
   return (
-    <group ref={groupRef} rotation={MODELS[0].rotation}>
+    <group ref={ref} rotation={MODELS[0].rotation}>
       <primitive object={scene} scale={MODELS[0].scale} />
     </group>
   )
-}
+})
+LamboModel.displayName = 'LamboModel'
 
 // ── Porsche model ────────────────────────────────────────────────────────────
 
-function PorscheModel({ onLoaded }: { onLoaded?: () => void }) {
-  const groupRef = useRef<Group>(null)
+const PorscheModel = forwardRef<Group, { onLoaded?: () => void }>(({ onLoaded }, ref) => {
   const { scene, nodes, materials } = useGLTF(MODELS[1].path)
 
   useMemo(() => {
@@ -148,11 +148,12 @@ function PorscheModel({ onLoaded }: { onLoaded?: () => void }) {
   }, [onLoaded])
 
   return (
-    <group ref={groupRef} rotation={MODELS[1].rotation}>
+    <group ref={ref} rotation={MODELS[1].rotation}>
       <primitive object={scene} scale={MODELS[1].scale} />
     </group>
   )
-}
+})
+PorscheModel.displayName = 'PorscheModel'
 
 // ── Post-processing (Bloom + LUT) ────────────────────────────────────────────
 
@@ -206,13 +207,71 @@ function Scene({
   effectsEnabled,
   envResolution,
   shadowResolution,
+  showSecondModel,
 }: {
   activeIndex: number
   onModelLoaded: () => void
   effectsEnabled: boolean
   envResolution: number
   shadowResolution: number
+  showSecondModel: boolean
 }) {
+  const porscheRef = useRef<Group>(null)
+  const lamboRef = useRef<Group>(null)
+  const isInitial = useRef(true)
+
+  useGSAP(
+    () => {
+      const porsche = porscheRef.current
+      const lambo = lamboRef.current
+      if (!porsche || !lambo) return
+
+      // Initial state: hide everything except active
+      if (isInitial.current) {
+        gsap.set(porsche.position, { x: activeIndex === 0 ? 0 : 20 })
+        gsap.set(lambo.position, { x: activeIndex === 1 ? 0 : 20 })
+
+        // Entrance "Bomb Drop" for the first car
+        const activeModel = activeIndex === 0 ? porsche : lambo
+        gsap.from(activeModel.position, {
+          y: 15,
+          duration: 1.4,
+          ease: 'power4.in',
+          onComplete: () => {
+            // Small subtle "impact" rebound
+            gsap.to(activeModel.position, {
+              y: 0.1,
+              duration: 0.1,
+              yoyo: true,
+              repeat: 1,
+            })
+          },
+        })
+
+        isInitial.current = false
+        return
+      }
+
+      const duration = 0.8
+      const ease = 'power2.inOut'
+
+      // Porsche slide (Slide 0)
+      gsap.to(porsche.position, {
+        x: activeIndex === 0 ? 0 : -20,
+        duration,
+        ease,
+      })
+
+      // Lambo slide (Slide 1)
+      gsap.to(lambo.position, {
+        x: activeIndex === 1 ? 0 : 20,
+        duration,
+        ease,
+      })
+    },
+    { dependencies: [activeIndex, showSecondModel] }
+  )
+
   return (
     <>
       <spotLight
@@ -225,8 +284,10 @@ function Scene({
       />
       <ambientLight intensity={0.5} />
 
-      {/* Active model */}
-      {activeIndex === 0 ? <PorscheModel /> : <LamboModel />}
+      {/* Models rendered for smooth sliding transitions */}
+      {/* vercel-react-best-practices: server-serialization/visible optimization */}
+      <PorscheModel ref={porscheRef} />
+      {showSecondModel && <LamboModel ref={lamboRef} />}
 
       {/* Fires onModelLoaded only after all assets loaded + env GPU-uploaded */}
       <ReadyGate onReady={onModelLoaded} />
@@ -275,11 +336,22 @@ export function HeroCarousel({
   const [envResolution, setEnvResolution] = useState(ENV_RES_HIGH)
   const [shadowResolution, setShadowResolution] = useState(SHADOW_RES_HIGH)
   const [shadowsEnabled, setShadowsEnabled] = useState(true)
+  const [showSecondModel, setShowSecondModel] = useState(false)
   const dragStartX = useRef<number | null>(null)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const isClient = useIsClient()
+
+  // Optimization: Preload second model AFTER first one is ready to prioritize initial LCP
+  const handleModelLoaded = useCallback(() => {
+    onReady?.()
+    // Delay preloading second model to preserve bandwidth for initial entrance
+    setTimeout(() => {
+      setShowSecondModel(true)
+      useGLTF.preload(MODELS[1].path)
+    }, 1000)
+  }, [onReady])
 
   const navigate = useCallback(
     (dir: 1 | -1) => {
@@ -319,10 +391,6 @@ export function HeroCarousel({
     if (e.key === 'ArrowLeft') navigate(-1)
     if (e.key === 'ArrowRight') navigate(1)
   }
-
-  const handleModelLoaded = useCallback(() => {
-    onReady?.()
-  }, [onReady])
 
   const active = heroCategories[activeIndex]
   const sectionRef = useRef<HTMLElement>(null)
@@ -377,7 +445,11 @@ export function HeroCarousel({
             shadows={shadowsEnabled}
             camera={{ position: [0, 1, 14], fov: 40 }}
             dpr={dpr}
-            gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
+            gl={{
+              alpha: true,
+              antialias: false,
+              powerPreference: 'high-performance',
+            }}
           >
             <Suspense fallback={null}>
               <Scene
@@ -386,6 +458,7 @@ export function HeroCarousel({
                 effectsEnabled={effectsEnabled}
                 envResolution={envResolution}
                 shadowResolution={shadowResolution}
+                showSecondModel={showSecondModel}
               />
             </Suspense>
             <PerformanceMonitor
