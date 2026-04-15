@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { useRef, useState } from 'react'
 import { heroBackgroundPosterUrl } from '@/lib/data'
 import { gsap, useGSAP } from '@/lib/gsap'
-import { cn } from '@/lib/utils'
 
 const HeroCarouselInner = dynamic(
   () => import('@/components/hero-carousel').then(m => ({ default: m.HeroCarousel })),
@@ -19,9 +18,9 @@ type Props = {
 export function HeroCarousel({ initialIndex = 0 }: Props) {
   const [canvasReady, setCanvasReady] = useState(false)
   const [activeIndex, setActiveIndex] = useState(initialIndex)
-  const [isTransitioning, setIsTransitioning] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const posterRef = useRef<HTMLDivElement>(null)
+  const isEntranceComplete = useRef(false)
 
   const posterUrl = heroBackgroundPosterUrl
 
@@ -30,20 +29,36 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
     () => {
       if (!canvasReady) return
 
-      const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
+      const tl = gsap.timeline({
+        defaults: { ease: 'power2.out' },
+        onComplete: () => {
+          isEntranceComplete.current = true
+        },
+      })
 
-      tl.fromTo(
-        '[data-hero-title]',
-        { opacity: 0, y: 30, scale: 0.95 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.8 },
-        0
-      )
-        .fromTo('[data-hero-cta]', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, 0.3)
+      // Hide poster immediately and fade in canvas-based UI
+      tl.to(posterRef.current, {
+        autoAlpha: 0,
+        duration: 1,
+        ease: 'power2.inOut',
+      })
+        .fromTo(
+          '[data-hero-title]',
+          { autoAlpha: 0, y: 30, scale: 0.95 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 0.8 },
+          0.3
+        )
+        .fromTo(
+          '[data-hero-cta]',
+          { autoAlpha: 0, y: 20 },
+          { autoAlpha: 1, y: 0, duration: 0.6 },
+          0.6
+        )
         .fromTo(
           '[data-hero-dot]',
-          { opacity: 0, scale: 0 },
-          { opacity: 1, scale: 1, duration: 0.4, stagger: 0.1 },
-          0.4
+          { autoAlpha: 0, scale: 0 },
+          { autoAlpha: 1, scale: 1, duration: 0.4, stagger: 0.1 },
+          0.7
         )
     },
     { scope: containerRef, dependencies: [canvasReady] }
@@ -52,7 +67,7 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
   // Slide transition animations (title, CTA, dots crossfade)
   useGSAP(
     () => {
-      if (canvasReady === false) return
+      if (!canvasReady || !isEntranceComplete.current) return
 
       const titleEl = '[data-hero-title]'
       const ctaEl = '[data-hero-cta]'
@@ -60,27 +75,24 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
 
       const tl = gsap.timeline({
         defaults: { ease: 'power2.inOut' },
-        onComplete: () => setIsTransitioning(false),
       })
-
-      setIsTransitioning(true)
 
       // Exit current content
       tl.to([titleEl, ctaEl], {
-        opacity: 0,
+        autoAlpha: 0,
         y: -20,
         duration: 0.3,
         stagger: 0.05,
         overwrite: 'auto',
-      }).to(dotsEl, { opacity: 0, scale: 0.5, duration: 0.2, overwrite: 'auto' }, 0)
+      }).to(dotsEl, { autoAlpha: 0, scale: 0.5, duration: 0.2, overwrite: 'auto' }, 0)
 
       // Enter new content
-      tl.fromTo(titleEl, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5 })
-        .fromTo(ctaEl, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '-=0.3')
+      tl.fromTo(titleEl, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.5 })
+        .fromTo(ctaEl, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.4 }, '-=0.3')
         .fromTo(
           dotsEl,
-          { opacity: 0, scale: 0 },
-          { opacity: 1, scale: 1, duration: 0.3, stagger: 0.08, ease: 'back.out(1.7)' },
+          { autoAlpha: 0, scale: 0 },
+          { autoAlpha: 1, scale: 1, duration: 0.3, stagger: 0.08, ease: 'back.out(1.7)' },
           '-=0.2'
         )
     },
@@ -109,13 +121,7 @@ export function HeroCarousel({ initialIndex = 0 }: Props) {
   return (
     <div ref={containerRef} className="relative min-h-screen">
       {/* SSR Poster Image for LCP Optimization */}
-      <div
-        ref={posterRef}
-        className={cn(
-          'absolute inset-0 z-10 transition-opacity duration-1000 ease-in-out',
-          canvasReady && !isTransitioning ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        )}
-      >
+      <div ref={posterRef} className="absolute inset-0 z-10">
         <Image
           src={posterUrl}
           alt="Luxury supercar showcase background"
