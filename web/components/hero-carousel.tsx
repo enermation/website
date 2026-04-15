@@ -13,7 +13,6 @@ import { applyProps, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { Bloom, EffectComposer, LUT } from '@react-three/postprocessing'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import BackgroundVideo from 'next-video/background-video'
 import { LUTCubeLoader } from 'postprocessing'
 import { forwardRef, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Group } from 'three'
@@ -452,9 +451,10 @@ export function HeroCarousel({
       onKeyDown={onKeyDown}
     >
       {/* Video background */}
-      <BackgroundVideo
+      <video
         ref={bgVideoRef}
-        src={starsVideo}
+        src="/videos/hero-space-background.webm"
+        poster={starsVideo.poster}
         autoPlay
         muted
         loop
