@@ -9,7 +9,7 @@ import {
   useEnvironment,
   useGLTF,
 } from '@react-three/drei'
-import { applyProps, Canvas, useFrame, useLoader } from '@react-three/fiber'
+import { applyProps, Canvas, type ThreeElements, useFrame, useLoader } from '@react-three/fiber'
 import { Bloom, EffectComposer, LUT } from '@react-three/postprocessing'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -18,7 +18,6 @@ import { forwardRef, Suspense, useCallback, useEffect, useMemo, useRef, useState
 import type { Group } from 'three'
 import * as THREE from 'three'
 import { heroBackgroundPosterUrl, heroBackgroundVideoUrl, heroCategories } from '@/lib/data'
-import { gsap, useGSAP } from '@/lib/gsap'
 
 const MAX_3D_SLIDES = 2
 const TOTAL = Math.min(heroCategories.length, MAX_3D_SLIDES)
@@ -58,99 +57,103 @@ function useIsClient() {
 
 // ── Lambo model ──────────────────────────────────────────────────────────────
 
-const LamboModel = forwardRef<Group, { onLoaded?: () => void }>(({ onLoaded }, ref) => {
-  const { scene, nodes, materials } = useGLTF(MODELS[0].path)
+const LamboModel = forwardRef<Group, ThreeElements['group'] & { onLoaded?: () => void }>(
+  ({ onLoaded, ...props }, ref) => {
+    const { scene, nodes, materials } = useGLTF(MODELS[0].path)
 
-  useMemo(() => {
-    Object.values(nodes).forEach(node => {
-      if ((node as THREE.Mesh).isMesh) {
-        const mesh = node as THREE.Mesh
-        if (mesh.name.startsWith('glass')) mesh.geometry.computeVertexNormals()
-        if (mesh.name === 'silver_001_BreakDiscs_0')
-          mesh.material = applyProps(materials.BreakDiscs.clone(), { color: '#ddd' })
-      }
-    })
-    if (nodes.glass_003) nodes.glass_003.scale.setScalar(2.7)
-    if (materials.FrameBlack)
-      applyProps(materials.FrameBlack, { metalness: 0.75, roughness: 0, color: 'black' })
-    if (materials.Chrome)
-      applyProps(materials.Chrome, { metalness: 1, roughness: 0, color: '#333' })
-    if (materials.BreakDiscs)
-      applyProps(materials.BreakDiscs, { metalness: 0.2, roughness: 0.2, color: '#555' })
-    if (materials.TiresGum)
-      applyProps(materials.TiresGum, { metalness: 0, roughness: 0.4, color: '#181818' })
-    if (materials.GreyElements)
-      applyProps(materials.GreyElements, { metalness: 0, color: '#292929' })
-    if (materials.emitbrake)
-      applyProps(materials.emitbrake, { emissiveIntensity: 3, toneMapped: false })
-    if (materials.LightsFrontLed)
-      applyProps(materials.LightsFrontLed, { emissiveIntensity: 3, toneMapped: false })
-    const paintNode = nodes.yellow_WhiteCar_0
-    if (paintNode) {
-      ;(paintNode as THREE.Mesh).material = new THREE.MeshPhysicalMaterial({
-        roughness: 0.3,
-        metalness: 0.05,
-        color: '#A9A9A7',
-        envMapIntensity: 0.75,
-        clearcoatRoughness: 0,
-        clearcoat: 1,
+    useMemo(() => {
+      Object.values(nodes).forEach(node => {
+        if ((node as THREE.Mesh).isMesh) {
+          const mesh = node as THREE.Mesh
+          if (mesh.name.startsWith('glass')) mesh.geometry.computeVertexNormals()
+          if (mesh.name === 'silver_001_BreakDiscs_0')
+            mesh.material = applyProps(materials.BreakDiscs.clone(), { color: '#ddd' })
+        }
       })
-    }
-  }, [nodes, materials])
+      if (nodes.glass_003) nodes.glass_003.scale.setScalar(2.7)
+      if (materials.FrameBlack)
+        applyProps(materials.FrameBlack, { metalness: 0.75, roughness: 0, color: 'black' })
+      if (materials.Chrome)
+        applyProps(materials.Chrome, { metalness: 1, roughness: 0, color: '#333' })
+      if (materials.BreakDiscs)
+        applyProps(materials.BreakDiscs, { metalness: 0.2, roughness: 0.2, color: '#555' })
+      if (materials.TiresGum)
+        applyProps(materials.TiresGum, { metalness: 0, roughness: 0.4, color: '#181818' })
+      if (materials.GreyElements)
+        applyProps(materials.GreyElements, { metalness: 0, color: '#292929' })
+      if (materials.emitbrake)
+        applyProps(materials.emitbrake, { emissiveIntensity: 3, toneMapped: false })
+      if (materials.LightsFrontLed)
+        applyProps(materials.LightsFrontLed, { emissiveIntensity: 3, toneMapped: false })
+      const paintNode = nodes.yellow_WhiteCar_0
+      if (paintNode) {
+        ;(paintNode as THREE.Mesh).material = new THREE.MeshPhysicalMaterial({
+          roughness: 0.3,
+          metalness: 0.05,
+          color: '#A9A9A7',
+          envMapIntensity: 0.75,
+          clearcoatRoughness: 0,
+          clearcoat: 1,
+        })
+      }
+    }, [nodes, materials])
 
-  useEffect(() => {
-    onLoaded?.()
-  }, [onLoaded])
+    useEffect(() => {
+      onLoaded?.()
+    }, [onLoaded])
 
-  return (
-    <group ref={ref} rotation={MODELS[0].rotation}>
-      <primitive object={scene} scale={MODELS[0].scale} />
-    </group>
-  )
-})
+    return (
+      <group ref={ref} rotation={MODELS[0].rotation} {...props}>
+        <primitive object={scene} scale={MODELS[0].scale} />
+      </group>
+    )
+  }
+)
 LamboModel.displayName = 'LamboModel'
 
 // ── Porsche model ────────────────────────────────────────────────────────────
 
-const PorscheModel = forwardRef<Group, { onLoaded?: () => void }>(({ onLoaded }, ref) => {
-  const { scene, nodes, materials } = useGLTF(MODELS[1].path)
+const PorscheModel = forwardRef<Group, ThreeElements['group'] & { onLoaded?: () => void }>(
+  ({ onLoaded, ...props }, ref) => {
+    const { scene, nodes, materials } = useGLTF(MODELS[1].path)
 
-  useMemo(() => {
-    Object.values(nodes).forEach(node => {
-      if ((node as THREE.Mesh).isMesh) {
-        ;(node as THREE.Mesh).receiveShadow = (node as THREE.Mesh).castShadow = true
-      }
-    })
-    if (materials.rubber)
-      applyProps(materials.rubber, {
-        color: '#222',
-        roughness: 0.6,
-        roughnessMap: null,
-        normalScale: [4, 4],
+    useMemo(() => {
+      Object.values(nodes).forEach(node => {
+        if ((node as THREE.Mesh).isMesh) {
+          ;(node as THREE.Mesh).receiveShadow = (node as THREE.Mesh).castShadow = true
+        }
       })
-    if (materials.window)
-      applyProps(materials.window, { color: 'black', roughness: 0, clearcoat: 0.1 })
-    if (materials.coat)
-      applyProps(materials.coat, { envMapIntensity: 4, roughness: 0.5, metalness: 1 })
-    if (materials.paint)
-      applyProps(materials.paint, {
-        envMapIntensity: 2,
-        roughness: 0.45,
-        metalness: 0.8,
-        color: '#A7A9A8',
-      })
-  }, [nodes, materials])
+      if (materials.rubber)
+        applyProps(materials.rubber, {
+          color: '#222',
+          roughness: 0.6,
+          roughnessMap: null,
+          normalScale: [4, 4],
+        })
+      if (materials.window)
+        applyProps(materials.window, { color: 'black', roughness: 0, clearcoat: 0.1 })
+      if (materials.coat)
+        applyProps(materials.coat, { envMapIntensity: 4, roughness: 0.5, metalness: 1 })
+      if (materials.paint)
+        applyProps(materials.paint, {
+          envMapIntensity: 2,
+          roughness: 0.45,
+          metalness: 0.8,
+          color: '#A7A9A8',
+        })
+    }, [nodes, materials])
 
-  useEffect(() => {
-    onLoaded?.()
-  }, [onLoaded])
+    useEffect(() => {
+      onLoaded?.()
+    }, [onLoaded])
 
-  return (
-    <group ref={ref} rotation={MODELS[1].rotation}>
-      <primitive object={scene} scale={MODELS[1].scale} />
-    </group>
-  )
-})
+    return (
+      <group ref={ref} rotation={MODELS[1].rotation} {...props}>
+        <primitive object={scene} scale={MODELS[1].scale} />
+      </group>
+    )
+  }
+)
 PorscheModel.displayName = 'PorscheModel'
 
 // ── Post-processing (Bloom + LUT) ────────────────────────────────────────────
@@ -216,87 +219,6 @@ function Scene({
 }) {
   const porscheRef = useRef<Group>(null)
   const lamboRef = useRef<Group>(null)
-  const isInitial = useRef(true)
-
-  useGSAP(
-    () => {
-      const porsche = porscheRef.current
-      const lambo = lamboRef.current
-      if (!porsche || !lambo) return
-
-      // Automotive Ease: A "Beauty Pass" curve that lingers slightly in the center
-      // for users to admire the side profile of the car.
-      const automotiveEase = CustomEase.create('automotive', '0.7, 0, 0.3, 1')
-
-      // Initial state: hide everything except active
-      if (isInitial.current) {
-        gsap.set(porsche.position, { x: activeIndex === 0 ? 0 : 22 })
-        gsap.set(lambo.position, { x: activeIndex === 1 ? 0 : 22 })
-
-        // Entrance "Bomb Drop" with Suspension Effect for the active car
-        const activeModel = activeIndex === 0 ? porsche : lambo
-        const tl = gsap.timeline({
-          delay: 0.5,
-          onComplete: () => {
-            isInitial.current = false
-          },
-        })
-
-        // Accelerating fall
-        tl.from(activeModel.position, {
-          y: 20,
-          duration: 1.2,
-          ease: 'power3.in',
-        })
-          // Suspension Compression (weighted impact)
-          .to(activeModel.position, {
-            y: -0.08,
-            duration: 0.1,
-            ease: 'power2.out',
-          })
-          // Suspension Rebound / Settle
-          .to(activeModel.position, {
-            y: 0,
-            duration: 0.8,
-            ease: 'elastic.out(1, 0.6)',
-          })
-
-        return
-      }
-
-      const duration = 1.2
-      const ease = automotiveEase
-
-      // Porsche slide (Slide 0)
-      gsap.to(porsche.position, {
-        x: activeIndex === 0 ? 0 : -22,
-        duration,
-        ease,
-        overwrite: 'auto',
-        onStart: () => {
-          if (porsche) porsche.visible = true
-        },
-        onComplete: () => {
-          if (porsche && activeIndex !== 0) porsche.visible = false
-        },
-      })
-
-      // Lambo slide (Slide 1)
-      gsap.to(lambo.position, {
-        x: activeIndex === 1 ? 0 : 22,
-        duration,
-        ease,
-        overwrite: 'auto',
-        onStart: () => {
-          if (lambo) lambo.visible = true
-        },
-        onComplete: () => {
-          if (lambo && activeIndex !== 1) lambo.visible = false
-        },
-      })
-    },
-    { dependencies: [activeIndex, showSecondModel] }
-  )
 
   return (
     <>
@@ -310,10 +232,11 @@ function Scene({
       />
       <ambientLight intensity={0.5} />
 
-      {/* Models rendered for smooth sliding transitions */}
-      {/* vercel-react-best-practices: server-serialization/visible optimization */}
-      <PorscheModel ref={porscheRef} />
-      {showSecondModel && <LamboModel ref={lamboRef} />}
+      {/* Models rendered statically */}
+      <PorscheModel ref={porscheRef} visible={activeIndex === 0} position={[0, 0, 0]} />
+      {showSecondModel && (
+        <LamboModel ref={lamboRef} visible={activeIndex === 1} position={[0, 0, 0]} />
+      )}
 
       {/* Fires onModelLoaded only after all assets loaded + env GPU-uploaded */}
       <ReadyGate onReady={onModelLoaded} />
@@ -336,7 +259,7 @@ function Scene({
         resolution={envResolution}
       />
 
-      {/* Auto-orbiting camera */}
+      {/* Auto-orbiting camera rig */}
       <CameraRig />
 
       {/* Post-processing */}
@@ -526,22 +449,18 @@ export function HeroCarousel({
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
         <h1
           data-hero-title
-          className="font-display font-normal text-section uppercase tracking-widest text-white text-center will-change-[transform,opacity]"
+          className="font-display font-normal text-section uppercase tracking-widest text-white text-center"
         >
           {active.label}
         </h1>
         <Link
           data-hero-cta
           href={active.href}
-          className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black will-change-[transform,opacity]"
+          className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
         >
           Browse {active.label}
         </Link>
-        <div
-          className="flex items-center gap-3 will-change-[transform,opacity]"
-          role="tablist"
-          aria-label="Hero carousel slides"
-        >
+        <div className="flex items-center gap-3" role="tablist" aria-label="Hero carousel slides">
           {heroCategories.map((cat, i) => (
             <button
               key={cat.label}
