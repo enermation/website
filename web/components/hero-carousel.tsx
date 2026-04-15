@@ -17,12 +17,7 @@ import { LUTCubeLoader } from 'postprocessing'
 import { forwardRef, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Group } from 'three'
 import * as THREE from 'three'
-import {
-  HeroCategory,
-  heroBackgroundPosterUrl,
-  heroBackgroundVideoUrl,
-  heroCategories,
-} from '@/lib/data'
+import { heroBackgroundPosterUrl, heroBackgroundVideoUrl, heroCategories } from '@/lib/data'
 import { gsap, useGSAP } from '@/lib/gsap'
 
 const MAX_3D_SLIDES = 2
@@ -231,16 +226,21 @@ function Scene({
 
       // Automotive Ease: A "Beauty Pass" curve that lingers slightly in the center
       // for users to admire the side profile of the car.
-      const automotiveEase = 'cubic-bezier(0.7, 0, 0.3, 1)'
+      const automotiveEase = CustomEase.create('automotive', '0.7, 0, 0.3, 1')
 
       // Initial state: hide everything except active
       if (isInitial.current) {
-        gsap.set(porsche.position, { x: activeIndex === 0 ? 0 : 20 })
-        gsap.set(lambo.position, { x: activeIndex === 1 ? 0 : 20 })
+        gsap.set(porsche.position, { x: activeIndex === 0 ? 0 : 22 })
+        gsap.set(lambo.position, { x: activeIndex === 1 ? 0 : 22 })
 
         // Entrance "Bomb Drop" with Suspension Effect for the active car
         const activeModel = activeIndex === 0 ? porsche : lambo
-        const tl = gsap.timeline({ delay: 0.5 })
+        const tl = gsap.timeline({
+          delay: 0.5,
+          onComplete: () => {
+            isInitial.current = false
+          },
+        })
 
         // Accelerating fall
         tl.from(activeModel.position, {
@@ -261,7 +261,6 @@ function Scene({
             ease: 'elastic.out(1, 0.6)',
           })
 
-        isInitial.current = false
         return
       }
 
@@ -527,18 +526,22 @@ export function HeroCarousel({
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
         <h1
           data-hero-title
-          className="font-display font-normal text-section uppercase tracking-widest text-white text-center"
+          className="font-display font-normal text-section uppercase tracking-widest text-white text-center will-change-[transform,opacity]"
         >
           {active.label}
         </h1>
         <Link
           data-hero-cta
           href={active.href}
-          className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
+          className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black will-change-[transform,opacity]"
         >
           Browse {active.label}
         </Link>
-        <div className="flex items-center gap-3" role="tablist" aria-label="Hero carousel slides">
+        <div
+          className="flex items-center gap-3 will-change-[transform,opacity]"
+          role="tablist"
+          aria-label="Hero carousel slides"
+        >
           {heroCategories.map((cat, i) => (
             <button
               key={cat.label}
