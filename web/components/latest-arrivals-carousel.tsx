@@ -29,7 +29,13 @@ function formatPrice(product: ShopifyProductMinimal): string {
   }).format(parseFloat(amount))
 }
 
-function LatestArrivalCard({ product }: { product: ShopifyProductMinimal }) {
+function LatestArrivalCard({
+  product,
+  priority = false,
+}: {
+  product: ShopifyProductMinimal
+  priority?: boolean
+}) {
   const image = product.images.edges[0]?.node
   const details = [
     { icon: mdiCalendar, label: metaValue(product.year) },
@@ -47,6 +53,7 @@ function LatestArrivalCard({ product }: { product: ShopifyProductMinimal }) {
               src={image.url}
               alt={image.altText ?? product.title}
               fill
+              priority={priority}
               className="object-cover transition-transform duration-500 group-hover:scale-105"
               sizes="(min-width: 1280px) 416px, (min-width: 768px) 33vw, 100vw"
             />
@@ -101,9 +108,9 @@ export function LatestArrivalsCarousel({ products }: { products: ShopifyProductM
         <CarouselNext className="static translate-y-0" />
       </div>
       <CarouselContent className="-ml-4">
-        {products.map(product => (
+        {products.map((product, index) => (
           <CarouselItem key={product.id} className="basis-full md:basis-1/2 lg:basis-1/3 pl-4">
-            <LatestArrivalCard product={product} />
+            <LatestArrivalCard product={product} priority={index < 3} />
           </CarouselItem>
         ))}
       </CarouselContent>

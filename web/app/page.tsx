@@ -127,14 +127,13 @@ async function HomePageContent({ searchParams }: HomePageProps) {
   const params = await searchParams
   const slideIndex = Math.min(Math.max(Number(params.slide) || 0, 0), 2)
 
-  const [collections, latestArrivalsCollection, instagramFeed] = await Promise.all([
+  const [collections, latestArrivalsCollection] = await Promise.all([
     fetchCollections(),
     fetchCollectionProducts(primaryShowroomCollectionHandle, {
       sortKey: 'CREATED',
       reverse: true,
       first: 6,
     }),
-    getInstagramFeed(),
   ])
 
   // vercel-react-best-practices: server-serialization
@@ -161,8 +160,6 @@ async function HomePageContent({ searchParams }: HomePageProps) {
     transmission: product.transmission ? { value: product.transmission.value } : null,
   }))
 
-  const { posts: instagramPosts, username: igUsername, followersCount: igFollowers } = instagramFeed
-
   return (
     <>
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
@@ -172,7 +169,7 @@ async function HomePageContent({ searchParams }: HomePageProps) {
       <AnimatedSection className="bg-card">
         <SectionHeading title="Latest Arrivals for Sale" />
 
-        <div className="mx-auto max-w-site px-4 pb-14 md:px-6 md:pb-16" data-reveal>
+        <div className="mx-auto max-w-site px-4 pb-14 md:px-6 md:pb-16">
           <LatestArrivalsCarousel products={latestArrivals} />
           <div className="mt-12 flex justify-center" data-reveal>
             <Link
@@ -224,56 +221,66 @@ async function HomePageContent({ searchParams }: HomePageProps) {
       </AnimatedSection>
 
       {/* ── INSTAGRAM FEED ───────────────────────────────────────────────── */}
-      {instagramPosts.length > 0 && (
-        <AnimatedSection className="bg-muted py-16 px-4 md:py-20 md:px-20" stagger={0.1}>
-          <div className="max-w-site mx-auto">
-            <InstagramGrid>
-              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {/* Connect With Us + Profile — merged, spans 2 cols */}
-                <a
-                  href={`https://www.instagram.com/${igUsername}/`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group col-span-2 flex flex-col items-center justify-center gap-6 rounded-xl bg-card p-8 transition-colors duration-200 hover:bg-accent"
-                  data-instagram-item
-                >
-                  <span className="font-display font-normal text-2xl text-heading leading-snug">
-                    Connect With Us Online
-                  </span>
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="flex size-12 items-center justify-center rounded-full bg-muted">
-                      <Icon path={mdiInstagram} size={1} className="size-5 text-foreground" />
-                    </div>
-                    <div className="text-center">
-                      <p className="font-heading font-semibold text-sm text-heading">
-                        @{igUsername}
-                      </p>
-                      <p className="font-heading text-13 text-muted-foreground">
-                        {igFollowers.toLocaleString()} Followers
-                      </p>
-                    </div>
-                    <span className="inline-flex items-center justify-center rounded-none border-2 border-strong bg-foreground px-5 py-1.5 font-heading font-semibold text-13 uppercase tracking-wider text-background transition-colors duration-200 group-hover:bg-background group-hover:text-foreground">
-                      Follow
-                    </span>
-                  </div>
-                </a>
-
-                {/* Post tiles */}
-                {instagramPosts.map(post => (
-                  <InstagramTile
-                    key={post.id}
-                    href={post.permalink}
-                    mediaUrl={post.mediaUrl}
-                    thumbnailUrl={post.sizes?.medium?.mediaUrl ?? post.mediaUrl}
-                    alt={post.altText ?? post.prunedCaption ?? ''}
-                    isReel={post.isReel ?? post.mediaType === 'VIDEO'}
-                  />
-                ))}
-              </div>
-            </InstagramGrid>
-          </div>
-        </AnimatedSection>
-      )}
+      {/* async-suspense-boundaries: Nested suspense to avoid blocking top content */}
+      <Suspense fallback={null}>
+        <InstagramSection />
+      </Suspense>
     </>
+  )
+}
+
+async function InstagramSection() {
+  const instagramFeed = await getInstagramFeed()
+  const { posts: instagramPosts, username: igUsername, followersCount: igFollowers } = instagramFeed
+
+  if (instagramPosts.length === 0) return null
+
+  return (
+    <AnimatedSection className="bg-muted py-16 px-4 md:py-20 md:px-20" stagger={0.1}>
+      <div className="max-w-site mx-auto">
+        <InstagramGrid>
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {/* Connect With Us + Profile — merged, spans 2 cols */}
+            <a
+              href={`https://www.instagram.com/${igUsername}/`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group col-span-2 flex flex-col items-center justify-center gap-6 rounded-xl bg-card p-8 transition-colors duration-200 hover:bg-accent"
+              data-instagram-item
+            >
+              <span className="font-display font-normal text-2xl text-heading leading-snug">
+                Connect With Us Online
+              </span>
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+                  <Icon path={mdiInstagram} size={1} className="size-5 text-foreground" />
+                </div>
+                <div className="text-center">
+                  <p className="font-heading font-semibold text-sm text-heading">@{igUsername}</p>
+                  <p className="font-heading text-13 text-muted-foreground">
+                    {igFollowers.toLocaleString()} Followers
+                  </p>
+                </div>
+                <span className="inline-flex items-center justify-center rounded-none border-2 border-strong bg-foreground px-5 py-1.5 font-heading font-semibold text-13 uppercase tracking-wider text-background transition-colors duration-200 group-hover:bg-background group-hover:text-foreground">
+                  Follow
+                </span>
+              </div>
+            </a>
+
+            {/* Post tiles */}
+            {instagramPosts.map(post => (
+              <InstagramTile
+                key={post.id}
+                href={post.permalink}
+                mediaUrl={post.mediaUrl}
+                thumbnailUrl={post.sizes?.medium?.mediaUrl ?? post.mediaUrl}
+                alt={post.altText ?? post.prunedCaption ?? ''}
+                isReel={post.isReel ?? post.mediaType === 'VIDEO'}
+              />
+            ))}
+          </div>
+        </InstagramGrid>
+      </div>
+    </AnimatedSection>
   )
 }

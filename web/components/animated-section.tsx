@@ -19,7 +19,8 @@ export function AnimatedSection({ children, className, stagger = 0.15 }: Animate
 
       const items = containerRef.current.querySelectorAll('[data-reveal]')
 
-      gsap.set(items, { opacity: 0, y: 40 })
+      // vercel-react-best-practices: rendering-hydration-no-flicker
+      // No longer need gsap.set(items, { opacity: 0, y: 40 }) as we handle it via CSS
 
       ScrollTrigger.batch(items, {
         start: 'top 85%',
@@ -55,7 +56,8 @@ export function InstagramGrid({ children }: { children: React.ReactNode }) {
 
       const items = containerRef.current.querySelectorAll('[data-instagram-item]')
 
-      gsap.set(items, { opacity: 0, scale: 0.8 })
+      // vercel-react-best-practices: rendering-hydration-no-flicker
+      // No longer need gsap.set(items, { opacity: 0, scale: 0.8 }) as we handle it via CSS
 
       ScrollTrigger.batch(items, {
         start: 'top 85%',
