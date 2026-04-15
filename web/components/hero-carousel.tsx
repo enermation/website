@@ -157,14 +157,14 @@ PorscheModel.displayName = 'PorscheModel'
 
 // ── Post-processing (Bloom + LUT) ────────────────────────────────────────────
 
-function PostProcessing({ enabled }: { enabled: boolean }) {
+function PostProcessing({ enabled, intensity = 1.75 }: { enabled: boolean; intensity?: number }) {
   const lut = useLoader(LUTCubeLoader, '/F-6800-STD.cube')
 
   if (!enabled) return null
 
   return (
     <EffectComposer enableNormalPass={false}>
-      <Bloom luminanceThreshold={0.2} mipmapBlur luminanceSmoothing={0} intensity={1.75} />
+      <Bloom luminanceThreshold={0.2} mipmapBlur luminanceSmoothing={0} intensity={intensity} />
       <LUT lut={lut} />
     </EffectComposer>
   )
@@ -189,8 +189,9 @@ function ReadyGate({ onReady }: { onReady: () => void }) {
   useFrame(() => {
     if (called.current) return
     frames.current++
-    // Wait for a few frames after Suspense resolves so env map + reflections are GPU-uploaded
-    if (frames.current >= 4) {
+    // Wait for more frames (12) after Suspense resolves so env map + reflections + LUT are GPU-uploaded
+    // This prevents the bright "flash" during initialization.
+    if (frames.current >= 12) {
       called.current = true
       onReady()
     }
@@ -208,6 +209,7 @@ function Scene({
   envResolution,
   shadowResolution,
   showSecondModel,
+  isWarmingUp,
 }: {
   activeIndex: number
   onModelLoaded: () => void
@@ -215,10 +217,19 @@ function Scene({
   envResolution: number
   shadowResolution: number
   showSecondModel: boolean
+  isWarmingUp: boolean
 }) {
   const porscheRef = useRef<Group>(null)
   const lamboRef = useRef<Group>(null)
   const isInitial = useRef(true)
+
+  // Soft start: fade in environment and bloom intensity to prevent "flash"
+  const { envIntensity, bloomIntensity } = useMemo(() => {
+    return {
+      envIntensity: isWarmingUp ? 0 : 1,
+      bloomIntensity: isWarmingUp ? 0 : 1.75,
+    }
+  }, [isWarmingUp])
 
   useGSAP(
     () => {
@@ -323,7 +334,7 @@ function Scene({
         position={[0, -1.16, 0]}
         scale={10}
         blur={2.5}
-        opacity={0.8}
+        opacity={isWarmingUp ? 0 : 0.8}
         far={4}
       />
 
@@ -332,13 +343,14 @@ function Scene({
         files="/models/factory-road-turnaround_256.hdr"
         frames={1}
         resolution={envResolution}
+        environmentIntensity={envIntensity}
       />
 
       {/* Auto-orbiting camera */}
       <CameraRig />
 
       {/* Post-processing */}
-      <PostProcessing enabled={effectsEnabled} />
+      <PostProcessing enabled={effectsEnabled} intensity={bloomIntensity} />
     </>
   )
 }
@@ -361,6 +373,7 @@ export function HeroCarousel({
   const [shadowResolution, setShadowResolution] = useState(SHADOW_RES_HIGH)
   const [shadowsEnabled, setShadowsEnabled] = useState(true)
   const [showSecondModel, setShowSecondModel] = useState(false)
+  const [isWarmingUp, setIsWarmingUp] = useState(true)
   const dragStartX = useRef<number | null>(null)
   const router = useRouter()
   const pathname = usePathname()
@@ -370,6 +383,11 @@ export function HeroCarousel({
   // Optimization: Preload second model AFTER first one is ready to prioritize initial LCP
   const handleModelLoaded = useCallback(() => {
     onReady?.()
+    // Soft intensity ramp to prevent "bright flash"
+    setTimeout(() => {
+      setIsWarmingUp(false)
+    }, 100)
+
     // Delay preloading second model to preserve bandwidth for initial entrance
     setTimeout(() => {
       setShowSecondModel(true)
@@ -473,6 +491,7 @@ export function HeroCarousel({
               alpha: true,
               antialias: false,
               powerPreference: 'high-performance',
+              toneMapping: THREE.ACESFilmicToneMapping,
             }}
           >
             <Suspense fallback={null}>
@@ -483,6 +502,7 @@ export function HeroCarousel({
                 envResolution={envResolution}
                 shadowResolution={shadowResolution}
                 showSecondModel={showSecondModel}
+                isWarmingUp={isWarmingUp}
               />
             </Suspense>
             <PerformanceMonitor

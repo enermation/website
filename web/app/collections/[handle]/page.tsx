@@ -79,7 +79,7 @@ export default async function CollectionPage({
       <SiteHeader />
 
       {/* Sub-navigation */}
-      <nav className="hidden md:block bg-background border-b border-gray-90">
+      <nav className="hidden md:block bg-background border-b border-border">
         <div className="max-w-site mx-auto flex justify-center">
           {collectionLinks.map(collection => {
             const href = `/collections/${collection.handle}`
@@ -92,7 +92,7 @@ export default async function CollectionPage({
                   'font-heading font-semibold text-13 uppercase tracking-wide px-4 py-4 border-b-2 transition-colors',
                   isActive
                     ? 'border-foreground text-foreground'
-                    : 'border-transparent text-foreground/36 hover:text-foreground/60'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
                 )}
               >
                 {collection.title}
@@ -103,21 +103,21 @@ export default async function CollectionPage({
       </nav>
 
       {/* Page title — driven by Shopify collection title */}
-      <section className="bg-background border-b border-gray-90 px-3 py-10 text-center">
-        <h1 className="font-sans text-section font-normal uppercase tracking-widest text-gray-7 md:font-display">
+      <section className="bg-background border-b border-border px-3 py-10 text-center">
+        <h1 className="font-sans text-section font-normal uppercase tracking-widest text-heading md:font-display">
           {title}
         </h1>
         <div className="flex justify-center mt-6">
           <div className="flex items-center">
             <div className="h-1 w-10 bg-brand-green" />
-            <div className="h-1 w-10 bg-white border border-gray-87" />
+            <div className="h-1 w-10 bg-background border border-border" />
             <div className="h-1 w-10 bg-brand-red" />
           </div>
         </div>
       </section>
 
-      <nav className="border-b border-gray-90 bg-background px-3 py-5 md:hidden">
-        <div className="grid grid-cols-2">
+      <nav className="border-b border-border bg-background md:hidden">
+        <div className="flex overflow-x-auto scrollbar-hide">
           {collectionLinks.map(collection => {
             const href = `/collections/${collection.handle}`
             const isActive = collection.handle === handle
@@ -126,10 +126,10 @@ export default async function CollectionPage({
                 key={collection.id}
                 href={href}
                 className={cn(
-                  'flex justify-center px-4 py-3 text-center font-heading text-13 font-semibold uppercase tracking-wide transition-colors',
+                  'flex-none px-6 py-4 text-center font-heading text-13 font-semibold uppercase tracking-wide transition-colors border-b-2',
                   isActive
-                    ? 'border-b-2 border-gray-90 text-foreground'
-                    : 'border-b-2 border-transparent text-foreground/36'
+                    ? 'border-foreground text-foreground'
+                    : 'border-transparent text-muted-foreground'
                 )}
               >
                 {collection.title}
@@ -147,7 +147,7 @@ export default async function CollectionPage({
           </Suspense>
 
           {products.length === 0 ? (
-            <p className="font-body text-15 text-gray-33 text-center py-24">
+            <p className="font-body text-15 text-muted-foreground text-center py-24">
               No products found{make && make !== 'Show All' ? ` for ${make}` : ''}.
             </p>
           ) : (
