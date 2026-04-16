@@ -121,7 +121,7 @@ export default async function CollectionPage({
       </AnimatedSection>
 
       <nav className="border-b border-border bg-background md:hidden">
-        <div className="flex overflow-x-auto scrollbar-hide">
+        <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {collectionLinks.map(collection => {
             const href = `/collections/${collection.handle}`
             const isActive = collection.handle === handle

@@ -279,6 +279,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
           <Button
             variant="default"
             size="sm"
+            onClick={() => setIsFilterOpen(true)}
             aria-label="Open filter stock menu"
             className="h-10 px-5 border-2 border-foreground bg-foreground text-background hover:bg-foreground/90 font-heading font-semibold text-xs uppercase tracking-wider"
           >
