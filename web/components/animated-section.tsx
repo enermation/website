@@ -22,18 +22,24 @@ export function AnimatedSection({ children, className, stagger = 0.15 }: Animate
       // vercel-react-best-practices: rendering-hydration-no-flicker
       // No longer need gsap.set(items, { opacity: 0, y: 40 }) as we handle it via CSS
 
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
       ScrollTrigger.batch(items, {
         start: 'top 85%',
         once: true,
         onEnter: (elements: Element[]) => {
-          gsap.to(elements, {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: 'power2.out',
-            stagger,
-            overwrite: true,
-          })
+          if (prefersReducedMotion) {
+            gsap.set(elements, { opacity: 1, y: 0 })
+          } else {
+            gsap.to(elements, {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: 'power2.out',
+              stagger,
+              overwrite: true,
+            })
+          }
         },
       })
     },
