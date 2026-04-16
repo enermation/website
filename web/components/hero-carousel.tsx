@@ -10,7 +10,7 @@ import {
   useGLTF,
 } from '@react-three/drei'
 import { applyProps, Canvas, type ThreeElements, useFrame, useLoader } from '@react-three/fiber'
-import { Bloom, EffectComposer, LUT } from '@react-three/postprocessing'
+import { Bloom, EffectComposer, LUT, ToneMapping } from '@react-three/postprocessing'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { LUTCubeLoader } from 'postprocessing'
@@ -67,7 +67,7 @@ const LamboModel = forwardRef<Group, ThreeElements['group'] & { onLoaded?: () =>
           const mesh = node as THREE.Mesh
           if (mesh.name.startsWith('glass')) mesh.geometry.computeVertexNormals()
           if (mesh.name === 'silver_001_BreakDiscs_0')
-            mesh.material = applyProps(materials.BreakDiscs.clone(), { color: '#ddd' })
+            mesh.material = applyProps(materials.BreakDiscs, { color: '#ddd' })
         }
       })
       if (nodes.glass_003) nodes.glass_003.scale.setScalar(2.7)
@@ -75,19 +75,15 @@ const LamboModel = forwardRef<Group, ThreeElements['group'] & { onLoaded?: () =>
         applyProps(materials.FrameBlack, { metalness: 0.75, roughness: 0, color: 'black' })
       if (materials.Chrome)
         applyProps(materials.Chrome, { metalness: 1, roughness: 0, color: '#333' })
-      if (materials.BreakDiscs)
-        applyProps(materials.BreakDiscs, { metalness: 0.2, roughness: 0.2, color: '#555' })
       if (materials.TiresGum)
         applyProps(materials.TiresGum, { metalness: 0, roughness: 0.4, color: '#181818' })
       if (materials.GreyElements)
         applyProps(materials.GreyElements, { metalness: 0, color: '#292929' })
-      if (materials.emitbrake)
-        applyProps(materials.emitbrake, { emissiveIntensity: 3, toneMapped: false })
-      if (materials.LightsFrontLed)
-        applyProps(materials.LightsFrontLed, { emissiveIntensity: 3, toneMapped: false })
+      if (materials.emitbrake) applyProps(materials.emitbrake, { emissiveIntensity: 1.0 })
+      if (materials.LightsFrontLed) applyProps(materials.LightsFrontLed, { emissiveIntensity: 1.0 })
       const paintNode = nodes.yellow_WhiteCar_0
       if (paintNode) {
-        ;(paintNode as THREE.Mesh).material = new THREE.MeshPhysicalMaterial({
+        applyProps((paintNode as THREE.Mesh).material, {
           roughness: 0.3,
           metalness: 0.05,
           color: '#A9A9A7',
@@ -167,16 +163,19 @@ function PostProcessing({ enabled }: { enabled: boolean }) {
     <EffectComposer enableNormalPass={false}>
       <Bloom luminanceThreshold={0.2} mipmapBlur luminanceSmoothing={0} intensity={1.75} />
       <LUT lut={lut} />
+      <ToneMapping />
     </EffectComposer>
   )
 }
 
 // ── Auto-orbiting camera rig ──────────────────────────────────────────────────
 
-function CameraRig({ v = new THREE.Vector3() }: { v?: THREE.Vector3 }) {
+const _v = new THREE.Vector3()
+
+function CameraRig() {
   return useFrame(state => {
     const t = state.clock.elapsedTime
-    state.camera.position.lerp(v.set(Math.sin(t / 5) * 12, 1, Math.cos(t / 5) * 12), 0.05)
+    state.camera.position.lerp(_v.set(Math.sin(t / 5) * 12, 1, Math.cos(t / 5) * 12), 0.05)
     state.camera.lookAt(0, 0, 0)
   })
 }
@@ -292,15 +291,19 @@ export function HeroCarousel({
   const searchParams = useSearchParams()
   const isClient = useIsClient()
 
-  // Optimization: Preload second model AFTER first one is ready to prioritize initial LCP
-  const handleModelLoaded = useCallback(() => {
+  // LCP signal — fires once when model is ready
+  useEffect(() => {
     onReady?.()
-    // Delay preloading second model to preserve bandwidth for initial entrance
-    setTimeout(() => {
+  }, [onReady])
+
+  // Delayed preload of second model — fires once after mount, preserves bandwidth for initial LCP
+  useEffect(() => {
+    const timer = setTimeout(() => {
       setShowSecondModel(true)
       useGLTF.preload(MODELS[1].path)
     }, 1000)
-  }, [onReady])
+    return () => clearTimeout(timer)
+  }, [])
 
   const navigate = useCallback(
     (dir: 1 | -1) => {
@@ -403,7 +406,7 @@ export function HeroCarousel({
             <Suspense fallback={null}>
               <Scene
                 activeIndex={activeIndex}
-                onModelLoaded={handleModelLoaded}
+                onModelLoaded={onReady ?? (() => {})}
                 effectsEnabled={effectsEnabled}
                 envResolution={envResolution}
                 shadowResolution={shadowResolution}
