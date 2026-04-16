@@ -104,21 +104,18 @@ export default async function CollectionPage({
       </nav>
 
       {/* Page title — driven by Shopify collection title */}
-      <AnimatedSection className="bg-background border-b border-border px-3 py-10 text-center">
-        <h1
-          data-reveal
-          className="font-sans text-section font-normal uppercase tracking-widest text-heading md:font-display"
-        >
+      <div className="bg-background border-b border-border px-3 py-10 text-center">
+        <h1 className="collection-title-in font-display text-section font-normal uppercase tracking-widest text-heading">
           {title}
         </h1>
-        <div data-reveal className="flex justify-center mt-6">
+        <div className="flex justify-center mt-6">
           <div className="flex items-center">
             <div className="h-1 w-10 bg-brand-green" />
             <div className="h-1 w-10 bg-background border border-border" />
             <div className="h-1 w-10 bg-brand-red" />
           </div>
         </div>
-      </AnimatedSection>
+      </div>
 
       <nav className="border-b border-border bg-background md:hidden">
         <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -144,8 +141,8 @@ export default async function CollectionPage({
       </nav>
 
       {/* Content */}
-      <section className="bg-background py-3 md:py-6">
-        <div className="max-w-site mx-auto px-3">
+      <section className="relative bg-background py-3 md:py-6 collection-grain overflow-hidden">
+        <div className="relative z-10 max-w-site mx-auto px-3">
           <Suspense>
             <FilterBar makeOptions={makeOptions} currentMake={make} currentSort={sort} />
           </Suspense>
@@ -156,8 +153,12 @@ export default async function CollectionPage({
             </p>
           ) : (
             <AnimatedSection className="mt-6 grid grid-cols-1 gap-y-6 md:grid-cols-3 md:gap-6">
-              {products.map(product => (
-                <div key={product.id} data-reveal className="h-full">
+              {products.map((product, i) => (
+                <div
+                  key={product.id}
+                  data-reveal
+                  className={cn('h-full', i === 0 ? 'md:col-span-2' : '')}
+                >
                   <CarCard product={product} />
                 </div>
               ))}

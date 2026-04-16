@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { productPage } from '@/lib/data'
 import type { ShopifyProduct } from '@/lib/types'
-import { formatPrice } from '@/lib/utils'
+import { cn, formatPrice } from '@/lib/utils'
 
 type CarCardProps = {
   product: ShopifyProduct
@@ -61,7 +61,7 @@ export function CarCard({ product }: CarCardProps) {
             src={image.url}
             alt={image.altText ?? product.title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
             sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 100vw"
           />
         )}
@@ -75,7 +75,12 @@ export function CarCard({ product }: CarCardProps) {
         <p className="line-clamp-4 flex-1 font-body text-15 leading-7 text-body">
           {product.description}
         </p>
-        <p className="mt-3 font-heading text-lg font-semibold text-foreground">
+        <p
+          className={cn(
+            'mt-3 font-heading text-lg font-semibold',
+            product.availableForSale ? 'text-brand-green' : 'text-brand-red'
+          )}
+        >
           {product.availableForSale ? price : productPage.labels.reservedMoreWanted}
         </p>
       </div>
@@ -103,7 +108,12 @@ export function CarCard({ product }: CarCardProps) {
         <p className="font-body text-15 text-body leading-relaxed line-clamp-2 flex-1">
           {product.description}
         </p>
-        <p className="font-heading font-semibold text-lg text-foreground mt-3">
+        <p
+          className={cn(
+            'font-heading font-semibold text-lg mt-3',
+            product.availableForSale ? 'text-brand-green' : 'text-brand-red'
+          )}
+        >
           {product.availableForSale ? price : productPage.labels.reservedMoreWanted}
         </p>
       </div>

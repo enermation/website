@@ -176,8 +176,10 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
                           type="button"
                           onClick={() => selectMake(option.label)}
                           className={cn(
-                            'flex items-center justify-between px-8 py-3 text-left transition-colors',
-                            isActive ? 'bg-white/10' : 'bg-transparent hover:bg-white/5'
+                            'flex items-center justify-between px-8 py-3 text-left transition-colors border-l-[3px]',
+                            isActive
+                              ? 'border-l-brand-green bg-white/10'
+                              : 'border-l-transparent bg-transparent hover:bg-white/5'
                           )}
                         >
                           <span className="font-heading text-13 font-semibold uppercase tracking-wider text-background">
@@ -201,7 +203,10 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
         <div className="flex min-w-0 w-1/3 shrink-0 flex-col gap-1 px-3 pt-6">
           <label
             htmlFor="brand-select"
-            className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider"
+            className={cn(
+              'font-heading font-semibold text-13 uppercase tracking-wider transition-colors',
+              currentMake && currentMake !== 'Show All' ? 'text-brand-green' : 'text-foreground'
+            )}
           >
             Make
           </label>
