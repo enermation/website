@@ -40,7 +40,7 @@ const MODELS = [
   {
     path: '/models/911-transformed.glb',
     scale: 1.6,
-    rotation: [0, Math.PI / 5, 0] as [number, number, number],
+    rotation: [0, 0, 0] as [number, number, number],
   },
 ]
 
@@ -396,7 +396,7 @@ export function HeroCarousel({
           <Canvas
             frameloop="always"
             shadows={shadowsEnabled}
-            camera={{ position: [0, 1, 14], fov: 40 }}
+            camera={{ position: [0, 1, 12], fov: 40 }}
             dpr={dpr}
             gl={{
               alpha: true,
