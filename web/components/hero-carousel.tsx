@@ -17,7 +17,7 @@ import { LUTCubeLoader } from 'postprocessing'
 import { forwardRef, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Group } from 'three'
 import * as THREE from 'three'
-import { heroBackgroundPosterUrl, heroBackgroundVideoUrl, heroCategories } from '@/lib/data'
+import { heroBackgroundVideoUrl, heroCategories } from '@/lib/data'
 
 const MAX_3D_SLIDES = 2
 const TOTAL = Math.min(heroCategories.length, MAX_3D_SLIDES)
@@ -345,8 +345,6 @@ export function HeroCarousel({
   const sectionRef = useRef<HTMLElement>(null)
   const bgVideoRef = useRef<HTMLVideoElement>(null)
 
-  const posterUrl = heroBackgroundPosterUrl
-
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
@@ -382,7 +380,6 @@ export function HeroCarousel({
       <video
         ref={bgVideoRef}
         src={heroBackgroundVideoUrl}
-        poster={posterUrl}
         autoPlay
         muted
         loop
