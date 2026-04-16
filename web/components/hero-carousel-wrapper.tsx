@@ -1,9 +1,8 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import Image from 'next/image'
 import { useRef, useState } from 'react'
-import { heroBackgroundPosterUrl } from '@/lib/data'
+import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 
 const HeroCarouselInner = dynamic(
@@ -16,33 +15,22 @@ type Props = {
 }
 
 export function HeroCarousel({ initialIndex = 0 }: Props) {
-  const [canvasReady, setCanvasReady] = useState(false)
+  const [isReady, setIsReady] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
-  const posterRef = useRef<HTMLDivElement>(null)
-
-  const posterUrl = heroBackgroundPosterUrl
 
   return (
-    <div ref={containerRef} className="relative min-h-screen">
-      {/* SSR Poster Image for LCP Optimization */}
+    <div ref={containerRef} className="relative min-h-screen overflow-hidden">
+      {/* Skeleton / Placeholder while component loads and 3D initializes */}
       <div
-        ref={posterRef}
         className={cn(
-          'absolute inset-0 z-10 transition-opacity duration-300',
-          canvasReady ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          'absolute inset-0 z-10 transition-opacity duration-500 ease-in-out',
+          isReady ? 'opacity-0 pointer-events-none' : 'opacity-100'
         )}
       >
-        <Image
-          src={posterUrl}
-          alt="Luxury supercar showcase background"
-          fill
-          priority
-          placeholder="empty"
-          sizes="100vw"
-          className="object-cover"
-        />
+        <Skeleton className="size-full rounded-none" />
       </div>
-      <HeroCarouselInner initialIndex={initialIndex} onReady={() => setCanvasReady(true)} />
+
+      <HeroCarouselInner initialIndex={initialIndex} onReady={() => setIsReady(true)} />
     </div>
   )
 }

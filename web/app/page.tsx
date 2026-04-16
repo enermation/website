@@ -11,6 +11,7 @@ import { SiteHeader } from '@/components/site-header'
 import { StripeBar } from '@/components/stripe-bar'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   primaryShowroomCollectionHandle,
   primaryShowroomCollectionHref,
@@ -104,8 +105,23 @@ function MobileCollectionCard({ collection }: { collection: ShopifyCollection })
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-function HeroCarouselSkeleton() {
-  return <div className="relative h-screen w-full bg-muted animate-pulse" />
+function HomePageSkeleton() {
+  return (
+    <div className="flex flex-col">
+      <Skeleton className="h-dvh w-full rounded-none" />
+      <div className="mx-auto w-full max-w-site px-4 py-20 md:px-6">
+        <div className="mb-12 flex flex-col items-center gap-4">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-1 w-32" />
+        </div>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <Skeleton className="aspect-3/2 w-full" />
+          <Skeleton className="aspect-3/2 w-full" />
+          <Skeleton className="aspect-3/2 w-full" />
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default async function Home({ searchParams }: HomePageProps) {
@@ -115,7 +131,7 @@ export default async function Home({ searchParams }: HomePageProps) {
         <SiteHeader />
       </Suspense>
       <main>
-        <Suspense fallback={<HeroCarouselSkeleton />}>
+        <Suspense fallback={<HomePageSkeleton />}>
           <HomePageContent searchParams={searchParams} />
         </Suspense>
       </main>
