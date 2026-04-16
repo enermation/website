@@ -394,6 +394,7 @@ export function HeroCarousel({
       <div className="absolute inset-0">
         {isClient ? (
           <Canvas
+            frameloop="always"
             shadows={shadowsEnabled}
             camera={{ position: [0, 1, 14], fov: 40 }}
             dpr={dpr}
