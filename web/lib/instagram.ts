@@ -1,4 +1,5 @@
 import type { Feed, Post } from '@behold/types'
+import { cacheLife } from 'next/cache'
 
 export type InstagramFeed = {
   username: string
@@ -9,13 +10,14 @@ export type InstagramFeed = {
 const EMPTY: InstagramFeed = { username: '', followersCount: 0, posts: [] }
 
 export async function getInstagramFeed(): Promise<InstagramFeed> {
+  'use cache'
+  cacheLife('hours')
+
   const feedId = process.env.BEHOLD_FEED_ID
   if (!feedId) return EMPTY
 
   try {
-    const res = await fetch(`https://feeds.behold.so/${feedId}`, {
-      next: { revalidate: 3600 },
-    })
+    const res = await fetch(`https://feeds.behold.so/${feedId}`)
     if (!res.ok) return EMPTY
     const feed: Feed = await res.json()
     return {

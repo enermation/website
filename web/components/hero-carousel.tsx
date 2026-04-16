@@ -15,8 +15,8 @@ import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { LUTCubeLoader } from 'postprocessing'
 import { forwardRef, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { Group } from 'three'
-import * as THREE from 'three'
+import type { Group, Mesh } from 'three'
+import { Vector3 } from 'three'
 import { heroBackgroundVideoUrl, heroCategories } from '@/lib/data'
 
 const MAX_3D_SLIDES = 2
@@ -63,8 +63,8 @@ const LamboModel = forwardRef<Group, ThreeElements['group'] & { onLoaded?: () =>
 
     useMemo(() => {
       Object.values(nodes).forEach(node => {
-        if ((node as THREE.Mesh).isMesh) {
-          const mesh = node as THREE.Mesh
+        if ((node as Mesh).isMesh) {
+          const mesh = node as Mesh
           if (mesh.name.startsWith('glass')) mesh.geometry.computeVertexNormals()
           if (mesh.name === 'silver_001_BreakDiscs_0')
             mesh.material = applyProps(materials.BreakDiscs, { color: '#ddd' })
@@ -83,7 +83,7 @@ const LamboModel = forwardRef<Group, ThreeElements['group'] & { onLoaded?: () =>
       if (materials.LightsFrontLed) applyProps(materials.LightsFrontLed, { emissiveIntensity: 1.0 })
       const paintNode = nodes.yellow_WhiteCar_0
       if (paintNode) {
-        applyProps((paintNode as THREE.Mesh).material, {
+        applyProps((paintNode as Mesh).material, {
           roughness: 0.3,
           metalness: 0.05,
           color: '#A9A9A7',
@@ -115,8 +115,8 @@ const PorscheModel = forwardRef<Group, ThreeElements['group'] & { onLoaded?: () 
 
     useMemo(() => {
       Object.values(nodes).forEach(node => {
-        if ((node as THREE.Mesh).isMesh) {
-          ;(node as THREE.Mesh).receiveShadow = (node as THREE.Mesh).castShadow = true
+        if ((node as Mesh).isMesh) {
+          ;(node as Mesh).receiveShadow = (node as Mesh).castShadow = true
         }
       })
       if (materials.rubber)
@@ -170,7 +170,7 @@ function PostProcessing({ enabled }: { enabled: boolean }) {
 
 // ── Auto-orbiting camera rig ──────────────────────────────────────────────────
 
-const _v = new THREE.Vector3()
+const _v = new Vector3()
 
 function CameraRig() {
   return useFrame(state => {
