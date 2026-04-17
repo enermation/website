@@ -34,7 +34,7 @@ function SectionHeading({ title, dark = false }: { title: string; dark?: boolean
     <div className="flex flex-col items-center gap-6 py-12">
       <h2
         className={cn(
-          'font-display font-normal text-section uppercase tracking-widest text-center',
+          'font-display font-normal text-section uppercase tracking-tight text-center',
           dark ? 'text-on-dark' : 'text-heading'
         )}
       >

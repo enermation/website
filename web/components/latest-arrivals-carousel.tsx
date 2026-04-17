@@ -45,8 +45,8 @@ function LatestArrivalCard({
   ].filter(detail => detail.label)
 
   return (
-    <div className="flex flex-col">
-      <Link href={`/products/${product.handle}`} className="group flex flex-col">
+    <div className="flex flex-col bg-surface-dark">
+      <Link href={`/products/${product.handle}`} className="group relative flex flex-col">
         <AspectRatio ratio={3 / 2} className="overflow-hidden bg-surface-elevated">
           {image && (
             <Image
@@ -54,15 +54,31 @@ function LatestArrivalCard({
               alt={image.altText ?? product.title}
               fill
               priority={priority}
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
               sizes="(min-width: 1280px) 416px, (min-width: 768px) 33vw, 100vw"
             />
           )}
+
+          {/* Hover overlay — specs panel */}
+          {details.length > 0 && (
+            <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <div className="grid grid-cols-2 gap-2 p-4">
+                {details.map(({ icon: iconPath, label }) => (
+                  <div key={label} className="flex items-center gap-2">
+                    <Icon path={iconPath} size={1} className="size-3.5 shrink-0 text-on-dark" />
+                    <span className="truncate font-heading text-13 font-medium text-on-dark">
+                      {label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </AspectRatio>
 
-        <div className="flex flex-1 flex-col gap-3 px-1 pt-4">
-          <h3 className="font-display text-xl leading-snug text-heading">{product.title}</h3>
-          <p className="line-clamp-3 font-body text-15 leading-relaxed text-body">
+        <div className="flex flex-1 flex-col gap-2 px-1 pt-4">
+          <h3 className="font-display text-2xl leading-snug text-heading">{product.title}</h3>
+          <p className="line-clamp-2 font-body text-15 leading-relaxed text-muted">
             {product.description}
           </p>
           <p className="font-heading text-lg font-semibold text-foreground">
@@ -71,24 +87,6 @@ function LatestArrivalCard({
               : productPage.labels.reservedMoreWanted}
           </p>
         </div>
-
-        {details.length > 0 && (
-          <div
-            className={cn(
-              'mt-4 grid grid-cols-2 gap-y-3 border-t border-subtle px-1 pt-3',
-              details.length === 3 && 'md:grid-cols-3'
-            )}
-          >
-            {details.map(({ icon: iconPath, label }) => (
-              <div key={label} className="flex items-center gap-2 pr-2">
-                <Icon path={iconPath} size={1} className="size-3.5 shrink-0 text-heading" />
-                <span className="truncate font-body text-13 font-medium text-foreground">
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
       </Link>
     </div>
   )

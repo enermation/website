@@ -10,7 +10,7 @@ type AnimatedSectionProps = {
   stagger?: number
 }
 
-export function AnimatedSection({ children, className, stagger = 0.15 }: AnimatedSectionProps) {
+export function AnimatedSection({ children, className, stagger = 0.08 }: AnimatedSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useGSAP(
@@ -72,9 +72,9 @@ export function InstagramGrid({ children }: { children: React.ReactNode }) {
           gsap.to(elements, {
             opacity: 1,
             scale: 1,
-            duration: 0.4,
+            duration: 0.5,
             ease: 'power2.out',
-            stagger: { each: 0.05, from: 'random' },
+            stagger: { each: 0.06, from: 'random' },
             overwrite: true,
           })
         },
