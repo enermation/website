@@ -16,5 +16,5 @@ export async function subscribeEmail(
   }
 
   // TODO: connect to email provider (Klaviyo, Mailchimp, etc.)
-  return { success: true, message: 'subscribed' }
+  return { success: false, message: 'Email subscription is not yet available' }
 }

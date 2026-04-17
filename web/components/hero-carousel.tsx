@@ -31,6 +31,19 @@ const ENV_RES_LOW = 256
 const SHADOW_RES_HIGH = 1024
 const SHADOW_RES_LOW = 512
 
+// Camera
+const CAMERA_Y = 1
+const CAMERA_Z = 12
+const CAMERA_FOV = 40
+const CAMERA_ORBIT_RADIUS = 12
+const CAMERA_LERP_FACTOR = 0.05
+
+// Swipe
+const SWIPE_THRESHOLD_PX = 50
+
+// Ready gate
+const READY_GATE_FRAMES = 4
+
 const MODELS = [
   {
     path: '/models/lambo.glb',
@@ -175,7 +188,7 @@ const _v = new Vector3()
 function CameraRig() {
   return useFrame(state => {
     const t = state.clock.elapsedTime
-    state.camera.position.lerp(_v.set(Math.sin(t / 5) * 12, 1, Math.cos(t / 5) * 12), 0.05)
+    state.camera.position.lerp(_v.set(Math.sin(t / 5) * CAMERA_ORBIT_RADIUS, CAMERA_Y, Math.cos(t / 5) * CAMERA_ORBIT_RADIUS), CAMERA_LERP_FACTOR)
     state.camera.lookAt(0, 0, 0)
   })
 }
@@ -190,7 +203,7 @@ function ReadyGate({ onReady }: { onReady: () => void }) {
     if (called.current) return
     frames.current++
     // Wait for a few frames after Suspense resolves so env map + reflections are GPU-uploaded
-    if (frames.current >= 4) {
+    if (frames.current >= READY_GATE_FRAMES) {
       called.current = true
       onReady()
     }
@@ -335,7 +348,7 @@ export function HeroCarousel({
   const onPointerUp = (e: React.PointerEvent) => {
     if (dragStartX.current === null) return
     const delta = e.clientX - dragStartX.current
-    if (Math.abs(delta) > 50) navigate(delta < 0 ? 1 : -1)
+    if (Math.abs(delta) > SWIPE_THRESHOLD_PX) navigate(delta < 0 ? 1 : -1)
     dragStartX.current = null
   }
 
@@ -396,7 +409,7 @@ export function HeroCarousel({
           <Canvas
             frameloop="always"
             shadows={shadowsEnabled}
-            camera={{ position: [0, 1, 12], fov: 40 }}
+            camera={{ position: [0, CAMERA_Y, CAMERA_Z], fov: CAMERA_FOV }}
             dpr={dpr}
             gl={{
               alpha: true,

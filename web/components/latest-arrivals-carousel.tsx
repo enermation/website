@@ -14,13 +14,9 @@ import {
 } from '@/components/ui/carousel'
 import { productPage } from '@/lib/data'
 import type { ShopifyProductMinimal } from '@/lib/types'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice, metaValue } from '@/lib/utils'
 
-function metaValue(field: { value: string | null } | null): string | null {
-  return field?.value ?? null
-}
-
-function formatPrice(product: ShopifyProductMinimal): string {
+function formatPriceProduct(product: ShopifyProductMinimal): string {
   const { amount, currencyCode } = product.priceRange.minVariantPrice
 
   return new Intl.NumberFormat('en-GB', {
@@ -83,7 +79,7 @@ function LatestArrivalCard({
           </p>
           <p className="font-heading text-lg font-semibold text-foreground">
             {product.availableForSale
-              ? formatPrice(product)
+              ? formatPriceProduct(product)
               : productPage.labels.reservedMoreWanted}
           </p>
         </div>

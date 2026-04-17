@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/lib/cart-context'
 import { cart } from '@/lib/data'
-import { cn, formatPrice } from '@/lib/utils'
+import { cn, computeLineTotal, formatPrice } from '@/lib/utils'
 
 type ShoppingCart1Props = {
   className?: string
@@ -81,10 +81,7 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
 
               <div className="text-right">
                 <p className="font-heading text-base font-semibold text-on-dark">
-                  {formatPrice(
-                    parseFloat(line.price.amount) * line.quantity,
-                    line.price.currencyCode
-                  )}
+                  {computeLineTotal({ amount: line.price.amount, currencyCode: line.price.currencyCode, quantity: line.quantity })}
                 </p>
               </div>
 

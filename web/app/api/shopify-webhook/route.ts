@@ -37,13 +37,13 @@ export async function POST(request: Request) {
     case 'products/create':
     case 'products/update':
     case 'products/delete':
-      revalidateTag('products', 'default')
+      revalidateTag('products', 'max')
       break
 
     case 'collections/create':
     case 'collections/update':
     case 'collections/delete':
-      revalidateTag('collections', 'default')
+      revalidateTag('collections', 'max')
       break
 
     default:

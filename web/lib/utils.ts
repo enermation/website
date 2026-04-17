@@ -17,3 +17,13 @@ export function formatPrice(amount: string | number, currencyCode: string): stri
   }
   return formatterCache.get(key)!.format(typeof amount === 'string' ? parseFloat(amount) : amount)
 }
+
+export type MoneyInput = { amount: string; currencyCode: string }
+
+export function computeLineTotal(line: MoneyInput & { quantity: number }): string {
+  return formatPrice(parseFloat(line.amount) * line.quantity, line.currencyCode)
+}
+
+export function metaValue(field: { value: string | null } | null): string | null {
+  return field?.value ?? null
+}
