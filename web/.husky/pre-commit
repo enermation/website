@@ -1,2 +1,2 @@
 cd web
-bunx lint-staged
+bunx lint-staged --config lint-staged.config.mjs

@@ -16,7 +16,7 @@ import {
   removeCartLinesAction,
   updateCartLinesAction,
 } from '@/app/actions/cart'
-import type { ShopifyCart, ShopifyCartLine, ShopifyMoney } from '@/lib/types'
+import type { ShopifyCart, ShopifyMoney } from '@/lib/types'
 
 const CART_ID_STORAGE_KEY = 'shopify_cart_id'
 
@@ -144,10 +144,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [loadCart])
 
   const addToCart = useCallback(async (merchandiseId: string, quantity: number) => {
-    if (!merchandiseId) {
-      console.error('addToCart: merchandiseId is required')
-      return
-    }
+    if (!merchandiseId) return
 
     setIsUpdating(true)
     const cartId = getStoredCartId()
@@ -180,8 +177,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           setIsCartOpen(true)
         }
       }
-    } catch (error) {
-      console.error('addToCart failed:', error)
+    } catch {
     } finally {
       setIsUpdating(false)
     }
@@ -208,8 +204,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setLines(mapCartLines(fullCart.lines.edges))
         setCheckoutUrl(fullCart.checkoutUrl)
       }
-    } catch (error) {
-      console.error('updateLine failed:', error)
+    } catch {
     } finally {
       setIsUpdating(false)
     }
@@ -232,8 +227,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setLines(mapCartLines(fullCart.lines.edges))
         setCheckoutUrl(fullCart.checkoutUrl)
       }
-    } catch (error) {
-      console.error('removeLine failed:', error)
+    } catch {
     } finally {
       setIsUpdating(false)
     }

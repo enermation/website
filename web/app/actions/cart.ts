@@ -47,10 +47,7 @@ export async function addCartLinesAction(
     variables: { cartId, lines },
   })
 
-  if (data?.cartLinesAdd?.userErrors?.length) {
-    console.error('Shopify cartLinesAdd errors:', data.cartLinesAdd.userErrors)
-    return null
-  }
+  if (data?.cartLinesAdd?.userErrors?.length) return null
 
   if (!data?.cartLinesAdd?.cart) return null
 
@@ -69,10 +66,7 @@ export async function updateCartLinesAction(
     variables: { cartId, lines },
   })
 
-  if (data?.cartLinesUpdate?.userErrors?.length) {
-    console.error('Shopify cartLinesUpdate errors:', data.cartLinesUpdate.userErrors)
-    return null
-  }
+  if (data?.cartLinesUpdate?.userErrors?.length) return null
 
   if (!data?.cartLinesUpdate?.cart) return null
 
@@ -91,10 +85,7 @@ export async function removeCartLinesAction(
     variables: { cartId, lineIds },
   })
 
-  if (data?.cartLinesRemove?.userErrors?.length) {
-    console.error('Shopify cartLinesRemove errors:', data.cartLinesRemove.userErrors)
-    return null
-  }
+  if (data?.cartLinesRemove?.userErrors?.length) return null
 
   if (!data?.cartLinesRemove?.cart) return null
 

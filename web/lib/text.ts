@@ -12,7 +12,6 @@ import { layout, prepare } from '@chenglou/pretext'
 
 // Font configurations matching CSS custom properties
 const FONT_BODY = '400 15px Inter, sans-serif'
-const FONT_DISPLAY = '700 24px "Barlow Semi Condensed", sans-serif'
 
 export const LINE_HEIGHT_BODY = 1.75
 export const LINE_HEIGHT_BODY_SM = 1.5

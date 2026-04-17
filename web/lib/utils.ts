@@ -9,13 +9,14 @@ const formatterCache = new Map<string, Intl.NumberFormat>()
 
 export function formatPrice(amount: string | number, currencyCode: string): string {
   const key = `en-GB-${currencyCode}`
-  if (!formatterCache.has(key)) {
-    formatterCache.set(
-      key,
-      new Intl.NumberFormat('en-GB', { style: 'currency', currency: currencyCode })
-    )
+  let formatter = formatterCache.get(key)
+
+  if (!formatter) {
+    formatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: currencyCode })
+    formatterCache.set(key, formatter)
   }
-  return formatterCache.get(key)!.format(typeof amount === 'string' ? parseFloat(amount) : amount)
+
+  return formatter.format(typeof amount === 'string' ? parseFloat(amount) : amount)
 }
 
 export type MoneyInput = { amount: string; currencyCode: string }
