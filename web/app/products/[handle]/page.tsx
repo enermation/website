@@ -170,17 +170,19 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
         </div>
       </nav>
 
-      {/* 2-column product section */}
+      {/* Full-width gallery */}
       <section className="bg-background">
-        <div className="mx-auto max-w-site">
-          <div className="product-page-grid lg:gap-10 lg:px-6 lg:pt-8 lg:pb-12">
-            {/* Gallery column — edge-to-edge on mobile */}
-            <div>
-              <ImageGallery images={images} />
-            </div>
+        <div className="mx-auto max-w-site px-4 md:px-6 md:pt-6">
+          <ImageGallery images={images} />
+        </div>
+      </section>
 
-            {/* Info panel — sticky on desktop */}
-            <div className="info-panel-sticky px-4 py-6 lg:px-0 lg:py-0">
+      {/* Product content — 4-column grid: main + sidebar */}
+      <section className="bg-background">
+        <div className="mx-auto max-w-site px-4 py-6 md:px-6 md:py-10">
+          <div className="grid grid-cols-1 md:grid-cols-4 md:gap-10">
+            {/* Main content */}
+            <div className="md:col-span-3">
               <ProductInfoPanel
                 vendor={product.vendor}
                 title={product.title}
@@ -190,6 +192,25 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 defaultVariantId={variants[0]?.id}
               />
             </div>
+
+            {/* Sidebar — seller info + CTA */}
+            <aside className="hidden md:col-span-1 md:flex md:flex-col md:gap-5">
+              <div className="sticky top-6 flex flex-col gap-4 rounded-2xl border border-border bg-surface-elevated p-6">
+                <div className="flex flex-col gap-1">
+                  <p className="font-body text-13 text-muted-foreground">{product.vendor}</p>
+                  <p className="font-heading text-sm font-semibold text-foreground">
+                    {showroomLabel}
+                  </p>
+                </div>
+
+                <Link
+                  href={showroomHref}
+                  className="inline-flex items-center justify-center rounded-full border border-brand-green bg-brand-green px-4 py-3 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:border-brand-red hover:bg-brand-red"
+                >
+                  View All Stock
+                </Link>
+              </div>
+            </aside>
           </div>
         </div>
       </section>

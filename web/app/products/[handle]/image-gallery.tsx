@@ -53,10 +53,10 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
 
       {/* ── Desktop grid ── */}
       <div className="hidden md:flex md:flex-col md:gap-4">
-        <div className="flex h-128 gap-px">
+        <div className="flex h-96 gap-px">
           <button
             type="button"
-            className="group relative flex-1 overflow-hidden bg-surface-elevated cursor-zoom-in"
+            className="relative flex-1 overflow-hidden bg-surface-elevated cursor-zoom-in"
             onClick={() => openLightbox(desktopPageStart)}
           >
             <Image
@@ -64,15 +64,9 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
               alt={mainImage.altText ?? ''}
               fill
               priority
-              className="object-cover transition-opacity group-hover:opacity-90"
+              className="object-cover"
               sizes="(min-width: 1320px) 660px, 50vw"
             />
-            <div className="absolute inset-0 flex items-center justify-center bg-black-30 opacity-0 transition-opacity group-hover:opacity-100">
-              <div className="flex items-center gap-2 rounded-full bg-black-40 px-4 py-2 font-heading text-13 text-white">
-                <Icon path={mdiImageMultiple} size={1} className="size-4" />
-                <span>Click to expand</span>
-              </div>
-            </div>
           </button>
 
           {sideImages.length > 0 && (
@@ -81,10 +75,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                 const isLast = i === sideImages.length - 1
                 const imageIndex = desktopPageStart + 1 + i
                 return (
-                  <div
-                    key={image.url}
-                    className="group relative overflow-hidden bg-surface-elevated"
-                  >
+                  <div key={image.url} className="relative overflow-hidden bg-surface-elevated">
                     <button
                       type="button"
                       className="absolute inset-0 w-full h-full cursor-zoom-in"
@@ -95,20 +86,14 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                         src={image.url}
                         alt={image.altText ?? ''}
                         fill
-                        className="object-cover transition-opacity group-hover:opacity-90"
+                        className="object-cover"
                         sizes="(min-width: 1320px) 330px, 25vw"
                       />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black-30 opacity-0 transition-opacity group-hover:opacity-100">
-                        <div className="flex items-center gap-2 rounded-full bg-black-40 px-4 py-2 font-heading text-13 text-white">
-                          <Icon path={mdiImageMultiple} size={1} className="size-4" />
-                          <span>Click to expand</span>
-                        </div>
-                      </div>
                     </button>
                     {isLast && remainingCount > 0 && (
                       <button
                         type="button"
-                        className="absolute inset-0 flex cursor-pointer items-end justify-end bg-black-30 p-3 transition-opacity hover:bg-black-40"
+                        className="absolute inset-0 flex items-end justify-end bg-black-30 p-3 hover:bg-black-40 transition-colors"
                         onClick={() => openLightbox(desktopPageStart + 1)}
                       >
                         <span className="bg-black-40 px-3 py-1 font-heading text-13 text-white">
@@ -124,21 +109,11 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 rounded-full border border-gray-90 px-4 py-2 font-heading text-13 text-gray-7">
-              <Icon path={mdiImageMultiple} size={1} className="size-4" />
-              <span>
-                {desktopPageStart + 1}–{desktopPageEnd} of {images.length} Photos
-              </span>
-            </div>
-            <button
-              type="button"
-              className="flex items-center gap-2 rounded-full bg-gray-90 px-4 py-2 font-heading text-13 text-gray-7 transition-colors hover:text-foreground"
-              onClick={() => openLightbox(0)}
-            >
-              <Icon path={mdiImageMultiple} size={1} className="size-4" />
-              <span>View All {images.length} Photos</span>
-            </button>
+          <div className="flex items-center gap-2 rounded-full border border-gray-90 px-4 py-2 font-heading text-13 text-gray-7">
+            <Icon path={mdiImageMultiple} size={1} className="size-4" />
+            <span>
+              {desktopPageStart + 1}–{desktopPageEnd} of {images.length} Photos
+            </span>
           </div>
 
           {pageCount > 1 && (

@@ -375,38 +375,6 @@
   .story-row-media {
     aspect-ratio: 3 / 2;
   }
-
-  .product-page-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-}
-
-@media (min-width: 1024px) {
-  @layer components {
-    .product-page-grid {
-      grid-template-columns: 3fr 2fr;
-    }
-  }
-}
-
-@layer utilities {
-  .info-panel-sticky {
-    overflow-y: visible;
-  }
-}
-
-@media (min-width: 1024px) {
-  @layer utilities {
-    .info-panel-sticky {
-      position: sticky;
-      top: 6rem;
-      align-self: start;
-      max-height: calc(100vh - 7rem);
-      overflow-y: auto;
-    }
-  }
 }
 
 /* ─── Collection page — entrance animation ─── */
