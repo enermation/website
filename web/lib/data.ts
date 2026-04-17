@@ -335,6 +335,38 @@ export const relatedStories: RelatedStory[] = [
   },
 ]
 
+// Collection stories (editorial feed) ────────────────────────────────────────────────────────────────
+
+export const collectionStories: RelatedStory[] = [
+  {
+    id: 'cs-1',
+    image: '/images/news/news-article-1.webp',
+    date: '15 January 2026',
+    category: 'Buyer Guide',
+    title: 'The Complete Guide to Financing Your First Supercar',
+    excerpt: 'Understanding PCP, HP, and lease options for high-value vehicle acquisitions.',
+    href: '#',
+  },
+  {
+    id: 'cs-2',
+    image: '/images/news/news-article-2.webp',
+    date: '02 February 2026',
+    category: 'Market Insight',
+    title: 'Why the UK Supercar Market Remains Resilient in 2026',
+    excerpt: 'A look at collector demand and what it means for buyers and sellers alike.',
+    href: '#',
+  },
+  {
+    id: 'cs-3',
+    image: '/images/news/news-article-3.webp',
+    date: '20 March 2026',
+    category: 'Lifestyle',
+    title: 'The Most Coveted Road Trips for Enthusiasts This Summer',
+    excerpt: 'From the Scottish Highlands to the French Riviera — routes that define the driving experience.',
+    href: '#',
+  },
+]
+
 // â”€â”€ Dealer info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const dealerInfo = {
