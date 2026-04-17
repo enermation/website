@@ -46,7 +46,13 @@ export async function fetchCollections(): Promise<ShopifyCollection[]> {
 export async function fetchCollectionProducts(
   handle: string,
   options: { sortKey: string; reverse?: boolean; filter?: { vendor: string }[]; first?: number }
-): Promise<{ id: string; title: string; products: ShopifyProduct[] } | null> {
+): Promise<{
+  id: string
+  title: string
+  description: string | null
+  image: { url: string; altText: string | null } | null
+  products: ShopifyProduct[]
+} | null> {
   'use cache'
   cacheLife('minutes')
   cacheTag('products', `collection-${handle}`)
@@ -55,17 +61,16 @@ export async function fetchCollectionProducts(
     collection: {
       id: string
       title: string
+      description: string | null
+      image: { url: string; altText: string | null } | null
       products: { edges: { node: ShopifyProduct }[] }
     } | null
   }>(GET_PRODUCTS_IN_COLLECTION, { variables: { handle, ...options } })
 
   if (!data?.collection) return null
 
-  return {
-    id: data.collection.id,
-    title: data.collection.title,
-    products: data.collection.products.edges.map(e => e.node),
-  }
+  const { title, description, image, products } = data?.collection ?? {}
+  return data?.collection ? { id, title, description, image, products } : null
 }
 
 export async function fetchProduct(handle: string): Promise<ShopifyProduct | null> {

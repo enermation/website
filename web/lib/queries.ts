@@ -217,6 +217,11 @@ export const GET_PRODUCTS_IN_COLLECTION = `
     collection(handle: $handle) {
       id
       title
+      description
+      image {
+        url
+        altText
+      }
       products(first: $first, sortKey: $sortKey, reverse: $reverse, filters: $filter) {
         edges {
           node {
