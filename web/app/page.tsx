@@ -182,7 +182,7 @@ async function HomePageContent({ searchParams }: HomePageProps) {
       <HeroCarousel initialIndex={slideIndex} />
 
       {/* ── LATEST ARRIVALS / COLLECTIONS ─────────────────────────────── */}
-      <AnimatedSection className="bg-card">
+      <AnimatedSection className="bg-card" stagger={0.1}>
         <SectionHeading title="Latest Arrivals for Sale" />
 
         <div className="mx-auto max-w-site px-4 pb-14 md:px-6 md:pb-16">
