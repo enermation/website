@@ -125,7 +125,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       <SiteHeader />
 
       {/* Desktop breadcrumb */}
-      <nav className="hidden border-b border-border bg-background md:block">
+      <nav aria-label="Breadcrumb" className="hidden border-b border-border bg-background md:block">
         <div className="mx-auto flex max-w-site items-center gap-2 px-6 py-3 font-heading text-13 text-body">
           <Link href="/" className="transition-colors hover:text-foreground scroll-mt-20">
             {productPage.breadcrumb.home}
@@ -143,7 +143,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       </nav>
 
       {/* Mobile breadcrumb */}
-      <nav className="border-b border-border bg-background md:hidden">
+      <nav aria-label="Breadcrumb" className="border-b border-border bg-background md:hidden">
         <div className="mx-auto flex max-w-site items-center gap-1 px-4 py-3 font-heading text-13 text-body">
           <Link href="/" className="transition-colors hover:text-foreground scroll-mt-20">
             {productPage.breadcrumb.home}

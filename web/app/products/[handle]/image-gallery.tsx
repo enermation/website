@@ -53,10 +53,10 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
 
       {/* ── Desktop grid ── */}
       <div className="grain-overlay relative hidden md:flex md:flex-col md:gap-4">
-        <div className="flex h-96 gap-px">
+        <div className="flex h-96 gap-px min-w-0">
           <button
             type="button"
-            className="relative flex-1 overflow-hidden bg-surface-elevated cursor-zoom-in"
+            className="relative flex-1 overflow-hidden bg-surface-elevated cursor-zoom-in min-w-0"
             onClick={() => openLightbox(desktopPageStart)}
           >
             <Image
@@ -154,9 +154,15 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
         plugins={[Counter]}
         counter={{ container: { className: 'yarl-counter-pill' } }}
         render={{
-          iconPrev: () => <Icon path={mdiChevronLeft} size={1} className="size-5" />,
-          iconNext: () => <Icon path={mdiChevronRight} size={1} className="size-5" />,
-          iconClose: () => <Icon path={mdiClose} size={1} className="size-5" />,
+          iconPrev: () => (
+            <Icon path={mdiChevronLeft} size={1} className="size-5" aria-label="Previous image" />
+          ),
+          iconNext: () => (
+            <Icon path={mdiChevronRight} size={1} className="size-5" aria-label="Next image" />
+          ),
+          iconClose: () => (
+            <Icon path={mdiClose} size={1} className="size-5" aria-label="Close lightbox" />
+          ),
           slide: ({ slide, offset }) => {
             if (!isImageSlide(slide)) return undefined
             return (

@@ -2,12 +2,18 @@
 
 import { mdiCar } from '@mdi/js'
 import { Icon } from '@mdi/react'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { AddToCartButton } from '@/components/add-to-cart-button'
 import { ProductSpecs1 } from '@/components/product-specs1'
 import { Badge } from '@/components/ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { productPage } from '@/lib/data'
-import { useGSAP } from '@/lib/gsap'
 import type { ShopifyProductVariant } from '@/lib/types'
 import { cn, formatPrice } from '@/lib/utils'
 
@@ -28,8 +34,6 @@ export function ProductInfoPanel({
   variants,
   defaultVariantId,
 }: ProductInfoPanelProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-
   const [selectedVariantId, setSelectedVariantId] = useState<string>(
     defaultVariantId ?? variants[0]?.id ?? ''
   )
@@ -46,14 +50,6 @@ export function ProductInfoPanel({
     selectedVariant?.selectedOptions?.filter(
       option => option.name !== 'Title' && option.value !== 'Default Title'
     ) ?? []
-
-  useGSAP(
-    () => {
-      // CSS animations handle staggered reveal via [data-reveal="N"] animation-delay
-      // GSAP is not needed for stagger; reduced-motion is handled by CSS
-    },
-    { scope: containerRef }
-  )
 
   const specs = [
     ...(vendor ? [{ label: productPage.labels.brand, value: vendor }] : []),
@@ -74,13 +70,13 @@ export function ProductInfoPanel({
     {
       id: 'details',
       name: productPage.sections.listingDetails,
-      icon: <Icon path={mdiCar} size={1} className="size-4" />,
+      icon: <Icon path={mdiCar} size={1} className="size-4" aria-hidden="true" />,
       specs,
     },
   ]
 
   return (
-    <div ref={containerRef} className="flex flex-col gap-6 md:gap-8">
+    <div className="flex flex-col gap-6 md:gap-8">
       {/* Row 1: vendor + title */}
       <div
         data-reveal="1"
@@ -132,25 +128,28 @@ export function ProductInfoPanel({
           >
             Select Variant
           </label>
-          <select
-            id="variant-select"
-            value={selectedVariantId}
-            onChange={e => setSelectedVariantId(e.target.value)}
-            className="h-12 rounded-none border border-gray-90 bg-background px-4 font-body text-15 text-foreground"
-          >
-            {variants.map(variant => {
-              const label = variant.selectedOptions
-                ?.filter(o => o.name !== 'Title' && o.value !== 'Default Title')
-                .map(o => o.value)
-                .join(' / ')
-              return (
-                <option key={variant.id} value={variant.id}>
-                  {label ?? variant.title}
-                  {!variant.availableForSale ? ` — ${productPage.labels.sold}` : ''}
-                </option>
-              )
-            })}
-          </select>
+          <Select value={selectedVariantId} onValueChange={v => v && setSelectedVariantId(v)}>
+            <SelectTrigger
+              id="variant-select"
+              className="h-12 rounded-none border-border bg-background px-4 font-body text-15 text-foreground"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {variants.map(variant => {
+                const label = variant.selectedOptions
+                  ?.filter(o => o.name !== 'Title' && o.value !== 'Default Title')
+                  .map(o => o.value)
+                  .join(' / ')
+                return (
+                  <SelectItem key={variant.id} value={variant.id}>
+                    {label ?? variant.title}
+                    {!variant.availableForSale ? ` — ${productPage.labels.sold}` : ''}
+                  </SelectItem>
+                )
+              })}
+            </SelectContent>
+          </Select>
         </div>
       )}
 
@@ -160,7 +159,7 @@ export function ProductInfoPanel({
           <h2 className="font-display text-xl text-balance text-heading">
             {productPage.sections.aboutThisListing}
           </h2>
-          <p className="whitespace-pre-line overflow-wrap-break-word font-body text-15 leading-relaxed text-body">
+          <p className="whitespace-pre-line break-words line-clamp-4 font-body text-15 leading-relaxed text-body">
             {description}
           </p>
         </div>

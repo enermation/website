@@ -332,6 +332,15 @@
   animation: reveal-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
 }
 
+/* ─── Respect prefers-reduced-motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
 /* ─── Grain overlay for atmosphere ─── */
 .grain-overlay {
   position: relative;
