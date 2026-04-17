@@ -322,3 +322,12 @@ When the Figma MCP returns React + Tailwind output, apply these transformations:
 5. **Fonts**: Do not add new font imports — use `font-sans` / `font-mono` / `font-heading`
 6. **Spacing**: Use Tailwind's default spacing scale (4px base); do not hardcode px values
 7. **`"use client"`**: Add only if the component requires interactivity (state, effects, event handlers)
+
+## graphify
+
+This project has a graphify knowledge graph at graphify-out/.
+
+Rules:
+- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
+- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
+- After modifying code files in this session, run `python3 -c "from graphify.watch import _rebuild_code; from pathlib import Path; _rebuild_code(Path('.'))"` to keep the graph current

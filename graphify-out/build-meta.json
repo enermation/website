@@ -1,0 +1,19 @@
+{
+  "mode": "manual-curated-semantic-second-pass",
+  "base_graph_nodes": 320,
+  "base_graph_edges": 278,
+  "semantic_nodes_added": 15,
+  "semantic_edges_added": 55,
+  "semantic_hyperedges_added": 3,
+  "curated_docs": [
+    "README.md",
+    "web\\plans\\graphql_queries.md",
+    "tasks\\color-system-redesign.md",
+    "tasks\\hero-3d-lcp.md",
+    "tasks\\todo.md",
+    "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md"
+  ],
+  "nodes": 320,
+  "edges": 278,
+  "communities": 98
+}

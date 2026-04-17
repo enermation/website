@@ -1,0 +1,722 @@
+{
+  "nodes": [
+    {
+      "id": "concept_centralized_shopify_access",
+      "label": "Centralized Shopify Access Layer",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L75"
+    },
+    {
+      "id": "concept_collection_filtering_workflow",
+      "label": "Collection Filtering Workflow",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "concept_graphql_query_contracts",
+      "label": "Shopify GraphQL Query Contracts",
+      "file_type": "document",
+      "source_file": "web\\plans\\graphql_queries.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "concept_semantic_color_tokens",
+      "label": "Semantic Color Token Hierarchy",
+      "file_type": "document",
+      "source_file": "tasks\\color-system-redesign.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "concept_surface_elevated_card_pattern",
+      "label": "Elevated Surface Card Pattern",
+      "file_type": "document",
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "concept_hero_3d_lcp_optimization",
+      "label": "Hero 3D LCP Optimization",
+      "file_type": "document",
+      "source_file": "tasks\\hero-3d-lcp.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "concept_behold_instagram_feed",
+      "label": "Live Behold Instagram Feed",
+      "file_type": "document",
+      "source_file": "tasks\\todo.md",
+      "source_location": "L4"
+    },
+    {
+      "id": "concept_collection_editorial_redesign",
+      "label": "Collection Editorial Redesign",
+      "file_type": "document",
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "concept_collection_description_data_flow",
+      "label": "Collection Description Data Flow",
+      "file_type": "document",
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L111"
+    },
+    {
+      "id": "rationale_shopify_centralization",
+      "label": "Keep Shopify access centralized",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L75"
+    },
+    {
+      "id": "rationale_semantic_tokens",
+      "label": "Replace hardcoded colors with semantic tokens",
+      "file_type": "document",
+      "source_file": "tasks\\color-system-redesign.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "rationale_poster_first_lcp",
+      "label": "Poster-first rendering improves LCP",
+      "file_type": "document",
+      "source_file": "tasks\\hero-3d-lcp.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "rationale_editorial_alignment",
+      "label": "Align collection page with editorial luxury design",
+      "file_type": "document",
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "rationale_cached_instagram_feed",
+      "label": "Use cached server-side Instagram fetch with graceful fallback",
+      "file_type": "document",
+      "source_file": "tasks\\todo.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "web_app_globals_css",
+      "label": "globals.css",
+      "file_type": "code",
+      "source_file": "web\\app\\globals.css",
+      "source_location": "L1"
+    }
+  ],
+  "edges": [
+    {
+      "source": "rationale_shopify_centralization",
+      "target": "concept_centralized_shopify_access",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_centralized_shopify_access",
+      "target": "web_lib_shopify_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_centralized_shopify_access",
+      "target": "web_lib_queries_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_centralized_shopify_access",
+      "target": "web_app_page_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_centralized_shopify_access",
+      "target": "web_app_collections_handle_page_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_centralized_shopify_access",
+      "target": "web_app_products_handle_page_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_filtering_workflow",
+      "target": "web_app_collections_handle_page_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_filtering_workflow",
+      "target": "web_app_collections_handle_filter_bar_tsx",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.78,
+      "source_file": "README.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_filtering_workflow",
+      "target": "shopify_fetchcollectionproducts",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.74,
+      "source_file": "README.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_graphql_query_contracts",
+      "target": "web_lib_queries_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "web\\plans\\graphql_queries.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_graphql_query_contracts",
+      "target": "web_lib_types_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "web\\plans\\graphql_queries.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_graphql_query_contracts",
+      "target": "web_lib_shopify_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "web\\plans\\graphql_queries.md",
+      "source_location": "L261",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_graphql_query_contracts",
+      "target": "web_app_collections_handle_page_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "web\\plans\\graphql_queries.md",
+      "source_location": "L272",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_graphql_query_contracts",
+      "target": "web_app_products_handle_page_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "web\\plans\\graphql_queries.md",
+      "source_location": "L266",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_graphql_query_contracts",
+      "target": "concept_centralized_shopify_access",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88,
+      "source_file": "web\\plans\\graphql_queries.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "rationale_semantic_tokens",
+      "target": "concept_semantic_color_tokens",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\color-system-redesign.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_semantic_color_tokens",
+      "target": "web_app_globals_css",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\color-system-redesign.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_semantic_color_tokens",
+      "target": "web_components_site_header_client_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\color-system-redesign.md",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_semantic_color_tokens",
+      "target": "web_components_site_footer_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\color-system-redesign.md",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_semantic_color_tokens",
+      "target": "web_components_stripe_bar_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\color-system-redesign.md",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_semantic_color_tokens",
+      "target": "web_components_car_card_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\color-system-redesign.md",
+      "source_location": "L158",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_semantic_color_tokens",
+      "target": "web_app_products_handle_page_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\color-system-redesign.md",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_semantic_color_tokens",
+      "target": "web_app_page_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\color-system-redesign.md",
+      "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_semantic_color_tokens",
+      "target": "concept_surface_elevated_card_pattern",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\color-system-redesign.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "rationale_poster_first_lcp",
+      "target": "concept_hero_3d_lcp_optimization",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\hero-3d-lcp.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_hero_3d_lcp_optimization",
+      "target": "web_components_hero_carousel_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\hero-3d-lcp.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_hero_3d_lcp_optimization",
+      "target": "web_components_hero_carousel_wrapper_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\hero-3d-lcp.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_hero_3d_lcp_optimization",
+      "target": "web_app_page_tsx",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.68,
+      "source_file": "tasks\\hero-3d-lcp.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "rationale_cached_instagram_feed",
+      "target": "concept_behold_instagram_feed",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\todo.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_behold_instagram_feed",
+      "target": "web_lib_instagram_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\todo.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_behold_instagram_feed",
+      "target": "web_app_page_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\todo.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_behold_instagram_feed",
+      "target": "web_next_config_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\todo.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_behold_instagram_feed",
+      "target": "web_lib_data_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tasks\\todo.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "rationale_editorial_alignment",
+      "target": "concept_collection_editorial_redesign",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_editorial_redesign",
+      "target": "web_app_collections_handle_page_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L193",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_editorial_redesign",
+      "target": "web_app_collections_handle_filter_bar_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L194",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_editorial_redesign",
+      "target": "web_components_editorial_feed_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L196",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_editorial_redesign",
+      "target": "web_lib_data_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L192",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_editorial_redesign",
+      "target": "web_lib_queries_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L190",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_editorial_redesign",
+      "target": "web_lib_types_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L189",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_editorial_redesign",
+      "target": "web_lib_shopify_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L191",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_editorial_redesign",
+      "target": "web_app_globals_css",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L197",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_editorial_redesign",
+      "target": "concept_surface_elevated_card_pattern",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_editorial_redesign",
+      "target": "concept_collection_filtering_workflow",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.72,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_description_data_flow",
+      "target": "web_lib_types_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_description_data_flow",
+      "target": "web_lib_queries_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_description_data_flow",
+      "target": "web_lib_shopify_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_description_data_flow",
+      "target": "web_app_collections_handle_page_tsx",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.77,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L193",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_collection_description_data_flow",
+      "target": "concept_collection_editorial_redesign",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_surface_elevated_card_pattern",
+      "target": "web_app_globals_css",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L167",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_surface_elevated_card_pattern",
+      "target": "web_app_collections_handle_filter_bar_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_surface_elevated_card_pattern",
+      "target": "web_components_editorial_feed_tsx",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.79,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_surface_elevated_card_pattern",
+      "target": "web_app_products_handle_page_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_surface_elevated_card_pattern",
+      "target": "web_app_page_tsx",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.71,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "concept_surface_elevated_card_pattern",
+      "target": "web_components_car_card_tsx",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.69,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md",
+      "source_location": "L54",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "shopify_data_flow_bundle",
+      "label": "Shopify Data Flow Bundle",
+      "nodes": [
+        "concept_centralized_shopify_access",
+        "concept_graphql_query_contracts",
+        "web_lib_shopify_ts",
+        "web_lib_queries_ts",
+        "web_lib_types_ts",
+        "web_app_page_tsx",
+        "web_app_collections_handle_page_tsx",
+        "web_app_products_handle_page_tsx"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.86,
+      "source_file": "README.md"
+    },
+    {
+      "id": "collection_editorial_feature_bundle",
+      "label": "Collection Editorial Feature Bundle",
+      "nodes": [
+        "concept_collection_editorial_redesign",
+        "concept_collection_description_data_flow",
+        "concept_surface_elevated_card_pattern",
+        "web_app_collections_handle_page_tsx",
+        "web_app_collections_handle_filter_bar_tsx",
+        "web_components_editorial_feed_tsx",
+        "web_lib_data_ts",
+        "web_lib_queries_ts",
+        "web_lib_types_ts",
+        "web_lib_shopify_ts",
+        "web_app_globals_css"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "docs\\superpowers\\specs\\2026-04-17-collection-editorial-redesign.md"
+    },
+    {
+      "id": "homepage_experience_upgrade_bundle",
+      "label": "Homepage Experience Upgrade Bundle",
+      "nodes": [
+        "concept_hero_3d_lcp_optimization",
+        "concept_behold_instagram_feed",
+        "web_components_hero_carousel_tsx",
+        "web_components_hero_carousel_wrapper_tsx",
+        "web_lib_instagram_ts",
+        "web_next_config_ts",
+        "web_app_page_tsx"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.78,
+      "source_file": "tasks\\hero-3d-lcp.md"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "mode": "manual-curated-semantic-second-pass"
+}

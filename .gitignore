@@ -13,3 +13,4 @@ qwen.md
 website-2k25
 .playwright-cli
 package-lock.json
+graphify-out/cache/
