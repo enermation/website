@@ -3,7 +3,10 @@ import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { AnimatedSection } from '@/components/animated-section'
 import { CarCard } from '@/components/car-card'
+import { EditorialFeed } from '@/components/editorial-feed'
+import { EditorialHero } from '@/components/editorial-hero'
 import { SiteHeader } from '@/components/site-header'
+import { collectionStories } from '@/lib/data'
 import { fetchCollectionProducts, fetchCollections } from '@/lib/shopify'
 import type { ShopifyProduct } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -72,8 +75,9 @@ export default async function CollectionPage({
 
   if (!filteredCollection || !allCollection) notFound()
 
-  const { title, products } = filteredCollection
+  const { title, description, image, products } = filteredCollection
   const makeOptions = buildMakeOptions(allCollection.products)
+  const vehicleCount = products.length
 
   return (
     <>
@@ -103,20 +107,7 @@ export default async function CollectionPage({
         </div>
       </nav>
 
-      {/* Page title — driven by Shopify collection title */}
-      <div className="bg-background border-b border-border px-3 py-10 text-center">
-        <h1 className="collection-title-in font-display text-section font-normal uppercase tracking-widest text-heading">
-          {title}
-        </h1>
-        <div className="flex justify-center mt-6">
-          <div className="flex items-center">
-            <div className="h-1 w-10 bg-brand-green" />
-            <div className="h-1 w-10 bg-background border border-border" />
-            <div className="h-1 w-10 bg-brand-red" />
-          </div>
-        </div>
-      </div>
-
+      {/* Mobile sub-navigation */}
       <nav className="border-b border-border bg-background md:hidden">
         <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {collectionLinks.map(collection => {
@@ -140,8 +131,15 @@ export default async function CollectionPage({
         </div>
       </nav>
 
+      <EditorialHero
+        title={title}
+        image={image}
+        description={description}
+        vehicleCount={vehicleCount}
+      />
+
       {/* Content */}
-      <section className="relative bg-background py-3 md:py-6 collection-grain overflow-hidden">
+      <section className="relative bg-background py-3 md:py-6 overflow-hidden">
         <div className="relative z-10 max-w-site mx-auto px-3">
           <Suspense>
             <FilterBar makeOptions={makeOptions} currentMake={make} currentSort={sort} />
@@ -164,6 +162,8 @@ export default async function CollectionPage({
               ))}
             </AnimatedSection>
           )}
+
+          <EditorialFeed stories={collectionStories} />
         </div>
       </section>
     </>

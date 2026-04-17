@@ -69,8 +69,15 @@ export async function fetchCollectionProducts(
 
   if (!data?.collection) return null
 
-  const { title, description, image, products } = data?.collection ?? {}
-  return data?.collection ? { id, title, description, image, products } : null
+  const { title, description, image, products } = data.collection
+
+  return {
+    id: data.collection.id,
+    title,
+    description,
+    image,
+    products: products.edges.map(e => e.node),
+  }
 }
 
 export async function fetchProduct(handle: string): Promise<ShopifyProduct | null> {

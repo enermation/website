@@ -199,8 +199,10 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
         </div>
       </div>
 
-      <div className="hidden flex-wrap items-end gap-0 border-b border-border pb-3 md:flex">
-        <div className="flex min-w-0 w-1/3 shrink-0 flex-col gap-1 px-3 pt-6">
+      <div className="hidden md:block filter-bar-in">
+        <div className="rounded-2xl border border-border border-t-2 border-t-brand-green bg-surface-elevated px-6 py-5 shadow-sm">
+          <div className="flex flex-wrap items-end gap-0">
+            <div className="flex min-w-0 w-1/3 shrink-0 flex-col gap-1 px-3 pt-6">
           <label
             htmlFor="brand-select"
             className={cn(
@@ -291,6 +293,8 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
             <Icon path={mdiFilter} size={1} className="size-3.5 shrink-0" />
             Filter Stock
           </Button>
+        </div>
+      </div>
         </div>
       </div>
     </>

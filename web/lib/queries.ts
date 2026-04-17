@@ -202,6 +202,7 @@ export const GET_COLLECTIONS = `
             url
             altText
           }
+          description
         }
       }
       pageInfo {

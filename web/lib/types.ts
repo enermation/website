@@ -92,6 +92,7 @@ export type ShopifyCollection = {
   handle: string
   title: string
   image: ShopifyImage | null
+  description: string | null
 }
 
 export type ShopifyMenuResource =
