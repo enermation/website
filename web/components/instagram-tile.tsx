@@ -83,7 +83,12 @@ export function InstagramTile({ href, mediaUrl, thumbnailUrl, alt, isReel }: Pro
 
         {/* Instagram badge — appears on hover */}
         <div className="absolute top-2 right-2 flex size-7 items-center justify-center rounded-full bg-background/90 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <Icon path={mdiInstagram} size={1} className="size-3.5 text-foreground" />
+          <Icon
+            path={mdiInstagram}
+            size={1}
+            className="size-3.5 text-foreground"
+            aria-hidden="true"
+          />
         </div>
       </AspectRatio>
     </a>

@@ -96,7 +96,7 @@ function MobileCollectionCard({ collection }: { collection: ShopifyCollection })
         {collection.title}
       </h3>
       <div className="flex items-center gap-2 px-1 font-heading text-13 text-body">
-        <Icon path={mdiChevronRight} size={1} className="size-3 shrink-0" />
+        <Icon path={mdiChevronRight} size={1} className="size-3 shrink-0" aria-hidden="true" />
         <span>Discover More</span>
       </div>
     </Link>
@@ -130,7 +130,7 @@ export default async function Home({ searchParams }: HomePageProps) {
       <Suspense fallback={null}>
         <SiteHeader />
       </Suspense>
-      <main>
+      <main id="main-content">
         <Suspense fallback={<HomePageSkeleton />}>
           <HomePageContent searchParams={searchParams} />
         </Suspense>
@@ -269,7 +269,12 @@ async function InstagramSection() {
               </span>
               <div className="flex flex-col items-center gap-3">
                 <div className="flex size-12 items-center justify-center rounded-full bg-muted">
-                  <Icon path={mdiInstagram} size={1} className="size-5 text-foreground" />
+                  <Icon
+                    path={mdiInstagram}
+                    size={1}
+                    className="size-5 text-foreground"
+                    aria-hidden="true"
+                  />
                 </div>
                 <div className="text-center">
                   <p className="font-heading font-semibold text-sm text-heading">@{igUsername}</p>
