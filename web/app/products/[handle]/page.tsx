@@ -11,6 +11,7 @@ import { SiteHeader } from '@/components/site-header'
 import { StripeBar } from '@/components/stripe-bar'
 import { productPage, relatedStories } from '@/lib/data'
 import { fetchCollectionProducts, fetchProduct } from '@/lib/shopify'
+import { truncateForMeta } from '@/lib/text'
 import { ImageGallery } from './image-gallery'
 import { ProductInfoPanel } from './product-info-panel'
 
@@ -25,7 +26,7 @@ export async function generateMetadata({
   if (!product) return {}
 
   const description = product.description ?? ''
-  const truncated = description.length > 160 ? `${description.slice(0, 157)}…` : description
+  const truncated = truncateForMeta(description, 157)
   return {
     title: `${product.title} | Enermation`,
     description: truncated,
