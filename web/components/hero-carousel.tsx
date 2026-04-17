@@ -58,8 +58,7 @@ const MODELS = [
 ]
 
 // Optimization: Initially only preload the first model to keep LCP/initial load fast
-useGLTF.preload(MODELS[0].path)
-useEnvironment.preload({ files: '/models/factory-road-turnaround_256.hdr' })
+// Moved into useEffect below to prevent SSR execution — preloads must only run client-side
 
 // Client-only guard to prevent hydration mismatch
 function useIsClient() {
@@ -188,7 +187,14 @@ const _v = new Vector3()
 function CameraRig() {
   return useFrame(state => {
     const t = state.clock.elapsedTime
-    state.camera.position.lerp(_v.set(Math.sin(t / 5) * CAMERA_ORBIT_RADIUS, CAMERA_Y, Math.cos(t / 5) * CAMERA_ORBIT_RADIUS), CAMERA_LERP_FACTOR)
+    state.camera.position.lerp(
+      _v.set(
+        Math.sin(t / 5) * CAMERA_ORBIT_RADIUS,
+        CAMERA_Y,
+        Math.cos(t / 5) * CAMERA_ORBIT_RADIUS
+      ),
+      CAMERA_LERP_FACTOR
+    )
     state.camera.lookAt(0, 0, 0)
   })
 }
@@ -304,10 +310,13 @@ export function HeroCarousel({
   const searchParams = useSearchParams()
   const isClient = useIsClient()
 
-  // LCP signal — fires once when model is ready
+  // biome-ignore lint/correctness/useExhaustiveDependencies: preloads run once at initialization
   useEffect(() => {
     onReady?.()
-  }, [onReady])
+    // Preload first model and HDR environment — only runs client-side after mount
+    useGLTF.preload(MODELS[0].path)
+    useEnvironment.preload({ files: '/models/factory-road-turnaround_256.hdr' })
+  }, [])
 
   // Delayed preload of second model — fires once after mount, preserves bandwidth for initial LCP
   useEffect(() => {
