@@ -82,7 +82,7 @@ const LamboModel = forwardRef<Group, ThreeElements['group'] & { onLoaded?: () =>
       if (materials.emitbrake) applyProps(materials.emitbrake, { emissiveIntensity: 1.0 })
       if (materials.LightsFrontLed) applyProps(materials.LightsFrontLed, { emissiveIntensity: 1.0 })
       const paintNode = nodes.yellow_WhiteCar_0
-      if (paintNode) {
+      if (paintNode && (paintNode as Mesh).material) {
         applyProps((paintNode as Mesh).material, {
           roughness: 0.3,
           metalness: 0.05,
