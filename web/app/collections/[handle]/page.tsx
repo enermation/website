@@ -4,7 +4,6 @@ import { Suspense } from 'react'
 import { AnimatedSection } from '@/components/animated-section'
 import { CarCard } from '@/components/car-card'
 import { EditorialFeed } from '@/components/editorial-feed'
-import { EditorialHero } from '@/components/editorial-hero'
 import { SiteHeader } from '@/components/site-header'
 import { collectionStories } from '@/lib/data'
 import { fetchCollectionProducts, fetchCollections } from '@/lib/shopify'
@@ -130,13 +129,6 @@ export default async function CollectionPage({
           })}
         </div>
       </nav>
-
-      <EditorialHero
-        title={title}
-        image={image}
-        description={description}
-        vehicleCount={vehicleCount}
-      />
 
       {/* Content */}
       <section className="relative bg-background py-3 md:py-6 overflow-hidden">
