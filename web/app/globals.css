@@ -111,7 +111,7 @@
 
   /* ─── Font Mapping ─── */
   --font-sans: var(--font-body);
-  --font-mono: var(--font-body);
+  --font-mono: var(--font-heading);
   --font-heading: var(--font-heading);
 
   /* ─── Border Radius ─── */
@@ -362,10 +362,6 @@
 @layer components {
   .car-card-media {
     aspect-ratio: 3 / 2;
-  }
-
-  .product-gallery-mobile {
-    aspect-ratio: 39 / 32;
   }
 
   .product-gallery-desktop {

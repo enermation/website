@@ -92,7 +92,7 @@ export const navLinks: NavLink[] = [
   { label: 'Sell Your Car', href: '#', hasDropdown: true },
   { label: 'Services', href: '#', hasDropdown: true },
   { label: 'About', href: '#', hasDropdown: true },
-  { label: 'Contact', href: '#' },
+  { label: 'Contact', href: '/contact' },
 ]
 
 export const inventoryCollectionLinks: { label: string; href: string }[] = [
@@ -125,21 +125,21 @@ export const headerDropdownCopy = {
 // â”€â”€ Footer data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const footerAboutLinks: FooterLink[] = [
-  { label: 'Our Story', href: '#' },
-  { label: 'Why Enermation FAQ', href: '#' },
-  { label: 'Testimonials', href: '#' },
+  { label: 'Our Story', href: '/about' },
+  { label: 'Why Enermation FAQ', href: '/faq' },
+  { label: 'Testimonials', href: '/testimonials' },
 ]
 
 export const footerPrimaryLinks: FooterLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Showroom', href: primaryShowroomCollectionHref },
-  { label: 'Sell Your Car', href: '#' },
-  { label: 'Services', href: '#' },
-  { label: 'About', href: '#' },
-  { label: 'Contact Us', href: '#' },
+  { label: 'Sell Your Car', href: '/sell' },
+  { label: 'Services', href: '/services' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact Us', href: '/contact' },
 ]
 
-export const footerContactLinks: FooterLink[] = [{ label: 'How To Find Us', href: '#' }]
+export const footerContactLinks: FooterLink[] = [{ label: 'How To Find Us', href: '/contact' }]
 
 export const footerContactInfo = {
   location: 'Preston, Lancashire, UK',
@@ -148,9 +148,9 @@ export const footerContactInfo = {
 }
 
 export const footerLegalLinks: FooterLink[] = [
-  { label: 'Terms & Conditions', href: '#' },
-  { label: 'Privacy Policy', href: '#' },
-  { label: 'Contact Us', href: '#' },
+  { label: 'Terms & Conditions', href: '/terms' },
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Contact Us', href: '/contact' },
 ]
 
 export const footerNavigationGroups: FooterLinkGroup[] = [
@@ -179,7 +179,7 @@ export const footerContent = {
   inputPlaceholder: 'Enter your email',
   actionLabel: 'Roll Me In',
   companyLine:
-    'Â© 2026 Enermation Lifestyle Ltd. T/A Enermation Supercars. Registered Company Number: 06937335',
+    '© 2026 Enermation Lifestyle Ltd. T/A Enermation Supercars. Registered Company Number: 06937335',
   disclaimer:
     'Disclaimer: Great care is taken to ensure the specification displayed for each vehicle is correct, however due to how data is ported from third party sources from time to time errors may occur. Enermation take no responsibility or liability for such errors in the listings and we advise you check the full vehicle details independently before purchase.',
   creditPrefix: 'Site by',
@@ -290,7 +290,7 @@ export const newsArticle: NewsArticle = {
   date: '06 March 2024',
   category: 'Latest News',
   title: "Enermation's Top 5 Supercar Picks to Grace Your Driveway in 2024",
-  excerpt: "Enermation' Definitive Guide to the Ultimate Driving Experience in 2024",
+  excerpt: "Enermation's Definitive Guide to the Ultimate Driving Experience in 2024",
 }
 
 // â”€â”€ Related stories (product page) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -340,7 +340,7 @@ export const relatedStories: RelatedStory[] = [
 export const dealerInfo = {
   name: 'Enermation Supercars',
   address: 'Preston, Lancashire, UK',
-  memberSinceLabel: 'Joined 3 months ago',
+  memberSinceLabel: `Member since ${new Date().getFullYear()}`,
   listingAgentValue: 'License #LU977TT',
   registeredYear: '2026',
 }
@@ -370,7 +370,6 @@ export const productPage = {
     email: 'Email',
     specialistExportBroker: 'Specialist vehicle export broker',
     specialistDealer: 'Specialist dealer',
-    callUs: 'Call Us',
     callAgent: 'Call Agent',
     viewAllStock: 'View all stock',
     viewAllStockForSale: 'View all stock for sale',
@@ -378,7 +377,7 @@ export const productPage = {
     sold: 'Sold',
     soldOrReserved: 'Sold / Reserved',
     reserved: 'Reserved',
-    reservedMoreWanted: 'Reserved â€” More Wanted',
+    reservedMoreWanted: 'Reserved — More Wanted',
     notSpecified: 'Not specified',
     vatType: 'VAT Type',
     noDutyPaid: 'No Duty Paid',

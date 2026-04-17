@@ -10,7 +10,7 @@ type CarCardProps = {
   product: ShopifyProduct
 }
 
-function metaValue(field: { value: string | null } | null): string | null {
+function getMetafieldValue(field: { value: string | null } | null): string | null {
   return field?.value ?? null
 }
 
@@ -20,12 +20,12 @@ export function CarCard({ product }: CarCardProps) {
   const price = formatPrice(amount, currencyCode)
 
   // Structured metafield values
-  const make = metaValue(product.make) ?? product.vendor
-  const year = metaValue(product.year)
-  const transmission = metaValue(product.transmission)
-  const fuelType = metaValue(product.fuelType)
-  const mileage = metaValue(product.mileage)
-  const colour = metaValue(product.colour)
+  const make = getMetafieldValue(product.make) ?? product.vendor
+  const year = getMetafieldValue(product.year)
+  const transmission = getMetafieldValue(product.transmission)
+  const fuelType = getMetafieldValue(product.fuelType)
+  const mileage = getMetafieldValue(product.mileage)
+  const colour = getMetafieldValue(product.colour)
 
   // Transmission/fuel combined display (e.g. "Automatic / Petrol")
   const transmissionFuel = [transmission, fuelType].filter(Boolean).join(' / ') || null

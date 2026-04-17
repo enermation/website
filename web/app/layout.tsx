@@ -24,7 +24,7 @@ const heading = Barlow_Semi_Condensed({
 const body = Inter({
   variable: '--font-body',
   weight: ['400', '500'],
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   display: 'swap',
   preload: true,
 })
@@ -34,8 +34,8 @@ export const metadata: Metadata = {
   description:
     "Enermation are internationally renowned for offering a unique selection of some of the world's finest automobiles. The premier supercar dealer in the UK.",
   icons: {
-    icon: '/logo.jpg',
-    shortcut: '/logo.jpg',
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
     apple: '/logo.jpg',
   },
 }

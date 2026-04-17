@@ -11,7 +11,6 @@ import { SiteHeader } from '@/components/site-header'
 import { StripeBar } from '@/components/stripe-bar'
 import { productPage, relatedStories } from '@/lib/data'
 import { fetchCollectionProducts, fetchProduct } from '@/lib/shopify'
-import { formatPrice } from '@/lib/utils'
 import { ImageGallery } from './image-gallery'
 import { ProductInfoPanel } from './product-info-panel'
 
@@ -25,9 +24,11 @@ export async function generateMetadata({
 
   if (!product) return {}
 
+  const description = product.description ?? ''
+  const truncated = description.length > 160 ? `${description.slice(0, 157)}…` : description
   return {
     title: `${product.title} | Enermation`,
-    description: product.description.slice(0, 160),
+    description: truncated,
   }
 }
 
@@ -49,7 +50,31 @@ async function SimilarCarsSection({
     collection?.products.filter(product => product.handle !== currentProductHandle).slice(0, 3) ??
     []
 
-  if (similarCars.length === 0) return null
+  if (similarCars.length === 0) {
+    return (
+      <section className="bg-muted py-12 md:py-16">
+        <div className="mx-auto max-w-site px-4 md:px-6">
+          <div className="mb-8 flex items-center justify-between md:mb-10">
+            <h2 className="font-display text-2xl uppercase tracking-widest text-heading md:text-section">
+              {productPage.sections.youMayAlsoLike}
+            </h2>
+            <div className="hidden md:block">
+              <StripeBar />
+            </div>
+          </div>
+          <p className="font-body text-15 text-muted-foreground">No similar listings found.</p>
+          <div className="mt-8 flex justify-center md:mt-12">
+            <Link
+              href={showroomHref}
+              className="border-2 border-foreground px-8 py-3 text-center font-heading text-13 font-semibold uppercase tracking-wider text-foreground transition-colors hover:bg-foreground hover:text-background"
+            >
+              {productPage.labels.viewAllStockForSale}
+            </Link>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="bg-muted py-12 md:py-16">
@@ -93,14 +118,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
   const showroomHref = primaryCollection ? `/collections/${primaryCollection.handle}` : '/'
   const showroomLabel = primaryCollection?.title ?? productPage.breadcrumb.showroom
 
-  const { amount, currencyCode } = product.priceRange.minVariantPrice
-  const price = formatPrice(amount, currencyCode)
-
-  const firstVariant = product.variants.edges[0]?.node
-  const specOptions =
-    firstVariant?.selectedOptions?.filter(
-      option => option.name !== 'Title' && option.value !== 'Default Title'
-    ) ?? []
+  const variants = product.variants.edges.map(edge => edge.node)
 
   return (
     <>
@@ -109,11 +127,14 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       {/* Desktop breadcrumb */}
       <nav className="hidden border-b border-border bg-background md:block">
         <div className="mx-auto flex max-w-site items-center gap-2 px-6 py-3 font-heading text-13 text-body">
-          <Link href="/" className="transition-colors hover:text-foreground">
+          <Link href="/" className="transition-colors hover:text-foreground scroll-mt-20">
             {productPage.breadcrumb.home}
           </Link>
           <span>/</span>
-          <Link href={showroomHref} className="transition-colors hover:text-foreground">
+          <Link
+            href={showroomHref}
+            className="transition-colors hover:text-foreground scroll-mt-20"
+          >
             {showroomLabel}
           </Link>
           <span>/</span>
@@ -124,7 +145,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       {/* Mobile breadcrumb */}
       <nav className="border-b border-border bg-background md:hidden">
         <div className="mx-auto flex max-w-site items-center gap-1 px-4 py-3 font-heading text-13 text-body">
-          <Link href="/" className="transition-colors hover:text-foreground">
+          <Link href="/" className="transition-colors hover:text-foreground scroll-mt-20">
             {productPage.breadcrumb.home}
           </Link>
           <Icon
@@ -133,7 +154,10 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
             className="size-3 text-muted-foreground"
             aria-hidden="true"
           />
-          <Link href={showroomHref} className="transition-colors hover:text-foreground">
+          <Link
+            href={showroomHref}
+            className="transition-colors hover:text-foreground scroll-mt-20"
+          >
             {showroomLabel}
           </Link>
           <Icon
@@ -160,11 +184,10 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
               <ProductInfoPanel
                 vendor={product.vendor}
                 title={product.title}
-                price={price}
                 availableForSale={product.availableForSale}
                 description={product.description}
-                specOptions={specOptions}
-                merchandiseId={firstVariant?.id ?? ''}
+                variants={variants}
+                defaultVariantId={variants[0]?.id}
               />
             </div>
           </div>
@@ -200,6 +223,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                     src={story.image}
                     alt={story.title}
                     fill
+                    loading="lazy"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                     sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 100vw"
                   />

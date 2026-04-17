@@ -159,7 +159,7 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
     <header
       data-slot="site-header"
       className={cn(
-        'z-50',
+        'z-50 transition-[position] duration-300',
         isHomePage ? 'fixed inset-x-0 top-0 [padding-top:env(safe-area-inset-top)]' : 'sticky top-0'
       )}
     >

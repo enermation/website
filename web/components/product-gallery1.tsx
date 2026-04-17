@@ -51,8 +51,8 @@ const ProductGallery1 = ({ images, className, onImageClick }: ProductGallery1Pro
           ))}
         </CarouselContent>
         <div className="md:hidden">
-          <CarouselPrevious className="left-4" />
-          <CarouselNext className="right-4" />
+          <CarouselPrevious className="left-4" aria-label="Previous images" />
+          <CarouselNext className="right-4" aria-label="Next images" />
         </div>
       </Carousel>
     </section>

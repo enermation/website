@@ -52,7 +52,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
       <ProductGallery1 images={images} className="md:hidden" onImageClick={openLightbox} />
 
       {/* ── Desktop grid ── */}
-      <div data-slot="image-gallery" className="hidden md:flex md:flex-col md:gap-4">
+      <div className="hidden md:flex md:flex-col md:gap-4">
         <div className="flex h-128 gap-px">
           <button
             type="button"
