@@ -52,7 +52,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
       <ProductGallery1 images={images} className="md:hidden" onImageClick={openLightbox} />
 
       {/* ── Desktop grid ── */}
-      <div className="hidden md:flex md:flex-col md:gap-4">
+      <div className="grain-overlay relative hidden md:flex md:flex-col md:gap-4">
         <div className="flex h-96 gap-px">
           <button
             type="button"
@@ -109,10 +109,10 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 rounded-full border border-gray-90 px-4 py-2 font-heading text-13 text-gray-7">
-            <Icon path={mdiImageMultiple} size={1} className="size-4" />
+          <div className="flex items-center gap-2 font-heading text-11 text-gray-60 uppercase tracking-widest">
+            <Icon path={mdiImageMultiple} size={1} className="size-3.5" />
             <span>
-              {desktopPageStart + 1}–{desktopPageEnd} of {images.length} Photos
+              {desktopPageStart + 1}–{desktopPageEnd} of {images.length}
             </span>
           </div>
 
@@ -122,7 +122,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                 type="button"
                 variant="outline"
                 size="sm"
-                className="h-11 rounded-full border-2 px-4 font-heading text-13 font-semibold uppercase tracking-wide"
+                className="h-11 rounded-full border border-white-20 bg-black-40 px-4 font-heading text-13 font-semibold uppercase tracking-wide text-white transition-colors hover:border-white-40 hover:bg-black-50"
                 onClick={showPreviousDesktopPage}
               >
                 <Icon path={mdiChevronLeft} size={1} className="size-4" />
@@ -133,7 +133,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                 type="button"
                 variant="outline"
                 size="sm"
-                className="h-11 rounded-full border-2 px-4 font-heading text-13 font-semibold uppercase tracking-wide"
+                className="h-11 rounded-full border border-white-20 bg-black-40 px-4 font-heading text-13 font-semibold uppercase tracking-wide text-white transition-colors hover:border-white-40 hover:bg-black-50"
                 onClick={showNextDesktopPage}
               >
                 <span>Next</span>

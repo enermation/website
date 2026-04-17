@@ -7,7 +7,7 @@ import { AddToCartButton } from '@/components/add-to-cart-button'
 import { ProductSpecs1 } from '@/components/product-specs1'
 import { Badge } from '@/components/ui/badge'
 import { productPage } from '@/lib/data'
-import { gsap, useGSAP } from '@/lib/gsap'
+import { useGSAP } from '@/lib/gsap'
 import type { ShopifyProductVariant } from '@/lib/types'
 import { cn, formatPrice } from '@/lib/utils'
 
@@ -49,18 +49,8 @@ export function ProductInfoPanel({
 
   useGSAP(
     () => {
-      const items = containerRef.current?.querySelectorAll('[data-reveal]')
-      if (!items?.length) return
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      if (prefersReducedMotion) return
-      gsap.to(items, {
-        opacity: 1,
-        y: 0,
-        duration: 0.55,
-        stagger: 0.1,
-        ease: 'power2.out',
-        delay: 0.15,
-      })
+      // CSS animations handle staggered reveal via [data-reveal="N"] animation-delay
+      // GSAP is not needed for stagger; reduced-motion is handled by CSS
     },
     { scope: containerRef }
   )
@@ -91,27 +81,30 @@ export function ProductInfoPanel({
 
   return (
     <div ref={containerRef} className="flex flex-col gap-6 md:gap-8">
+      {/* Row 1: vendor + title */}
       <div
-        data-reveal
+        data-reveal="1"
         className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-6"
       >
         <div className="flex flex-col gap-1">
           {vendor && (
-            <p className="font-body text-13 uppercase tracking-widest text-body">{vendor}</p>
+            <p className="font-body text-11 uppercase tracking-widest text-muted-foreground">
+              {vendor}
+            </p>
           )}
-          <h1 className="font-display text-2xl leading-tight text-heading md:text-3xl md:leading-snug">
+          <h1 className="font-display text-3xl leading-tight text-heading md:text-4xl md:leading-snug">
             {title}
           </h1>
         </div>
 
         <div className="flex shrink-0 flex-col items-start gap-2 md:items-end">
-          <p className="whitespace-nowrap font-heading text-2xl font-semibold text-foreground">
+          <p className="whitespace-nowrap font-display text-4xl font-semibold text-heading">
             {currentAvailableForSale && currentPrice ? currentPrice : productPage.labels.reserved}
           </p>
           <Badge
             variant="outline"
             className={cn(
-              'h-auto rounded-none px-3 py-1 font-heading text-13 font-semibold uppercase tracking-wide',
+              'h-auto rounded-none px-3 py-1 font-heading text-11 font-semibold uppercase tracking-widest',
               currentAvailableForSale
                 ? 'border-brand-green text-brand-green'
                 : 'border-muted-foreground text-muted-foreground'
@@ -122,15 +115,17 @@ export function ProductInfoPanel({
         </div>
       </div>
 
-      <div data-reveal>
+      {/* Row 2: Add to Cart */}
+      <div data-reveal="2">
         <AddToCartButton
           merchandiseId={selectedVariant?.id ?? ''}
           availableForSale={currentAvailableForSale}
         />
       </div>
 
+      {/* Row 3: Variant selector */}
       {variants.length > 1 && (
-        <div data-reveal className="flex flex-col gap-2">
+        <div data-reveal="3" className="flex flex-col gap-2">
           <label
             htmlFor="variant-select"
             className="font-heading text-13 font-semibold uppercase tracking-wide text-foreground"
@@ -159,8 +154,9 @@ export function ProductInfoPanel({
         </div>
       )}
 
+      {/* Row 4: Description */}
       {description ? (
-        <div data-reveal className="flex flex-col gap-3">
+        <div data-reveal="4" className="flex flex-col gap-3">
           <h2 className="font-display text-xl text-balance text-heading">
             {productPage.sections.aboutThisListing}
           </h2>
@@ -170,7 +166,8 @@ export function ProductInfoPanel({
         </div>
       ) : null}
 
-      <div data-reveal>
+      {/* Row 5: Specs */}
+      <div data-reveal="5">
         <ProductSpecs1 categories={categories} title="" className="py-0" />
       </div>
     </div>

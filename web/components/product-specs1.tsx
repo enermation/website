@@ -43,7 +43,7 @@ const ProductSpecs1 = ({
   const showControls = categories.length > 1
 
   return (
-    <section className={cn('py-16 md:py-24', className)}>
+    <section className={cn('py-0', className)}>
       <div className="w-full">
         {(title || showControls) && (
           <div className="mb-8 flex items-center justify-between">

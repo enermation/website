@@ -195,19 +195,22 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
 
             {/* Sidebar — seller info + CTA */}
             <aside className="hidden md:col-span-1 md:flex md:flex-col md:gap-5">
-              <div className="sticky top-6 flex flex-col gap-4 rounded-2xl border border-border bg-surface-elevated p-6">
+              <div className="sticky top-6 flex flex-col gap-4 rounded-2xl border border-border border-t-2 bg-surface-elevated p-6">
                 <div className="flex flex-col gap-1">
-                  <p className="font-body text-13 text-muted-foreground">{product.vendor}</p>
-                  <p className="font-heading text-sm font-semibold text-foreground">
+                  <p className="font-body text-11 uppercase tracking-widest text-muted-foreground">
+                    {product.vendor}
+                  </p>
+                  <p className="font-heading text-base font-semibold text-foreground">
                     {showroomLabel}
                   </p>
                 </div>
 
                 <Link
                   href={showroomHref}
-                  className="inline-flex items-center justify-center rounded-full border border-brand-green bg-brand-green px-4 py-3 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:border-brand-red hover:bg-brand-red"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-brand-green bg-brand-green px-4 py-3 font-heading text-13 font-semibold uppercase tracking-widest text-background transition-colors hover:border-brand-red hover:bg-brand-red"
                 >
                   View All Stock
+                  <Icon path={mdiChevronRight} size={1} className="size-4" />
                 </Link>
               </div>
             </aside>

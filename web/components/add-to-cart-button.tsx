@@ -1,6 +1,6 @@
 'use client'
 
-import { mdiCart, mdiFlash } from '@mdi/js'
+import { mdiCart, mdiCash } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -66,7 +66,7 @@ export function AddToCartButton({
           'disabled:opacity-50 disabled:cursor-not-allowed'
         )}
       >
-        <Icon path={mdiFlash} size={1} className="mr-2 size-4" aria-hidden="true" />
+        <Icon path={mdiCash} size={1} className="mr-2 size-4" aria-hidden="true" />
         {isAdding ? 'Adding...' : 'Buy Now'}
       </Button>
     </div>
