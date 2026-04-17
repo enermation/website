@@ -127,7 +127,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
               aria-label="View all products and reset filters"
               className="h-10 justify-center rounded-none border-2 border-foreground bg-background font-heading text-xs font-semibold uppercase tracking-wide text-foreground hover:bg-accent"
             >
-              <Icon path={mdiGrid} size={1} className="size-3.5" />
+              <Icon path={mdiGrid} size={1} className="size-3.5" aria-hidden="true" />
               View All
             </Button>
             <Button
@@ -136,7 +136,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
               aria-label="Wishlist (currently unavailable)"
               className="h-10 justify-center rounded-none border-2 border-foreground bg-background font-heading text-xs font-semibold uppercase tracking-wide text-foreground disabled:opacity-50"
             >
-              <Icon path={mdiHeart} size={1} className="size-3.5" />
+              <Icon path={mdiHeart} size={1} className="size-3.5" aria-hidden="true" />
               Wishlist (0)
             </Button>
             <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
@@ -148,7 +148,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
                   />
                 }
               >
-                <Icon path={mdiFilter} size={1} className="size-3.5" />
+                <Icon path={mdiFilter} size={1} className="size-3.5" aria-hidden="true" />
                 Filter Stock
               </SheetTrigger>
               <SheetContent
@@ -176,7 +176,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
                           type="button"
                           onClick={() => selectMake(option.label)}
                           className={cn(
-                            'flex items-center justify-between px-8 py-3 text-left transition-colors border-l-[3px]',
+                            'flex items-center justify-between px-8 py-3 text-left transition-colors border-l-[3px] focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none',
                             isActive
                               ? 'border-l-brand-green bg-white/10'
                               : 'border-l-transparent bg-transparent hover:bg-white/5'
@@ -203,98 +203,98 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
         <div className="rounded-2xl border border-border border-t-2 border-t-brand-green bg-surface-elevated px-6 py-5 shadow-sm">
           <div className="flex flex-wrap items-end gap-0">
             <div className="flex min-w-0 w-1/3 shrink-0 flex-col gap-1 px-3 pt-6">
-          <label
-            htmlFor="brand-select"
-            className={cn(
-              'font-heading font-semibold text-13 uppercase tracking-wider transition-colors',
-              currentMake && currentMake !== 'Show All' ? 'text-brand-green' : 'text-foreground'
-            )}
-          >
-            Make
-          </label>
-          <Select
-            value={currentMake ?? 'Show All'}
-            onValueChange={value => updateParam('make', value)}
-            disabled={isPending}
-          >
-            <SelectTrigger
-              id="brand-select"
-              className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background"
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {makeLabels.map(m => (
-                <SelectItem key={m} value={m}>
-                  {m}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+              <label
+                htmlFor="brand-select"
+                className={cn(
+                  'font-heading font-semibold text-13 uppercase tracking-wider transition-colors',
+                  currentMake && currentMake !== 'Show All' ? 'text-brand-green' : 'text-foreground'
+                )}
+              >
+                Make
+              </label>
+              <Select
+                value={currentMake ?? 'Show All'}
+                onValueChange={value => updateParam('make', value)}
+                disabled={isPending}
+              >
+                <SelectTrigger
+                  id="brand-select"
+                  className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {makeLabels.map(m => (
+                    <SelectItem key={m} value={m}>
+                      {m}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-        <div className="flex w-1/5 min-w-0 shrink-0 flex-col gap-1 px-3 pt-6">
-          <label
-            htmlFor="sort-select"
-            className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider"
-          >
-            Sort By
-          </label>
-          <Select
-            value={currentSort ?? 'price-desc'}
-            onValueChange={value => updateParam('sort', value)}
-            disabled={isPending}
-          >
-            <SelectTrigger
-              id="sort-select"
-              className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background"
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {sortOptions.map(o => (
-                <SelectItem key={o.value} value={o.value}>
-                  {o.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+            <div className="flex w-1/5 min-w-0 shrink-0 flex-col gap-1 px-3 pt-6">
+              <label
+                htmlFor="sort-select"
+                className="font-heading font-semibold text-13 text-foreground uppercase tracking-wider"
+              >
+                Sort By
+              </label>
+              <Select
+                value={currentSort ?? 'price-desc'}
+                onValueChange={value => updateParam('sort', value)}
+                disabled={isPending}
+              >
+                <SelectTrigger
+                  id="sort-select"
+                  className="w-full h-10 px-3 border border-select-border rounded font-body text-base text-foreground bg-background"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {sortOptions.map(o => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-        <div className="ml-auto flex items-end gap-0 px-3 pt-6">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={resetFilters}
-            disabled={isPending}
-            aria-label="View all products and reset filters"
-            className="h-10 px-5 border-2 border-foreground font-heading font-semibold text-xs uppercase tracking-wider hover:bg-accent"
-          >
-            <Icon path={mdiGrid} size={1} className="size-3.5 shrink-0" />
-            View All
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled
-            aria-label="Wishlist (currently unavailable)"
-            className="h-10 px-5 border-2 border-l-0 border-foreground font-heading font-semibold text-xs uppercase tracking-wider disabled:opacity-50"
-          >
-            <Icon path={mdiHeart} size={1} className="size-3.5 shrink-0" />
-            Wishlist (0)
-          </Button>
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => setIsFilterOpen(true)}
-            aria-label="Open filter stock menu"
-            className="h-10 px-5 border-2 border-foreground bg-foreground text-background hover:bg-foreground/90 font-heading font-semibold text-xs uppercase tracking-wider"
-          >
-            <Icon path={mdiFilter} size={1} className="size-3.5 shrink-0" />
-            Filter Stock
-          </Button>
-        </div>
-      </div>
+            <div className="ml-auto flex items-end gap-0 px-3 pt-6">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetFilters}
+                disabled={isPending}
+                aria-label="View all products and reset filters"
+                className="h-10 px-5 border-2 border-foreground font-heading font-semibold text-xs uppercase tracking-wider hover:bg-accent"
+              >
+                <Icon path={mdiGrid} size={1} className="size-3.5 shrink-0" aria-hidden="true" />
+                View All
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled
+                aria-label="Wishlist (currently unavailable)"
+                className="h-10 px-5 border-2 border-l-0 border-foreground font-heading font-semibold text-xs uppercase tracking-wider disabled:opacity-50"
+              >
+                <Icon path={mdiHeart} size={1} className="size-3.5 shrink-0" aria-hidden="true" />
+                Wishlist (0)
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => setIsFilterOpen(true)}
+                aria-label="Open filter stock menu"
+                className="h-10 px-5 border-2 border-foreground bg-foreground text-background hover:bg-foreground/90 font-heading font-semibold text-xs uppercase tracking-wider"
+              >
+                <Icon path={mdiFilter} size={1} className="size-3.5 shrink-0" aria-hidden="true" />
+                Filter Stock
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </>

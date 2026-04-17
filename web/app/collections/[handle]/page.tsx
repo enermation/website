@@ -74,16 +74,18 @@ export default async function CollectionPage({
 
   if (!filteredCollection || !allCollection) notFound()
 
-  const { title, description, image, products } = filteredCollection
+  const { products } = filteredCollection
   const makeOptions = buildMakeOptions(allCollection.products)
-  const vehicleCount = products.length
 
   return (
     <>
       <SiteHeader />
 
       {/* Sub-navigation */}
-      <nav className="hidden md:block bg-background border-b border-border">
+      <nav
+        aria-label="Collection navigation"
+        className="hidden md:block bg-background border-b border-border"
+      >
         <div className="max-w-site mx-auto flex justify-center">
           {collectionLinks.map(collection => {
             const href = `/collections/${collection.handle}`
@@ -92,6 +94,7 @@ export default async function CollectionPage({
               <Link
                 key={collection.id}
                 href={href}
+                aria-current={isActive ? 'page' : undefined}
                 className={cn(
                   'font-heading font-semibold text-13 uppercase tracking-wide px-4 py-4 border-b-2 transition-colors',
                   isActive
@@ -107,7 +110,10 @@ export default async function CollectionPage({
       </nav>
 
       {/* Mobile sub-navigation */}
-      <nav className="border-b border-border bg-background md:hidden">
+      <nav
+        aria-label="Mobile collection navigation"
+        className="border-b border-border bg-background md:hidden"
+      >
         <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {collectionLinks.map(collection => {
             const href = `/collections/${collection.handle}`
@@ -116,6 +122,7 @@ export default async function CollectionPage({
               <Link
                 key={collection.id}
                 href={href}
+                aria-current={isActive ? 'page' : undefined}
                 className={cn(
                   'flex-none px-6 py-4 text-center font-heading text-13 font-semibold uppercase tracking-wide transition-colors border-b-2',
                   isActive
