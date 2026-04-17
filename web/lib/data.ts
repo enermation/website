@@ -362,7 +362,8 @@ export const collectionStories: RelatedStory[] = [
     date: '20 March 2026',
     category: 'Lifestyle',
     title: 'The Most Coveted Road Trips for Enthusiasts This Summer',
-    excerpt: 'From the Scottish Highlands to the French Riviera — routes that define the driving experience.',
+    excerpt:
+      'From the Scottish Highlands to the French Riviera — routes that define the driving experience.',
     href: '#',
   },
 ]

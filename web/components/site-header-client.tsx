@@ -202,11 +202,30 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
               </SheetTrigger>
               <SheetContent
                 side="right"
-                className="w-full max-w-md border-l border-white-20 bg-surface-dark p-0 text-background backdrop-blur-md sm:max-w-md"
+                className="cart-sidebar w-full max-w-md border-l border-white-20 bg-surface-dark p-0 text-background backdrop-blur-md sm:max-w-md"
               >
                 <SheetTitle className="sr-only">Shopping cart</SheetTitle>
-                <div className="flex h-full flex-col pt-8">
-                  <div className="flex-1 overflow-y-auto px-5">
+                <div className="grain-overlay relative flex flex-col">
+                  {/* Cart editorial header */}
+                  <div className="px-5 pt-6 pb-0">
+                    <div className="mb-3 flex items-center gap-2">
+                      <div className="h-0.5 w-9 bg-brand-green" />
+                      <div className="h-0.5 w-9 border border-white-solid" />
+                      <div className="h-0.5 w-9 bg-brand-red" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <h2 className="font-display text-section font-semibold uppercase tracking-wider text-on-dark">
+                        Your Cart
+                      </h2>
+                      {totalItemCount > 0 && (
+                        <span className="flex size-9 items-center justify-center rounded-full border border-white-30 bg-white-10 font-heading text-13 font-semibold text-on-dark-muted">
+                          {totalItemCount}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="mx-5 border-t border-white-20" />
+                  <div className="flex-1 overflow-y-auto px-5 pt-4">
                     <ShoppingCart1 />
                   </div>
                 </div>
@@ -253,11 +272,30 @@ export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
               </SheetTrigger>
               <SheetContent
                 side="right"
-                className="w-full max-w-md border-l border-white-20 bg-surface-dark p-0 text-background backdrop-blur-md sm:max-w-md"
+                className="cart-sidebar w-full max-w-md border-l border-white-20 bg-surface-dark p-0 text-background backdrop-blur-md sm:max-w-md"
               >
                 <SheetTitle className="sr-only">Shopping cart</SheetTitle>
-                <div className="flex h-full flex-col pt-8">
-                  <div className="flex-1 overflow-y-auto px-5">
+                <div className="grain-overlay relative flex flex-col">
+                  {/* Cart editorial header */}
+                  <div className="px-5 pt-6 pb-0">
+                    <div className="mb-3 flex items-center gap-2">
+                      <div className="h-0.5 w-9 bg-brand-green" />
+                      <div className="h-0.5 w-9 border border-white-solid" />
+                      <div className="h-0.5 w-9 bg-brand-red" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <h2 className="font-display text-section font-semibold uppercase tracking-wider text-on-dark">
+                        Your Cart
+                      </h2>
+                      {totalItemCount > 0 && (
+                        <span className="flex size-9 items-center justify-center rounded-full border border-white-30 bg-white-10 font-heading text-13 font-semibold text-on-dark-muted">
+                          {totalItemCount}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="mx-5 border-t border-white-20" />
+                  <div className="flex-1 overflow-y-auto px-5 pt-4">
                     <ShoppingCart1 />
                   </div>
                 </div>

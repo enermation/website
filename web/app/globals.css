@@ -488,3 +488,68 @@
 .filter-bar-in {
   animation: filter-bar-in 0.3s ease-out forwards;
 }
+
+/* ─── Cart item staggered entrance ─── */
+@keyframes cart-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cart-item-in {
+  animation: cart-item-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.cart-item-in:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.cart-item-in:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.cart-item-in:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.cart-item-in:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.cart-item-in:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+/* ─── Checkout CTA delayed entrance ─── */
+@keyframes checkout-cta-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.checkout-cta {
+  animation: checkout-cta-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  opacity: 0;
+}
+
+/* ─── Cart sidebar grain — slightly more visible than default ─── */
+.cart-sidebar .grain-overlay::after {
+  opacity: 0.035;
+}
+
+/* ─── Respect prefers-reduced-motion for cart animations ─── */
+@media (prefers-reduced-motion: reduce) {
+  .cart-item-in,
+  .checkout-cta {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}

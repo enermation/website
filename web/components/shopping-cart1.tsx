@@ -27,29 +27,34 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
 
   if (lines.length === 0) {
     return (
-      <section className={cn('py-12', className)}>
-        <div className="mx-auto max-w-lg text-center">
-          <p className="mb-4 font-heading text-xl text-on-dark">{cart.emptyTitle}</p>
-          <p className="mb-8 font-body text-on-dark-muted">{cart.emptyDescription}</p>
+      <div className={cn('flex flex-col items-center justify-center py-16', className)}>
+        {/* Decorative accent rules */}
+        <div className="mb-6 flex items-center gap-2">
+          <div className="h-0.5 w-8 bg-brand-green" />
+          <div className="h-0.5 w-8 border border-white-solid" />
+          <div className="h-0.5 w-8 bg-brand-red" />
         </div>
-      </section>
+
+        <p className="mb-3 font-heading text-section font-semibold uppercase tracking-wider text-on-dark">
+          {cart.emptyTitle}
+        </p>
+        <p className="font-body text-15 text-on-dark-muted">{cart.emptyDescription}</p>
+      </div>
     )
   }
 
   return (
-    <section className={cn('py-12', className)}>
-      <div className="mx-auto max-w-2xl">
-        <h1 className="mb-8 font-display text-2xl uppercase tracking-widest text-on-dark">
-          {cart.title}
-        </h1>
-
-        <div className="space-y-4">
-          {lines.map(line => (
-            <div
-              key={line.id}
-              className="flex items-center gap-4 rounded-lg border border-white-20 p-4"
-            >
-              <div className="size-20 shrink-0 overflow-hidden rounded-md bg-white-20">
+    <div className={cn('grain-overlay relative pt-4 pb-8', className)}>
+      {/* Cart items */}
+      <div className="space-y-4">
+        {lines.map(line => (
+          <div
+            key={line.id}
+            className="group relative rounded-xl border border-white-30 bg-white-5 p-5 transition-all duration-200 hover:border-white-40 hover:bg-white-10 cart-item-in"
+          >
+            <div className="flex items-start gap-5">
+              {/* Product image */}
+              <div className="size-20 shrink-0 overflow-hidden rounded-lg bg-white-20">
                 {line.image ? (
                   <Image
                     src={line.image.url}
@@ -65,50 +70,65 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
                 )}
               </div>
 
-              <div className="flex-1">
-                <h3 className="font-body text-base font-medium text-on-dark">
+              {/* Product info */}
+              <div className="min-w-0 flex-1">
+                <h3 className="font-body text-15 font-semibold leading-snug text-on-dark">
                   {line.productTitle}
                 </h3>
                 {line.selectedOptions.length > 0 && (
-                  <p className="text-sm text-on-dark-muted">
+                  <p className="mt-1 font-body text-13 text-on-dark-muted">
                     {line.selectedOptions.map(opt => opt.value).join(' / ')}
                   </p>
                 )}
-                <p className="text-sm text-on-dark-muted">
+                <p className="mt-1 font-body text-13 text-on-dark-muted">
                   {cart.quantityLabel}: {line.quantity}
                 </p>
               </div>
 
-              <div className="text-right">
-                <p className="font-heading text-base font-semibold text-on-dark">
-                  {computeLineTotal({ amount: line.price.amount, currencyCode: line.price.currencyCode, quantity: line.quantity })}
+              {/* Line total */}
+              <div className="shrink-0 text-right">
+                <p className="font-heading text-15 font-semibold text-on-dark">
+                  {computeLineTotal({
+                    amount: line.price.amount,
+                    currencyCode: line.price.currencyCode,
+                    quantity: line.quantity,
+                  })}
                 </p>
               </div>
 
+              {/* Remove button */}
               <Button
                 variant="ghost"
-                size="icon"
-                className="shrink-0 text-on-dark hover:bg-white-20"
+                size="icon-sm"
+                className="relative size-9 shrink-0 text-on-dark-muted transition-colors hover:bg-white-20 hover:text-on-dark"
                 onClick={() => removeLine(line.id)}
                 disabled={isUpdating}
+                aria-label={`Remove ${line.productTitle} from cart`}
               >
                 <Icon path={mdiClose} size={1} className="size-4" aria-hidden="true" />
               </Button>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
-        <Separator className="my-6 bg-white-20" />
+      {/* Footer */}
+      <div className="pt-6">
+        <Separator className="mb-6 bg-white-20" />
 
         <div className="space-y-4">
-          <div className="flex justify-between text-lg font-semibold text-on-dark">
-            <span>{cart.subtotalLabel}</span>
-            <span>{formatPrice(subtotal.amount, subtotal.currencyCode)}</span>
+          <div className="flex items-center justify-between">
+            <span className="font-heading text-15 font-semibold uppercase tracking-wide text-on-dark">
+              {cart.subtotalLabel}
+            </span>
+            <span className="font-heading text-15 font-semibold text-on-dark">
+              {formatPrice(subtotal.amount, subtotal.currencyCode)}
+            </span>
           </div>
 
           <Button
             size="lg"
-            className="w-full font-heading text-13 font-semibold uppercase tracking-wider bg-brand-green text-background hover:bg-brand-green/90"
+            className="checkout-cta w-full font-heading text-13 font-semibold uppercase tracking-wider text-whiteSolid bg-brand-green hover:bg-brand-green/90 disabled:opacity-50"
             onClick={handleCheckout}
             disabled={isUpdating}
           >
@@ -116,6 +136,6 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
           </Button>
         </div>
       </div>
-    </section>
+    </div>
   )
 }
