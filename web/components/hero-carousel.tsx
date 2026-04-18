@@ -8,6 +8,7 @@ import { type Group, MathUtils, type Mesh, Vector3 } from 'three'
 const CAMERA_Y = 1
 const CAMERA_LERP_FACTOR = 0.05
 const CAMERA_IDLE_ORBIT_HEIGHT = 0.16
+const MOBILE_ORBIT_FACTOR = 2.2
 const READY_GATE_FRAMES = 4
 const DROP_START_Y = 3.4
 const PORSCHE_SCALE = 1.6
@@ -238,10 +239,12 @@ function CameraRig({
   prefersReducedMotion,
   allowIdleOrbit,
   activeModelIndex,
+  isMobile,
 }: {
   prefersReducedMotion: boolean
   allowIdleOrbit: boolean
   activeModelIndex: number
+  isMobile: boolean
 }) {
   const orbitStrength = useRef(allowIdleOrbit ? 1 : 0)
   const orbitRadius = useRef(getModelConfig(activeModelIndex).orbitRadius)
@@ -251,9 +254,10 @@ function CameraRig({
     const elapsedTime = state.clock.elapsedTime
     const activeConfig = getModelConfig(activeModelIndex)
     const targetStrength = prefersReducedMotion ? 0 : allowIdleOrbit ? 1 : 0
+    const targetRadius = activeConfig.orbitRadius * (isMobile ? MOBILE_ORBIT_FACTOR : 1)
 
     orbitStrength.current = MathUtils.damp(orbitStrength.current, targetStrength, 3.2, delta)
-    orbitRadius.current = MathUtils.damp(orbitRadius.current, activeConfig.orbitRadius, 4, delta)
+    orbitRadius.current = MathUtils.damp(orbitRadius.current, targetRadius, 4, delta)
     lookAtY.current = MathUtils.damp(lookAtY.current, activeConfig.lookAtY, 4, delta)
 
     const orbitX = Math.sin(elapsedTime / 4.8) * orbitRadius.current * orbitStrength.current
@@ -295,12 +299,14 @@ function SceneContent({
   shouldDropModel,
   prefersReducedMotion,
   allowIdleOrbit,
+  isMobile,
 }: {
   onSceneReady: () => void
   activeModelIndex: number
   shouldDropModel: boolean
   prefersReducedMotion: boolean
   allowIdleOrbit: boolean
+  isMobile: boolean
 }) {
   const activeConfig = getModelConfig(activeModelIndex)
 
@@ -353,6 +359,7 @@ function SceneContent({
         prefersReducedMotion={prefersReducedMotion}
         allowIdleOrbit={allowIdleOrbit}
         activeModelIndex={activeModelIndex}
+        isMobile={isMobile}
       />
       <ReadyGate onReady={onSceneReady} />
     </>
@@ -366,6 +373,7 @@ type HeroCarouselSceneProps = {
   prefersReducedMotion: boolean
   allowIdleOrbit: boolean
   preloadInactiveModel: boolean
+  isMobile: boolean
 }
 
 export function HeroCarouselScene({
@@ -375,6 +383,7 @@ export function HeroCarouselScene({
   prefersReducedMotion,
   allowIdleOrbit,
   preloadInactiveModel,
+  isMobile,
 }: HeroCarouselSceneProps) {
   useEffect(() => {
     useGLTF.preload(getModelPath(activeModelIndex))
@@ -397,11 +406,14 @@ export function HeroCarouselScene({
     return () => globalThis.clearTimeout(timer)
   }, [activeModelIndex, preloadInactiveModel])
 
+  const initialOrbitRadius =
+    getModelConfig(activeModelIndex).orbitRadius * (isMobile ? MOBILE_ORBIT_FACTOR : 1)
+
   return (
     <Canvas
       frameloop="always"
       shadows
-      camera={{ position: [0, CAMERA_Y, getModelConfig(activeModelIndex).orbitRadius], fov: 38 }}
+      camera={{ position: [0, CAMERA_Y, initialOrbitRadius], fov: 38 }}
       dpr={[1, 1.25]}
       gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
     >
@@ -412,6 +424,7 @@ export function HeroCarouselScene({
           shouldDropModel={shouldDropModel}
           prefersReducedMotion={prefersReducedMotion}
           allowIdleOrbit={allowIdleOrbit}
+          isMobile={isMobile}
         />
       </Suspense>
     </Canvas>

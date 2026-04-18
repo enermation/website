@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { TextHoverEffect } from '@/components/ui/text-hover-effect'
+import { useIsMobile } from '@/hooks/use-mobile'
 import {
   heroBrandWordmark,
   heroShowcaseVehicles,
@@ -56,6 +57,7 @@ type HeroSequenceProps = {
 
 export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
   const prefersReducedMotion = usePrefersReducedMotion()
+  const isMobile = useIsMobile()
   const [phase, setPhase] = useState<HeroPhase>('shell-visible')
   const [sceneReady, setSceneReady] = useState(false)
   const [textAnimationComplete, setTextAnimationComplete] = useState(false)
@@ -169,6 +171,7 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
               prefersReducedMotion={prefersReducedMotion}
               allowIdleOrbit={allowIdleOrbit}
               preloadInactiveModel={showCarouselControls}
+              isMobile={isMobile}
             />
           </div>
         ) : null}
