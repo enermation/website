@@ -5,11 +5,11 @@ type Props = {
   initialIndex?: number
 }
 
-export function HeroCarousel({ initialIndex: _initialIndex = 0 }: Props) {
+export function HeroCarousel({ initialIndex = 0 }: Props) {
   return (
     <section data-slot="hero-stage" className="hero-stage">
       <HeroBackgroundVideo />
-      <HeroSequence />
+      <HeroSequence initialIndex={initialIndex} />
     </section>
   )
 }

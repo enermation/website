@@ -5,13 +5,9 @@ import { applyProps, Canvas, useFrame } from '@react-three/fiber'
 import { type ReactNode, Suspense, useEffect, useRef } from 'react'
 import { type Group, MathUtils, type Mesh, Vector3 } from 'three'
 
-const CAMERA_Y = 1.05
-const CAMERA_Z = 15.2
-const CAMERA_FOV = 34
+const CAMERA_Y = 1
 const CAMERA_LERP_FACTOR = 0.05
-const CAMERA_IDLE_ORBIT_X = 1.35
-const CAMERA_IDLE_ORBIT_Z = 0.45
-const CAMERA_IDLE_ORBIT_HEIGHT = 0.18
+const CAMERA_IDLE_ORBIT_HEIGHT = 0.16
 const READY_GATE_FRAMES = 4
 const DROP_START_Y = 3.4
 const PORSCHE_SCALE = 1.6
@@ -20,14 +16,49 @@ const PORSCHE_MODEL_PATH = '/models/911-transformed.glb'
 const LAMBO_MODEL_PATH = '/models/lambo.glb'
 const HDR_PATH = '/models/factory-road-turnaround_256.hdr'
 
-const PORSCHE_POSITION = [-2.35, -0.15, 0.25] as const
-const LAMBO_POSITION = [2.45, -0.18, -0.25] as const
-const PORSCHE_ROTATION = [0.02, 0.08, 0] as const
-const PORSCHE_DROP_ROTATION = [-0.14, 0.26, 0.08] as const
-const LAMBO_ROTATION = [0.01, Math.PI / 1.56, 0] as const
-const LAMBO_DROP_ROTATION = [-0.18, Math.PI / 1.42, -0.1] as const
-
 const cameraTarget = new Vector3()
+
+type HeroModelConfig = {
+  orbitRadius: number
+  lookAtY: number
+  restPosition: readonly [number, number, number]
+  restRotation: readonly [number, number, number]
+  dropRotation: readonly [number, number, number]
+  idlePhase: number
+  idleRotate: number
+}
+
+const PORSCHE_CONFIG: HeroModelConfig = {
+  orbitRadius: 10.8,
+  lookAtY: 0.42,
+  restPosition: [0, -0.03, 0] as const,
+  restRotation: [0.02, 0.08, 0] as const,
+  dropRotation: [-0.12, 0.08, 0] as const,
+  idlePhase: 0,
+  idleRotate: 0.045,
+}
+
+const LAMBO_CONFIG: HeroModelConfig = {
+  orbitRadius: 11.5,
+  lookAtY: 0.34,
+  restPosition: [0, -0.06, 0] as const,
+  restRotation: [0.01, Math.PI / 1.56, 0] as const,
+  dropRotation: [-0.14, Math.PI / 1.56, 0] as const,
+  idlePhase: 1.35,
+  idleRotate: 0.05,
+}
+
+function getModelConfig(activeModelIndex: number) {
+  return activeModelIndex === 0 ? PORSCHE_CONFIG : LAMBO_CONFIG
+}
+
+function getModelPath(activeModelIndex: number) {
+  return activeModelIndex === 0 ? PORSCHE_MODEL_PATH : LAMBO_MODEL_PATH
+}
+
+function getInactiveModelPath(activeModelIndex: number) {
+  return activeModelIndex === 0 ? LAMBO_MODEL_PATH : PORSCHE_MODEL_PATH
+}
 
 function PorscheModel() {
   const { scene, nodes, materials } = useGLTF(PORSCHE_MODEL_PATH)
@@ -163,22 +194,14 @@ function LamboModel() {
 type AnimatedVehicleProps = {
   shouldDropModel: boolean
   prefersReducedMotion: boolean
-  restPosition: readonly [number, number, number]
-  restRotation: readonly [number, number, number]
-  dropRotation: readonly [number, number, number]
-  idlePhase: number
-  idleRotate: number
+  config: HeroModelConfig
   children: ReactNode
 }
 
 function AnimatedVehicle({
   shouldDropModel,
   prefersReducedMotion,
-  restPosition,
-  restRotation,
-  dropRotation,
-  idlePhase,
-  idleRotate,
+  config,
   children,
 }: AnimatedVehicleProps) {
   const groupRef = useRef<Group>(null)
@@ -198,19 +221,19 @@ function AnimatedVehicle({
 
     const progress = revealProgress.current
     const idleStrength = prefersReducedMotion ? 0 : MathUtils.smoothstep(progress, 0.76, 1)
-    const idleTime = state.clock.elapsedTime + idlePhase
+    const idleTime = state.clock.elapsedTime + config.idlePhase
 
-    group.position.x = restPosition[0]
-    group.position.z = restPosition[2]
+    group.position.x = config.restPosition[0]
+    group.position.z = config.restPosition[2]
     group.position.y =
-      MathUtils.lerp(DROP_START_Y, restPosition[1], progress) +
+      MathUtils.lerp(DROP_START_Y, config.restPosition[1], progress) +
       Math.sin(idleTime * 0.7) * 0.04 * idleStrength
 
-    group.rotation.x = MathUtils.lerp(dropRotation[0], restRotation[0], progress)
+    group.rotation.x = MathUtils.lerp(config.dropRotation[0], config.restRotation[0], progress)
     group.rotation.y =
-      MathUtils.lerp(dropRotation[1], restRotation[1], progress) +
-      Math.sin(idleTime * 0.28) * idleRotate * idleStrength
-    group.rotation.z = MathUtils.lerp(dropRotation[2], restRotation[2], progress)
+      MathUtils.lerp(config.dropRotation[1], config.restRotation[1], progress) +
+      Math.sin(idleTime * 0.28) * config.idleRotate * idleStrength
+    group.rotation.z = MathUtils.lerp(config.dropRotation[2], config.restRotation[2], progress)
   })
 
   return <group ref={groupRef}>{children}</group>
@@ -219,25 +242,36 @@ function AnimatedVehicle({
 function CameraRig({
   prefersReducedMotion,
   allowIdleOrbit,
+  activeModelIndex,
 }: {
   prefersReducedMotion: boolean
   allowIdleOrbit: boolean
+  activeModelIndex: number
 }) {
   const orbitStrength = useRef(allowIdleOrbit ? 1 : 0)
+  const orbitRadius = useRef(getModelConfig(activeModelIndex).orbitRadius)
+  const lookAtY = useRef(getModelConfig(activeModelIndex).lookAtY)
 
   useFrame((state, delta) => {
     const elapsedTime = state.clock.elapsedTime
+    const activeConfig = getModelConfig(activeModelIndex)
     const targetStrength = prefersReducedMotion ? 0 : allowIdleOrbit ? 1 : 0
-    orbitStrength.current = MathUtils.damp(orbitStrength.current, targetStrength, 3.2, delta)
 
-    const orbitX = Math.sin(elapsedTime / 5.8) * CAMERA_IDLE_ORBIT_X * orbitStrength.current
+    orbitStrength.current = MathUtils.damp(orbitStrength.current, targetStrength, 3.2, delta)
+    orbitRadius.current = MathUtils.damp(orbitRadius.current, activeConfig.orbitRadius, 4, delta)
+    lookAtY.current = MathUtils.damp(lookAtY.current, activeConfig.lookAtY, 4, delta)
+
+    const orbitX = Math.sin(elapsedTime / 4.8) * orbitRadius.current * orbitStrength.current
     const orbitY =
       CAMERA_Y + Math.sin(elapsedTime / 8.8) * CAMERA_IDLE_ORBIT_HEIGHT * orbitStrength.current
-    const orbitZ =
-      CAMERA_Z + Math.cos(elapsedTime / 5.8) * CAMERA_IDLE_ORBIT_Z * orbitStrength.current
+    const orbitZ = MathUtils.lerp(
+      orbitRadius.current,
+      Math.cos(elapsedTime / 4.8) * orbitRadius.current,
+      orbitStrength.current
+    )
 
     state.camera.position.lerp(cameraTarget.set(orbitX, orbitY, orbitZ), CAMERA_LERP_FACTOR)
-    state.camera.lookAt(0, 0.42, 0)
+    state.camera.lookAt(0, lookAtY.current, 0)
   })
 
   return null
@@ -262,15 +296,19 @@ function ReadyGate({ onReady }: { onReady: () => void }) {
 
 function SceneContent({
   onSceneReady,
+  activeModelIndex,
   shouldDropModel,
   prefersReducedMotion,
   allowIdleOrbit,
 }: {
   onSceneReady: () => void
+  activeModelIndex: number
   shouldDropModel: boolean
   prefersReducedMotion: boolean
   allowIdleOrbit: boolean
 }) {
+  const activeConfig = getModelConfig(activeModelIndex)
+
   return (
     <>
       <ambientLight intensity={0.44} />
@@ -285,77 +323,87 @@ function SceneContent({
       <directionalLight position={[-5, 7, 6]} intensity={1.25} />
       <directionalLight position={[5, 5, 4]} intensity={0.8} />
 
-      <AnimatedVehicle
-        shouldDropModel={shouldDropModel}
-        prefersReducedMotion={prefersReducedMotion}
-        restPosition={PORSCHE_POSITION}
-        restRotation={PORSCHE_ROTATION}
-        dropRotation={PORSCHE_DROP_ROTATION}
-        idlePhase={0}
-        idleRotate={0.045}
-      >
-        <PorscheModel />
-      </AnimatedVehicle>
-
-      <AnimatedVehicle
-        shouldDropModel={shouldDropModel}
-        prefersReducedMotion={prefersReducedMotion}
-        restPosition={LAMBO_POSITION}
-        restRotation={LAMBO_ROTATION}
-        dropRotation={LAMBO_DROP_ROTATION}
-        idlePhase={1.35}
-        idleRotate={0.05}
-      >
-        <LamboModel />
-      </AnimatedVehicle>
+      {activeModelIndex === 0 ? (
+        <AnimatedVehicle
+          key="porsche"
+          shouldDropModel={shouldDropModel}
+          prefersReducedMotion={prefersReducedMotion}
+          config={activeConfig}
+        >
+          <PorscheModel />
+        </AnimatedVehicle>
+      ) : (
+        <AnimatedVehicle
+          key="lambo"
+          shouldDropModel={shouldDropModel}
+          prefersReducedMotion={prefersReducedMotion}
+          config={activeConfig}
+        >
+          <LamboModel />
+        </AnimatedVehicle>
+      )}
 
       <ContactShadows
-        resolution={768}
+        resolution={640}
         frames={prefersReducedMotion ? 1 : 90}
         position={[0, -1.16, 0]}
-        scale={14}
-        blur={2.5}
+        scale={11.5}
+        blur={2.4}
         opacity={0.74}
-        far={5.2}
+        far={4.8}
       />
 
       <Environment files={HDR_PATH} frames={1} resolution={256} />
-      <CameraRig prefersReducedMotion={prefersReducedMotion} allowIdleOrbit={allowIdleOrbit} />
+      <CameraRig
+        prefersReducedMotion={prefersReducedMotion}
+        allowIdleOrbit={allowIdleOrbit}
+        activeModelIndex={activeModelIndex}
+      />
       <ReadyGate onReady={onSceneReady} />
     </>
   )
 }
 
 type HeroCarouselSceneProps = {
+  activeModelIndex: number
   onSceneReady: () => void
   shouldDropModel: boolean
   prefersReducedMotion: boolean
   allowIdleOrbit: boolean
+  preloadInactiveModel: boolean
 }
 
 export function HeroCarouselScene({
+  activeModelIndex,
   onSceneReady,
   shouldDropModel,
   prefersReducedMotion,
   allowIdleOrbit,
+  preloadInactiveModel,
 }: HeroCarouselSceneProps) {
   useEffect(() => {
-    useGLTF.preload(PORSCHE_MODEL_PATH)
-    useGLTF.preload(LAMBO_MODEL_PATH)
+    useGLTF.preload(getModelPath(activeModelIndex))
     useEnvironment.preload({ files: HDR_PATH })
-  }, [])
+  }, [activeModelIndex])
+
+  useEffect(() => {
+    if (!preloadInactiveModel) return
+
+    useGLTF.preload(getInactiveModelPath(activeModelIndex))
+  }, [activeModelIndex, preloadInactiveModel])
 
   return (
     <Canvas
       frameloop="always"
       shadows
-      camera={{ position: [0, CAMERA_Y, CAMERA_Z], fov: CAMERA_FOV }}
+      camera={{ position: [0, CAMERA_Y, getModelConfig(activeModelIndex).orbitRadius], fov: 38 }}
       dpr={[1, 1.25]}
       gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
     >
       <Suspense fallback={null}>
         <SceneContent
           onSceneReady={onSceneReady}
+          activeModelIndex={activeModelIndex}
           shouldDropModel={shouldDropModel}
           prefersReducedMotion={prefersReducedMotion}
           allowIdleOrbit={allowIdleOrbit}

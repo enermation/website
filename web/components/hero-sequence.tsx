@@ -1,10 +1,17 @@
 'use client'
 
+import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
+import { Icon } from '@mdi/react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { startTransition, useCallback, useEffect, useMemo, useState } from 'react'
 import { HeroBrandText } from '@/components/hero-brand-text'
-import { heroBrandWordmark, primaryShowroomCollectionHref, productPage } from '@/lib/data'
+import {
+  heroBrandWordmark,
+  heroShowcaseVehicles,
+  primaryShowroomCollectionHref,
+  productPage,
+} from '@/lib/data'
 import { cn } from '@/lib/utils'
 
 const HeroScene = dynamic(
@@ -45,15 +52,26 @@ function usePrefersReducedMotion() {
   return prefersReducedMotion
 }
 
-export function HeroSequence() {
+type HeroSequenceProps = {
+  initialIndex?: number
+}
+
+export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
   const prefersReducedMotion = usePrefersReducedMotion()
   const [phase, setPhase] = useState<HeroPhase>('shell-visible')
   const [sceneReady, setSceneReady] = useState(false)
   const [sweepComplete, setSweepComplete] = useState(false)
+  const [activeModelIndex, setActiveModelIndex] = useState(() =>
+    Math.min(Math.max(initialIndex, 0), heroShowcaseVehicles.length - 1)
+  )
 
   const handleSceneReady = useCallback(() => {
     setSceneReady(true)
   }, [])
+
+  useEffect(() => {
+    setActiveModelIndex(Math.min(Math.max(initialIndex, 0), heroShowcaseVehicles.length - 1))
+  }, [initialIndex])
 
   useEffect(() => {
     setPhase('shell-visible')
@@ -131,6 +149,13 @@ export function HeroSequence() {
   }, [phase, prefersReducedMotion])
 
   const shouldMountScene = prefersReducedMotion || phase !== 'shell-visible'
+  const shouldMountSceneAfterIntro =
+    prefersReducedMotion ||
+    phase === 'rainbow-sweep' ||
+    phase === 'scene-ready' ||
+    phase === 'model-drop' ||
+    phase === 'text-exit' ||
+    phase === 'idle'
   const shouldRevealScene =
     phase === 'scene-ready' || phase === 'model-drop' || phase === 'text-exit' || phase === 'idle'
   const shouldDropModel =
@@ -141,19 +166,55 @@ export function HeroSequence() {
     phase === 'model-drop' ||
     phase === 'text-exit'
   const allowIdleOrbit = phase === 'idle' && !prefersReducedMotion
+  const showCarouselControls = phase === 'text-exit' || phase === 'idle' || prefersReducedMotion
+  const activeVehicle = heroShowcaseVehicles[activeModelIndex]
+
+  const navigateModel = useCallback((direction: 1 | -1) => {
+    startTransition(() => {
+      setActiveModelIndex(currentIndex => {
+        const total = heroShowcaseVehicles.length
+        return (currentIndex + direction + total) % total
+      })
+    })
+  }, [])
+
+  const goToModel = useCallback((nextIndex: number) => {
+    startTransition(() => {
+      setActiveModelIndex(nextIndex)
+    })
+  }, [])
+
+  const modelDots = useMemo(
+    () =>
+      heroShowcaseVehicles.map((vehicle, index) => (
+        <button
+          key={vehicle.label}
+          type="button"
+          role="tab"
+          className={cn('hero-stage__dot', index === activeModelIndex && 'hero-stage__dot--active')}
+          aria-label={`Show ${vehicle.label}`}
+          aria-selected={index === activeModelIndex}
+          aria-current={index === activeModelIndex ? 'true' : undefined}
+          onClick={() => goToModel(index)}
+        />
+      )),
+    [activeModelIndex, goToModel]
+  )
 
   return (
     <div data-slot="hero-sequence" data-phase={phase} className="hero-stage__sequence">
       <div className="hero-stage__scene-shell">
-        {shouldMountScene ? (
+        {shouldMountScene && shouldMountSceneAfterIntro ? (
           <div
             className={cn('hero-stage__scene', shouldRevealScene && 'hero-stage__scene--visible')}
           >
             <HeroScene
+              activeModelIndex={activeModelIndex}
               onSceneReady={handleSceneReady}
               shouldDropModel={shouldDropModel}
               prefersReducedMotion={prefersReducedMotion}
               allowIdleOrbit={allowIdleOrbit}
+              preloadInactiveModel={showCarouselControls}
             />
           </div>
         ) : null}
@@ -173,6 +234,37 @@ export function HeroSequence() {
         <Link href={primaryShowroomCollectionHref} className="hero-stage__cta">
           {productPage.labels.viewAllStockForSale}
         </Link>
+      </div>
+
+      <div
+        className={cn(
+          'hero-stage__carousel-meta',
+          showCarouselControls && 'hero-stage__carousel-meta--visible'
+        )}
+      >
+        <p className="hero-stage__model-label">{activeVehicle.label}</p>
+        <fieldset className="hero-stage__carousel-controls" aria-roledescription="carousel">
+          <legend className="sr-only">Hero model carousel</legend>
+          <button
+            type="button"
+            className="hero-stage__nav-button"
+            aria-label="Show previous model"
+            onClick={() => navigateModel(-1)}
+          >
+            <Icon path={mdiChevronLeft} size={1} className="size-5" aria-hidden="true" />
+          </button>
+          <div className="hero-stage__dots" role="tablist" aria-label="Choose hero model">
+            {modelDots}
+          </div>
+          <button
+            type="button"
+            className="hero-stage__nav-button"
+            aria-label="Show next model"
+            onClick={() => navigateModel(1)}
+          >
+            <Icon path={mdiChevronRight} size={1} className="size-5" aria-hidden="true" />
+          </button>
+        </fieldset>
       </div>
     </div>
   )

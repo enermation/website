@@ -77,6 +77,22 @@ export const heroCategories: HeroCategory[] = [
   { label: 'Commercial', href: '/collections/commercial-vehicles' },
 ]
 
+export type HeroShowcaseVehicle = {
+  label: string
+  href: string
+}
+
+export const heroShowcaseVehicles: HeroShowcaseVehicle[] = [
+  {
+    label: 'Porsche 911',
+    href: primaryShowroomCollectionHref,
+  },
+  {
+    label: 'Lamborghini Aventador',
+    href: primaryShowroomCollectionHref,
+  },
+]
+
 export const heroBackgroundVideoUrl =
   'https://videos.pexels.com/video-files/34750442/14731773_1280_720_24fps.mp4' as const
 
