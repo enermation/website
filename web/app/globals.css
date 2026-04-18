@@ -452,7 +452,7 @@
 
 .hero-stage__wordmark-shell {
   opacity: 0;
-  transform: translateY(1.5rem) scale(0.98);
+  transform: translateY(1.5rem);
   transition:
     opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
@@ -460,43 +460,30 @@
 
 [data-phase="text-reveal"] .hero-stage__wordmark-shell,
 [data-phase="rainbow-sweep"] .hero-stage__wordmark-shell,
-[data-phase="scene-ready"] .hero-stage__wordmark-shell,
-[data-phase="model-drop"] .hero-stage__wordmark-shell {
+[data-phase="scene-ready"] .hero-stage__wordmark-shell {
   opacity: 1;
   transform: none;
 }
 
-.hero-stage__text-svg {
+[data-phase="text-exit"] .hero-stage__wordmark-shell {
+  opacity: 0;
+  transform: translateY(-0.85rem);
+}
+
+.hero-stage__text-hover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: min(100%, 72rem);
-  height: auto;
+  height: clamp(6rem, 20vw, 14rem);
+}
+
+.hero-stage__text-hover svg {
   overflow: visible;
 }
 
-.hero-stage__text-svg-base,
-.hero-stage__text-svg-outline,
-.hero-stage__text-svg-reveal {
-  font-family: var(--font-flauta), var(--font-display), serif;
-  font-size: 10rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.hero-stage__text-svg-base {
-  fill: transparent;
-  stroke: var(--white-30);
-  stroke-width: 1.5;
-}
-
-.hero-stage__text-svg-outline {
-  fill: transparent;
-  stroke: var(--white-70);
-  stroke-width: 1.5;
-}
-
-.hero-stage__text-svg-reveal {
-  fill: transparent;
-  stroke-width: 1.5;
+.hero-stage__text-hover text {
+  font-size: clamp(2.9rem, 5vw, 4.5rem);
 }
 
 .hero-stage__actions {
@@ -658,11 +645,8 @@
 }
 
 @media (max-width: 767px) {
-  .hero-stage__text-svg-base,
-  .hero-stage__text-svg-outline,
-  .hero-stage__text-svg-reveal {
-    font-size: 6.4rem;
-    letter-spacing: 0.14em;
+  .hero-stage__text-hover {
+    height: clamp(4rem, 20vw, 7rem);
   }
 
   .hero-stage__carousel-controls {

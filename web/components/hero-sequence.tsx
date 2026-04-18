@@ -24,7 +24,7 @@ const SHELL_DELAY_MS = 140
 const TEXT_REVEAL_MS = 720
 const RAINBOW_SWEEP_MS = 1200
 const SCENE_REVEAL_DELAY_MS = 120
-const TEXT_EXIT_DELAY_MS = 420
+const TEXT_EXIT_DELAY_MS = 820
 const IDLE_DELAY_MS = 520
 
 type HeroPhase =
@@ -119,7 +119,7 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
     if (phase !== 'scene-ready') return
 
     const timer = window.setTimeout(
-      () => setPhase('model-drop'),
+      () => setPhase('text-exit'),
       prefersReducedMotion ? 0 : SCENE_REVEAL_DELAY_MS
     )
 
@@ -127,10 +127,10 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
   }, [phase, prefersReducedMotion])
 
   useEffect(() => {
-    if (phase !== 'model-drop') return
+    if (phase !== 'text-exit') return
 
     const timer = window.setTimeout(
-      () => setPhase('text-exit'),
+      () => setPhase('model-drop'),
       prefersReducedMotion ? 0 : TEXT_EXIT_DELAY_MS
     )
 
@@ -138,7 +138,7 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
   }, [phase, prefersReducedMotion])
 
   useEffect(() => {
-    if (phase !== 'text-exit') return
+    if (phase !== 'model-drop') return
 
     const timer = window.setTimeout(
       () => setPhase('idle'),
@@ -153,20 +153,13 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
     prefersReducedMotion ||
     phase === 'rainbow-sweep' ||
     phase === 'scene-ready' ||
-    phase === 'model-drop' ||
     phase === 'text-exit' ||
-    phase === 'idle'
-  const shouldRevealScene =
-    phase === 'scene-ready' || phase === 'model-drop' || phase === 'text-exit' || phase === 'idle'
-  const shouldDropModel =
-    phase === 'model-drop' || phase === 'text-exit' || phase === 'idle' || prefersReducedMotion
-  const shouldTriggerSweep =
-    phase === 'rainbow-sweep' ||
-    phase === 'scene-ready' ||
     phase === 'model-drop' ||
-    phase === 'text-exit'
+    phase === 'idle'
+  const shouldRevealScene = phase === 'model-drop' || phase === 'idle'
+  const shouldDropModel = phase === 'model-drop' || phase === 'idle' || prefersReducedMotion
   const allowIdleOrbit = phase === 'idle' && !prefersReducedMotion
-  const showCarouselControls = phase === 'text-exit' || phase === 'idle' || prefersReducedMotion
+  const showCarouselControls = phase === 'idle' || prefersReducedMotion
   const activeVehicle = heroShowcaseVehicles[activeModelIndex]
 
   const navigateModel = useCallback((direction: 1 | -1) => {
@@ -222,11 +215,7 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
 
       <div className="hero-stage__center">
         <div className="hero-stage__wordmark-shell">
-          <HeroBrandText
-            text={heroBrandWordmark}
-            sweepActive={shouldTriggerSweep}
-            prefersReducedMotion={prefersReducedMotion}
-          />
+          <HeroBrandText text={heroBrandWordmark} />
         </div>
       </div>
 
