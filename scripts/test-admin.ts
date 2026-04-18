@@ -3,12 +3,18 @@
  * Run from the repo root: bun scripts/test-admin.ts
  */
 
-const domain = (process.env.SHOPIFY_ADMIN_STORE_DOMAIN ?? process.env.SHOPIFY_STORE_DOMAIN)?.trim()
+const domain = (
+  process.env.SHOPIFY_ADMIN_STORE_DOMAIN ??
+  process.env.PUBLIC_STORE_DOMAIN ??
+  process.env.SHOPIFY_STORE_DOMAIN
+)?.trim()
 let token = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN?.trim()
 let scope: string | undefined
 
 if (!domain) {
-  console.error("Missing SHOPIFY_ADMIN_STORE_DOMAIN or SHOPIFY_STORE_DOMAIN in .env.local")
+  console.error(
+    'Missing SHOPIFY_ADMIN_STORE_DOMAIN, PUBLIC_STORE_DOMAIN, or SHOPIFY_STORE_DOMAIN in .env.local'
+  )
   process.exit(1)
 }
 
@@ -18,20 +24,20 @@ if (!token) {
 
   if (!clientId || !clientSecret) {
     console.error(
-      "Missing SHOPIFY_ADMIN_ACCESS_TOKEN or SHOPIFY_ADMIN_CLIENT_ID/SHOPIFY_ADMIN_CLIENT_SECRET in .env.local"
+      'Missing SHOPIFY_ADMIN_ACCESS_TOKEN or SHOPIFY_ADMIN_CLIENT_ID/SHOPIFY_ADMIN_CLIENT_SECRET in .env.local'
     )
     process.exit(1)
   }
 
   const authRes = await fetch(`https://${domain}/admin/oauth/access_token`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       client_id: clientId,
       client_secret: clientSecret,
-      grant_type: "client_credentials",
+      grant_type: 'client_credentials',
     }),
   })
 
@@ -41,12 +47,12 @@ if (!token) {
     process.exit(1)
   }
 
-  const authJson = await authRes.json() as { access_token?: string; scope?: string }
+  const authJson = (await authRes.json()) as { access_token?: string; scope?: string }
   token = authJson.access_token?.trim()
   scope = authJson.scope
 
   if (!token) {
-    console.error("Token exchange succeeded but no access token was returned.")
+    console.error('Token exchange succeeded but no access token was returned.')
     process.exit(1)
   }
 }
@@ -63,10 +69,10 @@ const query = `{
 }`
 
 const res = await fetch(url, {
-  method: "POST",
+  method: 'POST',
   headers: {
-    "Content-Type": "application/json",
-    "X-Shopify-Access-Token": token,
+    'Content-Type': 'application/json',
+    'X-Shopify-Access-Token': token,
   },
   body: JSON.stringify({ query }),
 })
@@ -78,15 +84,15 @@ if (!res.ok) {
   process.exit(1)
 }
 
-const json = await res.json() as { data?: { shop?: Record<string, unknown> }; errors?: unknown[] }
+const json = (await res.json()) as { data?: { shop?: Record<string, unknown> }; errors?: unknown[] }
 
 if (json.errors) {
-  console.error("GraphQL errors:", JSON.stringify(json.errors, null, 2))
+  console.error('GraphQL errors:', JSON.stringify(json.errors, null, 2))
   process.exit(1)
 }
 
-console.log("Admin API connection successful!")
-console.log("Shop:", JSON.stringify(json.data?.shop, null, 2))
+console.log('Admin API connection successful!')
+console.log('Shop:', JSON.stringify(json.data?.shop, null, 2))
 if (scope) {
-  console.log("Scopes:", scope)
+  console.log('Scopes:', scope)
 }

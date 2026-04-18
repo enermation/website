@@ -10,22 +10,31 @@ import {
 import type { ShopifyCollection, ShopifyProduct, ShopifyShopInfo } from '@/lib/types'
 
 function getRequiredEnv(
-  name: 'PUBLIC_STORE_DOMAIN' | 'PUBLIC_STOREFRONT_API_TOKEN' | 'PRIVATE_STOREFRONT_API_TOKEN'
+  canonicalName: 'PUBLIC_STORE_DOMAIN' | 'PRIVATE_STOREFRONT_API_TOKEN',
+  aliases: string[] = []
 ) {
-  const value = process.env[name]?.trim()
+  const candidates = [canonicalName, ...aliases]
 
-  if (!value) {
-    throw new Error(`Missing required Shopify environment variable: ${name}`)
+  for (const name of candidates) {
+    const value = process.env[name]?.trim()
+
+    if (value) {
+      return value
+    }
   }
 
-  return value
+  const aliasText = aliases.length > 0 ? ` (also checked: ${aliases.join(', ')})` : ''
+  throw new Error(`Missing required Shopify environment variable: ${canonicalName}${aliasText}`)
 }
 
 export function getClient() {
   return createStorefrontApiClient({
-    storeDomain: getRequiredEnv('PUBLIC_STORE_DOMAIN'),
+    storeDomain: getRequiredEnv('PUBLIC_STORE_DOMAIN', ['SHOPIFY_STORE_DOMAIN']),
     apiVersion: '2026-04',
-    privateAccessToken: getRequiredEnv('PRIVATE_STOREFRONT_API_TOKEN'),
+    privateAccessToken: getRequiredEnv('PRIVATE_STOREFRONT_API_TOKEN', [
+      'SHOPIFY_STOREFRONT_ACCESS_TOKEN',
+      'PUBLIC_STOREFRONT_API_TOKEN',
+    ]),
   })
 }
 

@@ -87,8 +87,8 @@ Sources: [web/lib/shopify.ts:13-19](https://github.com/syedaliabbas1/enermation-
 2. Create `web/.env.local` with:
 
    ```bash
-   SHOPIFY_STORE_DOMAIN=your-store.myshopify.com
-   SHOPIFY_STOREFRONT_ACCESS_TOKEN=your-storefront-token
+   PUBLIC_STORE_DOMAIN=your-store.myshopify.com
+   PRIVATE_STOREFRONT_API_TOKEN=your-storefront-token
    ```
 
 3. Run locally:

@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import fs from "node:fs"
-import path from "node:path"
-import process from "node:process"
-import { fileURLToPath } from "node:url"
-import { catalog } from "./shopify-catalog-data.mjs"
+import fs from 'node:fs'
+import path from 'node:path'
+import process from 'node:process'
+import { fileURLToPath } from 'node:url'
+import { catalog } from './shopify-catalog-data.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const repoRoot = path.resolve(__dirname, "..")
+const repoRoot = path.resolve(__dirname, '..')
 
 async function main() {
   const options = parseArgs(process.argv.slice(2))
@@ -17,10 +17,13 @@ async function main() {
     process.exit(0)
   }
 
-  loadEnvFile(path.join(repoRoot, ".env.local"))
-  loadEnvFile(path.join(repoRoot, "web", ".env.local"))
+  loadEnvFile(path.join(repoRoot, '.env.local'))
+  loadEnvFile(path.join(repoRoot, 'web', '.env.local'))
 
-  const storeDomain = getRequiredEnv("SHOPIFY_ADMIN_STORE_DOMAIN")
+  const storeDomain = getRequiredEnv('SHOPIFY_ADMIN_STORE_DOMAIN', [
+    'PUBLIC_STORE_DOMAIN',
+    'SHOPIFY_STORE_DOMAIN',
+  ])
   const expectedCurrency =
     process.env.SHOPIFY_SEED_EXPECTED_CURRENCY?.trim() || catalog.store.currencyCode
   const publicationName =
@@ -28,39 +31,39 @@ async function main() {
 
   const auth = await getAdminAccess(storeDomain)
   const scopeSet = new Set(
-    (auth.scope ?? "")
-      .split(",")
-      .map((entry) => entry.trim())
+    (auth.scope ?? '')
+      .split(',')
+      .map(entry => entry.trim())
       .filter(Boolean)
   )
 
-  if (auth.scope && !scopeSet.has("read_products") && !scopeSet.has("write_products")) {
+  if (auth.scope && !scopeSet.has('read_products') && !scopeSet.has('write_products')) {
     fail(
       [
-        "This script requires the Shopify Admin token to include `read_products` or `write_products`.",
+        'This script requires the Shopify Admin token to include `read_products` or `write_products`.',
         `Current scopes: ${auth.scope}`,
-        "Update the app scopes in Shopify Dev Dashboard, release/install the app again, then rerun this script.",
-      ].join("\n")
+        'Update the app scopes in Shopify Dev Dashboard, release/install the app again, then rerun this script.',
+      ].join('\n')
     )
   }
 
   if (
     !process.env.SHOPIFY_ADMIN_LOCATION_ID?.trim() &&
     auth.scope &&
-    !scopeSet.has("read_locations")
+    !scopeSet.has('read_locations')
   ) {
     fail(
       [
-        "Inventory setup needs a Shopify location.",
-        "Either set `SHOPIFY_ADMIN_LOCATION_ID` in `.env.local` or add the `read_locations` scope to the app and reinstall it.",
+        'Inventory setup needs a Shopify location.',
+        'Either set `SHOPIFY_ADMIN_LOCATION_ID` in `.env.local` or add the `read_locations` scope to the app and reinstall it.',
         `Current scopes: ${auth.scope}`,
-      ].join("\n")
+      ].join('\n')
     )
   }
 
   console.log(`Using store: ${storeDomain}`)
   if (options.dryRun) {
-    console.log("Dry run enabled: no Shopify mutations will be executed.")
+    console.log('Dry run enabled: no Shopify mutations will be executed.')
   }
 
   const shopContext = await adminGraphql(auth.token, storeDomain, SHOP_CONTEXT_QUERY)
@@ -70,17 +73,17 @@ async function main() {
   if (!options.skipCurrencyCheck && shop.currencyCode !== expectedCurrency) {
     fail(
       [
-        "Store currency mismatch.",
+        'Store currency mismatch.',
         `Expected: ${expectedCurrency}`,
         `Actual:   ${shop.currencyCode}`,
-        "Change the store currency, update `SHOPIFY_SEED_EXPECTED_CURRENCY`, or rerun with `--skip-currency-check` if this is intentional.",
-      ].join("\n")
+        'Change the store currency, update `SHOPIFY_SEED_EXPECTED_CURRENCY`, or rerun with `--skip-currency-check` if this is intentional.',
+      ].join('\n')
     )
   }
 
   const publication = resolvePublication(publications, publicationName)
   const locationId = options.dryRun
-    ? process.env.SHOPIFY_ADMIN_LOCATION_ID?.trim() || "(required at runtime)"
+    ? process.env.SHOPIFY_ADMIN_LOCATION_ID?.trim() || '(required at runtime)'
     : await resolveLocationId(auth, storeDomain)
 
   console.log(`Shop currency: ${shop.currencyCode}`)
@@ -98,13 +101,13 @@ async function main() {
     await archiveUnmanagedProducts({
       auth,
       storeDomain,
-      keepHandles: new Set(catalog.products.map((product) => product.handle)),
+      keepHandles: new Set(catalog.products.map(product => product.handle)),
       dryRun: options.dryRun,
     })
   }
 
   for (const product of catalog.products) {
-    const collectionIds = product.collections.map((handle) => {
+    const collectionIds = product.collections.map(handle => {
       const collectionId = collectionsByHandle.get(handle)
 
       if (!collectionId) {
@@ -149,16 +152,16 @@ async function main() {
     console.log(`Upserted product ${product.handle}`)
   }
 
-  console.log("Seed complete.")
-  console.log("Manual work still left: upload product images in Shopify Admin.")
+  console.log('Seed complete.')
+  console.log('Manual work still left: upload product images in Shopify Admin.')
 }
 
 function parseArgs(args) {
   return {
-    archiveUnmanaged: args.includes("--archive-unmanaged"),
-    dryRun: args.includes("--dry-run"),
-    help: args.includes("--help") || args.includes("-h"),
-    skipCurrencyCheck: args.includes("--skip-currency-check"),
+    archiveUnmanaged: args.includes('--archive-unmanaged'),
+    dryRun: args.includes('--dry-run'),
+    help: args.includes('--help') || args.includes('-h'),
+    skipCurrencyCheck: args.includes('--skip-currency-check'),
   }
 }
 
@@ -167,7 +170,9 @@ function printUsage() {
   node scripts/seed-shopify-catalog.mjs [--dry-run] [--archive-unmanaged] [--skip-currency-check]
 
 Environment:
-  SHOPIFY_ADMIN_STORE_DOMAIN     required
+  SHOPIFY_ADMIN_STORE_DOMAIN     preferred
+  PUBLIC_STORE_DOMAIN            accepted fallback
+  SHOPIFY_STORE_DOMAIN           legacy fallback
   SHOPIFY_ADMIN_CLIENT_ID        required unless SHOPIFY_ADMIN_ACCESS_TOKEN is set
   SHOPIFY_ADMIN_CLIENT_SECRET    required unless SHOPIFY_ADMIN_ACCESS_TOKEN is set
   SHOPIFY_ADMIN_ACCESS_TOKEN     optional shortcut if you already have a token
@@ -182,15 +187,15 @@ function loadEnvFile(filePath) {
     return
   }
 
-  const content = fs.readFileSync(filePath, "utf8")
+  const content = fs.readFileSync(filePath, 'utf8')
 
   for (const rawLine of content.split(/\r?\n/)) {
     const line = rawLine.trim()
-    if (!line || line.startsWith("#") || !line.includes("=")) {
+    if (!line || line.startsWith('#') || !line.includes('=')) {
       continue
     }
 
-    const separatorIndex = rawLine.indexOf("=")
+    const separatorIndex = rawLine.indexOf('=')
     const key = rawLine.slice(0, separatorIndex).trim()
     if (!key || process.env[key]) {
       continue
@@ -208,12 +213,16 @@ function loadEnvFile(filePath) {
   }
 }
 
-function getRequiredEnv(name) {
-  const value = process.env[name]?.trim()
-  if (!value) {
-    fail(`Missing required environment variable: ${name}`)
+function getRequiredEnv(name, aliases = []) {
+  for (const candidate of [name, ...aliases]) {
+    const value = process.env[candidate]?.trim()
+    if (value) {
+      return value
+    }
   }
-  return value
+
+  const aliasText = aliases.length > 0 ? ` (also checked: ${aliases.join(', ')})` : ''
+  fail(`Missing required environment variable: ${name}${aliasText}`)
 }
 
 async function getAdminAccess(storeDomain) {
@@ -222,18 +231,18 @@ async function getAdminAccess(storeDomain) {
     return { token: directToken, scope: null }
   }
 
-  const clientId = getRequiredEnv("SHOPIFY_ADMIN_CLIENT_ID")
-  const clientSecret = getRequiredEnv("SHOPIFY_ADMIN_CLIENT_SECRET")
+  const clientId = getRequiredEnv('SHOPIFY_ADMIN_CLIENT_ID')
+  const clientSecret = getRequiredEnv('SHOPIFY_ADMIN_CLIENT_SECRET')
 
   const response = await fetch(`https://${storeDomain}/admin/oauth/access_token`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       client_id: clientId,
       client_secret: clientSecret,
-      grant_type: "client_credentials",
+      grant_type: 'client_credentials',
     }),
   })
 
@@ -252,10 +261,10 @@ async function getAdminAccess(storeDomain) {
 
 async function adminGraphql(token, storeDomain, query, variables = {}) {
   const response = await fetch(`https://${storeDomain}/admin/api/2026-04/graphql.json`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      "X-Shopify-Access-Token": token,
+      'Content-Type': 'application/json',
+      'X-Shopify-Access-Token': token,
     },
     body: JSON.stringify({ query, variables }),
   })
@@ -275,13 +284,13 @@ async function adminGraphql(token, storeDomain, query, variables = {}) {
 }
 
 function resolvePublication(publications, requestedName) {
-  const directMatch = publications.find((publication) => publication.name === requestedName)
+  const directMatch = publications.find(publication => publication.name === requestedName)
   if (directMatch) {
     return directMatch
   }
 
-  const headlessMatch = publications.find((publication) =>
-    publication.name.toLowerCase().includes("headless")
+  const headlessMatch = publications.find(publication =>
+    publication.name.toLowerCase().includes('headless')
   )
   if (headlessMatch) {
     return headlessMatch
@@ -290,8 +299,8 @@ function resolvePublication(publications, requestedName) {
   fail(
     [
       `Could not find publication "${requestedName}".`,
-      `Available publications: ${publications.map((publication) => publication.name).join(", ")}`,
-    ].join("\n")
+      `Available publications: ${publications.map(publication => publication.name).join(', ')}`,
+    ].join('\n')
   )
 }
 
@@ -305,7 +314,7 @@ async function resolveLocationId(auth, storeDomain) {
   const firstLocation = data.locations.nodes[0]
 
   if (!firstLocation?.id) {
-    fail("No Shopify locations were returned. Set SHOPIFY_ADMIN_LOCATION_ID explicitly.")
+    fail('No Shopify locations were returned. Set SHOPIFY_ADMIN_LOCATION_ID explicitly.')
   }
 
   return firstLocation.id
@@ -394,15 +403,15 @@ async function findCollectionByHandle(token, storeDomain, handle) {
     query: `handle:${handle}`,
   })
 
-  return data.collections.nodes.find((collection) => collection.handle === handle) ?? null
+  return data.collections.nodes.find(collection => collection.handle === handle) ?? null
 }
 
 async function archiveUnmanagedProducts({ auth, storeDomain, keepHandles, dryRun }) {
   const products = await listAllProducts(auth.token, storeDomain)
-  const unmanaged = products.filter((product) => !keepHandles.has(product.handle))
+  const unmanaged = products.filter(product => !keepHandles.has(product.handle))
 
   if (unmanaged.length === 0) {
-    console.log("No unmanaged products found.")
+    console.log('No unmanaged products found.')
     return
   }
 
@@ -417,7 +426,7 @@ async function archiveUnmanagedProducts({ auth, storeDomain, keepHandles, dryRun
     const result = await adminGraphql(auth.token, storeDomain, PRODUCT_SET_MUTATION, {
       identifier: { id: product.id },
       input: {
-        status: "ARCHIVED",
+        status: 'ARCHIVED',
       },
       synchronous: true,
     })
@@ -477,7 +486,7 @@ function buildProductInput(product, collectionIds, locationId) {
     vendor: product.vendor,
   }
 
-  if (product.kind === "vehicle") {
+  if (product.kind === 'vehicle') {
     const year = product.metafields.year
     const transmission = product.metafields.transmission
     const fuelType = product.metafields.fuel_type
@@ -485,9 +494,9 @@ function buildProductInput(product, collectionIds, locationId) {
     return {
       ...base,
       productOptions: [
-        { name: "Year", position: 1, values: [{ name: year }] },
-        { name: "Transmission", position: 2, values: [{ name: transmission }] },
-        { name: "Fuel Type", position: 3, values: [{ name: fuelType }] },
+        { name: 'Year', position: 1, values: [{ name: year }] },
+        { name: 'Transmission', position: 2, values: [{ name: transmission }] },
+        { name: 'Fuel Type', position: 3, values: [{ name: fuelType }] },
       ],
       variants: [
         buildVariantInput({
@@ -495,9 +504,9 @@ function buildProductInput(product, collectionIds, locationId) {
           inventoryQuantity: product.inventoryQuantity,
           locationId,
           optionValues: [
-            { optionName: "Year", name: year },
-            { optionName: "Transmission", name: transmission },
-            { optionName: "Fuel Type", name: fuelType },
+            { optionName: 'Year', name: year },
+            { optionName: 'Transmission', name: transmission },
+            { optionName: 'Fuel Type', name: fuelType },
           ],
           requiresShipping: product.requiresShipping,
           trackInventory: product.trackInventory,
@@ -508,13 +517,13 @@ function buildProductInput(product, collectionIds, locationId) {
 
   return {
     ...base,
-    productOptions: [{ name: "Title", position: 1, values: [{ name: "Default Title" }] }],
+    productOptions: [{ name: 'Title', position: 1, values: [{ name: 'Default Title' }] }],
     variants: [
       buildVariantInput({
         price: product.price,
         inventoryQuantity: product.inventoryQuantity,
         locationId,
-        optionValues: [{ optionName: "Title", name: "Default Title" }],
+        optionValues: [{ optionName: 'Title', name: 'Default Title' }],
         requiresShipping: product.requiresShipping,
         trackInventory: product.trackInventory,
       }),
@@ -535,11 +544,11 @@ function buildVariantInput({
       requiresShipping,
       tracked: trackInventory,
     },
-    inventoryPolicy: "DENY",
+    inventoryPolicy: 'DENY',
     inventoryQuantities: [
       {
         locationId,
-        name: "available",
+        name: 'available',
         quantity: inventoryQuantity,
       },
     ],
@@ -549,12 +558,12 @@ function buildVariantInput({
 }
 
 function buildMetafields(product) {
-  const namespace = product.kind === "vehicle" ? "vehicle" : "part"
+  const namespace = product.kind === 'vehicle' ? 'vehicle' : 'part'
 
   return Object.entries(product.metafields).map(([key, value]) => ({
     key,
     namespace,
-    type: key === "compatibility" ? "list.single_line_text_field" : "single_line_text_field",
+    type: key === 'compatibility' ? 'list.single_line_text_field' : 'single_line_text_field',
     value: Array.isArray(value) ? JSON.stringify(value) : String(value),
   }))
 }
@@ -565,20 +574,22 @@ function asParagraph(text) {
 
 function escapeHtml(text) {
   return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
 }
 
 function formatUserErrors(label, userErrors) {
   return [
     `Shopify returned userErrors for ${label}:`,
-    ...userErrors.map((error) => {
-      const field = Array.isArray(error.field) ? error.field.join(".") : error.field ?? "(unknown field)"
+    ...userErrors.map(error => {
+      const field = Array.isArray(error.field)
+        ? error.field.join('.')
+        : (error.field ?? '(unknown field)')
       return `- ${field}: ${error.message}`
     }),
-  ].join("\n")
+  ].join('\n')
 }
 
 function fail(message) {

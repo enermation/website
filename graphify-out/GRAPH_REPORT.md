@@ -1,133 +1,144 @@
-# Graph Report - C:\Download\Download New\Enermation-Website\enermation-website  (2026-04-18)
+# Graph Report - .  (2026-04-18)
 
 ## Corpus Check
-- 117 files · ~50,528 words
+- 111 files · ~50,614 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 320 nodes · 278 edges · 98 communities detected
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.75)
+- 319 nodes · 240 edges · 109 communities detected
+- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.75)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Collection Editorial Redesign|Collection Editorial Redesign]]
-- [[_COMMUNITY_header-navigation.ts|header-navigation.ts]]
-- [[_COMMUNITY_select.tsx|select.tsx]]
-- [[_COMMUNITY_text.ts|text.ts]]
-- [[_COMMUNITY_Hero 3D LCP Optimization|Hero 3D LCP Optimization]]
-- [[_COMMUNITY_cart-context.tsx|cart-context.tsx]]
-- [[_COMMUNITY_cart.ts|cart.ts]]
-- [[_COMMUNITY_site-footer.tsx|site-footer.tsx]]
-- [[_COMMUNITY_Live Behold Instagram Feed|Live Behold Instagram Feed]]
-- [[_COMMUNITY_setup-metafields.ts|setup-metafields.ts]]
-- [[_COMMUNITY_site-header-client.tsx|site-header-client.tsx]]
-- [[_COMMUNITY_breadcrumb.tsx|breadcrumb.tsx]]
-- [[_COMMUNITY_pagination.tsx|pagination.tsx]]
-- [[_COMMUNITY_table.tsx|table.tsx]]
-- [[_COMMUNITY_utils.ts|utils.ts]]
-- [[_COMMUNITY_build-helpers.js|build-helpers.js]]
-- [[_COMMUNITY_generate_readme.js|generate_readme.js]]
-- [[_COMMUNITY_image-gallery.tsx|image-gallery.tsx]]
-- [[_COMMUNITY_header-search.tsx|header-search.tsx]]
-- [[_COMMUNITY_product-specs1.tsx|product-specs1.tsx]]
-- [[_COMMUNITY_carousel.tsx|carousel.tsx]]
-- [[_COMMUNITY_combobox.tsx|combobox.tsx]]
-- [[_COMMUNITY_drawer.tsx|drawer.tsx]]
-- [[_COMMUNITY_native-select.tsx|native-select.tsx]]
-- [[_COMMUNITY_navigation-menu.tsx|navigation-menu.tsx]]
-- [[_COMMUNITY_popover.tsx|popover.tsx]]
-- [[_COMMUNITY_sidebar.tsx|sidebar.tsx]]
-- [[_COMMUNITY_route.ts|route.ts]]
-- [[_COMMUNITY_add-to-cart-button.tsx|add-to-cart-button.tsx]]
-- [[_COMMUNITY_animated-section.tsx|animated-section.tsx]]
-- [[_COMMUNITY_accordion.tsx|accordion.tsx]]
-- [[_COMMUNITY_alert.tsx|alert.tsx]]
-- [[_COMMUNITY_calendar.tsx|calendar.tsx]]
-- [[_COMMUNITY_chart.tsx|chart.tsx]]
-- [[_COMMUNITY_context-menu.tsx|context-menu.tsx]]
-- [[_COMMUNITY_radio-group.tsx|radio-group.tsx]]
-- [[_COMMUNITY_resizable.tsx|resizable.tsx]]
-- [[_COMMUNITY_scroll-area.tsx|scroll-area.tsx]]
-- [[_COMMUNITY_toggle-group.tsx|toggle-group.tsx]]
-- [[_COMMUNITY_createResources()|createResources()]]
-- [[_COMMUNITY_layout.tsx|layout.tsx]]
-- [[_COMMUNITY_subscribeEmail()|subscribeEmail()]]
-- [[_COMMUNITY_route.ts|route.ts]]
-- [[_COMMUNITY_page.tsx|page.tsx]]
-- [[_COMMUNITY_handleSubmit()|handleSubmit()]]
-- [[_COMMUNITY_latest-arrivals-carousel.tsx|latest-arrivals-carousel.tsx]]
-- [[_COMMUNITY_shopping-cart1.tsx|shopping-cart1.tsx]]
-- [[_COMMUNITY_site-header.tsx|site-header.tsx]]
-- [[_COMMUNITY_timeline-animation.tsx|timeline-animation.tsx]]
-- [[_COMMUNITY_cn()|cn()]]
-- [[_COMMUNITY_aspect-ratio.tsx|aspect-ratio.tsx]]
-- [[_COMMUNITY_cn()|cn()]]
-- [[_COMMUNITY_badge.tsx|badge.tsx]]
-- [[_COMMUNITY_cn()|cn()]]
-- [[_COMMUNITY_cn()|cn()]]
-- [[_COMMUNITY_cn()|cn()]]
-- [[_COMMUNITY_checkbox.tsx|checkbox.tsx]]
-- [[_COMMUNITY_command.tsx|command.tsx]]
-- [[_COMMUNITY_dialog.tsx|dialog.tsx]]
-- [[_COMMUNITY_dropdown-menu.tsx|dropdown-menu.tsx]]
-- [[_COMMUNITY_empty.tsx|empty.tsx]]
-- [[_COMMUNITY_field.tsx|field.tsx]]
-- [[_COMMUNITY_input-group.tsx|input-group.tsx]]
-- [[_COMMUNITY_input-otp.tsx|input-otp.tsx]]
-- [[_COMMUNITY_item.tsx|item.tsx]]
-- [[_COMMUNITY_kbd.tsx|kbd.tsx]]
-- [[_COMMUNITY_label.tsx|label.tsx]]
-- [[_COMMUNITY_menubar.tsx|menubar.tsx]]
-- [[_COMMUNITY_progress.tsx|progress.tsx]]
-- [[_COMMUNITY_separator.tsx|separator.tsx]]
-- [[_COMMUNITY_skeleton.tsx|skeleton.tsx]]
-- [[_COMMUNITY_switch.tsx|switch.tsx]]
-- [[_COMMUNITY_tabs.tsx|tabs.tsx]]
-- [[_COMMUNITY_textarea.tsx|textarea.tsx]]
-- [[_COMMUNITY_toggle.tsx|toggle.tsx]]
-- [[_COMMUNITY_tooltip.tsx|tooltip.tsx]]
-- [[_COMMUNITY_useDebounce()|useDebounce()]]
-- [[_COMMUNITY_useIsMobile()|useIsMobile()]]
-- [[_COMMUNITY_useTextMeasurement()|useTextMeasurement()]]
-- [[_COMMUNITY_imageLoader()|imageLoader()]]
-- [[_COMMUNITY_test-admin.ts|test-admin.ts]]
-- [[_COMMUNITY_commitlint.config.ts|commitlint.config.ts]]
-- [[_COMMUNITY_lint-staged.config.ts|lint-staged.config.ts]]
-- [[_COMMUNITY_next-env.d.ts|next-env.d.ts]]
-- [[_COMMUNITY_product-info-panel.tsx|product-info-panel.tsx]]
-- [[_COMMUNITY_page.tsx|page.tsx]]
-- [[_COMMUNITY_instagram-tile.tsx|instagram-tile.tsx]]
-- [[_COMMUNITY_product-gallery1.tsx|product-gallery1.tsx]]
-- [[_COMMUNITY_collapsible.tsx|collapsible.tsx]]
-- [[_COMMUNITY_direction.tsx|direction.tsx]]
-- [[_COMMUNITY_hover-card.tsx|hover-card.tsx]]
-- [[_COMMUNITY_input.tsx|input.tsx]]
-- [[_COMMUNITY_sheet.tsx|sheet.tsx]]
-- [[_COMMUNITY_slider.tsx|slider.tsx]]
-- [[_COMMUNITY_sonner.tsx|sonner.tsx]]
-- [[_COMMUNITY_spinner.tsx|spinner.tsx]]
-- [[_COMMUNITY_about-data.ts|about-data.ts]]
-- [[_COMMUNITY_gsap.ts|gsap.ts]]
+- [[_COMMUNITY_Community 0|Community 0]]
+- [[_COMMUNITY_Community 1|Community 1]]
+- [[_COMMUNITY_Community 2|Community 2]]
+- [[_COMMUNITY_Community 3|Community 3]]
+- [[_COMMUNITY_Community 4|Community 4]]
+- [[_COMMUNITY_Community 5|Community 5]]
+- [[_COMMUNITY_Community 6|Community 6]]
+- [[_COMMUNITY_Community 7|Community 7]]
+- [[_COMMUNITY_Community 8|Community 8]]
+- [[_COMMUNITY_Community 9|Community 9]]
+- [[_COMMUNITY_Community 10|Community 10]]
+- [[_COMMUNITY_Community 11|Community 11]]
+- [[_COMMUNITY_Community 12|Community 12]]
+- [[_COMMUNITY_Community 13|Community 13]]
+- [[_COMMUNITY_Community 14|Community 14]]
+- [[_COMMUNITY_Community 15|Community 15]]
+- [[_COMMUNITY_Community 16|Community 16]]
+- [[_COMMUNITY_Community 17|Community 17]]
+- [[_COMMUNITY_Community 18|Community 18]]
+- [[_COMMUNITY_Community 19|Community 19]]
+- [[_COMMUNITY_Community 20|Community 20]]
+- [[_COMMUNITY_Community 21|Community 21]]
+- [[_COMMUNITY_Community 22|Community 22]]
+- [[_COMMUNITY_Community 23|Community 23]]
+- [[_COMMUNITY_Community 24|Community 24]]
+- [[_COMMUNITY_Community 25|Community 25]]
+- [[_COMMUNITY_Community 26|Community 26]]
+- [[_COMMUNITY_Community 27|Community 27]]
+- [[_COMMUNITY_Community 28|Community 28]]
+- [[_COMMUNITY_Community 29|Community 29]]
+- [[_COMMUNITY_Community 30|Community 30]]
+- [[_COMMUNITY_Community 31|Community 31]]
+- [[_COMMUNITY_Community 32|Community 32]]
+- [[_COMMUNITY_Community 33|Community 33]]
+- [[_COMMUNITY_Community 34|Community 34]]
+- [[_COMMUNITY_Community 35|Community 35]]
+- [[_COMMUNITY_Community 36|Community 36]]
+- [[_COMMUNITY_Community 37|Community 37]]
+- [[_COMMUNITY_Community 38|Community 38]]
+- [[_COMMUNITY_Community 39|Community 39]]
+- [[_COMMUNITY_Community 40|Community 40]]
+- [[_COMMUNITY_Community 41|Community 41]]
+- [[_COMMUNITY_Community 42|Community 42]]
+- [[_COMMUNITY_Community 43|Community 43]]
+- [[_COMMUNITY_Community 44|Community 44]]
+- [[_COMMUNITY_Community 45|Community 45]]
+- [[_COMMUNITY_Community 46|Community 46]]
+- [[_COMMUNITY_Community 47|Community 47]]
+- [[_COMMUNITY_Community 48|Community 48]]
+- [[_COMMUNITY_Community 49|Community 49]]
+- [[_COMMUNITY_Community 50|Community 50]]
+- [[_COMMUNITY_Community 51|Community 51]]
+- [[_COMMUNITY_Community 52|Community 52]]
+- [[_COMMUNITY_Community 53|Community 53]]
+- [[_COMMUNITY_Community 54|Community 54]]
+- [[_COMMUNITY_Community 55|Community 55]]
+- [[_COMMUNITY_Community 56|Community 56]]
+- [[_COMMUNITY_Community 57|Community 57]]
+- [[_COMMUNITY_Community 58|Community 58]]
+- [[_COMMUNITY_Community 59|Community 59]]
+- [[_COMMUNITY_Community 60|Community 60]]
+- [[_COMMUNITY_Community 61|Community 61]]
+- [[_COMMUNITY_Community 62|Community 62]]
+- [[_COMMUNITY_Community 63|Community 63]]
+- [[_COMMUNITY_Community 64|Community 64]]
+- [[_COMMUNITY_Community 65|Community 65]]
+- [[_COMMUNITY_Community 66|Community 66]]
+- [[_COMMUNITY_Community 67|Community 67]]
+- [[_COMMUNITY_Community 68|Community 68]]
+- [[_COMMUNITY_Community 69|Community 69]]
+- [[_COMMUNITY_Community 70|Community 70]]
+- [[_COMMUNITY_Community 71|Community 71]]
+- [[_COMMUNITY_Community 72|Community 72]]
+- [[_COMMUNITY_Community 73|Community 73]]
+- [[_COMMUNITY_Community 74|Community 74]]
+- [[_COMMUNITY_Community 75|Community 75]]
+- [[_COMMUNITY_Community 76|Community 76]]
+- [[_COMMUNITY_Community 77|Community 77]]
+- [[_COMMUNITY_Community 78|Community 78]]
+- [[_COMMUNITY_Community 79|Community 79]]
+- [[_COMMUNITY_Community 80|Community 80]]
+- [[_COMMUNITY_Community 81|Community 81]]
+- [[_COMMUNITY_Community 82|Community 82]]
+- [[_COMMUNITY_Community 83|Community 83]]
+- [[_COMMUNITY_Community 84|Community 84]]
+- [[_COMMUNITY_Community 85|Community 85]]
+- [[_COMMUNITY_Community 86|Community 86]]
+- [[_COMMUNITY_Community 87|Community 87]]
+- [[_COMMUNITY_Community 88|Community 88]]
+- [[_COMMUNITY_Community 89|Community 89]]
+- [[_COMMUNITY_Community 90|Community 90]]
+- [[_COMMUNITY_Community 91|Community 91]]
+- [[_COMMUNITY_Community 92|Community 92]]
+- [[_COMMUNITY_Community 93|Community 93]]
+- [[_COMMUNITY_Community 94|Community 94]]
+- [[_COMMUNITY_Community 95|Community 95]]
+- [[_COMMUNITY_Community 96|Community 96]]
+- [[_COMMUNITY_Community 97|Community 97]]
+- [[_COMMUNITY_Community 98|Community 98]]
+- [[_COMMUNITY_Community 99|Community 99]]
+- [[_COMMUNITY_Community 100|Community 100]]
+- [[_COMMUNITY_Community 101|Community 101]]
+- [[_COMMUNITY_Community 102|Community 102]]
+- [[_COMMUNITY_Community 103|Community 103]]
+- [[_COMMUNITY_Community 104|Community 104]]
+- [[_COMMUNITY_Community 105|Community 105]]
+- [[_COMMUNITY_Community 106|Community 106]]
+- [[_COMMUNITY_Community 107|Community 107]]
+- [[_COMMUNITY_Community 108|Community 108]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `Collection Editorial Redesign` - 12 edges
-2. `Semantic Color Token Hierarchy` - 9 edges
-3. `Elevated Surface Card Pattern` - 8 edges
-4. `getClient()` - 7 edges
-5. `Centralized Shopify Access Layer` - 7 edges
-6. `Shopify GraphQL Query Contracts` - 6 edges
-7. `itemHref()` - 5 edges
-8. `toItem()` - 5 edges
-9. `Live Behold Instagram Feed` - 5 edges
-10. `Collection Description Data Flow` - 5 edges
+1. `getClient()` - 7 edges
+2. `itemHref()` - 5 edges
+3. `toItem()` - 5 edges
+4. `Elevated Surface Card Pattern` - 5 edges
+5. `Collection Editorial Redesign` - 4 edges
+6. `generateReadme()` - 3 edges
+7. `graphql()` - 3 edges
+8. `getExistingDefinitions()` - 3 edges
+9. `createDefinition()` - 3 edges
+10. `main()` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Collection Filtering Workflow` --references--> `fetchCollectionProducts()`  [INFERRED]
-  README.md → web\lib\shopify.ts
-- `Shopify GraphQL Query Contracts` --conceptually_related_to--> `Centralized Shopify Access Layer`  [INFERRED]
-  web\plans\graphql_queries.md → README.md
-- `Collection Editorial Redesign` --conceptually_related_to--> `Collection Filtering Workflow`  [INFERRED]
-  docs\superpowers\specs\2026-04-17-collection-editorial-redesign.md → README.md
+- `fetchCollectionProducts()` --references--> `Collection Filtering Workflow`  [INFERRED]
+  web\lib\shopify.ts → README.md
+- `Centralized Shopify Access Layer` --conceptually_related_to--> `Shopify GraphQL Query Contracts`  [INFERRED]
+  README.md → web\plans\graphql_queries.md
+- `Collection Filtering Workflow` --conceptually_related_to--> `Collection Editorial Redesign`  [INFERRED]
+  README.md → docs\superpowers\specs\2026-04-17-collection-editorial-redesign.md
 - `Semantic Color Token Hierarchy` --conceptually_related_to--> `Elevated Surface Card Pattern`  [EXTRACTED]
   tasks\color-system-redesign.md → docs\superpowers\specs\2026-04-17-collection-editorial-redesign.md
 
@@ -138,532 +149,592 @@
 
 ## Communities
 
-### Community 0 - "Collection Editorial Redesign"
-Cohesion: 0.09
-Nodes (20): Centralized Shopify Access Layer, Collection Description Data Flow, Collection Editorial Redesign, Collection Filtering Workflow, Shopify GraphQL Query Contracts, Semantic Color Token Hierarchy, Elevated Surface Card Pattern, selectMake() (+12 more)
-
-### Community 1 - "header-navigation.ts"
+### Community 0 - "Community 0"
 Cohesion: 0.23
 Nodes (10): childrenForInventory(), fallbackHref(), fallbackItems(), getHeaderNavigation(), itemHref(), normalizeTopLevelLabel(), resourceUrl(), toChild() (+2 more)
 
-### Community 2 - "select.tsx"
+### Community 1 - "Community 1"
+Cohesion: 0.17
+Nodes (6): Hero 3D LCP Optimization, Semantic Color Token Hierarchy, Elevated Surface Card Pattern, SectionHeading(), Poster-first rendering improves LCP, Replace hardcoded colors with semantic tokens
+
+### Community 2 - "Community 2"
+Cohesion: 0.2
+Nodes (6): Collection Description Data Flow, Collection Editorial Redesign, Collection Filtering Workflow, selectMake(), updateParam(), Align collection page with editorial luxury design
+
+### Community 3 - "Community 3"
 Cohesion: 0.2
 Nodes (0): 
 
-### Community 3 - "text.ts"
+### Community 4 - "Community 4"
 Cohesion: 0.28
 Nodes (3): measureMetaDescription(), measureText(), prepareMetaDescription()
 
-### Community 4 - "Hero 3D LCP Optimization"
-Cohesion: 0.25
-Nodes (2): Hero 3D LCP Optimization, Poster-first rendering improves LCP
-
-### Community 5 - "cart-context.tsx"
+### Community 5 - "Community 5"
 Cohesion: 0.25
 Nodes (0): 
 
-### Community 6 - "cart.ts"
+### Community 6 - "Community 6"
+Cohesion: 0.46
+Nodes (7): fetchCollectionProducts(), fetchCollections(), fetchProduct(), fetchShopInfo(), getClient(), getRequiredEnv(), searchProducts()
+
+### Community 7 - "Community 7"
 Cohesion: 0.33
 Nodes (0): 
 
-### Community 7 - "site-footer.tsx"
+### Community 8 - "Community 8"
 Cohesion: 0.33
 Nodes (0): 
 
-### Community 8 - "Live Behold Instagram Feed"
-Cohesion: 0.33
-Nodes (2): Live Behold Instagram Feed, Use cached server-side Instagram fetch with graceful fallback
-
-### Community 9 - "setup-metafields.ts"
+### Community 9 - "Community 9"
 Cohesion: 0.8
 Nodes (4): createDefinition(), getExistingDefinitions(), graphql(), main()
 
-### Community 10 - "site-header-client.tsx"
+### Community 10 - "Community 10"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 11 - "breadcrumb.tsx"
+### Community 11 - "Community 11"
+Cohesion: 0.4
+Nodes (0): 
+
+### Community 12 - "Community 12"
 Cohesion: 0.5
 Nodes (2): BreadcrumbLink(), cn()
 
-### Community 12 - "pagination.tsx"
+### Community 13 - "Community 13"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 13 - "table.tsx"
+### Community 14 - "Community 14"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 14 - "utils.ts"
+### Community 15 - "Community 15"
 Cohesion: 0.5
 Nodes (2): computeLineTotal(), formatPrice()
 
-### Community 15 - "build-helpers.js"
+### Community 16 - "Community 16"
 Cohesion: 0.67
 Nodes (2): capitalize(), createNewResource()
 
-### Community 16 - "generate_readme.js"
+### Community 17 - "Community 17"
 Cohesion: 0.83
 Nodes (3): capitalize(), convertForMarkdown(), generateReadme()
 
-### Community 17 - "image-gallery.tsx"
+### Community 18 - "Community 18"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 18 - "header-search.tsx"
+### Community 19 - "Community 19"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 19 - "product-specs1.tsx"
+### Community 20 - "Community 20"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 20 - "carousel.tsx"
+### Community 21 - "Community 21"
 Cohesion: 0.67
 Nodes (2): CarouselItem(), useCarousel()
 
-### Community 21 - "combobox.tsx"
+### Community 22 - "Community 22"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 22 - "drawer.tsx"
+### Community 23 - "Community 23"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 23 - "native-select.tsx"
+### Community 24 - "Community 24"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 24 - "navigation-menu.tsx"
+### Community 25 - "Community 25"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 25 - "popover.tsx"
+### Community 26 - "Community 26"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 26 - "sidebar.tsx"
+### Community 27 - "Community 27"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 27 - "route.ts"
+### Community 28 - "Community 28"
 Cohesion: 1.0
 Nodes (2): computeHmac(), POST()
 
-### Community 28 - "add-to-cart-button.tsx"
+### Community 29 - "Community 29"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 29 - "animated-section.tsx"
+### Community 30 - "Community 30"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 30 - "accordion.tsx"
+### Community 31 - "Community 31"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 31 - "alert.tsx"
+### Community 32 - "Community 32"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 32 - "calendar.tsx"
+### Community 33 - "Community 33"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 33 - "chart.tsx"
+### Community 34 - "Community 34"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 34 - "context-menu.tsx"
+### Community 35 - "Community 35"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 35 - "radio-group.tsx"
+### Community 36 - "Community 36"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 36 - "resizable.tsx"
+### Community 37 - "Community 37"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 37 - "scroll-area.tsx"
+### Community 38 - "Community 38"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 38 - "toggle-group.tsx"
+### Community 39 - "Community 39"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 39 - "createResources()"
+### Community 40 - "Community 40"
+Cohesion: 0.67
+Nodes (3): Centralized Shopify Access Layer, Shopify GraphQL Query Contracts, Keep Shopify access centralized
+
+### Community 41 - "Community 41"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 40 - "layout.tsx"
+### Community 42 - "Community 42"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 41 - "subscribeEmail()"
+### Community 43 - "Community 43"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 42 - "route.ts"
+### Community 44 - "Community 44"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 43 - "page.tsx"
+### Community 45 - "Community 45"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 44 - "handleSubmit()"
+### Community 46 - "Community 46"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 45 - "latest-arrivals-carousel.tsx"
+### Community 47 - "Community 47"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 46 - "shopping-cart1.tsx"
+### Community 48 - "Community 48"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 47 - "site-header.tsx"
+### Community 49 - "Community 49"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 48 - "timeline-animation.tsx"
+### Community 50 - "Community 50"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 49 - "cn()"
+### Community 51 - "Community 51"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 50 - "aspect-ratio.tsx"
+### Community 52 - "Community 52"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 51 - "cn()"
+### Community 53 - "Community 53"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 52 - "badge.tsx"
+### Community 54 - "Community 54"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 53 - "cn()"
+### Community 55 - "Community 55"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 54 - "cn()"
+### Community 56 - "Community 56"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 55 - "cn()"
+### Community 57 - "Community 57"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 56 - "checkbox.tsx"
+### Community 58 - "Community 58"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 57 - "command.tsx"
+### Community 59 - "Community 59"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 58 - "dialog.tsx"
+### Community 60 - "Community 60"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 59 - "dropdown-menu.tsx"
+### Community 61 - "Community 61"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 60 - "empty.tsx"
+### Community 62 - "Community 62"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 61 - "field.tsx"
+### Community 63 - "Community 63"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 62 - "input-group.tsx"
+### Community 64 - "Community 64"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 63 - "input-otp.tsx"
+### Community 65 - "Community 65"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 64 - "item.tsx"
+### Community 66 - "Community 66"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 65 - "kbd.tsx"
+### Community 67 - "Community 67"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 66 - "label.tsx"
+### Community 68 - "Community 68"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 67 - "menubar.tsx"
+### Community 69 - "Community 69"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 68 - "progress.tsx"
+### Community 70 - "Community 70"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 69 - "separator.tsx"
+### Community 71 - "Community 71"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 70 - "skeleton.tsx"
+### Community 72 - "Community 72"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 71 - "switch.tsx"
+### Community 73 - "Community 73"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 72 - "tabs.tsx"
+### Community 74 - "Community 74"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 73 - "textarea.tsx"
+### Community 75 - "Community 75"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 74 - "toggle.tsx"
+### Community 76 - "Community 76"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 75 - "tooltip.tsx"
+### Community 77 - "Community 77"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 76 - "useDebounce()"
+### Community 78 - "Community 78"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 77 - "useIsMobile()"
+### Community 79 - "Community 79"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 78 - "useTextMeasurement()"
+### Community 80 - "Community 80"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 79 - "imageLoader()"
+### Community 81 - "Community 81"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 80 - "test-admin.ts"
+### Community 82 - "Community 82"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 81 - "commitlint.config.ts"
+### Community 83 - "Community 83"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 82 - "lint-staged.config.ts"
+### Community 84 - "Community 84"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 83 - "next-env.d.ts"
+### Community 85 - "Community 85"
+Cohesion: 1.0
+Nodes (2): Live Behold Instagram Feed, Use cached server-side Instagram fetch with graceful fallback
+
+### Community 86 - "Community 86"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 84 - "product-info-panel.tsx"
+### Community 87 - "Community 87"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 85 - "page.tsx"
+### Community 88 - "Community 88"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 86 - "instagram-tile.tsx"
+### Community 89 - "Community 89"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 87 - "product-gallery1.tsx"
+### Community 90 - "Community 90"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 88 - "collapsible.tsx"
+### Community 91 - "Community 91"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 89 - "direction.tsx"
+### Community 92 - "Community 92"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 90 - "hover-card.tsx"
+### Community 93 - "Community 93"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 91 - "input.tsx"
+### Community 94 - "Community 94"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 92 - "sheet.tsx"
+### Community 95 - "Community 95"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 93 - "slider.tsx"
+### Community 96 - "Community 96"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 94 - "sonner.tsx"
+### Community 97 - "Community 97"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 95 - "spinner.tsx"
+### Community 98 - "Community 98"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 96 - "about-data.ts"
+### Community 99 - "Community 99"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 97 - "gsap.ts"
+### Community 100 - "Community 100"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 101 - "Community 101"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 102 - "Community 102"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 103 - "Community 103"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 104 - "Community 104"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 105 - "Community 105"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 106 - "Community 106"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 107 - "Community 107"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 108 - "Community 108"
 Cohesion: 1.0
 Nodes (0): 
 
 ## Knowledge Gaps
-- **5 isolated node(s):** `Keep Shopify access centralized`, `Replace hardcoded colors with semantic tokens`, `Poster-first rendering improves LCP`, `Align collection page with editorial luxury design`, `Use cached server-side Instagram fetch with graceful fallback`
+- **7 isolated node(s):** `Shopify GraphQL Query Contracts`, `Live Behold Instagram Feed`, `Keep Shopify access centralized`, `Replace hardcoded colors with semantic tokens`, `Poster-first rendering improves LCP` (+2 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `createResources()`** (2 nodes): `createResources()`, `build.js`
+- **Thin community `Community 41`** (2 nodes): `createResources()`, `build.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `layout.tsx`** (2 nodes): `RootLayout()`, `layout.tsx`
+- **Thin community `Community 42`** (2 nodes): `RootLayout()`, `layout.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `subscribeEmail()`** (2 nodes): `subscribeEmail()`, `subscribe.ts`
+- **Thin community `Community 43`** (2 nodes): `subscribeEmail()`, `subscribe.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `route.ts`** (2 nodes): `GET()`, `route.ts`
+- **Thin community `Community 44`** (2 nodes): `GET()`, `route.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `page.tsx`** (2 nodes): `ContactPage()`, `page.tsx`
+- **Thin community `Community 45`** (2 nodes): `ContactPage()`, `page.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `handleSubmit()`** (2 nodes): `handleSubmit()`, `footer-stay-connected.tsx`
+- **Thin community `Community 46`** (2 nodes): `generateMetadata()`, `page.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `latest-arrivals-carousel.tsx`** (2 nodes): `formatPriceProduct()`, `latest-arrivals-carousel.tsx`
+- **Thin community `Community 47`** (2 nodes): `handleSubmit()`, `footer-stay-connected.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `shopping-cart1.tsx`** (2 nodes): `handleCheckout()`, `shopping-cart1.tsx`
+- **Thin community `Community 48`** (2 nodes): `formatPriceProduct()`, `latest-arrivals-carousel.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `site-header.tsx`** (2 nodes): `SiteHeader()`, `site-header.tsx`
+- **Thin community `Community 49`** (2 nodes): `handleCheckout()`, `shopping-cart1.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `timeline-animation.tsx`** (2 nodes): `TimelineAnimation()`, `timeline-animation.tsx`
+- **Thin community `Community 50`** (2 nodes): `SiteHeader()`, `site-header.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `cn()`** (2 nodes): `cn()`, `alert-dialog.tsx`
+- **Thin community `Community 51`** (2 nodes): `StripeBar()`, `stripe-bar.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `aspect-ratio.tsx`** (2 nodes): `AspectRatio()`, `aspect-ratio.tsx`
+- **Thin community `Community 52`** (2 nodes): `TimelineAnimation()`, `timeline-animation.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `cn()`** (2 nodes): `cn()`, `avatar.tsx`
+- **Thin community `Community 53`** (2 nodes): `cn()`, `alert-dialog.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `badge.tsx`** (2 nodes): `Badge()`, `badge.tsx`
+- **Thin community `Community 54`** (2 nodes): `AspectRatio()`, `aspect-ratio.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `cn()`** (2 nodes): `cn()`, `button-group.tsx`
+- **Thin community `Community 55`** (2 nodes): `cn()`, `avatar.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `cn()`** (2 nodes): `cn()`, `button.tsx`
+- **Thin community `Community 56`** (2 nodes): `Badge()`, `badge.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `cn()`** (2 nodes): `cn()`, `card.tsx`
+- **Thin community `Community 57`** (2 nodes): `cn()`, `button-group.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `checkbox.tsx`** (2 nodes): `Checkbox()`, `checkbox.tsx`
+- **Thin community `Community 58`** (2 nodes): `cn()`, `button.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `command.tsx`** (2 nodes): `cn()`, `command.tsx`
+- **Thin community `Community 59`** (2 nodes): `cn()`, `card.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `dialog.tsx`** (2 nodes): `cn()`, `dialog.tsx`
+- **Thin community `Community 60`** (2 nodes): `Checkbox()`, `checkbox.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `dropdown-menu.tsx`** (2 nodes): `cn()`, `dropdown-menu.tsx`
+- **Thin community `Community 61`** (2 nodes): `cn()`, `command.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `empty.tsx`** (2 nodes): `cn()`, `empty.tsx`
+- **Thin community `Community 62`** (2 nodes): `cn()`, `dialog.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `field.tsx`** (2 nodes): `cn()`, `field.tsx`
+- **Thin community `Community 63`** (2 nodes): `cn()`, `dropdown-menu.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `input-group.tsx`** (2 nodes): `cn()`, `input-group.tsx`
+- **Thin community `Community 64`** (2 nodes): `cn()`, `empty.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `input-otp.tsx`** (2 nodes): `cn()`, `input-otp.tsx`
+- **Thin community `Community 65`** (2 nodes): `cn()`, `field.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `item.tsx`** (2 nodes): `cn()`, `item.tsx`
+- **Thin community `Community 66`** (2 nodes): `cn()`, `input-group.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `kbd.tsx`** (2 nodes): `cn()`, `kbd.tsx`
+- **Thin community `Community 67`** (2 nodes): `cn()`, `input-otp.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `label.tsx`** (2 nodes): `cn()`, `label.tsx`
+- **Thin community `Community 68`** (2 nodes): `cn()`, `item.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `menubar.tsx`** (2 nodes): `cn()`, `menubar.tsx`
+- **Thin community `Community 69`** (2 nodes): `cn()`, `kbd.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `progress.tsx`** (2 nodes): `Progress()`, `progress.tsx`
+- **Thin community `Community 70`** (2 nodes): `cn()`, `label.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `separator.tsx`** (2 nodes): `cn()`, `separator.tsx`
+- **Thin community `Community 71`** (2 nodes): `cn()`, `menubar.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `skeleton.tsx`** (2 nodes): `Skeleton()`, `skeleton.tsx`
+- **Thin community `Community 72`** (2 nodes): `Progress()`, `progress.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `switch.tsx`** (2 nodes): `Switch()`, `switch.tsx`
+- **Thin community `Community 73`** (2 nodes): `cn()`, `separator.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `tabs.tsx`** (2 nodes): `Tabs()`, `tabs.tsx`
+- **Thin community `Community 74`** (2 nodes): `Skeleton()`, `skeleton.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `textarea.tsx`** (2 nodes): `cn()`, `textarea.tsx`
+- **Thin community `Community 75`** (2 nodes): `Switch()`, `switch.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `toggle.tsx`** (2 nodes): `cn()`, `toggle.tsx`
+- **Thin community `Community 76`** (2 nodes): `Tabs()`, `tabs.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `tooltip.tsx`** (2 nodes): `TooltipContent()`, `tooltip.tsx`
+- **Thin community `Community 77`** (2 nodes): `cn()`, `textarea.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `useDebounce()`** (2 nodes): `useDebounce()`, `use-debounce.ts`
+- **Thin community `Community 78`** (2 nodes): `cn()`, `toggle.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `useIsMobile()`** (2 nodes): `useIsMobile()`, `use-mobile.ts`
+- **Thin community `Community 79`** (2 nodes): `TooltipContent()`, `tooltip.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `useTextMeasurement()`** (2 nodes): `useTextMeasurement()`, `use-text-measurement.ts`
+- **Thin community `Community 80`** (2 nodes): `useDebounce()`, `use-debounce.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `imageLoader()`** (2 nodes): `imageLoader()`, `image-loader.ts`
+- **Thin community `Community 81`** (2 nodes): `useIsMobile()`, `use-mobile.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `test-admin.ts`** (1 nodes): `test-admin.ts`
+- **Thin community `Community 82`** (2 nodes): `useTextMeasurement()`, `use-text-measurement.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `commitlint.config.ts`** (1 nodes): `commitlint.config.ts`
+- **Thin community `Community 83`** (2 nodes): `imageLoader()`, `image-loader.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `lint-staged.config.ts`** (1 nodes): `lint-staged.config.ts`
+- **Thin community `Community 84`** (2 nodes): `getInstagramFeed()`, `instagram.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `next-env.d.ts`** (1 nodes): `next-env.d.ts`
+- **Thin community `Community 85`** (2 nodes): `Live Behold Instagram Feed`, `Use cached server-side Instagram fetch with graceful fallback`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `product-info-panel.tsx`** (1 nodes): `product-info-panel.tsx`
+- **Thin community `Community 86`** (1 nodes): `test-admin.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `page.tsx`** (1 nodes): `page.tsx`
+- **Thin community `Community 87`** (1 nodes): `commitlint.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `instagram-tile.tsx`** (1 nodes): `instagram-tile.tsx`
+- **Thin community `Community 88`** (1 nodes): `next-env.d.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `product-gallery1.tsx`** (1 nodes): `product-gallery1.tsx`
+- **Thin community `Community 89`** (1 nodes): `next.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `collapsible.tsx`** (1 nodes): `collapsible.tsx`
+- **Thin community `Community 90`** (1 nodes): `product-info-panel.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `direction.tsx`** (1 nodes): `direction.tsx`
+- **Thin community `Community 91`** (1 nodes): `page.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `hover-card.tsx`** (1 nodes): `hover-card.tsx`
+- **Thin community `Community 92`** (1 nodes): `hero-carousel-wrapper.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `input.tsx`** (1 nodes): `input.tsx`
+- **Thin community `Community 93`** (1 nodes): `instagram-tile.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `sheet.tsx`** (1 nodes): `sheet.tsx`
+- **Thin community `Community 94`** (1 nodes): `product-gallery1.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `slider.tsx`** (1 nodes): `slider.tsx`
+- **Thin community `Community 95`** (1 nodes): `collapsible.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `sonner.tsx`** (1 nodes): `sonner.tsx`
+- **Thin community `Community 96`** (1 nodes): `direction.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `spinner.tsx`** (1 nodes): `spinner.tsx`
+- **Thin community `Community 97`** (1 nodes): `hover-card.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `about-data.ts`** (1 nodes): `about-data.ts`
+- **Thin community `Community 98`** (1 nodes): `input.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `gsap.ts`** (1 nodes): `gsap.ts`
+- **Thin community `Community 99`** (1 nodes): `sheet.tsx`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 100`** (1 nodes): `slider.tsx`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 101`** (1 nodes): `sonner.tsx`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 102`** (1 nodes): `spinner.tsx`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 103`** (1 nodes): `about-data.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 104`** (1 nodes): `data.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 105`** (1 nodes): `gsap.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 106`** (1 nodes): `queries.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 107`** (1 nodes): `types.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 108`** (1 nodes): `pretext.d.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Semantic Color Token Hierarchy` connect `Collection Editorial Redesign` to `site-header-client.tsx`, `site-footer.tsx`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
-- **Why does `Collection Editorial Redesign` connect `Collection Editorial Redesign` to `Live Behold Instagram Feed`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **Why does `Hero 3D LCP Optimization` connect `Hero 3D LCP Optimization` to `Collection Editorial Redesign`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **Are the 3 inferred relationships involving `Elevated Surface Card Pattern` (e.g. with `editorial-feed.tsx` and `page.tsx`) actually correct?**
+- **Why does `Collection Editorial Redesign` connect `Community 2` to `Community 1`?**
+  _High betweenness centrality (0.006) - this node is a cross-community bridge._
+- **Why does `Collection Filtering Workflow` connect `Community 2` to `Community 6`?**
+  _High betweenness centrality (0.005) - this node is a cross-community bridge._
+- **Why does `Elevated Surface Card Pattern` connect `Community 1` to `Community 2`?**
+  _High betweenness centrality (0.005) - this node is a cross-community bridge._
+- **Are the 3 inferred relationships involving `Elevated Surface Card Pattern` (e.g. with `page.tsx` and `car-card.tsx`) actually correct?**
   _`Elevated Surface Card Pattern` has 3 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Keep Shopify access centralized`, `Replace hardcoded colors with semantic tokens`, `Poster-first rendering improves LCP` to the rest of the system?**
-  _5 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Collection Editorial Redesign` be split into smaller, more focused modules?**
-  _Cohesion score 0.09 - nodes in this community are weakly interconnected._
+- **What connects `Shopify GraphQL Query Contracts`, `Live Behold Instagram Feed`, `Keep Shopify access centralized` to the rest of the system?**
+  _7 weakly-connected nodes found - possible documentation gaps or missing edges._

@@ -95,8 +95,8 @@ bun run lint
 ## Key Configuration
 
 ### Environment Variables (web/.env.local)
-- `SHOPIFY_STORE_DOMAIN` - Shopify store domain
-- `SHOPIFY_STOREFRONT_ACCESS_TOKEN` - Storefront API access token
+- `PUBLIC_STORE_DOMAIN` - Shopify store domain
+- `PRIVATE_STOREFRONT_API_TOKEN` - Storefront API access token
 
 ### TypeScript Configuration
 - **Target**: ES2017
