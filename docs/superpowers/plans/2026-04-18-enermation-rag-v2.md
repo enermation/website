@@ -36,6 +36,7 @@ New files (Phase 1 only):
 - `web/lib/rag/query.ts`
 - `web/lib/rag/indexer.ts`
 - `web/lib/rag/prompt.ts`
+- `web/lib/rag/vision.ts`
 - `web/lib/rag/ratelimit.ts`
 - `web/app/api/rag/chat/route.ts`
 - `web/app/api/rag/reindex/route.ts`
@@ -64,10 +65,10 @@ Modified files:
 1. Install runtime deps via Bun:
 
    ```bash
-   bun add @upstash/vector @upstash/ratelimit @upstash/redis voyageai @ai-sdk/anthropic @ai-sdk/react
+   bun add @upstash/vector @upstash/ratelimit @upstash/redis voyageai @ai-sdk/anthropic @ai-sdk/groq @ai-sdk/react
    ```
 
-   No dev deps needed — types ship with the SDKs.
+   Both provider packages install together so the chat provider is a pure env switch at runtime. No dev deps needed — types ship with the SDKs.
 
 2. Update the example env template (NOT the real local env — user fills that) with the keys in the table below. Each entry: one `KEY=` line plus a one-line comment above it.
 
@@ -78,8 +79,11 @@ Modified files:
    | `UPSTASH_VECTOR_REST_TOKEN` | Vector DB token | server only |
    | `UPSTASH_REDIS_REST_URL` | Rate-limit backing store | server only |
    | `UPSTASH_REDIS_REST_TOKEN` | Redis token | server only |
-   | `ANTHROPIC_API_KEY` | Claude Haiku 4.5 | server only |
    | `RAG_ADMIN_SECRET` | Reindex route bearer token | server only |
+   | `CHAT_PROVIDER` | `anthropic` or `groq` (default `anthropic`) | server only |
+   | `CHAT_MODEL_ID` | Model id (defaults per provider: `claude-haiku-4-5` / `meta-llama/llama-4-scout-17b-16e-instruct`) | server only |
+   | `ANTHROPIC_API_KEY` | Required when `CHAT_PROVIDER=anthropic` | server only |
+   | `GROQ_API_KEY` | Required when `CHAT_PROVIDER=groq` | server only |
 
 3. Add widget sizing tokens to `web/app/globals.css`.
 
@@ -131,7 +135,7 @@ Modified files:
 - `EMBED_MODEL = 'voyage-3-large'`
 - `EMBED_DIMENSIONS = 1024`
 - `RERANK_MODEL = 'rerank-2.5'`
-- `CHAT_MODEL_ID = 'claude-haiku-4-5'`
+- `DEFAULT_CHAT_PROVIDER = 'anthropic'` / `DEFAULT_ANTHROPIC_MODEL = 'claude-haiku-4-5'` / `DEFAULT_GROQ_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct'` — used only when env vars are unset
 - `TOP_K_RETRIEVE = 24`
 - `TOP_K_RERANK = 6`
 - `INDEX_BATCH_SIZE = 64` (Voyage embed batch)
@@ -144,7 +148,7 @@ Modified files:
 
 - `getVoyageClient()` — lazy singleton via `new VoyageAIClient({ apiKey })` (import `VoyageAIClient` from `voyageai`). Throw if key missing.
 - `getVectorIndex()` — lazy singleton `new Index<ProductChunkMetadata>({ url, token })` from `@upstash/vector`.
-- `getAnthropic()` — returns `anthropic(CHAT_MODEL_ID)` from `@ai-sdk/anthropic`.
+- `getChatModel()` — reads `CHAT_PROVIDER` (default `anthropic`) and `CHAT_MODEL_ID` (provider-specific default). Returns `anthropic(modelId)` or `groq(modelId)`. Validates the provider value and throws for anything else. Imports `{ anthropic }` from `@ai-sdk/anthropic` and `{ groq }` from `@ai-sdk/groq`.
 - `getRedis()` — lazy `Redis.fromEnv()` from `@upstash/redis`.
 
 Use the existing `getRequiredEnv()` helper pattern in `web/lib/shopify.ts` — do not duplicate it; import it from there.
@@ -319,30 +323,53 @@ Available products:
 
 Include `SYSTEM_PROMPT_VERSION` as a trailing comment line so prompt drift is traceable.
 
+**`web/lib/rag/vision.ts`** — exports `describeImagesForRetrieval(imageParts: Array<{ mediaType: string; data: string | URL }>, accompanyingText: string): Promise<string>`.
+
+Implementation:
+
+1. If `imageParts.length === 0`, return `accompanyingText`.
+2. Validate each part: media type in `{image/jpeg, image/png, image/webp}`; data size ≤ 4 MB (count base64 length / 4 * 3 or byte length for URLs after fetch-head). Cap at 2 images — extra images dropped with a console warn.
+3. Call `generateText({ model: getChatModel(), messages: [{ role: 'user', content: [...imagePartsAsAiSdkContent, { type: 'text', text: DESCRIBE_PROMPT + (accompanyingText ? `\n\nUser said: ${accompanyingText}` : '') }] }], temperature: 0 })` — `generateText` comes from `ai` v6 (not streamed; we need the full string before embedding).
+4. Return `accompanyingText ? `${accompanyingText}\n\n[image context] ${description}` : description` as the retrieval query.
+
+`DESCRIBE_PROMPT` constant lives in `lib/rag/prompt.ts`:
+
+```
+Identify the object in the image as concisely as possible for product search. Output comma-separated facts only (no prose, no preamble):
+part type, material, visible codes or markings, apparent vehicle make/model if inferable, mounting style, approximate dimensions if visible, colour, condition.
+If you cannot identify the object, output: unknown object.
+```
+
+`import 'server-only'` at top.
+
 **`web/app/api/rag/chat/route.ts`** — runtime `nodejs` (default), `export const dynamic = 'force-dynamic'`, `maxDuration = 30`.
 
 Flow:
 
 1. Parse `{ messages }: { messages: UIMessage[] }` from request JSON.
 2. Derive `ip` from `request.headers.get('x-forwarded-for')?.split(',')[0] ?? 'anon'`.
-3. `const { success, limit, remaining, reset } = await getChatLimiter().limit(ip)`. If `!success`, return 429 with JSON `{ error: 'rate_limited', retryAfter: reset }` and `Retry-After` header.
-4. Extract the last user message text: find last `m.role === 'user'`, join `m.parts.filter(p => p.type === 'text').map(p => p.text)`. If empty → 400.
-5. `const products = await findRelevantProducts(userText)`.
-6. `const system = buildGroundedSystemPrompt(products)`.
-7. `const result = streamText({ model: getAnthropic(), system, messages: convertToModelMessages(messages), temperature: 0.2 })`.
-8. `return result.toUIMessageStreamResponse({ messageMetadata: ({ part }) => part.type === 'finish' ? { citations: products.map(p => p.metadata.handle) } as RagChatMessageMetadata : undefined })`.
+3. `const { success, reset } = await getChatLimiter().limit(ip)`. If `!success`, return 429 with JSON `{ error: 'rate_limited', retryAfter: reset }` and `Retry-After` header.
+4. Extract last user message: find last `m.role === 'user'`. Separate its parts into `textParts` (type `text`) and `imageParts` (type `file`, media type starts with `image/`). If both arrays empty → 400.
+5. `const userText = textParts.map(p => p.text).join(' ').trim()`.
+6. `const retrievalQuery = await describeImagesForRetrieval(imageParts, userText)`.
+7. `const products = await findRelevantProducts(retrievalQuery)`.
+8. `const system = buildGroundedSystemPrompt(products)`.
+9. `const result = streamText({ model: getChatModel(), system, messages: convertToModelMessages(messages), temperature: 0.2 })` — pass the **original** `messages` (including image parts) so the answer can reference the uploaded image directly.
+10. `return result.toUIMessageStreamResponse({ messageMetadata: ({ part }) => part.type === 'finish' ? { citations: products.map(p => p.metadata.handle) } as RagChatMessageMetadata : undefined })`.
 
-All helpers imported from `ai` (v6) and `@ai-sdk/anthropic`.
+All helpers imported from `ai` (v6); provider clients come from `lib/rag/clients.ts`.
 
 ### Acceptance
 
-- `curl -N` with a UIMessage body streams tokens; final assistant message metadata carries a `citations` array.
+- `curl -N` with a UIMessage body (text-only) streams tokens; final assistant message metadata carries a `citations` array.
+- A UIMessage with an `image/jpeg` file part of a known catalog part returns a response that names the part and cites the matching handle.
+- Swapping `CHAT_PROVIDER=groq` (with a valid `GROQ_API_KEY`) and restarting produces a working response with no code change.
 - 11th request in a minute returns 429.
 - Missing env returns 500 with a clean message.
 
 ### Commit
 
-`feat(rag): add rate-limited grounded chat streaming route`
+`feat(rag): add rate-limited grounded chat streaming route with image input`
 
 ---
 
@@ -384,9 +411,10 @@ Structure (all tokens):
 - Collapsed state: a round `Button` (size `icon`, variant `default`) with `mdiChat` icon.
 - Expanded state: a `Card` with `size-widget` utility, `flex flex-col`, `shadow-xl`, `border-gray-90`, `bg-background`.
   - Header: title "Enermation Assistant" (`text-13 font-heading`), close button (`mdiClose`).
-  - Body: `Conversation` primitive wrapping `Message` items. Assistant messages use `Response`; when final `citations` metadata is present, render `ProductCitation` for each handle.
+  - Body: `Conversation` primitive wrapping `Message` items. User messages render any image parts as a `size-16 rounded-md object-cover` thumbnail (Tailwind scale `size-16`, no arbitrary values). Assistant messages use `Response`; when final `citations` metadata is present, render `ProductCitation` for each handle.
   - Empty state: `SuggestedQuestions` calling `sendMessage({ role: 'user', parts: [{type: 'text', text: q}] })`.
-  - Footer: `PromptInput` with submit handler that calls `sendMessage(...)`.
+  - Footer: `PromptInput` with (a) a text field, (b) a paperclip icon-button (`mdiPaperclipPlus`) that opens a hidden `<input type="file" accept="image/jpeg,image/png,image/webp" multiple>`, (c) a submit button. Selected files become `file` parts on the next `sendMessage` call (`parts: [{type: 'text', text}, ...files.map(f => ({type: 'file', mediaType: f.type, data: dataUrl}))]`). Preview row above the input shows thumbnails with an `mdiClose` button per file to remove before sending.
+  - Client-side validation: reject files > 4 MB or non-image mime with a muted inline error; cap at 2 images per message (disable paperclip when 2 are queued).
 
 Error handling: if `status === 'error'`, show a muted `text-13 text-muted-foreground` line "Something went wrong. Try again." and a retry button calling `regenerate()`.
 
@@ -464,7 +492,8 @@ No code commit — this task is QA only. If anything is fixed, use a `fix(rag): 
 | §7.1 Chat widget | 8, 9 |
 | §7.2 /assistant page | 8, 10 |
 | §7.3 Admin reindex | 6 |
-| §8 Infra (env, rate limit) | 1, 2, 7 |
+| §6.3 Image input (describe-then-search) | 7, 9 |
+| §8 Infra (env, rate limit, provider-agnostic) | 1, 2, 7 |
 | §9 Constraints (tokens, types) | 1, all |
 | §10 New design tokens | 1 |
 
@@ -474,6 +503,8 @@ No code commit — this task is QA only. If anything is fixed, use a `fix(rag): 
 - Shopify `products/update` webhook with signature verification → delta reindex.
 - Chat persistence to a DB (session history, shareable links).
 - Multi-tenant admin UI for the reindex route.
+- **Multimodal product embeddings** — switch to `voyage-multimodal-3`, re-index all products with their `featuredImage`. One-task swap: change embed model id + add image handling in `chunkFromShopifyProduct`.
+- **Web-search fallback** — when `findRelevantProducts` returns an empty set, let the LLM call `web_search` (Anthropic built-in) or a Tavily/Exa tool (for Groq). Turns the chat route into a minimal tool-using agent.
 
 ## Open questions (must answer before Task 7)
 

@@ -1,8 +1,13 @@
 # Enermation RAG Assistant — Spec
 
-**Status:** Draft v1
-**Date:** 2026-04-18
+**Status:** Draft v2
+**Date:** 2026-04-19 (rev)
 **Owner:** @imossaidqadri
+
+**v2 changes vs v1:**
+- Chat model is provider-agnostic (env-configurable: Anthropic **or** Groq). No code change to switch.
+- Image input added to Phase 1 via describe-then-search (vision model → text query → existing text-embedding pipeline). **No image embeddings; no re-index.**
+- Web-search fallback ("if we don't stock it, tell the user what they have") deferred to Phase 2.
 
 ---
 
@@ -19,29 +24,38 @@ Give Enermation customers a natural-language assistant that retrieves relevant p
 - **Shopify webhook live-sync** — inventory is refreshed via an admin-triggered reindex for MVP. Webhooks are Phase 2.
 - **Chat history persistence** — conversations are in-memory React state and are lost on reload. No sessions, no auth, no KV.
 - **Multi-turn tool-calling / agentic flows** — single-turn RAG only. No function calls to Shopify from the LLM.
-- **Image understanding** — text-only input and text-only output.
+- **Multimodal embeddings** — products are embedded by text only (`voyage-3-large`, 1024-dim). Image input is supported (see §6.3), but images are *described into text* before retrieval. No `voyage-multimodal-3`, no product-image embedding, no re-index.
+- **Web-search fallback** — if retrieval returns nothing, the assistant says so. It does **not** reach out to the internet to find alternatives in Phase 1 (Phase 2 via Claude `web_search` tool or Groq + Tavily equivalent).
 
 ## 3. User Stories
 
 1. A customer lands on the home page, opens the widget, asks "Do you have any low-mileage AMG coupes under £150k?" — gets a grounded answer naming 2–3 matching cars with links.
 2. A customer visits `/assistant`, asks a broader question like "What's in your salvage parts inventory?" — gets a summary plus matching product cards.
 3. A customer asks about something the store doesn't stock — the assistant says so rather than inventing products.
-4. An admin POSTs to `/api/rag/reindex` with a bearer token — the Upstash Vector index rebuilds from the current Shopify catalog.
+4. A customer uploads a photo of a spare part (e.g. a brake shoe) with or without a text question — the assistant identifies the part, answers any question, and if the catalog has a match, links to it.
+5. An admin POSTs to `/api/rag/reindex` with a bearer token — the Upstash Vector index rebuilds from the current Shopify catalog.
 
 ## 4. Architecture
 
 ```
 ┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────────┐
 │  Widget / /assistant │  │   /api/rag/chat      │  │  Upstash Ratelimit   │
-│  (client, useChat)   │─▶│   (route handler)    │─▶│  (10 req/min/IP)     │
-└──────────────────────┘  └──────────┬───────────┘  └──────────────────────┘
-                                     │
+│  (client, useChat,   │─▶│   (route handler)    │─▶│  (10 req/min/IP)     │
+│   text + image parts)│  └──────────┬───────────┘  └──────────────────────┘
+└──────────────────────┘             │
+                                     ▼
+                      ┌────────────────────────────┐
+                      │ image parts present?       │
+                      │ yes → vision describe step │
+                      │ no  → pass-through         │
+                      └──────────────┬─────────────┘
+                                     ▼
                   ┌──────────────────┼─────────────────┐
                   ▼                                    ▼
          ┌─────────────────┐                   ┌─────────────────┐
          │  Voyage embed   │                   │  streamText     │
-         │  (query vector) │                   │  @ai-sdk/anthropic│
-         └────────┬────────┘                   │  Claude Haiku 4.5│
+         │  (query vector) │                   │  @ai-sdk/<prov> │
+         └────────┬────────┘                   │  env-configured │
                   ▼                            └────────▲────────┘
          ┌─────────────────┐                            │
          │  Upstash Vector │  top-K candidates          │
@@ -52,6 +66,8 @@ Give Enermation customers a natural-language assistant that retrieves relevant p
                            │  (rerank-2.5) │────────────┘
                            └───────────────┘
 ```
+
+`<prov>` is `anthropic` or `groq`, chosen at runtime from env. Both expose a multimodal model (Claude Haiku 4.5 / Llama 4 Scout 17B-16e) — the **same client also does the vision-describe step**, so we don't pull in a second model or provider.
 
 ### Ingestion
 
@@ -129,14 +145,21 @@ For non-vehicles, vehicle lines are omitted; the title, vendor, collection names
 
 ### Query pipeline
 
-1. Receive `{ messages: UIMessage[] }` — last user message is the query.
+1. Receive `{ messages: UIMessage[] }` — last user message may contain `text` parts and/or `file` parts (images: `image/jpeg`, `image/png`, `image/webp`; cap 4 MB each, 2 per message).
 2. Rate-limit check via `@upstash/ratelimit` by IP (sliding window, 10/min).
-3. Embed the last user message with Voyage (`voyage-3-large`, `input_type: "query"`, 1024-dim).
-4. Query Upstash Vector: `topK = 25`, `includeMetadata: true`.
-5. Rerank candidates with Voyage (`rerank-2.5`), keep top 6.
-6. Build system prompt with the 6 products inlined as `[title](url)` citations + key attributes.
-7. Stream response via `streamText` with Claude Haiku 4.5.
-8. Return `toUIMessageStreamResponse()`.
+3. **If the last user message has any image parts:** call the chat model once in "describe mode" — pass image parts + a constrained prompt ("Describe the object: part type, material, visible codes/markings, apparent vehicle make/model, mounting style, measurements if visible. No prose; comma-separated facts.") — concatenate the returned description with any accompanying user text to form the retrieval query. Else: the retrieval query is the user text alone.
+4. Embed the retrieval query with Voyage (`voyage-3-large`, `input_type: "query"`, 1024-dim).
+5. Query Upstash Vector: `topK = 25`, `includeMetadata: true`.
+6. Rerank candidates with Voyage (`rerank-2.5`), keep top 6.
+7. Build system prompt with the 6 products inlined as `[title](url)` citations + key attributes.
+8. Stream response via `streamText` with the env-configured chat model. Pass the original user messages *with* image parts intact so the model can reference the picture when answering ("the break shoe you uploaded looks like…").
+9. Return `toUIMessageStreamResponse()`.
+
+### 6.3 Image input — design notes
+
+- **Why describe-then-search, not multimodal embeddings.** Multimodal embeddings would require re-indexing every product with its `featuredImage` and switching to `voyage-multimodal-3`. In a dealership catalog, product titles already carry the visual signal (make/model/part name), so a text description extracted from the image is sufficient for retrieval. If visual-only queries ("this thing, I don't know what it is") underperform in practice, upgrading to multimodal embeddings is a one-task swap — no spec change.
+- **Why reuse the chat model for the describe step.** Both Claude Haiku 4.5 and Llama 4 Scout 17B-16e are multimodal. Using the same client for describe + answer avoids adding a vendor (Cloud Vision / SerpAPI Lens) just for OCR-like extraction.
+- **Why no Google Lens.** Lens is a consumer app without an official API. The viable proxies — Cloud Vision (different capability) and SerpAPI's Lens endpoint (third-party scraper, ToS-grey, fragile) — add a vendor without solving catalog matching, which is the part that actually requires our index. The "search the whole internet" behavior is better served by a Phase 2 web-search tool wired into the same LLM.
 
 ### Indexing pipeline
 
@@ -175,22 +198,31 @@ All static strings — widget title, greeting, suggested questions, error messag
 | Upstash Ratelimit  | `@upstash/ratelimit`     | Per-IP throttle on chat endpoint            |
 | Upstash Redis      | `@upstash/redis`         | Backing store for ratelimit                 |
 | Voyage AI          | `voyageai`               | Embeddings (`voyage-3-large`) + reranking (`rerank-2.5`) |
-| Anthropic provider | `@ai-sdk/anthropic`      | LLM provider for `streamText`               |
+| **Chat provider (choose one at install)** | `@ai-sdk/anthropic` **or** `@ai-sdk/groq` | LLM for describe + streamText. Both multimodal. |
 | AI SDK React       | `@ai-sdk/react`          | `useChat` hook (client)                     |
 | AI SDK core        | `ai` (^6, already present) | `streamText`, `UIMessage`, helpers       |
 | AI Elements        | CLI-installed components | UI primitives for chat                      |
 
-### Env vars (added to `.env.local.example`)
+**Both provider packages are installed** (`@ai-sdk/anthropic` + `@ai-sdk/groq`) so swapping is a config change. `getChatModel()` in `lib/rag/clients.ts` returns the configured provider based on `CHAT_PROVIDER`:
+- `anthropic` → `anthropic(CHAT_MODEL_ID)` where `CHAT_MODEL_ID` defaults to `claude-haiku-4-5`
+- `groq` → `groq(CHAT_MODEL_ID)` where `CHAT_MODEL_ID` defaults to `meta-llama/llama-4-scout-17b-16e-instruct`
 
-```
-VOYAGE_API_KEY=
-UPSTASH_VECTOR_REST_URL=
-UPSTASH_VECTOR_REST_TOKEN=
-UPSTASH_REDIS_REST_URL=
-UPSTASH_REDIS_REST_TOKEN=
-ANTHROPIC_API_KEY=
-RAG_ADMIN_SECRET=
-```
+### Env vars (documented in the example env template; real values live in the untracked local env file)
+
+| Variable | Purpose | Default / example |
+|---|---|---|
+| `VOYAGE_API_KEY` | Embeddings + rerank | — |
+| `UPSTASH_VECTOR_REST_URL` | Vector DB endpoint | — |
+| `UPSTASH_VECTOR_REST_TOKEN` | Vector DB token | — |
+| `UPSTASH_REDIS_REST_URL` | Ratelimit backing store | — |
+| `UPSTASH_REDIS_REST_TOKEN` | Redis token | — |
+| `RAG_ADMIN_SECRET` | Bearer for `/api/rag/reindex` | — |
+| `CHAT_PROVIDER` | `anthropic` or `groq` | `anthropic` |
+| `CHAT_MODEL_ID` | Model id passed to provider | `claude-haiku-4-5` or `meta-llama/llama-4-scout-17b-16e-instruct` |
+| `ANTHROPIC_API_KEY` | Required iff `CHAT_PROVIDER=anthropic` | — |
+| `GROQ_API_KEY` | Required iff `CHAT_PROVIDER=groq` | — |
+
+The example env template ships stubs for all of the above; the local env file is user-managed.
 
 ## 9. Constraints (non-negotiable)
 
@@ -251,9 +283,11 @@ MVP is done when:
 2. `bun run lint` passes.
 3. POSTing to `/api/rag/reindex` with the admin token indexes every product in Shopify and returns `{ indexed: N, failed: 0 }`.
 4. Opening the widget on `/` and asking "show me a Ferrari" streams an answer within 3s TTFT and cites at least one real product URL that resolves to a 200 page.
-5. `/assistant` renders the same behavior in a full-page layout.
-6. Sending 11 requests from the same IP within 60s returns a 429 on the 11th.
-7. Asking about a product not in inventory returns a graceful "I don't have that" answer — **not** a fabricated product.
+5. Uploading an image of a known catalog part (spare part or vehicle photo) via the widget returns a grounded answer that correctly identifies the part and — if present — cites the matching product URL. The describe step adds ≤ 1.5s to TTFT.
+6. Switching `CHAT_PROVIDER` from `anthropic` to `groq` (or vice-versa) in the env requires a restart only — no code change — and all success criteria (1–5) still pass.
+7. `/assistant` renders the same behavior in a full-page layout.
+8. Sending 11 requests from the same IP within 60s returns a 429 on the 11th.
+9. Asking about a product not in inventory returns a graceful "I don't have that" answer — **not** a fabricated product.
 
 ## 12. Risks & Mitigations
 
@@ -268,22 +302,28 @@ MVP is done when:
 
 ## 13. Phase Split
 
-| Area                       | Phase 1 (this spec)       | Phase 2 (follow-up)          |
-| -------------------------- | ------------------------- | ---------------------------- |
-| `/assistant` page          | ✅                        |                              |
-| Floating widget            | ✅                        |                              |
-| `/search` AI tab           |                           | ✅                           |
-| Admin reindex endpoint     | ✅                        |                              |
-| Shopify webhook live-sync  |                           | ✅                           |
-| Chat history persistence   |                           | ✅                           |
-| Citation click-through tracking |                       | ✅                           |
-| Analytics (which questions get asked) |                  | ✅                           |
+| Area                                  | Phase 1 (this spec) | Phase 2 (follow-up) |
+| ------------------------------------- | ------------------- | ------------------- |
+| `/assistant` page                     | yes                 |                     |
+| Floating widget                       | yes                 |                     |
+| Admin reindex endpoint                | yes                 |                     |
+| Image input (describe-then-search)    | yes                 |                     |
+| Provider-agnostic chat (Anthropic/Groq) | yes               |                     |
+| `/search` AI tab                      |                     | yes                 |
+| Shopify webhook live-sync             |                     | yes                 |
+| Chat history persistence              |                     | yes                 |
+| Citation click-through tracking       |                     | yes                 |
+| Analytics (which questions get asked) |                     | yes                 |
+| Multimodal product embeddings (`voyage-multimodal-3` + image re-index) |  | yes |
+| Web-search fallback when RAG misses (Claude `web_search` / Tavily for Groq) | | yes |
 
 ## 14. Open Questions
 
-1. Does the user have Voyage / Upstash / Anthropic accounts provisioned? (User confirmed: "skip part B, I'll handle it.") → assume yes.
+1. Does the user have Voyage / Upstash / Anthropic / Groq accounts provisioned? (User confirmed: "skip part B, I'll handle it.") → assume yes.
 2. Are all shopify products to be indexed, or should `availableForSale: false` products be skipped? **Default: index everything, mark availability in metadata so the LLM can state it.**
 3. Embedding model — `voyage-3-large` (1024) or `voyage-3-lite` (512)? **Default: `voyage-3-large`** for quality; swap later if cost is a concern.
+4. Launch provider — Anthropic (Claude Haiku 4.5) or Groq (Llama 4 Scout 17B-16e)? Code supports both; the choice is a default env value. **Proposed default: `anthropic`** for stronger reasoning; swap to `groq` if cost/latency becomes a concern.
+5. Image size + quantity caps — proposed **4 MB/image, 2 images/message**. Over cap → client-side rejection with a friendly message.
 
 ---
 
