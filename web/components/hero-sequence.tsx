@@ -4,8 +4,8 @@ import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { startTransition, useCallback, useEffect, useMemo, useState } from 'react'
-import { HeroBrandText } from '@/components/hero-brand-text'
+import { useCallback, useEffect, useState } from 'react'
+import { TextHoverEffect } from '@/components/ui/text-hover-effect'
 import {
   heroBrandWordmark,
   heroShowcaseVehicles,
@@ -21,8 +21,7 @@ const HeroScene = dynamic(
 )
 
 const SHELL_DELAY_MS = 140
-const TEXT_REVEAL_MS = 720
-const RAINBOW_SWEEP_MS = 1200
+const TEXT_ANIMATION_MS = 4000
 const SCENE_REVEAL_DELAY_MS = 120
 const TEXT_EXIT_DELAY_MS = 820
 const IDLE_DELAY_MS = 520
@@ -30,10 +29,9 @@ const IDLE_DELAY_MS = 520
 type HeroPhase =
   | 'shell-visible'
   | 'text-reveal'
-  | 'rainbow-sweep'
   | 'scene-ready'
-  | 'model-drop'
   | 'text-exit'
+  | 'model-drop'
   | 'idle'
 
 function usePrefersReducedMotion() {
@@ -60,7 +58,7 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
   const prefersReducedMotion = usePrefersReducedMotion()
   const [phase, setPhase] = useState<HeroPhase>('shell-visible')
   const [sceneReady, setSceneReady] = useState(false)
-  const [sweepComplete, setSweepComplete] = useState(false)
+  const [textAnimationComplete, setTextAnimationComplete] = useState(false)
   const [activeModelIndex, setActiveModelIndex] = useState(() =>
     Math.min(Math.max(initialIndex, 0), heroShowcaseVehicles.length - 1)
   )
@@ -70,13 +68,9 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
   }, [])
 
   useEffect(() => {
-    setActiveModelIndex(Math.min(Math.max(initialIndex, 0), heroShowcaseVehicles.length - 1))
-  }, [initialIndex])
-
-  useEffect(() => {
     setPhase('shell-visible')
     setSceneReady(false)
-    setSweepComplete(prefersReducedMotion)
+    setTextAnimationComplete(prefersReducedMotion)
 
     const timer = window.setTimeout(
       () => setPhase('text-reveal'),
@@ -89,31 +83,21 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
   useEffect(() => {
     if (phase !== 'text-reveal') return
 
-    const timer = window.setTimeout(
-      () => setPhase('rainbow-sweep'),
-      prefersReducedMotion ? 0 : TEXT_REVEAL_MS
-    )
-
-    return () => window.clearTimeout(timer)
-  }, [phase, prefersReducedMotion])
-
-  useEffect(() => {
-    if (phase !== 'rainbow-sweep') return
     if (prefersReducedMotion) {
-      setSweepComplete(true)
+      setTextAnimationComplete(true)
       return
     }
 
-    setSweepComplete(false)
-    const timer = window.setTimeout(() => setSweepComplete(true), RAINBOW_SWEEP_MS)
+    setTextAnimationComplete(false)
+    const timer = window.setTimeout(() => setTextAnimationComplete(true), TEXT_ANIMATION_MS)
 
     return () => window.clearTimeout(timer)
   }, [phase, prefersReducedMotion])
 
   useEffect(() => {
-    if (phase !== 'rainbow-sweep' || !sceneReady || !sweepComplete) return
+    if (phase !== 'text-reveal' || !sceneReady || !textAnimationComplete) return
     setPhase('scene-ready')
-  }, [phase, sceneReady, sweepComplete])
+  }, [phase, sceneReady, textAnimationComplete])
 
   useEffect(() => {
     if (phase !== 'scene-ready') return
@@ -149,13 +133,11 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
   }, [phase, prefersReducedMotion])
 
   const shouldMountScene = prefersReducedMotion || phase !== 'shell-visible'
-  const shouldMountSceneAfterIntro =
+  const shouldRenderWordmark =
     prefersReducedMotion ||
-    phase === 'rainbow-sweep' ||
+    phase === 'text-reveal' ||
     phase === 'scene-ready' ||
-    phase === 'text-exit' ||
-    phase === 'model-drop' ||
-    phase === 'idle'
+    phase === 'text-exit'
   const shouldRevealScene = phase === 'model-drop' || phase === 'idle'
   const shouldDropModel = phase === 'model-drop' || phase === 'idle' || prefersReducedMotion
   const allowIdleOrbit = phase === 'idle' && !prefersReducedMotion
@@ -163,41 +145,20 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
   const activeVehicle = heroShowcaseVehicles[activeModelIndex]
 
   const navigateModel = useCallback((direction: 1 | -1) => {
-    startTransition(() => {
-      setActiveModelIndex(currentIndex => {
-        const total = heroShowcaseVehicles.length
-        return (currentIndex + direction + total) % total
-      })
+    setActiveModelIndex(currentIndex => {
+      const total = heroShowcaseVehicles.length
+      return (currentIndex + direction + total) % total
     })
   }, [])
 
   const goToModel = useCallback((nextIndex: number) => {
-    startTransition(() => {
-      setActiveModelIndex(nextIndex)
-    })
+    setActiveModelIndex(nextIndex)
   }, [])
-
-  const modelDots = useMemo(
-    () =>
-      heroShowcaseVehicles.map((vehicle, index) => (
-        <button
-          key={vehicle.label}
-          type="button"
-          role="tab"
-          className={cn('hero-stage__dot', index === activeModelIndex && 'hero-stage__dot--active')}
-          aria-label={`Show ${vehicle.label}`}
-          aria-selected={index === activeModelIndex}
-          aria-current={index === activeModelIndex ? 'true' : undefined}
-          onClick={() => goToModel(index)}
-        />
-      )),
-    [activeModelIndex, goToModel]
-  )
 
   return (
     <div data-slot="hero-sequence" data-phase={phase} className="hero-stage__sequence">
       <div className="hero-stage__scene-shell">
-        {shouldMountScene && shouldMountSceneAfterIntro ? (
+        {shouldMountScene ? (
           <div
             className={cn('hero-stage__scene', shouldRevealScene && 'hero-stage__scene--visible')}
           >
@@ -215,7 +176,11 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
 
       <div className="hero-stage__center">
         <div className="hero-stage__wordmark-shell">
-          <HeroBrandText text={heroBrandWordmark} />
+          {shouldRenderWordmark ? (
+            <div className="hero-stage__text-hover">
+              <TextHoverEffect text={heroBrandWordmark} />
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -243,7 +208,21 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
             <Icon path={mdiChevronLeft} size={1} className="size-5" aria-hidden="true" />
           </button>
           <div className="hero-stage__dots" role="tablist" aria-label="Choose hero model">
-            {modelDots}
+            {heroShowcaseVehicles.map((vehicle, index) => (
+              <button
+                key={vehicle.label}
+                type="button"
+                role="tab"
+                className={cn(
+                  'hero-stage__dot',
+                  index === activeModelIndex && 'hero-stage__dot--active'
+                )}
+                aria-label={`Show ${vehicle.label}`}
+                aria-selected={index === activeModelIndex}
+                aria-current={index === activeModelIndex ? 'true' : undefined}
+                onClick={() => goToModel(index)}
+              />
+            ))}
           </div>
           <button
             type="button"

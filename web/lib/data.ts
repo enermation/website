@@ -64,19 +64,6 @@ export const primaryShowroomCollectionHandle = 'shop-all'
 export const primaryShowroomCollectionHref =
   `/collections/${primaryShowroomCollectionHandle}` as const
 
-// â”€â”€ Hero carousel categories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-export type HeroCategory = {
-  label: string
-  href: string
-}
-
-export const heroCategories: HeroCategory[] = [
-  { label: 'Sedan', href: '/collections/sedans' },
-  { label: 'SUV', href: '/collections/suvs' },
-  { label: 'Commercial', href: '/collections/commercial-vehicles' },
-]
-
 export type HeroShowcaseVehicle = {
   label: string
   href: string
