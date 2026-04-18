@@ -356,13 +356,302 @@
   z-index: 10;
 }
 
-/* ─── Hero Animation No-JS Fallback ─── */
-/* When JS is disabled, GSAP never runs so elements stay at their initial CSS
-   values. Setting opacity:1 / transform:none here as the no-JS baseline. */
-[data-hero-title],
-[data-hero-cta] {
+/* Hero stage */
+.hero-stage {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  isolation: isolate;
+  background-color: var(--surface-dark);
+}
+
+.hero-stage__media,
+.hero-stage__scene-shell,
+.hero-stage__scene {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-stage__fallback,
+.hero-stage__video {
+  object-fit: cover;
+  transition: opacity 0.45s ease;
+}
+
+.hero-stage__fallback {
+  z-index: 0;
+}
+
+.hero-stage__fallback--hidden {
+  opacity: 0;
+}
+
+.hero-stage__video {
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.hero-stage__video--ready {
+  opacity: 1;
+}
+
+.hero-stage__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(180deg, oklch(0 0 0 / 18%) 0%, oklch(0 0 0 / 34%) 58%, oklch(0 0 0 / 62%) 100%),
+    linear-gradient(115deg, oklch(0 0 0 / 46%) 8%, oklch(0 0 0 / 0%) 42%);
+}
+
+.hero-stage__sequence {
+  position: relative;
+  z-index: 3;
+  min-height: 100dvh;
+  pointer-events: none;
+}
+
+.hero-stage__scene {
+  opacity: 0;
+  transform: scale(1.015);
+  transition:
+    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+  pointer-events: none;
+}
+
+.hero-stage__scene--visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hero-stage__center {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem 8rem;
+}
+
+.hero-stage__wordmark-shell {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-phase="text-reveal"] .hero-stage__wordmark-shell,
+[data-phase="scene-ready"] .hero-stage__wordmark-shell {
   opacity: 1;
   transform: none;
+}
+
+[data-phase="text-exit"] .hero-stage__wordmark-shell {
+  opacity: 0;
+  transform: translateY(-0.85rem);
+}
+
+.hero-stage__text-hover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 72rem);
+  height: clamp(6rem, 20vw, 14rem);
+}
+
+.hero-stage__text-hover svg {
+  overflow: visible;
+}
+
+.hero-stage__text-hover text {
+  font-size: clamp(2.9rem, 5vw, 4.5rem);
+}
+
+.hero-stage__actions {
+  position: absolute;
+  inset-inline: 1.5rem;
+  bottom: 2.75rem;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-stage__carousel-meta {
+  position: absolute;
+  inset-inline: 1.5rem;
+  bottom: 7rem;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition:
+    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.hero-stage__carousel-meta--visible {
+  opacity: 1;
+  transform: none;
+}
+
+.hero-stage__model-label {
+  color: var(--text-on-dark);
+  font-family: var(--font-heading);
+  font-size: var(--text-13);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.hero-stage__carousel-controls {
+  display: flex;
+  min-inline-size: 0;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  pointer-events: auto;
+}
+
+.hero-stage__nav-button {
+  display: inline-flex;
+  height: 2.875rem;
+  width: 2.875rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--white-30);
+  border-radius: 9999px;
+  background-color: oklch(0 0 0 / 24%);
+  color: var(--text-on-dark);
+  backdrop-filter: blur(14px);
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.hero-stage__nav-button:hover {
+  border-color: var(--white-solid);
+  background-color: var(--white-solid);
+  color: var(--foreground);
+}
+
+.hero-stage__nav-button:focus-visible {
+  outline: 2px solid var(--white-solid);
+  outline-offset: 4px;
+}
+
+.hero-stage__dots {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.hero-stage__dot {
+  height: 0.5rem;
+  width: 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--white-30);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.hero-stage__dot:hover {
+  background-color: var(--white-70);
+}
+
+.hero-stage__dot:focus-visible {
+  outline: 2px solid var(--white-solid);
+  outline-offset: 4px;
+}
+
+.hero-stage__dot--active {
+  transform: scale(1.25);
+  background-color: var(--white-solid);
+}
+
+.hero-stage__cta {
+  pointer-events: auto;
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--white-solid);
+  padding-inline: 2rem;
+  background-color: oklch(0 0 0 / 26%);
+  color: var(--text-on-dark);
+  font-family: var(--font-heading);
+  font-size: var(--text-13);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  backdrop-filter: blur(14px);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.hero-stage__cta:hover {
+  border-color: var(--white-solid);
+  background-color: var(--white-solid);
+  color: var(--foreground);
+}
+
+.hero-stage__cta:focus-visible {
+  outline: 2px solid var(--white-solid);
+  outline-offset: 4px;
+}
+
+@media (min-width: 768px) {
+  .hero-stage__center {
+    padding-bottom: 9rem;
+  }
+
+  .hero-stage__carousel-meta {
+    bottom: 8rem;
+  }
+
+  .hero-stage__actions {
+    bottom: 3.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-stage__text-hover {
+    height: clamp(4rem, 20vw, 7rem);
+  }
+
+  .hero-stage__carousel-controls {
+    gap: 0.75rem;
+  }
+
+  .hero-stage__nav-button {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-stage__scene,
+  .hero-stage__wordmark-shell {
+    transition: none;
+    animation: none;
+  }
 }
 
 [data-instagram-item] {

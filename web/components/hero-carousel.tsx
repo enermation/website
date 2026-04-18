@@ -1,205 +1,276 @@
 'use client'
 
-import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
-import { Icon } from '@mdi/react'
-import {
-  ContactShadows,
-  Environment,
-  PerformanceMonitor,
-  useEnvironment,
-  useGLTF,
-} from '@react-three/drei'
-import { applyProps, Canvas, type ThreeElements, useFrame, useLoader } from '@react-three/fiber'
-import { Bloom, EffectComposer, LUT, ToneMapping } from '@react-three/postprocessing'
-import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { LUTCubeLoader } from 'postprocessing'
-import { forwardRef, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { Group, Mesh } from 'three'
-import { Vector3 } from 'three'
-import { heroBackgroundVideoUrl, heroCategories } from '@/lib/data'
+import { ContactShadows, Environment, useEnvironment, useGLTF } from '@react-three/drei'
+import { applyProps, Canvas, useFrame } from '@react-three/fiber'
+import { type ReactNode, Suspense, useEffect, useRef } from 'react'
+import { type Group, MathUtils, type Mesh, Vector3 } from 'three'
 
-const MAX_3D_SLIDES = 2
-const TOTAL = Math.min(heroCategories.length, MAX_3D_SLIDES)
-
-// Performance thresholds
-const DPR_MIN = 1
-const DPR_MAX = 2
-const DPR_START = 1.5
-const ENV_RES_HIGH = 512
-const ENV_RES_LOW = 256
-const SHADOW_RES_HIGH = 1024
-const SHADOW_RES_LOW = 512
-
-// Camera
 const CAMERA_Y = 1
-const CAMERA_Z = 12
-const CAMERA_FOV = 40
-const CAMERA_ORBIT_RADIUS = 12
 const CAMERA_LERP_FACTOR = 0.05
-
-// Swipe
-const SWIPE_THRESHOLD_PX = 50
-
-// Ready gate
+const CAMERA_IDLE_ORBIT_HEIGHT = 0.16
 const READY_GATE_FRAMES = 4
+const DROP_START_Y = 3.4
+const PORSCHE_SCALE = 1.6
+const LAMBO_SCALE = 0.015
+const PORSCHE_MODEL_PATH = '/models/911-transformed.glb'
+const LAMBO_MODEL_PATH = '/models/lambo.glb'
+const HDR_PATH = '/models/factory-road-turnaround_256.hdr'
 
-const MODELS = [
-  {
-    path: '/models/lambo.glb',
-    scale: 0.015,
-    rotation: [0, Math.PI / 1.5, 0] as [number, number, number],
-  },
-  {
-    path: '/models/911-transformed.glb',
-    scale: 1.6,
-    rotation: [0, 0, 0] as [number, number, number],
-  },
-]
+const cameraTarget = new Vector3()
 
-// Optimization: Initially only preload the first model to keep LCP/initial load fast
-// Moved into useEffect below to prevent SSR execution — preloads must only run client-side
-
-// Client-only guard to prevent hydration mismatch
-function useIsClient() {
-  const [isClient, setIsClient] = useState(false)
-  useEffect(() => setIsClient(true), [])
-  return isClient
+type HeroModelConfig = {
+  orbitRadius: number
+  lookAtY: number
+  restPosition: readonly [number, number, number]
+  restRotation: readonly [number, number, number]
+  dropRotation: readonly [number, number, number]
+  idlePhase: number
 }
 
-// ── Lambo model ──────────────────────────────────────────────────────────────
+const PORSCHE_CONFIG: HeroModelConfig = {
+  orbitRadius: 10.8,
+  lookAtY: 0.42,
+  restPosition: [0, -0.03, 0] as const,
+  restRotation: [0.02, 0.08, 0] as const,
+  dropRotation: [-0.12, 0.08, 0] as const,
+  idlePhase: 0,
+}
 
-const LamboModel = forwardRef<Group, ThreeElements['group'] & { onLoaded?: () => void }>(
-  ({ onLoaded, ...props }, ref) => {
-    const { scene, nodes, materials } = useGLTF(MODELS[0].path)
+const LAMBO_CONFIG: HeroModelConfig = {
+  orbitRadius: 11.5,
+  lookAtY: 0.34,
+  restPosition: [0, -0.06, 0] as const,
+  restRotation: [0.01, Math.PI / 1.56, 0] as const,
+  dropRotation: [-0.14, Math.PI / 1.56, 0] as const,
+  idlePhase: 1.35,
+}
 
-    useMemo(() => {
-      Object.values(nodes).forEach(node => {
-        if ((node as Mesh).isMesh) {
-          const mesh = node as Mesh
-          if (mesh.name.startsWith('glass')) mesh.geometry.computeVertexNormals()
-          if (mesh.name === 'silver_001_BreakDiscs_0')
-            mesh.material = applyProps(materials.BreakDiscs, { color: '#ddd' })
-        }
-      })
-      if (nodes.glass_003) nodes.glass_003.scale.setScalar(2.7)
-      if (materials.FrameBlack)
-        applyProps(materials.FrameBlack, { metalness: 0.75, roughness: 0, color: 'black' })
-      if (materials.Chrome)
-        applyProps(materials.Chrome, { metalness: 1, roughness: 0, color: '#333' })
-      if (materials.TiresGum)
-        applyProps(materials.TiresGum, { metalness: 0, roughness: 0.4, color: '#181818' })
-      if (materials.GreyElements)
-        applyProps(materials.GreyElements, { metalness: 0, color: '#292929' })
-      if (materials.emitbrake) applyProps(materials.emitbrake, { emissiveIntensity: 1.0 })
-      if (materials.LightsFrontLed) applyProps(materials.LightsFrontLed, { emissiveIntensity: 1.0 })
-      const paintNode = nodes.yellow_WhiteCar_0
-      if (paintNode && (paintNode as Mesh).material) {
-        applyProps((paintNode as Mesh).material, {
-          roughness: 0.3,
-          metalness: 0.05,
-          color: '#A9A9A7',
-          envMapIntensity: 0.75,
-          clearcoatRoughness: 0,
-          clearcoat: 1,
-        })
+function getModelConfig(activeModelIndex: number) {
+  return activeModelIndex === 0 ? PORSCHE_CONFIG : LAMBO_CONFIG
+}
+
+function getModelPath(activeModelIndex: number) {
+  return activeModelIndex === 0 ? PORSCHE_MODEL_PATH : LAMBO_MODEL_PATH
+}
+
+function getInactiveModelPath(activeModelIndex: number) {
+  return activeModelIndex === 0 ? LAMBO_MODEL_PATH : PORSCHE_MODEL_PATH
+}
+
+function PorscheModel() {
+  const { scene, nodes, materials } = useGLTF(PORSCHE_MODEL_PATH)
+
+  useEffect(() => {
+    Object.values(nodes).forEach(node => {
+      if ((node as Mesh).isMesh) {
+        const mesh = node as Mesh
+        mesh.castShadow = true
+        mesh.receiveShadow = true
       }
-    }, [nodes, materials])
+    })
 
-    useEffect(() => {
-      onLoaded?.()
-    }, [onLoaded])
-
-    return (
-      <group ref={ref} rotation={MODELS[0].rotation} {...props}>
-        <primitive object={scene} scale={MODELS[0].scale} />
-      </group>
-    )
-  }
-)
-LamboModel.displayName = 'LamboModel'
-
-// ── Porsche model ────────────────────────────────────────────────────────────
-
-const PorscheModel = forwardRef<Group, ThreeElements['group'] & { onLoaded?: () => void }>(
-  ({ onLoaded, ...props }, ref) => {
-    const { scene, nodes, materials } = useGLTF(MODELS[1].path)
-
-    useMemo(() => {
-      Object.values(nodes).forEach(node => {
-        if ((node as Mesh).isMesh) {
-          ;(node as Mesh).receiveShadow = (node as Mesh).castShadow = true
-        }
+    if (materials.rubber) {
+      applyProps(materials.rubber, {
+        color: '#222',
+        roughness: 0.6,
+        roughnessMap: null,
+        normalScale: [3, 3],
       })
-      if (materials.rubber)
-        applyProps(materials.rubber, {
-          color: '#222',
-          roughness: 0.6,
-          roughnessMap: null,
-          normalScale: [4, 4],
-        })
-      if (materials.window)
-        applyProps(materials.window, { color: 'black', roughness: 0, clearcoat: 0.1 })
-      if (materials.coat)
-        applyProps(materials.coat, { envMapIntensity: 4, roughness: 0.5, metalness: 1 })
-      if (materials.paint)
-        applyProps(materials.paint, {
-          envMapIntensity: 2,
-          roughness: 0.45,
-          metalness: 0.8,
-          color: '#A7A9A8',
-        })
-    }, [nodes, materials])
+    }
 
-    useEffect(() => {
-      onLoaded?.()
-    }, [onLoaded])
+    if (materials.window) {
+      applyProps(materials.window, {
+        color: '#111',
+        roughness: 0.05,
+        clearcoat: 0.1,
+      })
+    }
 
-    return (
-      <group ref={ref} rotation={MODELS[1].rotation} {...props}>
-        <primitive object={scene} scale={MODELS[1].scale} />
-      </group>
-    )
-  }
-)
-PorscheModel.displayName = 'PorscheModel'
+    if (materials.coat) {
+      applyProps(materials.coat, {
+        envMapIntensity: 2.4,
+        roughness: 0.35,
+        metalness: 0.85,
+      })
+    }
 
-// ── Post-processing (Bloom + LUT) ────────────────────────────────────────────
+    if (materials.paint) {
+      applyProps(materials.paint, {
+        color: '#A7A9A8',
+        envMapIntensity: 1.7,
+        roughness: 0.28,
+        metalness: 0.7,
+        clearcoat: 0.9,
+        clearcoatRoughness: 0.08,
+      })
+    }
+  }, [materials, nodes])
 
-function PostProcessing({ enabled }: { enabled: boolean }) {
-  const lut = useLoader(LUTCubeLoader, '/F-6800-STD.cube')
-
-  if (!enabled) return null
-
-  return (
-    <EffectComposer enableNormalPass={false}>
-      <Bloom luminanceThreshold={0.2} mipmapBlur luminanceSmoothing={0} intensity={1.75} />
-      <LUT lut={lut} />
-      <ToneMapping />
-    </EffectComposer>
-  )
+  return <primitive object={scene} scale={PORSCHE_SCALE} />
 }
 
-// ── Auto-orbiting camera rig ──────────────────────────────────────────────────
+function LamboModel() {
+  const { scene, nodes, materials } = useGLTF(LAMBO_MODEL_PATH)
 
-const _v = new Vector3()
+  useEffect(() => {
+    Object.values(nodes).forEach(node => {
+      if ((node as Mesh).isMesh) {
+        const mesh = node as Mesh
+        mesh.castShadow = true
+        mesh.receiveShadow = true
 
-function CameraRig() {
-  return useFrame(state => {
-    const t = state.clock.elapsedTime
-    state.camera.position.lerp(
-      _v.set(
-        Math.sin(t / 5) * CAMERA_ORBIT_RADIUS,
-        CAMERA_Y,
-        Math.cos(t / 5) * CAMERA_ORBIT_RADIUS
-      ),
-      CAMERA_LERP_FACTOR
+        if (mesh.name.startsWith('glass')) {
+          mesh.geometry.computeVertexNormals()
+        }
+
+        if (mesh.name === 'silver_001_BreakDiscs_0' && materials.BreakDiscs) {
+          mesh.material = applyProps(materials.BreakDiscs, { color: '#ddd' })
+        }
+      }
+    })
+
+    if (nodes.glass_003) {
+      nodes.glass_003.scale.setScalar(2.7)
+    }
+
+    if (materials.FrameBlack) {
+      applyProps(materials.FrameBlack, {
+        metalness: 0.75,
+        roughness: 0,
+        color: '#111',
+      })
+    }
+
+    if (materials.Chrome) {
+      applyProps(materials.Chrome, {
+        metalness: 1,
+        roughness: 0,
+        color: '#333',
+      })
+    }
+
+    if (materials.TiresGum) {
+      applyProps(materials.TiresGum, {
+        metalness: 0,
+        roughness: 0.4,
+        color: '#181818',
+      })
+    }
+
+    if (materials.GreyElements) {
+      applyProps(materials.GreyElements, {
+        metalness: 0,
+        color: '#292929',
+      })
+    }
+
+    if (materials.emitbrake) {
+      applyProps(materials.emitbrake, { emissiveIntensity: 1.0 })
+    }
+
+    if (materials.LightsFrontLed) {
+      applyProps(materials.LightsFrontLed, { emissiveIntensity: 1.0 })
+    }
+
+    const paintNode = nodes.yellow_WhiteCar_0
+    if (paintNode) {
+      applyProps((paintNode as Mesh).material, {
+        roughness: 0.3,
+        metalness: 0.05,
+        color: '#A9A9A7',
+        envMapIntensity: 0.75,
+        clearcoatRoughness: 0,
+        clearcoat: 1,
+      })
+    }
+  }, [materials, nodes])
+
+  return <primitive object={scene} scale={LAMBO_SCALE} />
+}
+
+type AnimatedVehicleProps = {
+  shouldDropModel: boolean
+  prefersReducedMotion: boolean
+  config: HeroModelConfig
+  children: ReactNode
+}
+
+function AnimatedVehicle({
+  shouldDropModel,
+  prefersReducedMotion,
+  config,
+  children,
+}: AnimatedVehicleProps) {
+  const groupRef = useRef<Group>(null)
+  const revealProgress = useRef(prefersReducedMotion ? 1 : 0)
+
+  useFrame((state, delta) => {
+    const group = groupRef.current
+    if (!group) return
+
+    const targetProgress = shouldDropModel || prefersReducedMotion ? 1 : 0
+    revealProgress.current = MathUtils.damp(
+      revealProgress.current,
+      targetProgress,
+      prefersReducedMotion ? 10 : 4.5,
+      delta
     )
-    state.camera.lookAt(0, 0, 0)
+
+    const progress = revealProgress.current
+    const idleStrength = prefersReducedMotion ? 0 : MathUtils.smoothstep(progress, 0.76, 1)
+    const idleTime = state.clock.elapsedTime + config.idlePhase
+
+    group.position.x = config.restPosition[0]
+    group.position.z = config.restPosition[2]
+    group.position.y =
+      MathUtils.lerp(DROP_START_Y, config.restPosition[1], progress) +
+      Math.sin(idleTime * 0.7) * 0.04 * idleStrength
+
+    group.rotation.x = MathUtils.lerp(config.dropRotation[0], config.restRotation[0], progress)
+    group.rotation.y = MathUtils.lerp(config.dropRotation[1], config.restRotation[1], progress)
+    group.rotation.z = MathUtils.lerp(config.dropRotation[2], config.restRotation[2], progress)
   })
+
+  return <group ref={groupRef}>{children}</group>
 }
 
-// ── Ready gate — fires onReady after all assets loaded + N rendered frames ────
+function CameraRig({
+  prefersReducedMotion,
+  allowIdleOrbit,
+  activeModelIndex,
+}: {
+  prefersReducedMotion: boolean
+  allowIdleOrbit: boolean
+  activeModelIndex: number
+}) {
+  const orbitStrength = useRef(allowIdleOrbit ? 1 : 0)
+  const orbitRadius = useRef(getModelConfig(activeModelIndex).orbitRadius)
+  const lookAtY = useRef(getModelConfig(activeModelIndex).lookAtY)
+
+  useFrame((state, delta) => {
+    const elapsedTime = state.clock.elapsedTime
+    const activeConfig = getModelConfig(activeModelIndex)
+    const targetStrength = prefersReducedMotion ? 0 : allowIdleOrbit ? 1 : 0
+
+    orbitStrength.current = MathUtils.damp(orbitStrength.current, targetStrength, 3.2, delta)
+    orbitRadius.current = MathUtils.damp(orbitRadius.current, activeConfig.orbitRadius, 4, delta)
+    lookAtY.current = MathUtils.damp(lookAtY.current, activeConfig.lookAtY, 4, delta)
+
+    const orbitX = Math.sin(elapsedTime / 4.8) * orbitRadius.current * orbitStrength.current
+    const orbitY =
+      CAMERA_Y + Math.sin(elapsedTime / 8.8) * CAMERA_IDLE_ORBIT_HEIGHT * orbitStrength.current
+    const orbitZ = MathUtils.lerp(
+      orbitRadius.current,
+      Math.cos(elapsedTime / 4.8) * orbitRadius.current,
+      orbitStrength.current
+    )
+
+    state.camera.position.lerp(cameraTarget.set(orbitX, orbitY, orbitZ), CAMERA_LERP_FACTOR)
+    state.camera.lookAt(0, lookAtY.current, 0)
+  })
+
+  return null
+}
 
 function ReadyGate({ onReady }: { onReady: () => void }) {
   const called = useRef(false)
@@ -207,320 +278,142 @@ function ReadyGate({ onReady }: { onReady: () => void }) {
 
   useFrame(() => {
     if (called.current) return
-    frames.current++
-    // Wait for a few frames after Suspense resolves so env map + reflections are GPU-uploaded
-    if (frames.current >= READY_GATE_FRAMES) {
-      called.current = true
-      onReady()
-    }
+
+    frames.current += 1
+    if (frames.current < READY_GATE_FRAMES) return
+
+    called.current = true
+    onReady()
   })
 
   return null
 }
 
-// ── 3D Scene ──────────────────────────────────────────────────────────────────
-
-function Scene({
-  activeIndex,
-  onModelLoaded,
-  effectsEnabled,
-  envResolution,
-  shadowResolution,
-  showSecondModel,
+function SceneContent({
+  onSceneReady,
+  activeModelIndex,
+  shouldDropModel,
+  prefersReducedMotion,
+  allowIdleOrbit,
 }: {
-  activeIndex: number
-  onModelLoaded: () => void
-  effectsEnabled: boolean
-  envResolution: number
-  shadowResolution: number
-  showSecondModel: boolean
+  onSceneReady: () => void
+  activeModelIndex: number
+  shouldDropModel: boolean
+  prefersReducedMotion: boolean
+  allowIdleOrbit: boolean
 }) {
-  const porscheRef = useRef<Group>(null)
-  const lamboRef = useRef<Group>(null)
+  const activeConfig = getModelConfig(activeModelIndex)
 
   return (
     <>
+      <ambientLight intensity={0.44} />
       <spotLight
-        position={[0, 15, 0]}
-        angle={0.3}
+        position={[0, 16, 2]}
+        angle={0.28}
         penumbra={1}
+        intensity={2.3}
         castShadow
-        intensity={2}
-        shadow-bias={-0.0001}
+        shadow-bias={-0.00008}
       />
-      <ambientLight intensity={0.5} />
+      <directionalLight position={[-5, 7, 6]} intensity={1.25} />
+      <directionalLight position={[5, 5, 4]} intensity={0.8} />
 
-      {/* Models rendered statically */}
-      <PorscheModel ref={porscheRef} visible={activeIndex === 0} position={[0, 0, 0]} />
-      {showSecondModel && (
-        <LamboModel ref={lamboRef} visible={activeIndex === 1} position={[0, 0, 0]} />
+      {activeModelIndex === 0 ? (
+        <AnimatedVehicle
+          key="porsche"
+          shouldDropModel={shouldDropModel}
+          prefersReducedMotion={prefersReducedMotion}
+          config={activeConfig}
+        >
+          <PorscheModel />
+        </AnimatedVehicle>
+      ) : (
+        <AnimatedVehicle
+          key="lambo"
+          shouldDropModel={shouldDropModel}
+          prefersReducedMotion={prefersReducedMotion}
+          config={activeConfig}
+        >
+          <LamboModel />
+        </AnimatedVehicle>
       )}
 
-      {/* Fires onModelLoaded only after all assets loaded + env GPU-uploaded */}
-      <ReadyGate onReady={onModelLoaded} />
-
-      {/* Contact shadows for floor reflection effect */}
       <ContactShadows
-        resolution={shadowResolution}
-        frames={1}
+        resolution={512}
+        frames={prefersReducedMotion ? 1 : 36}
         position={[0, -1.16, 0]}
-        scale={10}
-        blur={2.5}
-        opacity={0.8}
-        far={4}
+        scale={11.5}
+        blur={2.4}
+        opacity={0.74}
+        far={4.8}
       />
 
-      {/* HDR environment for realistic lighting and reflections */}
-      <Environment
-        files="/models/factory-road-turnaround_256.hdr"
-        frames={1}
-        resolution={envResolution}
+      <Environment files={HDR_PATH} frames={1} resolution={256} />
+      <CameraRig
+        prefersReducedMotion={prefersReducedMotion}
+        allowIdleOrbit={allowIdleOrbit}
+        activeModelIndex={activeModelIndex}
       />
-
-      {/* Auto-orbiting camera rig */}
-      <CameraRig />
-
-      {/* Post-processing */}
-      <PostProcessing enabled={effectsEnabled} />
+      <ReadyGate onReady={onSceneReady} />
     </>
   )
 }
 
-// ── Hero carousel ─────────────────────────────────────────────────────────────
+type HeroCarouselSceneProps = {
+  activeModelIndex: number
+  onSceneReady: () => void
+  shouldDropModel: boolean
+  prefersReducedMotion: boolean
+  allowIdleOrbit: boolean
+  preloadInactiveModel: boolean
+}
 
-export function HeroCarousel({
-  initialIndex = 0,
-  onReady,
-  onSlideChange,
-}: {
-  initialIndex?: number
-  onReady?: () => void
-  onSlideChange?: (index: number) => void
-}) {
-  const [activeIndex, setActiveIndex] = useState(initialIndex)
-  const [dpr, setDpr] = useState(DPR_START)
-  const [effectsEnabled, setEffectsEnabled] = useState(true)
-  const [envResolution, setEnvResolution] = useState(ENV_RES_HIGH)
-  const [shadowResolution, setShadowResolution] = useState(SHADOW_RES_HIGH)
-  const [shadowsEnabled, setShadowsEnabled] = useState(true)
-  const [showSecondModel, setShowSecondModel] = useState(false)
-  const dragStartX = useRef<number | null>(null)
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const isClient = useIsClient()
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: preloads run once at initialization
+export function HeroCarouselScene({
+  activeModelIndex,
+  onSceneReady,
+  shouldDropModel,
+  prefersReducedMotion,
+  allowIdleOrbit,
+  preloadInactiveModel,
+}: HeroCarouselSceneProps) {
   useEffect(() => {
-    onReady?.()
-    // Preload first model and HDR environment — only runs client-side after mount
-    useGLTF.preload(MODELS[0].path)
-    useEnvironment.preload({ files: '/models/factory-road-turnaround_256.hdr' })
-  }, [])
-
-  // Delayed preload of second model — fires once after mount, preserves bandwidth for initial LCP
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSecondModel(true)
-      useGLTF.preload(MODELS[1].path)
-    }, 1000)
-    return () => clearTimeout(timer)
-  }, [])
-
-  const navigate = useCallback(
-    (dir: 1 | -1) => {
-      const newIndex = (activeIndex + dir + TOTAL) % TOTAL
-      setActiveIndex(newIndex)
-      onSlideChange?.(newIndex)
-      const params = new URLSearchParams(searchParams.toString())
-      params.set('slide', String(newIndex))
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-    },
-    [activeIndex, searchParams, pathname, router, onSlideChange]
-  )
-
-  const goToSlide = useCallback(
-    (index: number) => {
-      setActiveIndex(index)
-      onSlideChange?.(index)
-      const params = new URLSearchParams(searchParams.toString())
-      params.set('slide', String(index))
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-    },
-    [searchParams, pathname, router, onSlideChange]
-  )
-
-  const onPointerDown = (e: React.PointerEvent) => {
-    dragStartX.current = e.clientX
-  }
-
-  const onPointerUp = (e: React.PointerEvent) => {
-    if (dragStartX.current === null) return
-    const delta = e.clientX - dragStartX.current
-    if (Math.abs(delta) > SWIPE_THRESHOLD_PX) navigate(delta < 0 ? 1 : -1)
-    dragStartX.current = null
-  }
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowLeft') navigate(-1)
-    if (e.key === 'ArrowRight') navigate(1)
-  }
-
-  const active = heroCategories[activeIndex]
-  const sectionRef = useRef<HTMLElement>(null)
-  const bgVideoRef = useRef<HTMLVideoElement>(null)
+    useGLTF.preload(getModelPath(activeModelIndex))
+    useEnvironment.preload({ files: HDR_PATH })
+  }, [activeModelIndex])
 
   useEffect(() => {
-    const section = sectionRef.current
-    if (!section) return
+    if (!preloadInactiveModel) return
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const video = bgVideoRef.current
-        if (!video) return
-        if (entry.isIntersecting) {
-          video.play().catch(() => {})
-        } else {
-          video.pause()
-        }
-      },
-      { threshold: 0 }
-    )
+    const preload = () => {
+      useGLTF.preload(getInactiveModelPath(activeModelIndex))
+    }
 
-    observer.observe(section)
-    return () => observer.disconnect()
-  }, [])
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const idleId = window.requestIdleCallback(() => preload(), { timeout: 1500 })
+      return () => window.cancelIdleCallback(idleId)
+    }
+
+    const timer = globalThis.setTimeout(preload, 900)
+    return () => globalThis.clearTimeout(timer)
+  }, [activeModelIndex, preloadInactiveModel])
 
   return (
-    <section
-      ref={sectionRef}
-      aria-label="Product showcase carousel"
-      className="relative min-h-dvh overflow-hidden select-none touch-manipulation"
-      aria-roledescription="carousel"
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      onKeyDown={onKeyDown}
+    <Canvas
+      frameloop="always"
+      shadows
+      camera={{ position: [0, CAMERA_Y, getModelConfig(activeModelIndex).orbitRadius], fov: 38 }}
+      dpr={[1, 1.25]}
+      gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
     >
-      {/* Video background */}
-      <video
-        ref={bgVideoRef}
-        src={heroBackgroundVideoUrl}
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 size-full object-cover"
-      />
-
-      {/* Three.js canvas — transparent so video shows through */}
-      <div className="absolute inset-0">
-        {isClient ? (
-          <Canvas
-            frameloop="always"
-            shadows={shadowsEnabled}
-            camera={{ position: [0, CAMERA_Y, CAMERA_Z], fov: CAMERA_FOV }}
-            dpr={dpr}
-            gl={{
-              alpha: true,
-              antialias: false,
-              powerPreference: 'high-performance',
-            }}
-          >
-            <Suspense fallback={null}>
-              <Scene
-                activeIndex={activeIndex}
-                onModelLoaded={onReady ?? (() => {})}
-                effectsEnabled={effectsEnabled}
-                envResolution={envResolution}
-                shadowResolution={shadowResolution}
-                showSecondModel={showSecondModel}
-              />
-            </Suspense>
-            <PerformanceMonitor
-              factor={1}
-              bounds={refreshrate => (refreshrate > 90 ? [50, 90] : [50, 60])}
-              flipflops={3}
-              onChange={({ factor }) => {
-                // Gradual DPR adjustment: clamp between DPR_MIN and DPR_MAX (1.0 to 2.0)
-                setDpr(Math.max(DPR_MIN, Math.min(DPR_MAX, DPR_MIN + (DPR_MAX - DPR_MIN) * factor)))
-              }}
-              onIncline={() => {
-                setEffectsEnabled(true)
-                setEnvResolution(ENV_RES_HIGH)
-                setShadowResolution(SHADOW_RES_HIGH)
-                setShadowsEnabled(true)
-              }}
-              onDecline={() => {
-                setEffectsEnabled(false)
-                setEnvResolution(ENV_RES_LOW)
-                setShadowResolution(SHADOW_RES_LOW)
-              }}
-              onFallback={() => {
-                // Guaranteed baseline: minimal quality
-                setDpr(DPR_MIN)
-                setEffectsEnabled(false)
-                setEnvResolution(ENV_RES_LOW)
-                setShadowResolution(SHADOW_RES_LOW)
-                setShadowsEnabled(false)
-              }}
-            />
-          </Canvas>
-        ) : null}
-      </div>
-
-      {/* Category label + CTA + dots */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 pb-16">
-        <h1
-          data-hero-title
-          className="font-display font-normal text-section uppercase tracking-widest text-white text-center"
-        >
-          {active.label}
-        </h1>
-        <Link
-          data-hero-cta
-          href={active.href}
-          className="pointer-events-auto inline-flex items-center justify-center rounded-none border-2 border-white bg-black/70 px-10 py-3 font-heading font-semibold text-13 uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-black"
-        >
-          Browse {active.label}
-        </Link>
-        <div className="flex items-center gap-3" role="tablist" aria-label="Hero carousel slides">
-          {heroCategories.map((cat, i) => (
-            <button
-              key={cat.label}
-              type="button"
-              data-hero-dot
-              role="tab"
-              aria-label={`Show ${cat.label}`}
-              aria-selected={i === activeIndex}
-              aria-current={i === activeIndex ? 'true' : undefined}
-              onClick={() => goToSlide(i)}
-              className={`pointer-events-auto rounded-full transition-all duration-300 ${
-                i === activeIndex
-                  ? 'size-2.5 bg-on-dark'
-                  : 'size-1.5 bg-on-dark/40 hover:bg-on-dark/70'
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Arrow navigation */}
-      <button
-        type="button"
-        aria-label="Previous category"
-        onClick={() => navigate(-1)}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200"
-      >
-        <Icon path={mdiChevronLeft} size={1} className="size-6" />
-      </button>
-      <button
-        type="button"
-        aria-label="Next category"
-        onClick={() => navigate(1)}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200"
-      >
-        <Icon path={mdiChevronRight} size={1} className="size-6" />
-      </button>
-    </section>
+      <Suspense fallback={null}>
+        <SceneContent
+          onSceneReady={onSceneReady}
+          activeModelIndex={activeModelIndex}
+          shouldDropModel={shouldDropModel}
+          prefersReducedMotion={prefersReducedMotion}
+          allowIdleOrbit={allowIdleOrbit}
+        />
+      </Suspense>
+    </Canvas>
   )
 }

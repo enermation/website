@@ -64,21 +64,27 @@ export const primaryShowroomCollectionHandle = 'shop-all'
 export const primaryShowroomCollectionHref =
   `/collections/${primaryShowroomCollectionHandle}` as const
 
-// â”€â”€ Hero carousel categories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-export type HeroCategory = {
+export type HeroShowcaseVehicle = {
   label: string
   href: string
 }
 
-export const heroCategories: HeroCategory[] = [
-  { label: 'Sedan', href: '/collections/sedans' },
-  { label: 'SUV', href: '/collections/suvs' },
-  { label: 'Commercial', href: '/collections/commercial-vehicles' },
+export const heroShowcaseVehicles: HeroShowcaseVehicle[] = [
+  {
+    label: 'Porsche 911',
+    href: primaryShowroomCollectionHref,
+  },
+  {
+    label: 'Lamborghini Aventador',
+    href: primaryShowroomCollectionHref,
+  },
 ]
 
 export const heroBackgroundVideoUrl =
   'https://videos.pexels.com/video-files/34750442/14731773_1280_720_24fps.mp4' as const
+
+export const heroVideoPoster = '/images/fallback-bg.webp' as const
+export const heroBrandWordmark = 'ENERMATION' as const
 
 // â”€â”€ Section images â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
