@@ -1,8 +1,12 @@
 import { SiteHeaderClient } from '@/components/site-header-client'
 import { getHeaderNavigation } from '@/lib/header-navigation'
 
-export async function SiteHeader() {
+type SiteHeaderProps = {
+  isHomePage?: boolean
+}
+
+export async function SiteHeader({ isHomePage = false }: SiteHeaderProps) {
   const navigation = await getHeaderNavigation()
 
-  return <SiteHeaderClient navigation={navigation} />
+  return <SiteHeaderClient navigation={navigation} isHomePage={isHomePage} />
 }

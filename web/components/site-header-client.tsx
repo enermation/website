@@ -14,7 +14,6 @@ import {
 import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { HeaderSearch } from '@/components/header-search'
 import { ShoppingCart1 } from '@/components/shopping-cart1'
@@ -27,6 +26,7 @@ import { cn } from '@/lib/utils'
 
 type SiteHeaderClientProps = {
   navigation: HeaderNavigation
+  isHomePage?: boolean
 }
 
 function hasHref(href: string): boolean {
@@ -136,11 +136,9 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
   )
 }
 
-export function SiteHeaderClient({ navigation }: SiteHeaderClientProps) {
+export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderClientProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
-  const pathname = usePathname()
-  const isHomePage = pathname === '/'
   const { totalItemCount, closeCart, isCartOpen } = useCart()
 
   useEffect(() => {

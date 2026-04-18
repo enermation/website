@@ -114,7 +114,7 @@ export default function Home() {
   return (
     <>
       <Suspense fallback={null}>
-        <SiteHeader />
+        <SiteHeader isHomePage />
       </Suspense>
       <main id="main-content">
         <HeroCarousel />
