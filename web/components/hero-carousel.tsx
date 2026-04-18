@@ -25,7 +25,6 @@ type HeroModelConfig = {
   restRotation: readonly [number, number, number]
   dropRotation: readonly [number, number, number]
   idlePhase: number
-  idleRotate: number
 }
 
 const PORSCHE_CONFIG: HeroModelConfig = {
@@ -35,7 +34,6 @@ const PORSCHE_CONFIG: HeroModelConfig = {
   restRotation: [0.02, 0.08, 0] as const,
   dropRotation: [-0.12, 0.08, 0] as const,
   idlePhase: 0,
-  idleRotate: 0.045,
 }
 
 const LAMBO_CONFIG: HeroModelConfig = {
@@ -45,7 +43,6 @@ const LAMBO_CONFIG: HeroModelConfig = {
   restRotation: [0.01, Math.PI / 1.56, 0] as const,
   dropRotation: [-0.14, Math.PI / 1.56, 0] as const,
   idlePhase: 1.35,
-  idleRotate: 0.05,
 }
 
 function getModelConfig(activeModelIndex: number) {
@@ -230,9 +227,7 @@ function AnimatedVehicle({
       Math.sin(idleTime * 0.7) * 0.04 * idleStrength
 
     group.rotation.x = MathUtils.lerp(config.dropRotation[0], config.restRotation[0], progress)
-    group.rotation.y =
-      MathUtils.lerp(config.dropRotation[1], config.restRotation[1], progress) +
-      Math.sin(idleTime * 0.28) * config.idleRotate * idleStrength
+    group.rotation.y = MathUtils.lerp(config.dropRotation[1], config.restRotation[1], progress)
     group.rotation.z = MathUtils.lerp(config.dropRotation[2], config.restRotation[2], progress)
   })
 
@@ -344,8 +339,8 @@ function SceneContent({
       )}
 
       <ContactShadows
-        resolution={640}
-        frames={prefersReducedMotion ? 1 : 90}
+        resolution={512}
+        frames={prefersReducedMotion ? 1 : 36}
         position={[0, -1.16, 0]}
         scale={11.5}
         blur={2.4}
@@ -389,7 +384,17 @@ export function HeroCarouselScene({
   useEffect(() => {
     if (!preloadInactiveModel) return
 
-    useGLTF.preload(getInactiveModelPath(activeModelIndex))
+    const preload = () => {
+      useGLTF.preload(getInactiveModelPath(activeModelIndex))
+    }
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const idleId = window.requestIdleCallback(() => preload(), { timeout: 1500 })
+      return () => window.cancelIdleCallback(idleId)
+    }
+
+    const timer = globalThis.setTimeout(preload, 900)
+    return () => globalThis.clearTimeout(timer)
   }, [activeModelIndex, preloadInactiveModel])
 
   return (

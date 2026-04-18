@@ -72,7 +72,7 @@ export function HeroBackgroundVideo() {
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
         onCanPlay={() => {
           setIsReady(true)
           videoRef.current?.play().catch(() => {})

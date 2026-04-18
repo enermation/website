@@ -75,12 +75,6 @@
   --color-white-30: var(--white-30);
   --color-white-20: var(--white-20);
   --color-white-70: var(--white-70);
-  --color-hero-spectrum-1: var(--hero-spectrum-1);
-  --color-hero-spectrum-2: var(--hero-spectrum-2);
-  --color-hero-spectrum-3: var(--hero-spectrum-3);
-  --color-hero-spectrum-4: var(--hero-spectrum-4);
-  --color-hero-spectrum-5: var(--hero-spectrum-5);
-  --color-hero-spectrum-6: var(--hero-spectrum-6);
 
   /* ─── Shadcn/ui Semantic Tokens ─── */
   --color-background: var(--background);
@@ -203,12 +197,6 @@
   --white-20: oklch(1 0 0 / 20%);
   --white-30: oklch(1 0 0 / 30%);
   --white-70: oklch(1 0 0 / 70%);
-  --hero-spectrum-1: oklch(0.84 0.15 340);
-  --hero-spectrum-2: oklch(0.88 0.19 305);
-  --hero-spectrum-3: oklch(0.86 0.2 250);
-  --hero-spectrum-4: oklch(0.88 0.2 200);
-  --hero-spectrum-5: oklch(0.9 0.19 155);
-  --hero-spectrum-6: oklch(0.83 0.2 40);
 
   /* ─── Sidebar ─── */
   --sidebar: oklch(0.98 0 0);
@@ -459,7 +447,6 @@
 }
 
 [data-phase="text-reveal"] .hero-stage__wordmark-shell,
-[data-phase="rainbow-sweep"] .hero-stage__wordmark-shell,
 [data-phase="scene-ready"] .hero-stage__wordmark-shell {
   opacity: 1;
   transform: none;
@@ -661,8 +648,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hero-stage__scene,
-  .hero-stage__wordmark-shell,
-  .hero-stage__wordmark-rainbow--active {
+  .hero-stage__wordmark-shell {
     transition: none;
     animation: none;
   }
