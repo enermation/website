@@ -80,6 +80,9 @@ export const heroCategories: HeroCategory[] = [
 export const heroBackgroundVideoUrl =
   'https://videos.pexels.com/video-files/34750442/14731773_1280_720_24fps.mp4' as const
 
+export const heroVideoPoster = '/images/fallback-bg.webp' as const
+export const heroBrandWordmark = 'ENERMATION' as const
+
 // â”€â”€ Section images â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const heroImage = '/images/hero.webp'

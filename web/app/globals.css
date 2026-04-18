@@ -75,6 +75,12 @@
   --color-white-30: var(--white-30);
   --color-white-20: var(--white-20);
   --color-white-70: var(--white-70);
+  --color-hero-spectrum-1: var(--hero-spectrum-1);
+  --color-hero-spectrum-2: var(--hero-spectrum-2);
+  --color-hero-spectrum-3: var(--hero-spectrum-3);
+  --color-hero-spectrum-4: var(--hero-spectrum-4);
+  --color-hero-spectrum-5: var(--hero-spectrum-5);
+  --color-hero-spectrum-6: var(--hero-spectrum-6);
 
   /* ─── Shadcn/ui Semantic Tokens ─── */
   --color-background: var(--background);
@@ -197,6 +203,12 @@
   --white-20: oklch(1 0 0 / 20%);
   --white-30: oklch(1 0 0 / 30%);
   --white-70: oklch(1 0 0 / 70%);
+  --hero-spectrum-1: oklch(0.84 0.15 340);
+  --hero-spectrum-2: oklch(0.88 0.19 305);
+  --hero-spectrum-3: oklch(0.86 0.2 250);
+  --hero-spectrum-4: oklch(0.88 0.2 200);
+  --hero-spectrum-5: oklch(0.9 0.19 155);
+  --hero-spectrum-6: oklch(0.83 0.2 40);
 
   /* ─── Sidebar ─── */
   --sidebar: oklch(0.98 0 0);
@@ -356,13 +368,206 @@
   z-index: 10;
 }
 
-/* ─── Hero Animation No-JS Fallback ─── */
-/* When JS is disabled, GSAP never runs so elements stay at their initial CSS
-   values. Setting opacity:1 / transform:none here as the no-JS baseline. */
-[data-hero-title],
-[data-hero-cta] {
+/* Hero stage */
+.hero-stage {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  isolation: isolate;
+  background-color: var(--surface-dark);
+}
+
+.hero-stage__media,
+.hero-stage__scene-shell,
+.hero-stage__scene {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-stage__fallback,
+.hero-stage__video {
+  object-fit: cover;
+  transition: opacity 0.45s ease;
+}
+
+.hero-stage__fallback {
+  z-index: 0;
+}
+
+.hero-stage__fallback--hidden {
+  opacity: 0;
+}
+
+.hero-stage__video {
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.hero-stage__video--ready {
+  opacity: 1;
+}
+
+.hero-stage__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(180deg, oklch(0 0 0 / 18%) 0%, oklch(0 0 0 / 34%) 58%, oklch(0 0 0 / 62%) 100%),
+    linear-gradient(115deg, oklch(0 0 0 / 46%) 8%, oklch(0 0 0 / 0%) 42%);
+}
+
+.hero-stage__sequence {
+  position: relative;
+  z-index: 3;
+  min-height: 100dvh;
+  pointer-events: none;
+}
+
+.hero-stage__scene {
+  opacity: 0;
+  transform: scale(1.015);
+  transition:
+    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+  pointer-events: none;
+}
+
+.hero-stage__scene--visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hero-stage__center {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem 8rem;
+}
+
+.hero-stage__wordmark-shell {
+  opacity: 0;
+  transform: translateY(1.5rem) scale(0.98);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-phase="text-reveal"] .hero-stage__wordmark-shell,
+[data-phase="rainbow-sweep"] .hero-stage__wordmark-shell,
+[data-phase="scene-ready"] .hero-stage__wordmark-shell,
+[data-phase="model-drop"] .hero-stage__wordmark-shell {
   opacity: 1;
   transform: none;
+}
+
+.hero-stage__text-svg {
+  width: min(100%, 72rem);
+  height: auto;
+  overflow: visible;
+}
+
+.hero-stage__text-svg-base,
+.hero-stage__text-svg-outline,
+.hero-stage__text-svg-reveal {
+  font-family: var(--font-flauta), var(--font-display), serif;
+  font-size: 10rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.hero-stage__text-svg-base {
+  fill: transparent;
+  stroke: var(--white-30);
+  stroke-width: 1.5;
+}
+
+.hero-stage__text-svg-outline {
+  fill: transparent;
+  stroke: var(--white-70);
+  stroke-width: 1.5;
+}
+
+.hero-stage__text-svg-reveal {
+  fill: transparent;
+  stroke-width: 1.5;
+}
+
+.hero-stage__actions {
+  position: absolute;
+  inset-inline: 1.5rem;
+  bottom: 2.75rem;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-stage__cta {
+  pointer-events: auto;
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--white-solid);
+  padding-inline: 2rem;
+  background-color: oklch(0 0 0 / 26%);
+  color: var(--text-on-dark);
+  font-family: var(--font-heading);
+  font-size: var(--text-13);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  backdrop-filter: blur(14px);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.hero-stage__cta:hover {
+  border-color: var(--white-solid);
+  background-color: var(--white-solid);
+  color: var(--foreground);
+}
+
+.hero-stage__cta:focus-visible {
+  outline: 2px solid var(--white-solid);
+  outline-offset: 4px;
+}
+
+@media (min-width: 768px) {
+  .hero-stage__center {
+    padding-bottom: 9rem;
+  }
+
+  .hero-stage__actions {
+    bottom: 3.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-stage__text-svg-base,
+  .hero-stage__text-svg-outline,
+  .hero-stage__text-svg-reveal {
+    font-size: 6.4rem;
+    letter-spacing: 0.14em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-stage__scene,
+  .hero-stage__wordmark-shell,
+  .hero-stage__wordmark-rainbow--active {
+    transition: none;
+    animation: none;
+  }
 }
 
 [data-instagram-item] {
