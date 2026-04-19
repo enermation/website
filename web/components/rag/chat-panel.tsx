@@ -1,6 +1,8 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
+import { mdiAttachmentPlus, mdiClose } from '@mdi/js'
+import { Icon } from '@mdi/react'
 import type { FileUIPart } from 'ai'
 import { DefaultChatTransport } from 'ai'
 import Image from 'next/image'
@@ -23,8 +25,6 @@ import { Suggestion, Suggestions } from '@/components/ai-elements/suggestion'
 import { Button } from '@/components/ui/button'
 import { SUGGESTED_QUESTIONS } from '@/lib/rag/suggested-questions'
 import type { RagChatMessageMetadata } from '@/lib/rag/types'
-import { mdiAttachmentPlus, mdiClose } from '@mdi/js'
-import { Icon } from '@mdi/react'
 
 const MAX_FILES = 2
 const MAX_FILE_SIZE = 4 * 1024 * 1024
@@ -32,15 +32,12 @@ const MAX_FILE_SIZE = 4 * 1024 * 1024
 interface ChatPanelProps {
   /** Endpoint for the chat API. Defaults to /api/rag/chat */
   api?: string
-  /** Initial message to send when the panel first loads */
-  initialMessage?: string
   /** Whether to show suggested questions when conversation is empty */
   showSuggestedQuestions?: boolean
 }
 
 export function ChatPanel({
   api = '/api/rag/chat',
-  initialMessage,
   showSuggestedQuestions = true,
 }: ChatPanelProps) {
   const [error, setError] = useState<string | null>(null)
