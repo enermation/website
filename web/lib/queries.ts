@@ -33,6 +33,50 @@ const MENU_RESOURCE_FRAGMENT = `
 
 // ── Products ──────────────────────────────────────────────────────────────────
 
+export const GET_ALL_PRODUCTS_FOR_INDEX = `
+  query getAllProductsForIndex($first: Int!, $cursor: String) {
+    products(first: $first, after: $cursor) {
+      edges {
+        cursor
+        node {
+          id
+          handle
+          title
+          description
+          vendor
+          availableForSale
+          images(first: 1) {
+            edges {
+              node {
+                url
+                altText
+              }
+            }
+          }
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          collections(first: 20) {
+            edges {
+              node {
+                handle
+              }
+            }
+          }
+          ${PRODUCT_METAFIELDS}
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+`
+
 export const GET_ALL_PRODUCTS = `
   query getAllProducts {
     products(first: 50) {
