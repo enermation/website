@@ -1,8 +1,9 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  cacheComponents: true,
   allowedDevOrigins: ['192.168.0.95'],
+  cacheComponents: true,
+  transpilePackages: ['voyageai'],
   images: {
     loaderFile: './lib/image-loader.ts',
     remotePatterns: [

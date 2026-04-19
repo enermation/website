@@ -37,6 +37,6 @@
     "components/ui",
     "../graphql",
     "_temp-hero-old",
-    "components/ai-elements/**"
+    "components/ai-elements"
   ]
 }

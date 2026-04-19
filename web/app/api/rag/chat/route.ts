@@ -9,7 +9,6 @@ import { getChatLimiter } from '@/lib/rag/ratelimit'
 import type { RagChatMessageMetadata } from '@/lib/rag/types'
 import { describeImagesForRetrieval } from '@/lib/rag/vision'
 
-export const dynamic = 'force-dynamic'
 export const maxDuration = 30
 
 type ChatRequestBody = {

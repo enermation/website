@@ -18,6 +18,7 @@ import { Message, MessageContent, MessageResponse } from '@/components/ai-elemen
 import {
   PromptInputBody,
   PromptInputFooter,
+  PromptInputProvider,
   PromptInputSubmit,
   PromptInputTextarea,
 } from '@/components/ai-elements/prompt-input'
@@ -126,7 +127,7 @@ export function ChatPanel({
   const hasCitations = !!(citations && citations.length > 0)
 
   return (
-    <>
+    <PromptInputProvider>
       <Conversation className="flex-1">
         <ConversationContent>
           {messages.length === 0 ? (
@@ -305,6 +306,6 @@ export function ChatPanel({
           <span className="text-13 text-muted-foreground">{error}</span>
         </div>
       )}
-    </>
+    </PromptInputProvider>
   )
 }
