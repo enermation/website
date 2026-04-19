@@ -31,6 +31,10 @@
   --w-lightbox: 95vw;
   --h-lightbox: 85vh;
 
+  /* ─── Widget dimensions ─── */
+  --size-widget-h: 32rem;
+  --size-widget-w: 24rem;
+
   /* ─── Custom spacing ─── */
   --spacing-cta: 46.25rem; /* 740px — CTA split section height */
   --spacing-128: 32rem; /* 512px — desktop gallery hero height */
@@ -263,6 +267,11 @@
 }
 
 @layer utilities {
+  .size-widget {
+    width: var(--size-widget-w);
+    height: var(--size-widget-h);
+  }
+
   .grid-layout {
     @apply mx-auto grid w-full max-w-full grid-cols-4 gap-3 px-4 lg:grid-cols-12;
   }
