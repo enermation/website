@@ -1,9 +1,14 @@
 import type { Metadata } from 'next'
+import dynamic from 'next/dynamic'
 import { Barlow_Semi_Condensed, Bebas_Neue, Inter } from 'next/font/google'
 import { Suspense } from 'react'
 import './globals.css'
 import { SiteFooter } from '@/components/site-footer'
 import { CartProvider } from '@/lib/cart-context'
+
+const ChatWidget = dynamic(() => import('@/components/chat-widget').then(m => m.ChatWidget), {
+  ssr: false,
+})
 
 const display = Bebas_Neue({
   variable: '--font-display',
@@ -56,6 +61,7 @@ export default function RootLayout({
           <CartProvider>
             {children}
             <SiteFooter />
+            <ChatWidget />
           </CartProvider>
         </Suspense>
       </body>

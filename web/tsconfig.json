@@ -33,9 +33,10 @@
   ],
   "exclude": [
     "node_modules",
+    "node_modules/ai-elements",
     "components/ui",
     "../graphql",
     "_temp-hero-old",
-    "components/ai-elements"
+    "components/ai-elements/**"
   ]
 }
