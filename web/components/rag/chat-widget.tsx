@@ -1,6 +1,6 @@
 'use client'
 
-import { mdiChat, mdiClose } from '@mdi/js'
+import { mdiRobotHappyOutline, mdiClose } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import { useCallback, useState } from 'react'
 import { ChatPanel } from '@/components/rag/chat-panel'
