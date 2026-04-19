@@ -6,7 +6,7 @@ import './globals.css'
 import { SiteFooter } from '@/components/site-footer'
 import { CartProvider } from '@/lib/cart-context'
 
-const ChatWidget = dynamic(() => import('@/components/chat-widget').then(m => m.ChatWidget), {
+const ChatWidget = dynamic(() => import('@/components/rag/chat-widget').then(m => m.ChatWidget), {
   ssr: false,
 })
 
