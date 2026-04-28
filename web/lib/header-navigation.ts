@@ -158,6 +158,7 @@ async function fetchCollections(): Promise<HeaderNavChild[]> {
   cacheTag('collections')
 
   const { data } = await getClient().request<CollectionsResponse>(GET_COLLECTIONS_FOR_HEADER)
+  if (!data?.collections) return []
   return data.collections.edges.map(({ node }) => ({
     label: node.title,
     href: `/collections/${node.handle}`,

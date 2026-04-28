@@ -74,42 +74,81 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
         <div
           aria-hidden="true"
           className={cn(
-            'pointer-events-none invisible absolute left-1/2 top-full z-50 w-72 -translate-x-1/2 pt-2 opacity-0 transition-opacity transition-[visibility] duration-150',
+            'pointer-events-none invisible absolute left-1/2 top-full z-50 -translate-x-1/2 pt-2 opacity-0 transition-opacity transition-[visibility] duration-150',
             'group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100',
             'group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100'
           )}
         >
-          <div className="flex flex-col gap-1 rounded-2xl border border-white-20 bg-surface-dark p-4 shadow-xl">
+          <div
+            className={cn(
+              'flex flex-col gap-1 rounded-2xl border border-white-20 bg-surface-dark p-4 shadow-xl',
+              item.children.length >= 8 ? 'w-96' : 'w-72'
+            )}
+          >
             <p className="pb-1 font-heading text-sm font-semibold text-background">{item.label}</p>
-            {item.children.map(child => {
-              const iconPath = menuItemIcon(child.label)
+            {item.children.length >= 8 ? (
+              <div className="grid grid-cols-3 gap-x-4">
+                {item.children.map(child => {
+                  const iconPath = menuItemIcon(child.label)
 
-              return hasHref(child.href) ? (
-                <Link
-                  key={`${item.label}-${child.label}`}
-                  href={child.href}
-                  className={cn(
-                    'inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-background transition-colors hover:bg-white-20',
-                    focusRing
-                  )}
-                >
-                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
-                    <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
+                  return hasHref(child.href) ? (
+                    <Link
+                      key={`${item.label}-${child.label}`}
+                      href={child.href}
+                      className={cn(
+                        'inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-background transition-colors hover:bg-white-20',
+                        focusRing
+                      )}
+                    >
+                      <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
+                        <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
+                      </span>
+                      <span>{child.label}</span>
+                    </Link>
+                  ) : (
+                    <span
+                      key={`${item.label}-${child.label}`}
+                      className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-on-dark-muted"
+                    >
+                      <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
+                        <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
+                      </span>
+                      <span>{child.label}</span>
+                    </span>
+                  )
+                })}
+              </div>
+            ) : (
+              item.children.map(child => {
+                const iconPath = menuItemIcon(child.label)
+
+                return hasHref(child.href) ? (
+                  <Link
+                    key={`${item.label}-${child.label}`}
+                    href={child.href}
+                    className={cn(
+                      'inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-background transition-colors hover:bg-white-20',
+                      focusRing
+                    )}
+                  >
+                    <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
+                      <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
+                    </span>
+                    <span>{child.label}</span>
+                  </Link>
+                ) : (
+                  <span
+                    key={`${item.label}-${child.label}`}
+                    className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-on-dark-muted"
+                  >
+                    <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
+                      <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
+                    </span>
+                    <span>{child.label}</span>
                   </span>
-                  <span>{child.label}</span>
-                </Link>
-              ) : (
-                <span
-                  key={`${item.label}-${child.label}`}
-                  className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-on-dark-muted"
-                >
-                  <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
-                    <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
-                  </span>
-                  <span>{child.label}</span>
-                </span>
-              )
-            })}
+                )
+              })
+            )}
 
             {featured && hasHref(featured.href) && (
               <Link
