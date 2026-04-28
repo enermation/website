@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { AssistantShell } from '@/components/rag/assistant-shell'
+import { ChatPanel } from '@/components/rag/chat-panel'
 import { Card, CardContent } from '@/components/ui/card'
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export default function AssistantPage() {
       <div className="w-full max-w-site mx-auto px-4">
         <Card className="flex flex-col h-[calc(100vh-8rem)]">
           <CardContent className="flex flex-1 flex-col overflow-hidden p-0">
-            <AssistantShell api="/api/rag/chat" />
+            <ChatPanel api="/api/rag/chat" showSuggestedQuestions={true} />
           </CardContent>
         </Card>
       </div>

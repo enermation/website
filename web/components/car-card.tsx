@@ -21,32 +21,23 @@ export function CarCard({ product }: CarCardProps) {
   const { amount, currencyCode } = product.priceRange.minVariantPrice
   const price = formatPrice(amount, currencyCode)
 
-  // Derive make/model from title — not stored as metafields
+  // Derive make from title — not stored as metafields
   const { make: makeFromTitle } = parseVehicleFromTitle(product.title)
   const make = makeFromTitle ?? product.vendor
 
-  // Resolve vehicle attributes from metafields (now properly mapped to actual Shopify fields)
+  // Vehicle attributes from metafields
   const year = metaValue(product.year)
   const transmission = metaValue(product.transmission)
   const fuelType = metaValue(product.fuelType)
-  // Note: mileage, colour, model are not available as Shopify metafields for this store
 
-  // Transmission/fuel combined display (e.g. "Automatic / Petrol")
+  // Mileage parsed from description (speedometer icon)
+  const { specs } = formatVehicleDescription(product.description)
+  const mileage = specs.find(s => s.label === 'Mileage')?.value ?? null
+
+  // Combined transmission/fuel (e.g. "Automatic / Petrol")
   const transmissionFuel = [transmission, fuelType].filter(Boolean).join(' / ') || null
 
-  // Desktop detail rows
-  const desktopDetails = [
-    { icon: mdiCar, label: make },
-    { icon: mdiCarShiftPattern, label: transmissionFuel },
-    {
-      icon: mdiSpeedometer,
-      label: product.availableForSale ? productPage.labels.available : productPage.labels.sold,
-    },
-    { icon: mdiCalendar, label: year },
-  ].filter(row => row.label)
-
   // Mobile detail list (up to 4 items)
-  // Note: mileage, colour, model are not available as Shopify metafields for this store
   const mobileDetails = [
     year,
     transmissionFuel,
@@ -118,12 +109,21 @@ export function CarCard({ product }: CarCardProps) {
       </div>
 
       <div className="mt-3 hidden grid-cols-2 gap-y-1 border-t border-border-subtle pt-2 md:grid">
-        {desktopDetails.map(({ icon: iconPath, label }) => (
-          <div key={label} className="flex items-center gap-2 px-2 py-1">
-            <Icon path={iconPath} size={1} className="size-3.5 text-heading shrink-0" />
-            <span className="font-body font-medium text-13 text-foreground truncate">{label}</span>
-          </div>
-        ))}
+        {[
+          { icon: mdiCar, label: make },
+          { icon: mdiCarShiftPattern, label: transmissionFuel },
+          { icon: mdiSpeedometer, label: mileage },
+          { icon: mdiCalendar, label: year },
+        ]
+          .filter(row => row.label)
+          .map(({ icon: iconPath, label }) => (
+            <div key={label} className="flex items-center gap-2 px-2 py-1">
+              <Icon path={iconPath} size={1} className="size-3.5 text-heading shrink-0" />
+              <span className="font-body font-medium text-13 text-foreground truncate">
+                {label}
+              </span>
+            </div>
+          ))}
       </div>
 
       <div className="mt-3 hidden flex-1 flex-col px-1 pb-4 md:flex">
