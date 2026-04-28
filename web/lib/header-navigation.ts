@@ -1,8 +1,7 @@
 import { cacheLife, cacheTag } from 'next/cache'
-import { type HeaderNavFallbackItem, headerActions, headerNavFallbackItems } from '@/lib/data'
-import { GET_COLLECTIONS_FOR_HEADER, GET_HEADER_MENU } from '@/lib/queries'
+import { headerActions } from '@/lib/data'
+import { GET_COLLECTIONS_FOR_HEADER } from '@/lib/queries'
 import { getClient } from '@/lib/shopify'
-import type { ShopifyMenu, ShopifyMenuItem } from '@/lib/types'
 
 export type HeaderNavChild = {
   label: string
@@ -13,6 +12,7 @@ export type HeaderNavItem = {
   label: string
   href: string
   children: HeaderNavChild[]
+  showOnDesktop?: boolean
 }
 
 export type HeaderNavigation = {
@@ -20,82 +20,7 @@ export type HeaderNavigation = {
   actions: typeof headerActions
 }
 
-type HeaderMenuResponse = {
-  menu: ShopifyMenu | null
-}
-
-const DEFAULT_MENU_HANDLE = 'main-menu'
-type AllowedTopLevelLabel = 'Home' | 'Inventory' | 'About' | 'Contact'
-
-const TOP_LEVEL_ALIASES: Record<string, AllowedTopLevelLabel> = {
-  home: 'Home',
-  inventory: 'Inventory',
-  catalog: 'Inventory',
-  showroom: 'Inventory',
-  about: 'About',
-  contact: 'Contact',
-}
-
-function toRelativeUrl(url: string | null): string {
-  if (!url) return '#'
-  if (url.startsWith('/')) return url
-
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    const parsed = new URL(url)
-    return `${parsed.pathname}${parsed.search}${parsed.hash}` || '/'
-  }
-
-  return '#'
-}
-
-function resourceUrl(item: ShopifyMenuItem): string | null {
-  const resource = item.resource
-  if (!resource) return null
-
-  if (resource.__typename === 'Collection') {
-    return `/collections/${resource.handle}`
-  }
-
-  if (resource.__typename === 'Product') {
-    return `/products/${resource.handle}`
-  }
-
-  if (resource.__typename === 'Page') {
-    return `/${resource.handle}`
-  }
-
-  if (resource.__typename === 'Blog') {
-    return `/blogs/${resource.handle}`
-  }
-
-  return null
-}
-
-function itemHref(item: ShopifyMenuItem): string {
-  return resourceUrl(item) ?? toRelativeUrl(item.url)
-}
-
-function toChild(item: ShopifyMenuItem): HeaderNavChild | null {
-  const label = item.title.trim()
-  if (!label) return null
-
-  return {
-    label,
-    href: itemHref(item),
-  }
-}
-
-function isChild(item: HeaderNavChild | null): item is HeaderNavChild {
-  return item !== null
-}
-
-function normalizeTopLevelLabel(raw: string): AllowedTopLevelLabel | null {
-  const label = raw.trim()
-  if (!label) return null
-
-  const normalized = TOP_LEVEL_ALIASES[label.toLowerCase()]
-  return normalized ?? null
-}
+type CollectionCategory = 'cars' | 'motorcycles' | 'commercial' | 'parts'
 
 type CollectionsResponse = {
   collections: {
@@ -103,53 +28,35 @@ type CollectionsResponse = {
   }
 }
 
-function childrenForInventory(
-  items: ShopifyMenuItem[],
-  collections: HeaderNavChild[]
-): HeaderNavChild[] {
-  const mapped = items.map(toChild).filter(isChild)
-  return mapped.length > 0 ? mapped : collections
+const CATEGORY_RULES: { category: CollectionCategory; patterns: string[] }[] = [
+  { category: 'cars', patterns: ['car', 'electric car', 'vehicle', 'automobile'] },
+  { category: 'motorcycles', patterns: ['motor cycle', 'motorcycle', 'bike'] },
+  {
+    category: 'commercial',
+    patterns: ['commercial vehicle', 'heavy duty', 'heavy machin', 'truck', 'renewable energy'],
+  },
+  { category: 'parts', patterns: ['part', 'spare'] },
+]
+
+const CATEGORY_LABELS: Record<CollectionCategory, string> = {
+  cars: 'Cars',
+  motorcycles: 'Motorcycles',
+  commercial: 'Commercial',
+  parts: 'Parts',
 }
 
-function fallbackHref(label: AllowedTopLevelLabel): string {
-  const match = headerNavFallbackItems.find(item => item.label === label)
-  return match?.href ?? '/'
-}
+function categorizeCollection(handle: string, title: string): CollectionCategory {
+  const lowerHandle = handle.toLowerCase()
+  const lowerTitle = title.toLowerCase()
+  const combined = `${lowerHandle} ${lowerTitle}`
 
-function toItem(item: ShopifyMenuItem, collections: HeaderNavChild[]): HeaderNavItem | null {
-  const normalizedLabel = normalizeTopLevelLabel(item.title)
-  if (!normalizedLabel) return null
-
-  const href = itemHref(item)
-  const resolvedHref = href === '#' ? fallbackHref(normalizedLabel) : href
-  const children =
-    normalizedLabel === 'Inventory'
-      ? childrenForInventory(item.items, collections)
-      : item.items.map(toChild).filter(isChild)
-
-  return {
-    label: normalizedLabel,
-    href: resolvedHref,
-    children,
+  for (const rule of CATEGORY_RULES) {
+    if (rule.patterns.some(pattern => combined.includes(pattern))) {
+      return rule.category
+    }
   }
-}
 
-function toFallbackItem(item: HeaderNavFallbackItem, collections: HeaderNavChild[]): HeaderNavItem {
-  const children = item.label === 'Inventory' ? collections : []
-
-  return {
-    label: item.label,
-    href: item.href,
-    children,
-  }
-}
-
-function isItem(item: HeaderNavItem | null): item is HeaderNavItem {
-  return item !== null
-}
-
-function fallbackItems(collections: HeaderNavChild[]): HeaderNavItem[] {
-  return headerNavFallbackItems.map(item => toFallbackItem(item, collections))
+  return 'cars' // fallback to cars
 }
 
 async function fetchCollections(): Promise<HeaderNavChild[]> {
@@ -165,24 +72,63 @@ async function fetchCollections(): Promise<HeaderNavChild[]> {
   }))
 }
 
+type GroupedCollections = {
+  [K in CollectionCategory]: HeaderNavChild[]
+}
+
+function groupCollectionsByCategory(collections: HeaderNavChild[]): GroupedCollections {
+  const groups: GroupedCollections = {
+    cars: [],
+    motorcycles: [],
+    commercial: [],
+    parts: [],
+  }
+
+  for (const collection of collections) {
+    const category = categorizeCollection(collection.href, collection.label)
+    groups[category].push(collection)
+  }
+
+  return groups
+}
+
+function buildNavItems(collections: HeaderNavChild[]): HeaderNavItem[] {
+  const grouped = groupCollectionsByCategory(collections)
+  const items: HeaderNavItem[] = []
+
+  // Home
+  items.push({ label: 'Home', href: '/', children: [], showOnDesktop: true })
+
+  // Vehicle categories (only if they have collections)
+  const categoryOrder: CollectionCategory[] = ['cars', 'motorcycles', 'commercial', 'parts']
+  for (const category of categoryOrder) {
+    if (grouped[category].length > 0) {
+      items.push({
+        label: CATEGORY_LABELS[category],
+        href: grouped[category][0].href,
+        children: grouped[category],
+        showOnDesktop: true,
+      })
+    }
+  }
+
+  // About/Contact - mobile only
+  items.push({ label: 'About', href: '/#about', children: [], showOnDesktop: false })
+  items.push({ label: 'Contact', href: '/#contact', children: [], showOnDesktop: false })
+
+  return items
+}
+
 export async function getHeaderNavigation(): Promise<HeaderNavigation> {
   'use cache'
   cacheLife('hours')
   cacheTag('navigation')
 
-  const [collections, menuHandle] = await Promise.all([
-    fetchCollections(),
-    Promise.resolve(process.env.SHOPIFY_HEADER_MENU_HANDLE?.trim() || DEFAULT_MENU_HANDLE),
-  ])
-
-  const { data } = await getClient().request<HeaderMenuResponse>(GET_HEADER_MENU, {
-    variables: { handle: menuHandle },
-  })
-
-  const shopifyItems = data?.menu?.items.map(item => toItem(item, collections)).filter(isItem) ?? []
+  const collections = await fetchCollections()
+  const items = buildNavItems(collections)
 
   return {
-    items: shopifyItems.length > 0 ? shopifyItems : fallbackItems(collections),
+    items,
     actions: headerActions,
   }
 }

@@ -241,7 +241,7 @@ export const GET_HEADER_MENU = `
 
 export const GET_COLLECTIONS = `
   query getCollections {
-    collections(first: 10, sortKey: TITLE, query: "product_count:>0") {
+    collections(first: 10, sortKey: TITLE) {
       edges {
         cursor
         node {

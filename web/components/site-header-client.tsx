@@ -214,9 +214,11 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
           </Link>
 
           <nav className="hidden flex-1 items-center justify-center gap-7 px-8 md:flex">
-            {navigation.items.map(item => (
-              <DesktopNavItem key={item.label} item={item} />
-            ))}
+            {navigation.items
+              .filter(item => item.showOnDesktop !== false)
+              .map(item => (
+                <DesktopNavItem key={item.label} item={item} />
+              ))}
           </nav>
 
           <div className="hidden items-center gap-2 md:flex">
@@ -268,25 +270,6 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                 </div>
               </SheetContent>
             </Sheet>
-
-            <Link
-              href={navigation.actions.secondary.href}
-              className={cn(
-                'inline-flex h-8 items-center justify-center rounded-full border border-white-30 px-4 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-white-20',
-                focusRing
-              )}
-            >
-              {navigation.actions.secondary.label}
-            </Link>
-            <Link
-              href={navigation.actions.primary.href}
-              className={cn(
-                'inline-flex h-8 items-center justify-center rounded-full border border-brand-green bg-brand-green px-4 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-brand-red hover:border-brand-red',
-                focusRing
-              )}
-            >
-              {navigation.actions.primary.label}
-            </Link>
           </div>
 
           <div className="ml-auto flex items-center gap-1 md:hidden">
