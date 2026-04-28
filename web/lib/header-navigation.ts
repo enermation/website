@@ -12,6 +12,7 @@ export type HeaderNavItem = {
   label: string
   href: string
   children: HeaderNavChild[]
+  showOnDesktop?: boolean
 }
 
 export type HeaderNavigation = {
