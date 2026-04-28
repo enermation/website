@@ -508,29 +508,6 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                       )
                     })}
                   </nav>
-
-                  <div className="grid grid-cols-1 gap-2 border-t border-white-20 p-5">
-                    <Link
-                      href={navigation.actions.secondary.href}
-                      className={cn(
-                        'inline-flex h-9 items-center justify-center rounded-full border border-white-30 px-4 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-white-20',
-                        focusRing
-                      )}
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      {navigation.actions.secondary.label}
-                    </Link>
-                    <Link
-                      href={navigation.actions.primary.href}
-                      className={cn(
-                        'inline-flex h-9 items-center justify-center rounded-full border border-brand-green bg-brand-green px-4 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-brand-red hover:border-brand-red',
-                        focusRing
-                      )}
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      {navigation.actions.primary.label}
-                    </Link>
-                  </div>
                 </div>
               </DrawerContent>
             </Drawer>
