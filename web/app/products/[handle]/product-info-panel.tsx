@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { productPage } from '@/lib/data'
 import { matchFeature } from '@/lib/features'
 import type { ShopifyProductVariant } from '@/lib/types'
@@ -31,17 +32,20 @@ const TECH_SPEC_LABELS = new Set([
 
 function SpecTable({ rows }: { rows: { label: string; value: string }[] }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-      {rows.map(({ label, value }) => (
-        <div
-          key={label}
-          className="flex flex-col gap-1 rounded-lg border border-border bg-card p-3"
-        >
-          <span className="font-body text-12 text-muted-foreground">{label}</span>
-          <span className="font-body text-14 font-medium text-foreground">{value}</span>
-        </div>
-      ))}
-    </div>
+    <Table>
+      <TableBody>
+        {rows.map(({ label, value }) => (
+          <TableRow key={label}>
+            <TableCell className="border border-border font-body text-12 text-muted-foreground">
+              {label}
+            </TableCell>
+            <TableCell className="border border-border font-body text-14 font-medium text-foreground">
+              {value}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   )
 }
 
@@ -217,12 +221,23 @@ export function ProductInfoPanel({
       )}
 
       {techSpecRows.length > 0 && (
-        <div data-reveal="5" className="flex flex-col gap-3">
-          <h2 className="font-display text-xl text-heading">
-            {productPage.sections.statsAndPerformance}
-          </h2>
-          <SpecTable rows={techSpecRows} />
-        </div>
+        <Collapsible data-reveal="5" defaultOpen={false}>
+          <CollapsibleTrigger className="flex w-full items-center justify-between border border-border px-4 py-3 hover:bg-muted/50">
+            <span className="font-display text-xl text-heading">
+              {productPage.sections.statsAndPerformance}
+            </span>
+            <Icon
+              path={mdiChevronDown}
+              size={1}
+              className="size-4 text-muted-foreground transition-transform [[data-state=open]_&]:rotate-180"
+            />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="border border-t-0 border-border">
+              <SpecTable rows={techSpecRows} />
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       )}
 
       {iconFeatures.length > 0 && (
