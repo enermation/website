@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select'
 import { productPage } from '@/lib/data'
 import type { ShopifyProductVariant } from '@/lib/types'
-import { cn, formatPrice } from '@/lib/utils'
+import { cn, formatPrice, parseVehicleDescription } from '@/lib/utils'
 
 type ProductInfoPanelProps = {
   vendor?: string | null
@@ -51,27 +51,39 @@ export function ProductInfoPanel({
       option => option.name !== 'Title' && option.value !== 'Default Title'
     ) ?? []
 
-  const specs = [
-    ...(vendor ? [{ label: productPage.labels.brand, value: vendor }] : []),
-    ...specOptions.map(option => ({ label: option.name, value: option.value })),
-    {
-      label: productPage.labels.status,
-      value: currentAvailableForSale
-        ? productPage.labels.available
-        : productPage.labels.soldOrReserved,
-    },
-    {
-      label: productPage.labels.price,
-      value: currentAvailableForSale && currentPrice ? currentPrice : productPage.labels.reserved,
-    },
-  ]
+  // Specs list derived from description — vehicle fields become rows in Car Details
+  // Equipment is excluded here (it belongs in the About paragraph instead)
+  const vehicleSpecLines = (() => {
+    const parsed = parseVehicleDescription(description)
+    return parsed
+      .filter(line => line.label !== 'Equipment')
+      .map(line => ({ label: line.label, value: line.value }))
+  })()
+
+  // Equipment paragraph — parsed from description for the About section
+  // Format as a flowing sentence by joining comma-separated items
+  const equipmentParagraph = (() => {
+    const parsed = parseVehicleDescription(description)
+    const equipmentLines = parsed.filter(line => line.label === 'Equipment')
+    const raw = equipmentLines.map(line => line.value).join(' ')
+    if (!raw) return null
+    // Split on comma or slash, rejoin as a comma-separated sentence
+    const items = raw
+      .split(/[,/]/)
+      .map(s => s.trim())
+      .filter(Boolean)
+    return items.join(', ')
+  })()
 
   const categories = [
     {
       id: 'details',
       name: productPage.sections.listingDetails,
       icon: <Icon path={mdiCar} size={1} className="size-4" aria-hidden="true" />,
-      specs,
+      specs: [
+        ...specOptions.map(option => ({ label: option.name, value: option.value })),
+        ...vehicleSpecLines,
+      ].filter(row => row.value),
     },
   ]
 
@@ -153,15 +165,21 @@ export function ProductInfoPanel({
         </div>
       )}
 
-      {/* Row 4: Description */}
+      {/* Row 4: Description — equipment as a beautiful paragraph */}
       {description ? (
-        <div data-reveal="4" className="flex flex-col gap-3">
+        <div data-reveal="4" className="flex flex-col gap-4">
           <h2 className="font-display text-xl text-balance text-heading">
             {productPage.sections.aboutThisListing}
           </h2>
-          <p className="whitespace-pre-line break-words line-clamp-4 font-body text-15 leading-relaxed text-body">
-            {description}
-          </p>
+          {equipmentParagraph ? (
+            <p className="whitespace-pre-line break-words font-body text-15 leading-relaxed text-body">
+              {equipmentParagraph}
+            </p>
+          ) : (
+            <p className="whitespace-pre-line break-words font-body text-15 leading-relaxed text-body">
+              {description}
+            </p>
+          )}
         </div>
       ) : null}
 

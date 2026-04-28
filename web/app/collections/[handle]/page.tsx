@@ -8,7 +8,7 @@ import { SiteHeader } from '@/components/site-header'
 import { collectionStories } from '@/lib/data'
 import { fetchCollectionProducts, fetchCollections } from '@/lib/shopify'
 import type { ShopifyProduct } from '@/lib/types'
-import { cn } from '@/lib/utils'
+import { cn, parseVehicleFromTitle } from '@/lib/utils'
 import { FilterBar } from './filter-bar'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -37,8 +37,8 @@ function buildMakeOptions(products: ShopifyProduct[]): MakeOption[] {
   const counts = new Map<string, number>()
 
   for (const product of products) {
-    // Prefer structured metafield make, fall back to vendor
-    const make = product.make?.value?.trim() || product.vendor?.trim()
+    // Derive make from product title (first word), fall back to vendor
+    const make = parseVehicleFromTitle(product.title).make ?? product.vendor?.trim() ?? null
     if (!make) continue
     counts.set(make, (counts.get(make) ?? 0) + 1)
   }
