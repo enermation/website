@@ -386,7 +386,7 @@ export function HeroCarouselScene({
 }: HeroCarouselSceneProps) {
   useEffect(() => {
     useGLTF.preload(getModelPath(activeModelIndex))
-    useEnvironment.preload('forest')
+    useEnvironment.preload({ preset: 'forest' })
   }, [activeModelIndex])
 
   useEffect(() => {
