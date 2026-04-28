@@ -18,6 +18,48 @@ import { matchFeature } from '@/lib/features'
 import type { ShopifyProductVariant } from '@/lib/types'
 import { cn, formatPrice, parseVehicleDescription } from '@/lib/utils'
 
+const TECH_SPEC_LABELS = new Set([
+  'Displacement',
+  'Max output',
+  'Drivetrain',
+  'Drive modes',
+  'Steering Modes',
+  'Suspension',
+  'Chassis',
+  'Frame',
+])
+
+function SpecTable({ rows }: { rows: { label: string; value: string }[] }) {
+  const left = rows.filter((_, i) => i % 2 === 0)
+  const right = rows.filter((_, i) => i % 2 !== 0)
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2">
+      <div className="md:pr-6">
+        {left.map(({ label, value }) => (
+          <div
+            key={label}
+            className="flex min-w-0 items-center justify-between gap-4 border-b border-border py-3"
+          >
+            <span className="shrink-0 font-body text-14 text-muted-foreground">{label}</span>
+            <span className="truncate font-body text-14 font-medium text-foreground">{value}</span>
+          </div>
+        ))}
+      </div>
+      <div className="md:border-l md:border-border md:pl-6">
+        {right.map(({ label, value }) => (
+          <div
+            key={label}
+            className="flex min-w-0 items-center justify-between gap-4 border-b border-border py-3"
+          >
+            <span className="shrink-0 font-body text-14 text-muted-foreground">{label}</span>
+            <span className="truncate font-body text-14 font-medium text-foreground">{value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 type ProductInfoPanelProps = {
   vendor?: string | null
   title: string
@@ -72,10 +114,13 @@ export function ProductInfoPanel({
 
   const hasStructuredSpecs = vehicleSpecLines.some(l => l.label !== '')
 
-  const specRows = [
+  const allSpecRows = [
     ...specOptions.map(o => ({ label: o.name, value: o.value })),
     ...vehicleSpecLines.filter(l => l.label !== ''),
   ].filter(r => r.value)
+
+  const keySpecRows = allSpecRows.filter(r => !TECH_SPEC_LABELS.has(r.label))
+  const techSpecRows = allSpecRows.filter(r => TECH_SPEC_LABELS.has(r.label))
 
   const iconFeatures = equipmentItems
     .map(item => ({ item, icon: matchFeature(item) }))
@@ -161,29 +206,26 @@ export function ProductInfoPanel({
         </div>
       )}
 
-      {specRows.length > 0 && (
+      {keySpecRows.length > 0 && (
         <div data-reveal="4" className="flex flex-col gap-3">
           <h2 className="font-display text-xl text-heading">
-            {productPage.sections.listingDetails}
+            {productPage.sections.keyInformation}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2">
-            {specRows.map(({ label, value }) => (
-              <div
-                key={label}
-                className="flex items-center justify-between gap-4 border-b border-border py-3"
-              >
-                <span className="font-body text-14 text-muted-foreground">{label}</span>
-                <span className="font-body text-14 font-medium text-foreground text-right">
-                  {value}
-                </span>
-              </div>
-            ))}
-          </div>
+          <SpecTable rows={keySpecRows} />
+        </div>
+      )}
+
+      {techSpecRows.length > 0 && (
+        <div data-reveal="5" className="flex flex-col gap-3">
+          <h2 className="font-display text-xl text-heading">
+            {productPage.sections.statsAndPerformance}
+          </h2>
+          <SpecTable rows={techSpecRows} />
         </div>
       )}
 
       {iconFeatures.length > 0 && (
-        <div data-reveal="5" className="flex flex-col gap-4">
+        <div data-reveal="6" className="flex flex-col gap-4">
           <h2 className="font-display text-xl text-heading">
             {productPage.sections.vehicleFeatures}
           </h2>
@@ -201,7 +243,7 @@ export function ProductInfoPanel({
       )}
 
       {unmatchedFeatures.length > 0 && (
-        <Collapsible data-reveal="6">
+        <Collapsible data-reveal="7">
           <CollapsibleTrigger className="flex w-full items-center justify-between border border-border px-4 py-3 hover:bg-muted/50">
             <span className="font-body text-14 font-medium text-foreground">
               {productPage.sections.moreFeatures}
@@ -228,7 +270,7 @@ export function ProductInfoPanel({
       )}
 
       {!hasStructuredSpecs && description && (
-        <div data-reveal="7" className="flex flex-col gap-3">
+        <div data-reveal="8" className="flex flex-col gap-3">
           <h2 className="font-display text-xl text-heading">
             {productPage.sections.aboutThisListing}
           </h2>

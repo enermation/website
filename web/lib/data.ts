@@ -393,7 +393,8 @@ export const productPage = {
   },
   sections: {
     aboutThisListing: 'About This Car',
-    listingDetails: 'Car Details',
+    keyInformation: 'Key Information',
+    statsAndPerformance: 'Stats & Performance',
     vehicleFeatures: 'Vehicle Features',
     moreFeatures: 'More Features',
     askAQuestion: 'Ask a Question',
