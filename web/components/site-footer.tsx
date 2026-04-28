@@ -19,12 +19,12 @@ function FooterWordmark() {
       data-slot="footer-wordmark"
       className="col-span-full mx-auto w-full overflow-hidden border-b border-white-30 pb-2 lg:pb-0"
     >
-      <p
+      <img
         aria-hidden="true"
-        className="pointer-events-none select-none truncate font-heading text-footer-wordmark font-black leading-none tracking-tighter opacity-20 text-on-dark"
-      >
-        Enermation
-      </p>
+        src="/logo.svg"
+        alt=""
+        className="pointer-events-none select-none w-[15.5vw] max-w-full opacity-20"
+      />
     </div>
   )
 }

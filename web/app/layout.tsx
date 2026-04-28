@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import { Barlow_Semi_Condensed, Bebas_Neue, Inter } from 'next/font/google'
 import { Suspense } from 'react'
 import './globals.css'
+import { ChatWidgetMount } from '@/components/chat-widget-mount'
 import { SiteFooter } from '@/components/site-footer'
 import { CartProvider } from '@/lib/cart-context'
-import { ChatWidgetMount } from '@/components/chat-widget-mount'
 
 const display = Bebas_Neue({
   variable: '--font-display',
@@ -35,9 +35,9 @@ export const metadata: Metadata = {
   description:
     "Enermation are internationally renowned for offering a unique selection of some of the world's finest automobiles. The premier supercar dealer in the UK.",
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
-    apple: '/logo.jpg',
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+    apple: '/logo.svg',
   },
 }
 

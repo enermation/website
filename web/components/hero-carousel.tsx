@@ -15,7 +15,6 @@ const PORSCHE_SCALE = 1.6
 const LAMBO_SCALE = 0.015
 const PORSCHE_MODEL_PATH = '/models/911-transformed.glb'
 const LAMBO_MODEL_PATH = '/models/lambo.glb'
-const HDR_PATH = '/models/factory-road-turnaround_256.hdr'
 
 const cameraTarget = new Vector3()
 
@@ -354,7 +353,7 @@ function SceneContent({
         far={4.8}
       />
 
-      <Environment files={HDR_PATH} frames={1} resolution={256} />
+      <Environment preset="forest" frames={1} resolution={256} />
       <CameraRig
         prefersReducedMotion={prefersReducedMotion}
         allowIdleOrbit={allowIdleOrbit}
@@ -387,7 +386,7 @@ export function HeroCarouselScene({
 }: HeroCarouselSceneProps) {
   useEffect(() => {
     useGLTF.preload(getModelPath(activeModelIndex))
-    useEnvironment.preload({ files: HDR_PATH })
+    useEnvironment.preload('forest')
   }, [activeModelIndex])
 
   useEffect(() => {

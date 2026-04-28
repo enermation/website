@@ -26,7 +26,6 @@ import {
   mdiVanPassenger,
 } from '@mdi/js'
 import { Icon } from '@mdi/react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { HeaderSearch } from '@/components/header-search'
@@ -246,13 +245,12 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
       <div className="mx-auto max-w-site px-3 py-3 md:px-6 md:py-4">
         <div className="flex h-12 items-center rounded-full border border-black-40 bg-black-50 px-3 md:h-12 md:px-7">
           <Link href="/" aria-label="Enermation home" className="shrink-0">
-            <Image
-              src="/logo.jpg"
+            <img
+              src="/logo.svg"
               alt="Enermation"
               width={124}
               height={32}
               className="h-7 w-auto rounded-sm"
-              priority
             />
           </Link>
 
@@ -388,8 +386,8 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                       aria-label="Enermation home"
                       onClick={() => setMobileOpen(false)}
                     >
-                      <Image
-                        src="/logo.jpg"
+                      <img
+                        src="/logo.svg"
                         alt="Enermation"
                         width={132}
                         height={34}
