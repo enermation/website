@@ -135,8 +135,6 @@ export const footerAboutLinks: FooterLink[] = [
 export const footerPrimaryLinks: FooterLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Showroom', href: primaryShowroomCollectionHref },
-  { label: 'Sell Your Car', href: '/sell' },
-  { label: 'Services', href: '/services' },
   { label: 'About', href: '/about' },
   { label: 'Contact Us', href: '/contact' },
 ]
