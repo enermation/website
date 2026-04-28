@@ -4,12 +4,26 @@ import {
   mdiArrowBottomRight,
   mdiArrowRight,
   mdiBike,
+  mdiBus,
+  mdiBusArticulatedEnd,
   mdiCar,
-  mdiCarShiftPattern,
+  mdiCarConvertible,
+  mdiCarElectric,
+  mdiCarEstate,
+  mdiCarHatchback,
+  mdiCarPickup,
+  mdiCarSports,
   mdiCart,
+  mdiCarWrench,
   mdiChevronDown,
+  mdiFlash,
+  mdiJeepney,
   mdiMenu,
+  mdiMotorbike,
+  mdiTractorVariant,
   mdiTruck,
+  mdiTruckCargoContainer,
+  mdiVanPassenger,
 } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import Image from 'next/image'
@@ -36,9 +50,38 @@ function hasHref(href: string): boolean {
 function menuItemIcon(label: string) {
   const normalized = label.toLowerCase()
 
-  if (normalized.includes('spare') || normalized.includes('part')) return mdiCarShiftPattern
-  if (normalized.includes('commercial') || normalized.includes('truck')) return mdiTruck
-  if (normalized.includes('motorcycle') || normalized.includes('bike')) return mdiBike
+  if (normalized.includes('part') || normalized.includes('spare')) return mdiCarWrench
+
+  if (
+    normalized.includes('motorcycle') ||
+    normalized.includes('motor cycle') ||
+    normalized.includes('motorbike')
+  )
+    return mdiMotorbike
+  if (normalized.includes('cycle') || normalized.includes('bike')) return mdiBike
+
+  if (normalized.includes('machinery') || normalized.includes('machine')) return mdiTractorVariant
+  if (normalized.includes('tractor') || normalized.includes('semi')) return mdiTractorVariant
+  if (normalized.includes('bus') && normalized.includes('articulated')) return mdiBusArticulatedEnd
+  if (normalized.includes('bus')) return mdiBus
+
+  if (normalized.includes('cargo') || normalized.includes('container'))
+    return mdiTruckCargoContainer
+  if (normalized.includes('truck')) return mdiTruck
+  if (normalized.includes('commercial') || normalized.includes('heavy')) return mdiTruck
+
+  if (normalized.includes('van')) return mdiVanPassenger
+  if (normalized.includes('jeep') || normalized.includes('suv')) return mdiJeepney
+
+  if (normalized.includes('estate') || normalized.includes('station')) return mdiCarEstate
+  if (normalized.includes('hatchback') || normalized.includes('compact')) return mdiCarHatchback
+  if (normalized.includes('pickup') || normalized.includes('ute')) return mdiCarPickup
+  if (normalized.includes('sports') || normalized.includes('performance')) return mdiCarSports
+  if (normalized.includes('convertible') || normalized.includes('cabrio')) return mdiCarConvertible
+
+  if (normalized.includes('electric')) return mdiCarElectric
+  if (normalized.includes('renewable') || normalized.includes('energy')) return mdiFlash
+
   return mdiCar
 }
 
