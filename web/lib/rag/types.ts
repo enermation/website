@@ -19,6 +19,7 @@ export type ProductChunkMetadata = {
   imageUrl: string | null
   url: string
   textSnippet: string
+  available: boolean
 }
 
 export type RagRetrievalResult = {
@@ -28,4 +29,22 @@ export type RagRetrievalResult = {
 
 export type RagChatMessageMetadata = {
   citations?: string[]
+}
+
+export type ProductCitationData = Pick<
+  ProductChunkMetadata,
+  | 'handle'
+  | 'title'
+  | 'priceAmount'
+  | 'priceCurrency'
+  | 'imageUrl'
+  | 'available'
+  | 'url'
+  | 'make'
+  | 'model'
+  | 'year'
+>
+
+export type FullRagChatMessageMetadata = {
+  citations?: ProductCitationData[]
 }

@@ -23,9 +23,14 @@ import {
   PromptInputTextarea,
 } from '@/components/ai-elements/prompt-input'
 import { Suggestion, Suggestions } from '@/components/ai-elements/suggestion'
+import { ProductCitation } from '@/components/rag/product-citation'
 import { Button } from '@/components/ui/button'
-import { SUGGESTED_QUESTIONS } from '@/lib/rag/suggested-questions'
-import type { RagChatMessageMetadata } from '@/lib/rag/types'
+import {
+  ASSISTANT_EMPTY_DESCRIPTION,
+  ASSISTANT_GREETING,
+  SUGGESTED_QUESTIONS,
+} from '@/lib/assistant-data'
+import type { FullRagChatMessageMetadata } from '@/lib/rag/types'
 
 const MAX_FILES = 2
 const MAX_FILE_SIZE = 4 * 1024 * 1024
@@ -121,7 +126,7 @@ export function ChatPanel({
   const lastMsg = messages[messages.length - 1]
   const citations =
     lastMsg?.role === 'assistant' && lastMsg.metadata != null
-      ? (lastMsg.metadata as RagChatMessageMetadata).citations
+      ? (lastMsg.metadata as FullRagChatMessageMetadata).citations
       : null
 
   const hasCitations = !!(citations && citations.length > 0)
@@ -132,8 +137,8 @@ export function ChatPanel({
         <ConversationContent>
           {messages.length === 0 ? (
             <ConversationEmptyState
-              description="Ask about vehicles, parts, or anything in our inventory"
-              title="How can I help you?"
+              description={ASSISTANT_EMPTY_DESCRIPTION}
+              title={ASSISTANT_GREETING}
             />
           ) : (
             messages.map(msg => {
@@ -197,6 +202,14 @@ export function ChatPanel({
                         })}
                     </MessageResponse>
                   </MessageContent>
+
+                  {msg.role === 'assistant' && hasCitations && (
+                    <div className="mt-2 flex flex-col gap-2">
+                      {citations?.map(c => (
+                        <ProductCitation key={c.handle} product={c} />
+                      ))}
+                    </div>
+                  )}
                 </Message>
               )
             })

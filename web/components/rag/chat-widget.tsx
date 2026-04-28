@@ -1,11 +1,12 @@
 'use client'
 
-import { mdiRobotHappyOutline, mdiClose } from '@mdi/js'
+import { mdiClose, mdiRobotHappyOutline } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import { useCallback, useState } from 'react'
 import { ChatPanel } from '@/components/rag/chat-panel'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { ASSISTANT_WIDGET_TITLE } from '@/lib/assistant-data'
 import { cn } from '@/lib/utils'
 
 export function ChatWidget() {
@@ -19,12 +20,12 @@ export function ChatWidget() {
   if (!isOpen) {
     return (
       <Button
-        className="fixed bottom-4 right-4 z-50 size-12 rounded-full shadow-xl"
+        className="fixed bottom-6 right-6 z-50 size-12 rounded-full shadow-xl bg-brand-green"
         onClick={handleOpen}
         size="icon"
         variant="default"
       >
-        <Icon path={mdiChat} size={1} />
+        <Icon path={mdiRobotHappyOutline} size={1} />
       </Button>
     )
   }
@@ -32,11 +33,12 @@ export function ChatWidget() {
   return (
     <Card
       className={cn(
-        'fixed bottom-4 right-4 z-50 flex size-widget flex-col shadow-xl border-border bg-background'
+        'fixed bottom-6 right-6 z-50 flex size-widget flex-col shadow-xl border-border bg-background',
+        'h-(--size-widget-h)'
       )}
     >
       <CardHeader className="flex flex-row items-center justify-between gap-2 border-b border-border px-4 py-3">
-        <span className="text-13 font-heading">Enermation Assistant</span>
+        <span className="text-13 font-heading">{ASSISTANT_WIDGET_TITLE}</span>
         <Button
           className="size-8 rounded-full p-0"
           onClick={handleClose}

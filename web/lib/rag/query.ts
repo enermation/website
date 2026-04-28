@@ -1,7 +1,7 @@
 import 'server-only'
 
-import { getVectorIndex } from '@/lib/rag/clients'
-import { TOP_K_RETRIEVE } from '@/lib/rag/constants'
+import { getQdrantClient } from '@/lib/rag/clients'
+import { QDRANT_COLLECTION, TOP_K_RETRIEVE } from '@/lib/rag/constants'
 import { embedQuery } from '@/lib/rag/embed'
 import { rerankCandidates } from '@/lib/rag/rerank'
 import type { RagRetrievalResult } from '@/lib/rag/types'
@@ -9,12 +9,13 @@ import type { RagRetrievalResult } from '@/lib/rag/types'
 export async function findRelevantProducts(query: string): Promise<RagRetrievalResult[]> {
   const vector = await embedQuery(query)
 
-  const index = getVectorIndex()
+  const client = getQdrantClient()
 
-  const results = await index.query({
+  const results = await client.search(QDRANT_COLLECTION, {
     vector,
-    topK: TOP_K_RETRIEVE,
-    includeMetadata: true,
+    limit: TOP_K_RETRIEVE,
+    with_payload: true,
+    with_vector: false,
   })
 
   if (!results || results.length === 0) {
@@ -22,9 +23,9 @@ export async function findRelevantProducts(query: string): Promise<RagRetrievalR
   }
 
   const candidates: RagRetrievalResult[] = results
-    .filter(r => r.metadata !== undefined)
+    .filter(r => r.payload !== undefined && r.payload !== null)
     .map(r => ({
-      metadata: r.metadata as RagRetrievalResult['metadata'],
+      metadata: r.payload as RagRetrievalResult['metadata'],
       score: r.score ?? 0,
     }))
 

@@ -1,16 +1,22 @@
 // ── Shared metafield fragment ─────────────────────────────────────────────────
+//
+// Actual Shopify structure (from Admin API):
+//   custom.model_year          → number_integer (e.g. "2025")
+//   shopify.transmission-type  → list.metaobject_reference (GIDs like "gid://shopify/Metaobject/...")
+//   shopify.item-condition     → list.metaobject_reference
+//   shopify.fuel-supply        → list.metaobject_reference
+//   shopify.drive-type         → list.metaobject_reference
+//   shopify.vehicle-features   → list.metaobject_reference (accessories/features)
+//
+// Metaobject reference values are JSON arrays of GIDs. The metaobject labels
+// (e.g. "Automatic", "Used", "Diesel") are resolved via the Admin API.
 
 const PRODUCT_METAFIELDS = `
-  make: metafield(namespace: "vehicle", key: "make") { value type }
-  model: metafield(namespace: "vehicle", key: "model") { value type }
-  year: metafield(namespace: "vehicle", key: "year") { value type }
-  mileage: metafield(namespace: "vehicle", key: "mileage") { value type }
-  colour: metafield(namespace: "vehicle", key: "colour") { value type }
-  fuelType: metafield(namespace: "vehicle", key: "fuel_type") { value type }
-  transmission: metafield(namespace: "vehicle", key: "transmission") { value type }
-  originCountry: metafield(namespace: "vehicle", key: "origin_country") { value type }
-  condition: metafield(namespace: "vehicle", key: "condition") { value type }
-  engine: metafield(namespace: "vehicle", key: "engine") { value type }
+  year: metafield(namespace: "custom", key: "model_year") { value type }
+  transmission: metafield(namespace: "shopify", key: "transmission-type") { value type }
+  condition: metafield(namespace: "shopify", key: "item-condition") { value type }
+  fuelType: metafield(namespace: "shopify", key: "fuel-supply") { value type }
+  driveType: metafield(namespace: "shopify", key: "drive-type") { value type }
 `
 
 const MENU_RESOURCE_FRAGMENT = `

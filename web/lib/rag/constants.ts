@@ -6,11 +6,15 @@ export const DEFAULT_CHAT_PROVIDER = 'anthropic'
 export const DEFAULT_ANTHROPIC_MODEL = 'claude-haiku-4-5'
 export const DEFAULT_GROQ_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct'
 
-export const TOP_K_RETRIEVE = 24
+export const TOP_K_RETRIEVE = 25
 export const TOP_K_RERANK = 6
 
+export const QDRANT_COLLECTION = 'enermation-products'
+export const QDRANT_VECTOR_SIZE = EMBED_DIMENSIONS
+export const QDRANT_DISTANCE = 'Cosine'
+
 export const INDEX_BATCH_SIZE = 64
-export const UPSTASH_UPSERT_BATCH = 100
+export const QDRANT_UPSERT_BATCH = 128
 
 export const RATELIMIT_WINDOW = '60 s'
 export const RATELIMIT_REQUESTS = 10

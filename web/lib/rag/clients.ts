@@ -1,14 +1,13 @@
 import { anthropic } from '@ai-sdk/anthropic'
 import { groq } from '@ai-sdk/groq'
+import { QdrantClient } from '@qdrant/qdrant-js'
 import { Redis } from '@upstash/redis'
-import { Index } from '@upstash/vector'
 import { VoyageAIClient } from 'voyageai'
 import {
   DEFAULT_ANTHROPIC_MODEL,
   DEFAULT_CHAT_PROVIDER,
   DEFAULT_GROQ_MODEL,
 } from '@/lib/rag/constants'
-import type { ProductChunkMetadata } from '@/lib/rag/types'
 
 function getRequiredEnv(name: string): string {
   const value = process.env[name]?.trim()
@@ -23,8 +22,8 @@ type GroqModel = ReturnType<typeof groq>
 type ChatModel = AnthropicModel | GroqModel
 
 let voyageClient: VoyageAIClient | undefined
-let vectorIndex: Index<ProductChunkMetadata> | undefined
 let redisClient: Redis | undefined
+let qdrantClient: QdrantClient | undefined
 let chatModelInstance: ChatModel | undefined
 
 export function getVoyageClient(): VoyageAIClient {
@@ -35,13 +34,13 @@ export function getVoyageClient(): VoyageAIClient {
   return voyageClient
 }
 
-export function getVectorIndex(): Index<ProductChunkMetadata> {
-  if (!vectorIndex) {
-    const url = getRequiredEnv('UPSTASH_VECTOR_REST_URL')
-    const token = getRequiredEnv('UPSTASH_VECTOR_REST_TOKEN')
-    vectorIndex = new Index<ProductChunkMetadata>({ url, token })
+export function getQdrantClient(): QdrantClient {
+  if (!qdrantClient) {
+    const url = getRequiredEnv('QDRANT_URL')
+    const apiKey = getRequiredEnv('QDRANT_API_KEY')
+    qdrantClient = new QdrantClient({ url, apiKey })
   }
-  return vectorIndex
+  return qdrantClient
 }
 
 export function getRedis(): Redis {

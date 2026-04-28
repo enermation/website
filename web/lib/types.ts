@@ -21,18 +21,21 @@ export type ShopifyMetafield = {
   type: string | null
 }
 
-// Vehicle-specific metafields (all optional — may not be set on every product)
+// Vehicle-specific metafields (from shopify.* and custom.* namespaces)
+// Metaobject references are stored as JSON arrays of GIDs.
+// Resolution (parsing GIDs → label strings) happens at the data layer.
 export type VehicleMetafields = {
-  make: ShopifyMetafield | null
-  model: ShopifyMetafield | null
-  year: ShopifyMetafield | null
-  mileage: ShopifyMetafield | null
-  colour: ShopifyMetafield | null
-  fuelType: ShopifyMetafield | null
-  transmission: ShopifyMetafield | null
-  originCountry: ShopifyMetafield | null
-  condition: ShopifyMetafield | null
-  engine: ShopifyMetafield | null
+  make: ShopifyMetafield | null // derived from product title — not a metafield
+  model: ShopifyMetafield | null // derived from product title — not a metafield
+  year: ShopifyMetafield | null // custom.model_year → number_integer
+  mileage: ShopifyMetafield | null // not set on Shopify — derived from elsewhere
+  colour: ShopifyMetafield | null // not set on Shopify
+  fuelType: ShopifyMetafield | null // shopify.fuel-supply → list.metaobject_reference
+  transmission: ShopifyMetafield | null // shopify.transmission-type → list.metaobject_reference
+  originCountry: ShopifyMetafield | null // not set on Shopify
+  condition: ShopifyMetafield | null // shopify.item-condition → list.metaobject_reference
+  engine: ShopifyMetafield | null // not set on Shopify
+  driveType: ShopifyMetafield | null // shopify.drive-type → list.metaobject_reference
 }
 
 // Variant shape returned by GET_PRODUCT_BY_HANDLE (full detail).
@@ -64,6 +67,7 @@ export type ShopifyProduct = {
   variants: { edges: { node: ShopifyProductVariant }[] }
   collections?: { edges: { node: ShopifyCollection }[] }
   // Vehicle metafields (null if not set or not a vehicle product)
+  // driveType added — previously was part of vehicle namespace but now uses shopify.drive-type
   make: ShopifyMetafield | null
   model: ShopifyMetafield | null
   year: ShopifyMetafield | null
@@ -74,6 +78,7 @@ export type ShopifyProduct = {
   originCountry: ShopifyMetafield | null
   condition: ShopifyMetafield | null
   engine: ShopifyMetafield | null
+  driveType: ShopifyMetafield | null
 }
 
 export type ShopifyProductMinimal = Pick<

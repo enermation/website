@@ -6,7 +6,7 @@ import { getChatModel } from '@/lib/rag/clients'
 import { buildGroundedSystemPrompt } from '@/lib/rag/prompt'
 import { findRelevantProducts } from '@/lib/rag/query'
 import { getChatLimiter } from '@/lib/rag/ratelimit'
-import type { RagChatMessageMetadata } from '@/lib/rag/types'
+import type { FullRagChatMessageMetadata, ProductCitationData } from '@/lib/rag/types'
 import { describeImagesForRetrieval } from '@/lib/rag/vision'
 
 export const maxDuration = 30
@@ -88,19 +88,30 @@ export async function POST(request: Request) {
 
   const modelMessages = await convertToModelMessages(messages)
 
-  const citations = products.map(p => p.metadata.handle)
+  const citations: ProductCitationData[] = products.map(p => ({
+    handle: p.metadata.handle,
+    title: p.metadata.title,
+    priceAmount: p.metadata.priceAmount,
+    priceCurrency: p.metadata.priceCurrency,
+    imageUrl: p.metadata.imageUrl,
+    available: p.metadata.available,
+    url: p.metadata.url,
+    make: p.metadata.make,
+    model: p.metadata.model,
+    year: p.metadata.year,
+  }))
 
   const result = streamText({
     model: getChatModel(),
     system,
     messages: modelMessages,
-    temperature: 0.2,
+    temperature: 0.3,
   })
 
   return result.toUIMessageStreamResponse({
     messageMetadata({ part }: { part: TextStreamPart<ToolSet> }) {
       if (part.type === 'finish') {
-        return { citations } as RagChatMessageMetadata
+        return { citations } as FullRagChatMessageMetadata
       }
       return undefined
     },

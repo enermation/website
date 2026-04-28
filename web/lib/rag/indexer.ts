@@ -1,32 +1,65 @@
 import 'server-only'
 
+import type { QdrantClient } from '@qdrant/qdrant-js'
 import { GET_ALL_PRODUCTS_FOR_INDEX } from '@/lib/queries'
 import { chunkFromShopifyProduct } from '@/lib/rag/chunk'
-import { getVectorIndex } from '@/lib/rag/clients'
-import { UPSTASH_UPSERT_BATCH } from '@/lib/rag/constants'
+import { getQdrantClient } from '@/lib/rag/clients'
+import {
+  QDRANT_COLLECTION,
+  QDRANT_DISTANCE,
+  QDRANT_UPSERT_BATCH,
+  QDRANT_VECTOR_SIZE,
+} from '@/lib/rag/constants'
 import { embedDocuments } from '@/lib/rag/embed'
 import type { ProductChunkMetadata } from '@/lib/rag/types'
 import { getClient } from '@/lib/shopify'
 import type { ShopifyProduct } from '@/lib/types'
 
+async function ensureCollection(client: QdrantClient): Promise<void> {
+  const exists = await client.collectionExists(QDRANT_COLLECTION)
+  if (!exists) {
+    await client.createCollection(QDRANT_COLLECTION, {
+      vectors: {
+        size: QDRANT_VECTOR_SIZE,
+        distance: QDRANT_DISTANCE as 'Cosine',
+      },
+    })
+  }
+}
+
 export async function reindexAll(options: { fresh?: boolean } = {}): Promise<{
-  upserted: number
-  pages: number
+  indexed: number
+  failed: number
+  durationMs: number
 }> {
-  const index = getVectorIndex()
+  const start = Date.now()
+  const client = getQdrantClient()
+
+  await ensureCollection(client)
 
   if (options.fresh) {
-    await index.reset()
+    try {
+      await client.deleteCollection(QDRANT_COLLECTION)
+    } catch {
+      // collection may not exist yet, ignore
+    }
+    await client.createCollection(QDRANT_COLLECTION, {
+      vectors: {
+        size: QDRANT_VECTOR_SIZE,
+        distance: QDRANT_DISTANCE as 'Cosine',
+      },
+    })
+  } else {
+    await ensureCollection(client)
   }
 
-  const client = getClient()
+  const shopify = getClient()
   const allProducts: ShopifyProduct[] = []
   let cursor: string | undefined
   let hasNextPage = true
-  let pageCount = 0
 
   while (hasNextPage) {
-    const { data } = await client.request<{
+    const { data } = await shopify.request<{
       products: {
         edges: { cursor: string; node: ShopifyProduct }[]
         pageInfo: { hasNextPage: boolean; endCursor: string }
@@ -37,7 +70,6 @@ export async function reindexAll(options: { fresh?: boolean } = {}): Promise<{
 
     const products = data?.products.edges.map(e => e.node) ?? []
     allProducts.push(...products)
-    pageCount++
     hasNextPage = data?.products.pageInfo.hasNextPage ?? false
     cursor = data?.products.pageInfo.endCursor
   }
@@ -53,22 +85,27 @@ export async function reindexAll(options: { fresh?: boolean } = {}): Promise<{
   const items = chunks.map((chunk, i) => ({
     id: chunk.id,
     vector: vectors[i],
-    metadata: chunk.metadata,
+    payload: chunk.metadata as Record<string, unknown>,
   }))
 
-  let upserted = 0
+  let indexed = 0
+  let failed = 0
 
-  for (let i = 0; i < items.length; i += UPSTASH_UPSERT_BATCH) {
-    const batch = items.slice(i, i + UPSTASH_UPSERT_BATCH)
-    await index.upsert(
-      batch.map(item => ({
-        id: item.id,
-        vector: item.vector,
-        metadata: item.metadata as ProductChunkMetadata,
-      }))
-    )
-    upserted += batch.length
+  for (let i = 0; i < items.length; i += QDRANT_UPSERT_BATCH) {
+    const batch = items.slice(i, i + QDRANT_UPSERT_BATCH)
+    try {
+      await client.upsert(QDRANT_COLLECTION, {
+        points: batch.map(item => ({
+          id: item.id,
+          vector: item.vector,
+          payload: item.payload,
+        })),
+      })
+      indexed += batch.length
+    } catch {
+      failed += batch.length
+    }
   }
 
-  return { upserted, pages: pageCount }
+  return { indexed, failed, durationMs: Date.now() - start }
 }

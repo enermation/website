@@ -9,6 +9,16 @@ import {
 } from '@/lib/queries'
 import type { ShopifyCollection, ShopifyProduct, ShopifyShopInfo } from '@/lib/types'
 
+// ── Admin API client (for metaobject resolution) ──────────────────────────────
+
+function getAdminClient() {
+  return createStorefrontApiClient({
+    storeDomain: getRequiredEnv('PUBLIC_STORE_DOMAIN', ['SHOPIFY_STORE_DOMAIN']),
+    apiVersion: '2026-04',
+    privateAccessToken: process.env.SHOPIFY_ADMIN_ACCESS_TOKEN ?? '',
+  })
+}
+
 function getRequiredEnv(
   canonicalName: 'PUBLIC_STORE_DOMAIN' | 'PRIVATE_STOREFRONT_API_TOKEN',
   aliases: string[] = []
@@ -36,6 +46,95 @@ export function getClient() {
       'PUBLIC_STOREFRONT_API_TOKEN',
     ]),
   })
+}
+
+// ── Metaobject resolution ─────────────────────────────────────────────────────
+//
+// Metafield values of type list.metaobject_reference contain JSON arrays of GIDs:
+//   e.g. '["gid://shopify/Metaobject/193218642106"]'
+//
+// This resolver fetches the label from each referenced metaobject so we get
+// human-readable strings like "Automatic" instead of raw GIDs.
+
+type MetaobjectField = { key: string; value: string }
+
+type Metaobject = {
+  id: string
+  type: string
+  handle: string
+  fields: MetaobjectField[]
+}
+
+function parseMetaobjectGIDs(value: string | null): string[] {
+  if (!value) return []
+  try {
+    const parsed = JSON.parse(value)
+    return Array.isArray(parsed) ? parsed.filter((v): v is string => typeof v === 'string') : []
+  } catch {
+    return []
+  }
+}
+
+function metaobjectLabel(metaobject: Metaobject | null): string | null {
+  return metaobject?.fields.find(f => f.key === 'label')?.value ?? null
+}
+
+// Resolves a list.metaobject_reference metafield value to its first label.
+// Returns null if no metaobjects found or none have a label.
+async function resolveMetaobjectLabel(value: string | null): Promise<string | null> {
+  const gids = parseMetaobjectGIDs(value)
+  if (gids.length === 0) {
+    console.log('[resolveMetaobjectLabel] no GIDs, returning null')
+    return null
+  }
+
+  console.log('[resolveMetaobjectLabel] fetching metaobject:', gids[0])
+
+  const { data, errors } = await getAdminClient().request<{ metaobject: Metaobject | null }>(
+    `{ metaobject(id: "${gids[0]}") { id type handle fields { key value } } }`
+  )
+
+  if (errors) {
+    console.error('[resolveMetaobjectLabel] errors:', JSON.stringify(errors))
+    return null
+  }
+
+  const label = metaobjectLabel(data?.metaobject ?? null)
+  console.log('[resolveMetaobjectLabel] resolved label:', label)
+  return label
+}
+
+// Resolves all vehicle metafields on a product. Call this after fetching a product
+// to enrich it with human-readable vehicle data.
+export async function resolveVehicleMetafields(product: ShopifyProduct): Promise<ShopifyProduct> {
+  console.log('[resolveVehicleMetafields] product:', product.title)
+  console.log('[resolveVehicleMetafields] raw transmission:', product.transmission)
+  console.log('[resolveVehicleMetafields] raw condition:', product.condition)
+  console.log('[resolveVehicleMetafields] raw fuelType:', product.fuelType)
+  console.log('[resolveVehicleMetafields] raw driveType:', product.driveType)
+
+  const [transmissionLabel, conditionLabel, fuelTypeLabel, driveTypeLabel] = await Promise.all([
+    resolveMetaobjectLabel(product.transmission?.value ?? null),
+    resolveMetaobjectLabel(product.condition?.value ?? null),
+    resolveMetaobjectLabel(product.fuelType?.value ?? null),
+    resolveMetaobjectLabel(product.driveType?.value ?? null),
+  ])
+
+  console.log('[resolveVehicleMetafields] resolved:', {
+    transmissionLabel,
+    conditionLabel,
+    fuelTypeLabel,
+    driveTypeLabel,
+  })
+
+  return {
+    ...product,
+    // These are still ShopifyMetafield-shaped for compat, but we resolve in place
+    transmission: { value: transmissionLabel, type: product.transmission?.type ?? null },
+    condition: { value: conditionLabel, type: product.condition?.type ?? null },
+    fuelType: { value: fuelTypeLabel, type: product.fuelType?.type ?? null },
+    driveType: { value: driveTypeLabel, type: product.driveType?.type ?? null },
+  }
 }
 
 // ── Cached data fetchers ──────────────────────────────────────────────────────
@@ -80,12 +179,14 @@ export async function fetchCollectionProducts(
 
   const { title, description, image, products } = data.collection
 
+  const resolved = await Promise.all(products.edges.map(e => resolveVehicleMetafields(e.node)))
+
   return {
     id: data.collection.id,
     title,
     description,
     image,
-    products: products.edges.map(e => e.node),
+    products: resolved,
   }
 }
 
@@ -99,7 +200,9 @@ export async function fetchProduct(handle: string): Promise<ShopifyProduct | nul
     { variables: { handle } }
   )
 
-  return data?.product ?? null
+  if (!data?.product) return null
+
+  return resolveVehicleMetafields(data.product)
 }
 
 export async function fetchShopInfo(): Promise<ShopifyShopInfo | null> {
