@@ -33,6 +33,7 @@ import { useEffect, useState } from 'react'
 import { HeaderSearch } from '@/components/header-search'
 import { ShoppingCart1 } from '@/components/shopping-cart1'
 import { Badge } from '@/components/ui/badge'
+import { Drawer, DrawerContent } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { useCart } from '@/lib/cart-context'
 import { headerDropdownCopy } from '@/lib/data'
@@ -435,8 +436,8 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
               </SheetContent>
             </Sheet>
 
-            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-              <SheetTrigger
+            <Drawer open={mobileOpen} onOpenChange={setMobileOpen}>
+              <DrawerTrigger
                 className={cn(
                   'inline-flex size-11 items-center justify-center rounded-full text-background md:hidden',
                   focusRing
@@ -444,10 +445,10 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                 aria-label="Open menu"
               >
                 <Icon path={mdiMenu} size={1} className="size-5" />
-              </SheetTrigger>
-              <SheetContent
-                side="left"
-                className="w-full max-w-none border-r border-white-20 bg-surface-dark p-0 text-background backdrop-blur-md sm:max-w-none"
+              </DrawerTrigger>
+              <DrawerContent
+                data-slot="drawer-content"
+                className="w-full max-w-none border-r border-white-20 bg-surface-dark text-background"
               >
                 <div className="flex h-full flex-col pt-12">
                   <SheetTitle className="sr-only">Site navigation</SheetTitle>
@@ -531,8 +532,8 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                     </Link>
                   </div>
                 </div>
-              </SheetContent>
-            </Sheet>
+              </DrawerContent>
+            </Drawer>
           </div>
         </div>
       </div>
