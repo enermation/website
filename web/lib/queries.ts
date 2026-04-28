@@ -277,7 +277,7 @@ export const GET_COLLECTIONS_FOR_HEADER = `
 `
 
 export const GET_PRODUCTS_IN_COLLECTION = `
-  query getProductsInCollection($handle: String!, $sortKey: ProductCollectionSortKeys!, $reverse: Boolean, $filter: [ProductFilter!], $first: Int = 50) {
+  query getProductsInCollection($handle: String!, $sortKey: ProductCollectionSortKeys, $reverse: Boolean, $filter: [ProductFilter!], $first: Int = 50) {
     collection(handle: $handle) {
       id
       title

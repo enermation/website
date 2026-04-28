@@ -153,7 +153,7 @@ export async function fetchCollections(): Promise<ShopifyCollection[]> {
 
 export async function fetchCollectionProducts(
   handle: string,
-  options: { sortKey: string; reverse?: boolean; filter?: { vendor: string }[]; first?: number }
+  options?: { sortKey?: string; reverse?: boolean; filter?: { vendor: string }[]; first?: number }
 ): Promise<{
   id: string
   title: string

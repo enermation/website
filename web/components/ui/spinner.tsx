@@ -2,16 +2,9 @@ import { Icon } from '@mdi/react'
 import { mdiLoading } from '@mdi/js'
 import { cn } from '@/lib/utils'
 
-function Spinner({ className, ...props }: React.ComponentProps<'svg'>) {
+function Spinner({ className }: { className?: string }) {
   return (
-    <Icon
-      role="status"
-      aria-label="Loading"
-      path={mdiLoading}
-      size={1}
-      className={cn('size-4 animate-spin', className)}
-      {...props}
-    />
+    <Icon path={mdiLoading} size={1} className={cn('size-4 animate-spin', className)} />
   )
 }
 

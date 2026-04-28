@@ -170,36 +170,8 @@ export function ChatPanel({
                     <MessageResponse>
                       {msg.parts
                         .filter(p => p.type === 'text')
-                        .map((p, textIdx) => {
-                          const text = p.text
-                          const textKey = `text-${msg.id}-${textIdx}`
-                          if (
-                            msg.role === 'assistant' &&
-                            textIdx === msg.parts.filter(q => q.type === 'text').length - 1
-                          ) {
-                            return (
-                              <span key={textKey}>
-                                {hasCitations
-                                  ? text.split(/\[([^\]]+)\]/).map((segment, segIdx) => {
-                                      if (segIdx % 2 === 1) {
-                                        const citeKey = `cite-${msg.id}-${textIdx}-${segIdx}`
-                                        return (
-                                          <InlineCitation key={citeKey}>
-                                            <InlineCitationText className="text-brand-green underline-offset-2 hover:underline">
-                                              {segment}
-                                            </InlineCitationText>
-                                          </InlineCitation>
-                                        )
-                                      }
-                                      const plainKey = `plain-${msg.id}-${textIdx}-${segIdx}`
-                                      return <span key={plainKey}>{segment}</span>
-                                    })
-                                  : text}
-                              </span>
-                            )
-                          }
-                          return <span key={textKey}>{text}</span>
-                        })}
+                        .map(p => p.text)
+                        .join('')}
                     </MessageResponse>
                   </MessageContent>
 

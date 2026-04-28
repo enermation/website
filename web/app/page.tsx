@@ -134,31 +134,10 @@ export default function Home() {
 
 async function LatestArrivalsSection() {
   const latestArrivalsCollection = await fetchCollectionProducts(primaryShowroomCollectionHandle, {
-    sortKey: 'CREATED',
-    reverse: true,
     first: 6,
   })
 
-  const latestArrivals = (latestArrivalsCollection?.products ?? []).map(product => ({
-    id: product.id,
-    handle: product.handle,
-    title: product.title,
-    description: product.description,
-    availableForSale: product.availableForSale,
-    priceRange: product.priceRange,
-    images: {
-      edges: product.images.edges.slice(0, 1).map(edge => ({
-        node: {
-          url: edge.node.url,
-          altText: edge.node.altText,
-        },
-      })),
-    },
-    year: product.year ? { value: product.year.value } : null,
-    colour: product.colour ? { value: product.colour.value } : null,
-    mileage: product.mileage ? { value: product.mileage.value } : null,
-    transmission: product.transmission ? { value: product.transmission.value } : null,
-  }))
+  const latestArrivals = latestArrivalsCollection?.products ?? []
 
   return (
     <AnimatedSection className="bg-card" stagger={0.1}>
