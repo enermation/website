@@ -7,8 +7,8 @@ import type { ShopifyProduct } from '@/lib/types'
 import {
   cn,
   formatPrice,
-  formatVehicleDescription,
   metaValue,
+  parseVehicleDescription,
   parseVehicleFromTitle,
 } from '@/lib/utils'
 
@@ -25,19 +25,15 @@ export function CarCard({ product }: CarCardProps) {
   const { make: makeFromTitle } = parseVehicleFromTitle(product.title)
   const make = makeFromTitle ?? product.vendor
 
-  // Vehicle attributes from metafields
   const year = metaValue(product.year)
   const transmission = metaValue(product.transmission)
   const fuelType = metaValue(product.fuelType)
 
-  // Mileage parsed from description (speedometer icon)
-  const { specs } = formatVehicleDescription(product.description)
-  const mileage = specs.find(s => s.label === 'Mileage')?.value ?? null
+  const mileage =
+    parseVehicleDescription(product.description).find(s => s.label === 'Mileage')?.value ?? null
 
-  // Combined transmission/fuel (e.g. "Automatic / Petrol")
   const transmissionFuel = [transmission, fuelType].filter(Boolean).join(' / ') || null
 
-  // Mobile detail list (up to 4 items)
   const mobileDetails = [
     year,
     transmissionFuel,
@@ -66,28 +62,6 @@ export function CarCard({ product }: CarCardProps) {
       </h3>
 
       <div className="mt-3 flex flex-col px-1 md:hidden">
-        {(() => {
-          const { equipment } = formatVehicleDescription(product.description)
-          return equipment.length > 0 ? (
-            <ul className="flex flex-col gap-1">
-              {equipment.slice(0, 6).map(item => (
-                <li
-                  key={item}
-                  className="font-body text-13 text-body before:mr-2 before:content-['·']"
-                >
-                  {item}
-                </li>
-              ))}
-              {equipment.length > 6 && (
-                <li className="font-body text-13 text-muted-foreground">
-                  +{equipment.length - 6} more
-                </li>
-              )}
-            </ul>
-          ) : (
-            <p className="flex-1 font-body text-15 leading-7 text-body">{product.description}</p>
-          )
-        })()}
         <p
           className={cn(
             'mt-3 font-heading text-lg font-semibold',
@@ -127,28 +101,6 @@ export function CarCard({ product }: CarCardProps) {
       </div>
 
       <div className="mt-3 hidden flex-1 flex-col px-1 pb-4 md:flex">
-        {(() => {
-          const { equipment } = formatVehicleDescription(product.description)
-          return equipment.length > 0 ? (
-            <ul className="flex flex-col gap-1">
-              {equipment.slice(0, 8).map(item => (
-                <li
-                  key={item}
-                  className="font-body text-13 text-body before:mr-2 before:content-['·']"
-                >
-                  {item}
-                </li>
-              ))}
-              {equipment.length > 8 && (
-                <li className="font-body text-13 text-muted-foreground">
-                  +{equipment.length - 8} more
-                </li>
-              )}
-            </ul>
-          ) : (
-            <p className="flex-1 font-body text-15 leading-7 text-body">{product.description}</p>
-          )
-        })()}
         <p
           className={cn(
             'font-heading font-semibold text-lg mt-3',

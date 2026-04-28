@@ -42,8 +42,6 @@ export function parseVehicleFromTitle(title: string): {
   }
 }
 
-// ── Vehicle description formatter ──────────────────────────────────────────
-
 const DESCRIPTION_LABELS = [
   'Year',
   'Mileage',
@@ -59,6 +57,7 @@ const DESCRIPTION_LABELS = [
   'Chassis',
   'Frame',
   'Model Code',
+  'Model',
   'Equipment',
 ] as const
 
@@ -67,22 +66,12 @@ type DescriptionLine = {
   value: string
 }
 
-/**
- * Parses raw Shopify product description strings into structured label/value pairs.
- * Handles concatenated formats like "Year: 2025Mileage: 0 kmTransmission: Automatic..."
- * where field labels run together without proper separators.
- */
 export function parseVehicleDescription(raw: string): DescriptionLine[] {
   if (!raw) return []
 
-  // Clean the input — normalize whitespace, remove newlines
   const text = raw.replace(/\n/g, ' ').replace(/\r/g, ' ').trim()
 
-  // Build a regex that matches any known label followed by a colon
-  // Labels contain uppercase letters, spaces, and hyphens
   const labelPattern = DESCRIPTION_LABELS.join('|').replace(/ /g, '\\s+')
-
-  // Find all label positions in the string
   const labelRegex = new RegExp(`(${labelPattern}):`, 'gi')
   const matches = [...text.matchAll(labelRegex)]
 
@@ -95,8 +84,6 @@ export function parseVehicleDescription(raw: string): DescriptionLine[] {
   for (let i = 0; i < matches.length; i++) {
     const label = matches[i][1]
     const startIndex = matches[i].index ?? 0
-
-    // Value extends from after the label+colon to the start of the next label (or end)
     const valueStart = startIndex + label.length + 1 // skip "Label:"
     const nextMatch = matches[i + 1]
     const valueEnd = nextMatch ? (nextMatch.index ?? text.length) : text.length
@@ -110,9 +97,6 @@ export function parseVehicleDescription(raw: string): DescriptionLine[] {
   return result
 }
 
-/**
- * Formats a vehicle description for display — separates specs from equipment.
- */
 export function formatVehicleDescription(raw: string): {
   specs: DescriptionLine[]
   equipment: string[]
@@ -124,7 +108,6 @@ export function formatVehicleDescription(raw: string): {
   const specs = parsed.filter(line => line.label !== 'Equipment')
   const equipmentLines = parsed.filter(line => line.label === 'Equipment')
 
-  // Equipment items are comma or slash-separated
   const equipment = equipmentLines.flatMap(line =>
     line.value
       .split(/[,/]/)

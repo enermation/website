@@ -394,6 +394,8 @@ export const productPage = {
   sections: {
     aboutThisListing: 'About This Car',
     listingDetails: 'Car Details',
+    vehicleFeatures: 'Vehicle Features',
+    moreFeatures: 'More Features',
     askAQuestion: 'Ask a Question',
     contactAgent: 'Contact Agent',
     forSaleBy: 'For Sale by',

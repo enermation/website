@@ -1,11 +1,11 @@
 'use client'
 
-import { mdiCar } from '@mdi/js'
+import { mdiChevronDown } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import { useState } from 'react'
 import { AddToCartButton } from '@/components/add-to-cart-button'
-import { ProductSpecs1 } from '@/components/product-specs1'
 import { Badge } from '@/components/ui/badge'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import {
   Select,
   SelectContent,
@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { productPage } from '@/lib/data'
+import { matchFeature } from '@/lib/features'
 import type { ShopifyProductVariant } from '@/lib/types'
 import { cn, formatPrice, parseVehicleDescription } from '@/lib/utils'
 
@@ -51,41 +52,36 @@ export function ProductInfoPanel({
       option => option.name !== 'Title' && option.value !== 'Default Title'
     ) ?? []
 
-  // Specs list derived from description — vehicle fields become rows in Car Details
-  // Equipment is excluded here (it belongs in the About paragraph instead)
-  const vehicleSpecLines = (() => {
-    const parsed = parseVehicleDescription(description)
-    return parsed
-      .filter(line => line.label !== 'Equipment')
-      .map(line => ({ label: line.label, value: line.value }))
-  })()
+  const parsed = parseVehicleDescription(description)
 
-  // Equipment paragraph — parsed from description for the About section
-  // Format as a flowing sentence by joining comma-separated items
-  const equipmentParagraph = (() => {
-    const parsed = parseVehicleDescription(description)
-    const equipmentLines = parsed.filter(line => line.label === 'Equipment')
-    const raw = equipmentLines.map(line => line.value).join(' ')
-    if (!raw) return null
-    // Split on comma or slash, rejoin as a comma-separated sentence
-    const items = raw
-      .split(/[,/]/)
-      .map(s => s.trim())
-      .filter(Boolean)
-    return items.join(', ')
-  })()
+  const vehicleSpecLines = parsed
+    .filter(line => line.label !== 'Equipment')
+    .map(line => ({ label: line.label, value: line.value }))
 
-  const categories = [
-    {
-      id: 'details',
-      name: productPage.sections.listingDetails,
-      icon: <Icon path={mdiCar} size={1} className="size-4" aria-hidden="true" />,
-      specs: [
-        ...specOptions.map(option => ({ label: option.name, value: option.value })),
-        ...vehicleSpecLines,
-      ].filter(row => row.value),
-    },
-  ]
+  const equipmentRaw = parsed
+    .filter(line => line.label === 'Equipment')
+    .map(line => line.value)
+    .join(' ')
+
+  const equipmentItems = equipmentRaw
+    ? equipmentRaw
+        .split(/[,/]/)
+        .map(s => s.trim())
+        .filter(Boolean)
+    : []
+
+  const hasStructuredSpecs = vehicleSpecLines.some(l => l.label !== '')
+
+  const specRows = [
+    ...specOptions.map(o => ({ label: o.name, value: o.value })),
+    ...vehicleSpecLines.filter(l => l.label !== ''),
+  ].filter(r => r.value)
+
+  const iconFeatures = equipmentItems
+    .map(item => ({ item, icon: matchFeature(item) }))
+    .filter((f): f is { item: string; icon: string } => f.icon !== null)
+
+  const unmatchedFeatures = equipmentItems.filter(item => matchFeature(item) === null)
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
@@ -165,28 +161,82 @@ export function ProductInfoPanel({
         </div>
       )}
 
-      {/* Row 4: Description — equipment as a beautiful paragraph */}
-      {description ? (
-        <div data-reveal="4" className="flex flex-col gap-4">
-          <h2 className="font-display text-xl text-balance text-heading">
+      {specRows.length > 0 && (
+        <div data-reveal="4" className="flex flex-col gap-3">
+          <h2 className="font-display text-xl text-heading">
+            {productPage.sections.listingDetails}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            {specRows.map(({ label, value }) => (
+              <div
+                key={label}
+                className="flex items-center justify-between gap-4 border-b border-border py-3"
+              >
+                <span className="font-body text-14 text-muted-foreground">{label}</span>
+                <span className="font-body text-14 font-medium text-foreground text-right">
+                  {value}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {iconFeatures.length > 0 && (
+        <div data-reveal="5" className="flex flex-col gap-4">
+          <h2 className="font-display text-xl text-heading">
+            {productPage.sections.vehicleFeatures}
+          </h2>
+          <div className="grid grid-cols-3 gap-6 rounded-lg border border-border p-6 sm:grid-cols-4 md:grid-cols-5">
+            {iconFeatures.map(({ item, icon }) => (
+              <div key={item} className="flex flex-col items-center gap-2 text-center">
+                <Icon path={icon} size={1} className="size-6 text-foreground" />
+                <span className="font-body text-12 leading-tight text-muted-foreground">
+                  {item}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {unmatchedFeatures.length > 0 && (
+        <Collapsible data-reveal="6">
+          <CollapsibleTrigger className="flex w-full items-center justify-between border border-border px-4 py-3 hover:bg-muted/50">
+            <span className="font-body text-14 font-medium text-foreground">
+              {productPage.sections.moreFeatures}
+            </span>
+            <Icon
+              path={mdiChevronDown}
+              size={1}
+              className="size-4 text-muted-foreground transition-transform [[data-state=open]_&]:rotate-180"
+            />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <ul className="flex flex-col gap-1 border border-t-0 border-border px-4 py-3">
+              {unmatchedFeatures.map(item => (
+                <li
+                  key={item}
+                  className="font-body text-14 text-body before:mr-2 before:content-['·']"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </CollapsibleContent>
+        </Collapsible>
+      )}
+
+      {!hasStructuredSpecs && description && (
+        <div data-reveal="7" className="flex flex-col gap-3">
+          <h2 className="font-display text-xl text-heading">
             {productPage.sections.aboutThisListing}
           </h2>
-          {equipmentParagraph ? (
-            <p className="whitespace-pre-line break-words font-body text-15 leading-relaxed text-body">
-              {equipmentParagraph}
-            </p>
-          ) : (
-            <p className="whitespace-pre-line break-words font-body text-15 leading-relaxed text-body">
-              {description}
-            </p>
-          )}
+          <p className="whitespace-pre-line break-words font-body text-15 leading-relaxed text-body">
+            {description}
+          </p>
         </div>
-      ) : null}
-
-      {/* Row 5: Specs */}
-      <div data-reveal="5">
-        <ProductSpecs1 categories={categories} title="" className="py-0" />
-      </div>
+      )}
     </div>
   )
 }
