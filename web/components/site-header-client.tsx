@@ -33,7 +33,7 @@ import { useEffect, useState } from 'react'
 import { HeaderSearch } from '@/components/header-search'
 import { ShoppingCart1 } from '@/components/shopping-cart1'
 import { Badge } from '@/components/ui/badge'
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { useCart } from '@/lib/cart-context'
 import { headerDropdownCopy } from '@/lib/data'
@@ -450,9 +450,8 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                 data-slot="drawer-content"
                 className="w-full max-w-none border-r border-white-20 bg-surface-dark text-background"
               >
+                <DrawerTitle className="sr-only">Site navigation</DrawerTitle>
                 <div className="flex h-full flex-col pt-12">
-                  <span className="sr-only">Site navigation</span>
-
                   <div className="px-5 pb-4">
                     <Link
                       href="/"
