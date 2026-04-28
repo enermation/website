@@ -16,7 +16,9 @@ import {
   mdiCart,
   mdiCarWrench,
   mdiChevronDown,
+  mdiChevronRight,
   mdiFlash,
+  mdiHome,
   mdiJeepney,
   mdiMenu,
   mdiMotorbike,
@@ -85,6 +87,78 @@ function menuItemIcon(label: string) {
 }
 
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+
+function MobileNavAccordion({ item, onClose }: { item: HeaderNavItem; onClose: () => void }) {
+  const [expanded, setExpanded] = useState(false)
+  const hasChildren = item.children.length > 0
+
+  return (
+    <div className="flex flex-col">
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        className={cn(
+          'flex items-center gap-3 rounded-lg px-4 py-3 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-white-20',
+          focusRing,
+          expanded && 'bg-white-10'
+        )}
+        aria-expanded={expanded}
+      >
+        <Icon path={mdiCar} size={1} className="size-5 text-white-50" aria-hidden="true" />
+        <span className="flex-1 text-left">{item.label}</span>
+        {hasChildren && (
+          <Icon
+            path={mdiChevronRight}
+            size={1}
+            className={cn(
+              'size-4 text-white-50 transition-transform duration-200',
+              expanded && 'rotate-90'
+            )}
+            aria-hidden="true"
+          />
+        )}
+      </button>
+      {expanded && hasChildren && (
+        <div className="mt-1 flex flex-col gap-1 px-3">
+          {item.children.map(child =>
+            hasHref(child.href) ? (
+              <Link
+                key={`${item.label}-${child.label}`}
+                href={child.href}
+                className={cn(
+                  'flex items-center gap-3 rounded-lg px-4 py-2.5 font-body text-sm text-white-70 transition-colors hover:bg-white-20 hover:text-background',
+                  focusRing
+                )}
+                onClick={onClose}
+              >
+                <Icon
+                  path={menuItemIcon(child.label)}
+                  size={1}
+                  className="size-4"
+                  aria-hidden="true"
+                />
+                <span>{child.label}</span>
+              </Link>
+            ) : (
+              <span
+                key={`${item.label}-${child.label}`}
+                className="flex items-center gap-3 rounded-lg px-4 py-2.5 font-body text-sm text-white-50"
+              >
+                <Icon
+                  path={menuItemIcon(child.label)}
+                  size={1}
+                  className="size-4"
+                  aria-hidden="true"
+                />
+                <span>{child.label}</span>
+              </span>
+            )
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
 
 function DesktopNavItem({ item }: { item: HeaderNavItem }) {
   const hasChildren = item.children.length > 0
@@ -255,11 +329,9 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
           </Link>
 
           <nav className="hidden flex-1 items-center justify-center gap-7 px-8 md:flex">
-            {navigation.items
-              .filter(item => item.showOnDesktop !== false)
-              .map(item => (
-                <DesktopNavItem key={item.label} item={item} />
-              ))}
+            {navigation.items.map(item => (
+              <DesktopNavItem key={item.label} item={item} />
+            ))}
           </nav>
 
           <div className="hidden items-center gap-2 md:flex">
@@ -396,56 +468,44 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                     </Link>
                   </div>
 
-                  <nav className="flex flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-8">
-                    {navigation.items
-                      .filter(item => item.showOnDesktop !== false)
-                      .map(item => (
-                        <div key={item.label} className="border-b border-white-20 py-4">
-                          {hasHref(item.href) ? (
+                  <nav className="flex flex-1 flex-col gap-1 overflow-y-auto overscroll-contain px-5 pb-8">
+                    {navigation.items.map(item => {
+                      const hasChildren = item.children.length > 0
+                      return (
+                        <div key={item.label} className="rounded-xl bg-white-5 p-1">
+                          {hasChildren ? (
+                            <MobileNavAccordion item={item} onClose={() => setMobileOpen(false)} />
+                          ) : hasHref(item.href) ? (
                             <Link
                               href={item.href}
                               className={cn(
-                                'font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:text-muted-foreground',
+                                'flex items-center gap-3 rounded-lg px-4 py-3 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-white-20',
                                 focusRing
                               )}
                               onClick={() => setMobileOpen(false)}
                             >
+                              <Icon
+                                path={item.label === 'Home' ? mdiHome : mdiCar}
+                                size={1}
+                                className="size-5 text-white-50"
+                                aria-hidden="true"
+                              />
                               {item.label}
                             </Link>
                           ) : (
-                            <p className="font-heading text-13 font-semibold uppercase tracking-wide text-background">
+                            <p className="flex items-center gap-3 rounded-lg px-4 py-3 font-heading text-13 font-semibold uppercase tracking-wide text-background">
+                              <Icon
+                                path={mdiCar}
+                                size={1}
+                                className="size-5 text-white-50"
+                                aria-hidden="true"
+                              />
                               {item.label}
                             </p>
                           )}
-
-                          {item.children.length > 0 && (
-                            <div className="mt-3 flex flex-col gap-2 pl-3">
-                              {item.children.map(child =>
-                                hasHref(child.href) ? (
-                                  <Link
-                                    key={`${item.label}-${child.label}`}
-                                    href={child.href}
-                                    className={cn(
-                                      'font-body text-sm text-background transition-colors hover:text-muted-foreground',
-                                      focusRing
-                                    )}
-                                    onClick={() => setMobileOpen(false)}
-                                  >
-                                    {child.label}
-                                  </Link>
-                                ) : (
-                                  <span
-                                    key={`${item.label}-${child.label}`}
-                                    className="font-body text-sm text-muted-foreground"
-                                  >
-                                    {child.label}
-                                  </span>
-                                )
-                              )}
-                            </div>
-                          )}
                         </div>
-                      ))}
+                      )
+                    })}
                   </nav>
 
                   <div className="grid grid-cols-1 gap-2 border-t border-white-20 p-5">
