@@ -132,3 +132,31 @@ export async function getHeaderNavigation(): Promise<HeaderNavigation> {
     actions: headerActions,
   }
 }
+
+export type FooterNavGroup = {
+  title: string
+  children: HeaderNavChild[]
+}
+
+export async function getFooterNavigation(): Promise<FooterNavGroup[]> {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('collections')
+
+  const collections = await fetchCollections()
+  const grouped = groupCollectionsByCategory(collections)
+
+  const categoryOrder: CollectionCategory[] = ['cars', 'motorcycles', 'commercial', 'parts']
+  const groups: FooterNavGroup[] = []
+
+  for (const category of categoryOrder) {
+    if (grouped[category].length > 0) {
+      groups.push({
+        title: CATEGORY_LABELS[category],
+        children: grouped[category],
+      })
+    }
+  }
+
+  return groups
+}

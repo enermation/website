@@ -7,8 +7,8 @@ import Link from 'next/link'
 import { Suspense, useRef } from 'react'
 
 import { FooterStayConnected } from '@/components/footer-stay-connected'
-import type { FooterLink } from '@/lib/data'
-import { footerContent, footerPrimaryLinks, footerSocialLinks } from '@/lib/data'
+import { footerContent, footerSocialLinks } from '@/lib/data'
+import type { FooterNavGroup } from '@/lib/header-navigation'
 import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -29,7 +29,15 @@ function FooterWordmark() {
   )
 }
 
-function FooterNavLinks({ links, className }: { links: FooterLink[]; className?: string }) {
+function FooterNavLinks({
+  links,
+  title,
+  className,
+}: {
+  links: { label: string; href: string }[]
+  title?: string
+  className?: string
+}) {
   const containerRef = useRef<HTMLElement>(null)
 
   useGSAP(
@@ -57,6 +65,11 @@ function FooterNavLinks({ links, className }: { links: FooterLink[]; className?:
       className={cn('flex flex-col gap-y-2 overflow-hidden', className)}
       aria-label="Footer navigation"
     >
+      {title && (
+        <p className="font-heading text-sm font-semibold uppercase tracking-wide text-white-50">
+          {title}
+        </p>
+      )}
       <ul className="flex flex-col gap-y-2 text-on-dark">
         {links.map(({ label, href }) => (
           <li key={label}>
@@ -101,7 +114,11 @@ function FooterCopyright({ className }: { className?: string }) {
   )
 }
 
-export function SiteFooter() {
+type SiteFooterProps = {
+  exploreGroups: FooterNavGroup[]
+}
+
+export function SiteFooter({ exploreGroups }: SiteFooterProps) {
   return (
     <footer
       data-slot="site-footer"
@@ -112,10 +129,11 @@ export function SiteFooter() {
       </div>
 
       <div className="grid-layout footer-grid relative grid-rows-[auto_auto_28px] !gap-y-10 pb-2 pt-4 lg:grid-rows-[auto] lg:items-end lg:!gap-y-2 lg:py-0">
-        <FooterNavLinks
-          links={footerPrimaryLinks}
-          className="col-start-1 col-end-5 row-start-1 border-b border-white-30 pb-4 lg:col-start-7 lg:col-end-9 lg:border-none lg:pb-0"
-        />
+        <div className="col-start-1 col-end-5 row-start-1 flex flex-col gap-6 border-b border-white-30 pb-4 lg:col-start-7 lg:col-end-9 lg:border-none lg:pb-0">
+          {exploreGroups.map(group => (
+            <FooterNavLinks key={group.title} links={group.children} title={group.title} />
+          ))}
+        </div>
 
         <FooterStayConnected
           content={footerContent}

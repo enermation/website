@@ -5,6 +5,7 @@ import './globals.css'
 import { ChatWidgetMount } from '@/components/chat-widget-mount'
 import { SiteFooter } from '@/components/site-footer'
 import { CartProvider } from '@/lib/cart-context'
+import { getFooterNavigation } from '@/lib/header-navigation'
 
 const display = Bebas_Neue({
   variable: '--font-display',
@@ -41,11 +42,13 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const exploreGroups = await getFooterNavigation()
+
   return (
     <html
       lang="en"
@@ -56,7 +59,7 @@ export default function RootLayout({
         <Suspense>
           <CartProvider>
             {children}
-            <SiteFooter />
+            <SiteFooter exploreGroups={exploreGroups} />
             <ChatWidgetMount />
           </CartProvider>
         </Suspense>
