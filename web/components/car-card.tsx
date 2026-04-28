@@ -1,4 +1,4 @@
-import { mdiCalendar, mdiCar, mdiCarShiftPattern, mdiSpeedometer } from '@mdi/js'
+import { mdiCalendar, mdiCar, mdiFuel, mdiSpeedometer } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -26,13 +26,10 @@ export function CarCard({ product }: CarCardProps) {
   const make = makeFromTitle ?? product.vendor
 
   const year = metaValue(product.year)
-  const transmission = metaValue(product.transmission)
   const fuelType = metaValue(product.fuelType)
 
   const mileage =
     parseVehicleDescription(product.description).find(s => s.label === 'Mileage')?.value ?? null
-
-  const transmissionFuel = [transmission, fuelType].filter(Boolean).join(' / ') || null
 
   return (
     <Link href={`/products/${product.handle}`} className="flex flex-col group">
@@ -69,10 +66,8 @@ export function CarCard({ product }: CarCardProps) {
           <span className="font-body font-medium text-13 text-foreground truncate">{make}</span>
         </div>
         <div className="flex items-center gap-2 px-2 py-1">
-          <Icon path={mdiCarShiftPattern} size={1} className="size-3.5 text-heading shrink-0" />
-          <span className="font-body font-medium text-13 text-foreground truncate">
-            {transmissionFuel}
-          </span>
+          <Icon path={mdiFuel} size={1} className="size-3.5 text-heading shrink-0" />
+          <span className="font-body font-medium text-13 text-foreground truncate">{fuelType}</span>
         </div>
         <div className="flex items-center gap-2 px-2 py-1">
           <Icon path={mdiSpeedometer} size={1} className="size-3.5 text-heading shrink-0" />
@@ -87,7 +82,7 @@ export function CarCard({ product }: CarCardProps) {
       <div className="mt-3 hidden grid-cols-2 gap-y-1 border-t border-border-subtle pt-2 md:grid">
         {[
           { icon: mdiCar, label: make },
-          { icon: mdiCarShiftPattern, label: transmissionFuel },
+          { icon: mdiFuel, label: fuelType },
           { icon: mdiSpeedometer, label: mileage },
           { icon: mdiCalendar, label: year },
         ]
