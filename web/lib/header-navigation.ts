@@ -12,7 +12,6 @@ export type HeaderNavItem = {
   label: string
   href: string
   children: HeaderNavChild[]
-  showOnDesktop?: boolean
 }
 
 export type HeaderNavigation = {
@@ -111,10 +110,6 @@ function buildNavItems(collections: HeaderNavChild[]): HeaderNavItem[] {
       })
     }
   }
-
-  // About/Contact - mobile only
-  items.push({ label: 'About', href: '/#about', children: [], showOnDesktop: false })
-  items.push({ label: 'Contact', href: '/#contact', children: [], showOnDesktop: false })
 
   return items
 }

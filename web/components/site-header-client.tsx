@@ -397,53 +397,55 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                   </div>
 
                   <nav className="flex flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-8">
-                    {navigation.items.map(item => (
-                      <div key={item.label} className="border-b border-white-20 py-4">
-                        {hasHref(item.href) ? (
-                          <Link
-                            href={item.href}
-                            className={cn(
-                              'font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:text-muted-foreground',
-                              focusRing
-                            )}
-                            onClick={() => setMobileOpen(false)}
-                          >
-                            {item.label}
-                          </Link>
-                        ) : (
-                          <p className="font-heading text-13 font-semibold uppercase tracking-wide text-background">
-                            {item.label}
-                          </p>
-                        )}
+                    {navigation.items
+                      .filter(item => item.showOnDesktop !== false)
+                      .map(item => (
+                        <div key={item.label} className="border-b border-white-20 py-4">
+                          {hasHref(item.href) ? (
+                            <Link
+                              href={item.href}
+                              className={cn(
+                                'font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:text-muted-foreground',
+                                focusRing
+                              )}
+                              onClick={() => setMobileOpen(false)}
+                            >
+                              {item.label}
+                            </Link>
+                          ) : (
+                            <p className="font-heading text-13 font-semibold uppercase tracking-wide text-background">
+                              {item.label}
+                            </p>
+                          )}
 
-                        {item.children.length > 0 && (
-                          <div className="mt-3 flex flex-col gap-2 pl-3">
-                            {item.children.map(child =>
-                              hasHref(child.href) ? (
-                                <Link
-                                  key={`${item.label}-${child.label}`}
-                                  href={child.href}
-                                  className={cn(
-                                    'font-body text-sm text-background transition-colors hover:text-muted-foreground',
-                                    focusRing
-                                  )}
-                                  onClick={() => setMobileOpen(false)}
-                                >
-                                  {child.label}
-                                </Link>
-                              ) : (
-                                <span
-                                  key={`${item.label}-${child.label}`}
-                                  className="font-body text-sm text-muted-foreground"
-                                >
-                                  {child.label}
-                                </span>
-                              )
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                          {item.children.length > 0 && (
+                            <div className="mt-3 flex flex-col gap-2 pl-3">
+                              {item.children.map(child =>
+                                hasHref(child.href) ? (
+                                  <Link
+                                    key={`${item.label}-${child.label}`}
+                                    href={child.href}
+                                    className={cn(
+                                      'font-body text-sm text-background transition-colors hover:text-muted-foreground',
+                                      focusRing
+                                    )}
+                                    onClick={() => setMobileOpen(false)}
+                                  >
+                                    {child.label}
+                                  </Link>
+                                ) : (
+                                  <span
+                                    key={`${item.label}-${child.label}`}
+                                    className="font-body text-sm text-muted-foreground"
+                                  >
+                                    {child.label}
+                                  </span>
+                                )
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      ))}
                   </nav>
 
                   <div className="grid grid-cols-1 gap-2 border-t border-white-20 p-5">
