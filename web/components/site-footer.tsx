@@ -62,7 +62,7 @@ function FooterNavLinks({ links, className }: { links: FooterLink[]; className?:
           <li key={label}>
             <Link
               href={href}
-              className="inline-flex w-fit font-heading text-4xl font-semibold uppercase leading-none tracking-tight text-on-dark transition-colors hover:text-on-dark"
+              className="inline-flex w-fit font-heading text-xl font-semibold uppercase leading-none tracking-tight text-on-dark transition-colors hover:text-on-dark"
             >
               {label}
             </Link>

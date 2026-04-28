@@ -1,11 +1,6 @@
 import { cacheLife, cacheTag } from 'next/cache'
-import {
-  type HeaderNavFallbackItem,
-  headerActions,
-  headerNavFallbackItems,
-  inventoryCollectionLinks,
-} from '@/lib/data'
-import { GET_HEADER_MENU } from '@/lib/queries'
+import { type HeaderNavFallbackItem, headerActions, headerNavFallbackItems } from '@/lib/data'
+import { GET_COLLECTIONS_FOR_HEADER, GET_HEADER_MENU } from '@/lib/queries'
 import { getClient } from '@/lib/shopify'
 import type { ShopifyMenu, ShopifyMenuItem } from '@/lib/types'
 
@@ -102,9 +97,18 @@ function normalizeTopLevelLabel(raw: string): AllowedTopLevelLabel | null {
   return normalized ?? null
 }
 
-function childrenForInventory(items: ShopifyMenuItem[]): HeaderNavChild[] {
+type CollectionsResponse = {
+  collections: {
+    edges: { node: { handle: string; title: string } }[]
+  }
+}
+
+function childrenForInventory(
+  items: ShopifyMenuItem[],
+  collections: HeaderNavChild[]
+): HeaderNavChild[] {
   const mapped = items.map(toChild).filter(isChild)
-  return mapped.length > 0 ? mapped : inventoryCollectionLinks
+  return mapped.length > 0 ? mapped : collections
 }
 
 function fallbackHref(label: AllowedTopLevelLabel): string {
@@ -112,7 +116,7 @@ function fallbackHref(label: AllowedTopLevelLabel): string {
   return match?.href ?? '/'
 }
 
-function toItem(item: ShopifyMenuItem): HeaderNavItem | null {
+function toItem(item: ShopifyMenuItem, collections: HeaderNavChild[]): HeaderNavItem | null {
   const normalizedLabel = normalizeTopLevelLabel(item.title)
   if (!normalizedLabel) return null
 
@@ -120,7 +124,7 @@ function toItem(item: ShopifyMenuItem): HeaderNavItem | null {
   const resolvedHref = href === '#' ? fallbackHref(normalizedLabel) : href
   const children =
     normalizedLabel === 'Inventory'
-      ? childrenForInventory(item.items)
+      ? childrenForInventory(item.items, collections)
       : item.items.map(toChild).filter(isChild)
 
   return {
@@ -130,8 +134,8 @@ function toItem(item: ShopifyMenuItem): HeaderNavItem | null {
   }
 }
 
-function toFallbackItem(item: HeaderNavFallbackItem): HeaderNavItem {
-  const children = item.label === 'Inventory' ? inventoryCollectionLinks : []
+function toFallbackItem(item: HeaderNavFallbackItem, collections: HeaderNavChild[]): HeaderNavItem {
+  const children = item.label === 'Inventory' ? collections : []
 
   return {
     label: item.label,
@@ -144,8 +148,20 @@ function isItem(item: HeaderNavItem | null): item is HeaderNavItem {
   return item !== null
 }
 
-function fallbackItems(): HeaderNavItem[] {
-  return headerNavFallbackItems.map(toFallbackItem)
+function fallbackItems(collections: HeaderNavChild[]): HeaderNavItem[] {
+  return headerNavFallbackItems.map(item => toFallbackItem(item, collections))
+}
+
+async function fetchCollections(): Promise<HeaderNavChild[]> {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('collections')
+
+  const { data } = await getClient().request<CollectionsResponse>(GET_COLLECTIONS_FOR_HEADER)
+  return data.collections.edges.map(({ node }) => ({
+    label: node.title,
+    href: `/collections/${node.handle}`,
+  }))
 }
 
 export async function getHeaderNavigation(): Promise<HeaderNavigation> {
@@ -153,15 +169,19 @@ export async function getHeaderNavigation(): Promise<HeaderNavigation> {
   cacheLife('hours')
   cacheTag('navigation')
 
-  const menuHandle = process.env.SHOPIFY_HEADER_MENU_HANDLE?.trim() || DEFAULT_MENU_HANDLE
+  const [collections, menuHandle] = await Promise.all([
+    fetchCollections(),
+    Promise.resolve(process.env.SHOPIFY_HEADER_MENU_HANDLE?.trim() || DEFAULT_MENU_HANDLE),
+  ])
+
   const { data } = await getClient().request<HeaderMenuResponse>(GET_HEADER_MENU, {
     variables: { handle: menuHandle },
   })
 
-  const shopifyItems = data?.menu?.items.map(toItem).filter(isItem) ?? []
+  const shopifyItems = data?.menu?.items.map(item => toItem(item, collections)).filter(isItem) ?? []
 
   return {
-    items: shopifyItems.length > 0 ? shopifyItems : fallbackItems(),
+    items: shopifyItems.length > 0 ? shopifyItems : fallbackItems(collections),
     actions: headerActions,
   }
 }

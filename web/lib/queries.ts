@@ -241,7 +241,7 @@ export const GET_HEADER_MENU = `
 
 export const GET_COLLECTIONS = `
   query getCollections {
-    collections(first: 10) {
+    collections(first: 10, sortKey: TITLE) {
       edges {
         cursor
         node {
@@ -258,6 +258,19 @@ export const GET_COLLECTIONS = `
       pageInfo {
         hasNextPage
         hasPreviousPage
+      }
+    }
+  }
+`
+
+export const GET_COLLECTIONS_FOR_HEADER = `
+  query getCollectionsForHeader {
+    collections(first: 10, sortKey: TITLE) {
+      edges {
+        node {
+          handle
+          title
+        }
       }
     }
   }
