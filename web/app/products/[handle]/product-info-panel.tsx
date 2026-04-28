@@ -30,32 +30,17 @@ const TECH_SPEC_LABELS = new Set([
 ])
 
 function SpecTable({ rows }: { rows: { label: string; value: string }[] }) {
-  const left = rows.filter((_, i) => i % 2 === 0)
-  const right = rows.filter((_, i) => i % 2 !== 0)
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2">
-      <div className="md:pr-6">
-        {left.map(({ label, value }) => (
-          <div
-            key={label}
-            className="flex min-w-0 items-center justify-between gap-4 border-b border-border py-3"
-          >
-            <span className="shrink-0 font-body text-14 text-muted-foreground">{label}</span>
-            <span className="truncate font-body text-14 font-medium text-foreground">{value}</span>
-          </div>
-        ))}
-      </div>
-      <div className="md:border-l md:border-border md:pl-6">
-        {right.map(({ label, value }) => (
-          <div
-            key={label}
-            className="flex min-w-0 items-center justify-between gap-4 border-b border-border py-3"
-          >
-            <span className="shrink-0 font-body text-14 text-muted-foreground">{label}</span>
-            <span className="truncate font-body text-14 font-medium text-foreground">{value}</span>
-          </div>
-        ))}
-      </div>
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+      {rows.map(({ label, value }) => (
+        <div
+          key={label}
+          className="flex flex-col gap-1 rounded-lg border border-border bg-card p-3"
+        >
+          <span className="font-body text-12 text-muted-foreground">{label}</span>
+          <span className="font-body text-14 font-medium text-foreground">{value}</span>
+        </div>
+      ))}
     </div>
   )
 }
@@ -122,11 +107,27 @@ export function ProductInfoPanel({
   const keySpecRows = allSpecRows.filter(r => !TECH_SPEC_LABELS.has(r.label))
   const techSpecRows = allSpecRows.filter(r => TECH_SPEC_LABELS.has(r.label))
 
-  const iconFeatures = equipmentItems
+  const ICON_FEATURE_LABELS = new Set([
+    'android auto',
+    'apple carplay',
+    'cruise control',
+    'heated seats',
+    'navigation',
+    'parking camera',
+    'parking sensors',
+    'touchscreen infotainment',
+  ])
+
+  const matchedFeatures = equipmentItems
     .map(item => ({ item, icon: matchFeature(item) }))
     .filter((f): f is { item: string; icon: string } => f.icon !== null)
 
+  const iconFeatures = matchedFeatures.filter(f => ICON_FEATURE_LABELS.has(f.item.toLowerCase()))
+  const extraMatchedFeatures = matchedFeatures.filter(
+    f => !ICON_FEATURE_LABELS.has(f.item.toLowerCase())
+  )
   const unmatchedFeatures = equipmentItems.filter(item => matchFeature(item) === null)
+  const moreFeatures = [...extraMatchedFeatures.map(f => f.item), ...unmatchedFeatures]
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
@@ -229,20 +230,18 @@ export function ProductInfoPanel({
           <h2 className="font-display text-xl text-heading">
             {productPage.sections.vehicleFeatures}
           </h2>
-          <div className="grid grid-cols-3 gap-6 rounded-lg border border-border p-6 sm:grid-cols-4 md:grid-cols-5">
+          <ul className="grid grid-cols-2 gap-x-8 gap-y-2 sm:grid-cols-3 md:grid-cols-4">
             {iconFeatures.map(({ item, icon }) => (
-              <div key={item} className="flex flex-col items-center gap-2 text-center">
-                <Icon path={icon} size={1} className="size-6 text-foreground" />
-                <span className="font-body text-12 leading-tight text-muted-foreground">
-                  {item}
-                </span>
-              </div>
+              <li key={item} className="flex items-center gap-2">
+                <Icon path={icon} size={1} className="size-4 shrink-0 text-foreground" />
+                <span className="font-body text-14 text-body">{item}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       )}
 
-      {unmatchedFeatures.length > 0 && (
+      {moreFeatures.length > 0 && (
         <Collapsible data-reveal="7">
           <CollapsibleTrigger className="flex w-full items-center justify-between border border-border px-4 py-3 hover:bg-muted/50">
             <span className="font-body text-14 font-medium text-foreground">
@@ -256,7 +255,7 @@ export function ProductInfoPanel({
           </CollapsibleTrigger>
           <CollapsibleContent>
             <ul className="flex flex-col gap-1 border border-t-0 border-border px-4 py-3">
-              {unmatchedFeatures.map(item => (
+              {moreFeatures.map(item => (
                 <li
                   key={item}
                   className="font-body text-14 text-body before:mr-2 before:content-['·']"

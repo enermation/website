@@ -34,15 +34,6 @@ export function CarCard({ product }: CarCardProps) {
 
   const transmissionFuel = [transmission, fuelType].filter(Boolean).join(' / ') || null
 
-  const mobileDetails = [
-    year,
-    transmissionFuel,
-    make,
-    product.availableForSale ? productPage.labels.available : productPage.labels.sold,
-  ]
-    .filter(Boolean)
-    .slice(0, 4)
-
   return (
     <Link href={`/products/${product.handle}`} className="flex flex-col group">
       <div className="car-card-media relative h-56 overflow-hidden bg-surface-elevated shrink-0 md:h-auto">
@@ -72,13 +63,24 @@ export function CarCard({ product }: CarCardProps) {
         </p>
       </div>
 
-      <div className="mt-4 border-t border-border-subtle px-2 pt-3 pb-1 md:hidden">
-        <div className="flex flex-col gap-3">
-          {mobileDetails.map(detail => (
-            <p key={detail} className="font-body text-13 font-medium text-foreground">
-              {detail}
-            </p>
-          ))}
+      <div className="mt-4 grid grid-cols-2 gap-y-1 border-t border-border-subtle px-2 pt-3 pb-1 md:hidden">
+        <div className="flex items-center gap-2 px-2 py-1">
+          <Icon path={mdiCar} size={1} className="size-3.5 text-heading shrink-0" />
+          <span className="font-body font-medium text-13 text-foreground truncate">{make}</span>
+        </div>
+        <div className="flex items-center gap-2 px-2 py-1">
+          <Icon path={mdiCarShiftPattern} size={1} className="size-3.5 text-heading shrink-0" />
+          <span className="font-body font-medium text-13 text-foreground truncate">
+            {transmissionFuel}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 px-2 py-1">
+          <Icon path={mdiSpeedometer} size={1} className="size-3.5 text-heading shrink-0" />
+          <span className="font-body font-medium text-13 text-foreground truncate">{mileage}</span>
+        </div>
+        <div className="flex items-center gap-2 px-2 py-1">
+          <Icon path={mdiCalendar} size={1} className="size-3.5 text-heading shrink-0" />
+          <span className="font-body font-medium text-13 text-foreground truncate">{year}</span>
         </div>
       </div>
 
