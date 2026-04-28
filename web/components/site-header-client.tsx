@@ -34,7 +34,7 @@ import { HeaderSearch } from '@/components/header-search'
 import { ShoppingCart1 } from '@/components/shopping-cart1'
 import { Badge } from '@/components/ui/badge'
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { useCart } from '@/lib/cart-context'
 import { headerDropdownCopy } from '@/lib/data'
 import type { HeaderNavItem, HeaderNavigation } from '@/lib/header-navigation'
@@ -451,7 +451,7 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                 className="w-full max-w-none border-r border-white-20 bg-surface-dark text-background"
               >
                 <div className="flex h-full flex-col pt-12">
-                  <SheetTitle className="sr-only">Site navigation</SheetTitle>
+                  <span className="sr-only">Site navigation</span>
 
                   <div className="px-5 pb-4">
                     <Link
