@@ -1,10 +1,7 @@
 name: CI
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+# Disabled - Husky handles lint/typecheck/build validation locally
+on: never
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

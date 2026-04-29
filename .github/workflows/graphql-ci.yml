@@ -1,14 +1,7 @@
 name: GraphQL CI
 
-on:
-  push:
-    branches: [main]
-    paths:
-      - "graphql/**"
-  pull_request:
-    branches: [main]
-    paths:
-      - "graphql/**"
+# Disabled - Husky handles lint/build validation locally
+on: never
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
