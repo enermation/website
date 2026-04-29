@@ -133,7 +133,7 @@ export function ChatPanel({
           {messages.length === 0 ? (
             showSuggestedQuestions ? (
               <div className="flex h-full items-center justify-center p-4">
-                <div className="grid w-full gap-2.5 grid-cols-2">
+                <div className="grid w-full gap-2 grid-cols-2">
                   {SUGGESTED_QUESTIONS_WITH_ICONS.map(item => (
                     <SuggestionButton
                       key={item.text}
@@ -141,6 +141,7 @@ export function ChatPanel({
                       icon={item.icon}
                       prompt={item.text}
                       sendMessage={({ text }) => handleSuggestion(text)}
+                      className="p-3 text-xs"
                     />
                   ))}
                 </div>
