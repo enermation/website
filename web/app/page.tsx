@@ -139,7 +139,7 @@ async function LatestArrivalsSection() {
   const latestArrivals = latestArrivalsCollection?.products ?? []
 
   return (
-    <AnimatedSection className="bg-card" stagger={0.1}>
+    <AnimatedSection className="bg-card">
       <SectionHeading title="Latest Arrivals for Sale" />
 
       <div className="mx-auto max-w-site px-4 pb-14 md:px-6 md:pb-16">
@@ -180,8 +180,8 @@ async function CollectionsSection() {
 
       <div className="mx-auto hidden max-w-site px-6 pb-16 md:block">
         <div className="grid grid-cols-3 gap-8">
-          {collections.map((collection, index) => (
-            <div key={collection.id} data-reveal style={{ animationDelay: `${index * 0.1}s` }}>
+          {collections.map(collection => (
+            <div key={collection.id} data-reveal>
               <CollectionCard collection={collection} />
             </div>
           ))}
@@ -206,7 +206,7 @@ async function InstagramSection() {
   if (instagramPosts.length === 0) return null
 
   return (
-    <AnimatedSection className="bg-muted px-4 py-16 md:px-20 md:py-20" stagger={0.1}>
+    <AnimatedSection className="bg-muted px-4 py-16 md:px-20 md:py-20">
       <div className="mx-auto max-w-site">
         <InstagramGrid>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-4">

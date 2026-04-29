@@ -1,10 +1,6 @@
 'use client'
 
-import { motion } from 'motion/react'
-
 const STROKE_WIDTH = 0.8
-const DRAW_DURATION = 3
-const TRAIL_DURATION = 3.5
 
 export function TextHoverEffect({ text }: { text: string }) {
   return (
@@ -32,41 +28,31 @@ export function TextHoverEffect({ text }: { text: string }) {
         {text}
       </text>
       {/* First draw - main stroke */}
-      <motion.text
+      <text
         x="50%"
         y="50%"
         textAnchor="middle"
         dominantBaseline="middle"
         strokeWidth={STROKE_WIDTH}
         vectorEffect="non-scaling-stroke"
-        className="fill-transparent font-display text-7xl font-normal"
-        style={{ stroke: 'var(--white-70)' }}
-        initial={{ strokeDashoffset: 1000, strokeDasharray: 1000 }}
-        animate={{ strokeDashoffset: 0, strokeDasharray: 1000 }}
-        transition={{ duration: DRAW_DURATION, ease: 'easeInOut' }}
+        className="fill-transparent font-display text-7xl font-normal text-draw-primary"
+        style={{ stroke: 'var(--white-70)', strokeDasharray: 1000 }}
       >
         {text}
-      </motion.text>
+      </text>
       {/* Second draw - trailing echo */}
-      <motion.text
+      <text
         x="50%"
         y="50%"
         textAnchor="middle"
         dominantBaseline="middle"
         strokeWidth={STROKE_WIDTH * 0.6}
         vectorEffect="non-scaling-stroke"
-        className="fill-transparent font-display text-7xl font-normal"
-        style={{ stroke: 'var(--white-50)' }}
-        initial={{ strokeDashoffset: 1000, strokeDasharray: 1000 }}
-        animate={{ strokeDashoffset: 0, strokeDasharray: 1000 }}
-        transition={{
-          duration: TRAIL_DURATION,
-          ease: 'easeOut',
-          delay: 0.15,
-        }}
+        className="fill-transparent font-display text-7xl font-normal text-draw-trail"
+        style={{ stroke: 'var(--white-50)', strokeDasharray: 1000 }}
       >
         {text}
-      </motion.text>
+      </text>
     </svg>
   )
 }
