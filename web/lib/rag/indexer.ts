@@ -12,7 +12,7 @@ import {
 } from '@/lib/rag/constants'
 import { embedDocuments } from '@/lib/rag/embed'
 import type { ProductChunkMetadata } from '@/lib/rag/types'
-import { getClient } from '@/lib/shopify'
+import { getClient, resolveVehicleMetafields } from '@/lib/shopify'
 import type { ShopifyProduct } from '@/lib/types'
 
 async function ensureCollection(client: QdrantClient): Promise<void> {
@@ -74,7 +74,11 @@ export async function reindexAll(options: { fresh?: boolean } = {}): Promise<{
     cursor = data?.products.pageInfo.endCursor
   }
 
-  const chunks = allProducts.map(product => {
+  const enrichedProducts = await Promise.all(
+    allProducts.map(product => resolveVehicleMetafields(product))
+  )
+
+  const chunks = enrichedProducts.map(product => {
     const collections = product.collections?.edges.map(e => e.node.handle) ?? []
     return chunkFromShopifyProduct(product, collections)
   })

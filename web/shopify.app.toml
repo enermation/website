@@ -1,0 +1,13 @@
+name = "new-app-may-26"
+client_id = "041136a12b7291d1f21085d98d1d7eb5"
+application_url = "https://example.com"
+embedded = true
+
+[access_scopes]
+scopes = "read_metaobject_definitions,write_metaobject_definitions,read_metaobjects,write_metaobjects,read_product_feeds,write_product_feeds,read_product_listings,write_product_listings,read_products,write_products,read_content,write_content,unauthenticated_write_checkouts,unauthenticated_read_checkouts,unauthenticated_read_metaobjects,unauthenticated_read_product_inventory,unauthenticated_read_product_listings,unauthenticated_read_product_tags,unauthenticated_read_content,unauthenticated_read_metafields"
+
+[auth]
+redirect_urls = ["https://example.com/auth/callback"]
+
+[webhooks]
+api_version = "2026-04"
