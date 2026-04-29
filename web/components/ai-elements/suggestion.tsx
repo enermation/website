@@ -16,8 +16,8 @@ export const Suggestions = ({
   children,
   ...props
 }: SuggestionsProps) => (
-  <ScrollArea className="w-full overflow-x-auto whitespace-nowrap" {...props}>
-    <div className={cn("flex w-max flex-nowrap items-center gap-2", className)}>
+  <ScrollArea className="w-full overflow-x-auto" {...props}>
+    <div className={cn("flex flex-wrap items-center gap-2", className)}>
       {children}
     </div>
     <ScrollBar className="hidden" orientation="horizontal" />
@@ -27,11 +27,13 @@ export const Suggestions = ({
 export type SuggestionProps = Omit<ComponentProps<typeof Button>, "onClick"> & {
   suggestion: string;
   onClick?: (suggestion: string) => void;
+  icon?: React.ComponentType<{ className?: string }>;
 };
 
 export const Suggestion = ({
   suggestion,
   onClick,
+  icon: IconComponent,
   className,
   variant = "outline",
   size = "sm",
@@ -51,7 +53,10 @@ export const Suggestion = ({
       variant={variant}
       {...props}
     >
-      {children || suggestion}
+      <div className="flex items-center gap-2">
+        {IconComponent && <IconComponent className="size-4 shrink-0" />}
+        <span>{children || suggestion}</span>
+      </div>
     </Button>
   );
 };

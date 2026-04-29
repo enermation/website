@@ -1,8 +1,8 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
-import { mdiAttachmentPlus, mdiClose } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { Paperclip } from 'lucide-react'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import type { FileUIPart } from 'ai'
 import { DefaultChatTransport } from 'ai'
 import Image from 'next/image'
@@ -234,7 +234,7 @@ export function ChatPanel({
                   onClick={() => removeFile(fileIdx)}
                   type="button"
                 >
-                  <Icon path={mdiClose} size={0.75} />
+                  <XMarkIcon className="size-3" />
                 </button>
               </div>
             )
@@ -279,7 +279,7 @@ export function ChatPanel({
                 type="button"
                 variant="ghost"
               >
-                <Icon path={mdiAttachmentPlus} size={1} />
+                <Paperclip className="size-4" />
               </PromptInputSubmit>
             </div>
           </PromptInputFooter>

@@ -1,7 +1,8 @@
 'use client'
 
-import { mdiClose, mdiRobotHappyOutline } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { BotMessageSquare } from 'lucide-react'
+import { XMarkIcon } from '@heroicons/react/24/outline'
+import { usePathname } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { ChatPanel } from '@/components/rag/chat-panel'
 import { Button } from '@/components/ui/button'
@@ -10,7 +11,12 @@ import { ASSISTANT_WIDGET_TITLE } from '@/lib/assistant-data'
 import { cn } from '@/lib/utils'
 
 export function ChatWidget() {
+  const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+
+  if (pathname === '/assistant') {
+    return null
+  }
 
   const handleOpen = useCallback(() => setIsOpen(true), [])
   const handleClose = useCallback(() => {
@@ -25,7 +31,7 @@ export function ChatWidget() {
         size="icon"
         variant="default"
       >
-        <Icon path={mdiRobotHappyOutline} size={1} />
+        <BotMessageSquare className="size-5" />
       </Button>
     )
   }
@@ -46,7 +52,7 @@ export function ChatWidget() {
           type="button"
           variant="ghost"
         >
-          <Icon path={mdiClose} size={1} />
+          <XMarkIcon className="size-4" />
         </Button>
       </CardHeader>
 

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
-import { ChatPanel } from '@/components/rag/chat-panel'
-import { Card, CardContent } from '@/components/ui/card'
+import { AssistantPageClient } from '@/components/assistant/assistant-thread'
 
 export const metadata: Metadata = {
   title: 'Assistant — Enermation',
@@ -8,15 +7,5 @@ export const metadata: Metadata = {
 }
 
 export default function AssistantPage() {
-  return (
-    <main className="min-h-full flex flex-col items-center py-section">
-      <div className="w-full max-w-site mx-auto px-4">
-        <Card className="flex flex-col h-[calc(100vh-8rem)]">
-          <CardContent className="flex flex-1 flex-col overflow-hidden p-0">
-            <ChatPanel api="/api/rag/chat" showSuggestedQuestions={true} />
-          </CardContent>
-        </Card>
-      </div>
-    </main>
-  )
+  return <AssistantPageClient />
 }

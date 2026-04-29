@@ -1,7 +1,7 @@
 'use client'
 
-import { mdiCheckCircle, mdiCurrencyUsd } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { CheckCircle } from 'lucide-react'
+import { Banknote } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { ProductCitationData } from '@/lib/rag/types'
@@ -28,7 +28,7 @@ export function ProductCitation({ product }: ProductCitationProps) {
         </div>
       ) : (
         <div className="flex size-12 shrink-0 items-center justify-center rounded-md bg-muted">
-          <Icon path={mdiCurrencyUsd} size={1.5} className="text-muted-foreground" />
+          <Banknote className="text-muted-foreground" />
         </div>
       )}
 
@@ -55,7 +55,7 @@ export function ProductCitation({ product }: ProductCitationProps) {
       </div>
 
       {product.available ? (
-        <Icon path={mdiCheckCircle} size={1} className="shrink-0 text-brand-green" />
+        <CheckCircle className="shrink-0 text-brand-green" />
       ) : (
         <span className="shrink-0 font-body text-11 uppercase tracking-wider text-muted-foreground">
           Sold
