@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { productPage } from '@/lib/data'
-import { matchFeature } from '@/lib/features'
+import { FEATURE_MAP, scanFeaturesFromText } from '@/lib/features'
 import type { ResolvedSpec, ShopifyProductVariant } from '@/lib/types'
 import { cn, formatPrice } from '@/lib/utils'
 
@@ -89,20 +89,43 @@ export function ProductInfoPanel({
 
   const hasStructuredSpecs = allSpecRows.length > 0
 
+  const hasNamespace = (r: {
+    label: string
+    value: string
+  }): r is { label: string; value: string } & { namespace: string; key: string } => 'namespace' in r
+
   const keySpecRows = allSpecRows.filter(r => {
-    const id = 'namespace' in r ? `${r.namespace}.${r.key}` : null
+    const id = hasNamespace(r) ? `${r.namespace}.${r.key}` : null
     return id === null || !TECH_SPEC_KEYS.has(id)
   })
   const techSpecRows = allSpecRows.filter(r => {
-    const id = 'namespace' in r ? `${r.namespace}.${r.key}` : null
+    const id = hasNamespace(r) ? `${r.namespace}.${r.key}` : null
     return id !== null && TECH_SPEC_KEYS.has(id)
   })
 
-  const iconFeatures = equipmentItems
-    .map(item => ({ item, icon: matchFeature(item) }))
-    .filter((f): f is { item: string; icon: string } => f.icon !== null)
+  // Metafield features are authoritative — use their proper taxonomy labels
+  const metafieldIconFeatures = equipmentItems
+    .map(item => {
+      const entry = FEATURE_MAP.find(e => e.keywords.some(k => item.toLowerCase().includes(k)))
+      return entry ? { item, icon: entry.icon, iconGrid: entry.iconGrid ?? false } : null
+    })
+    .filter((f): f is { item: string; icon: string; iconGrid: boolean } => f !== null)
 
-  const moreFeatures = equipmentItems.filter(item => matchFeature(item) === null)
+  // Scan description for additional features not already covered by metafields
+  const coveredIcons = new Set(metafieldIconFeatures.map(f => f.icon))
+  const descriptionIconFeatures = scanFeaturesFromText(description)
+    .map(f => {
+      const entry = FEATURE_MAP.find(e => e.icon === f.icon)
+      return entry ? { ...f, iconGrid: entry.iconGrid ?? false } : f
+    })
+    .filter(f => !coveredIcons.has(f.icon))
+
+  const allIconFeatures: { item: string; icon: string; iconGrid: boolean }[] = [
+    ...metafieldIconFeatures,
+    ...descriptionIconFeatures,
+  ]
+  const iconGridFeatures = allIconFeatures.filter(f => f.iconGrid)
+  const moreFeatures = allIconFeatures.filter(f => !f.iconGrid).map(f => f.item)
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
@@ -211,13 +234,13 @@ export function ProductInfoPanel({
         </Collapsible>
       )}
 
-      {iconFeatures.length > 0 && (
+      {iconGridFeatures.length > 0 && (
         <div data-reveal="6" className="flex flex-col gap-4">
           <h2 className="font-display text-xl text-heading">
             {productPage.sections.vehicleFeatures}
           </h2>
           <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-            {iconFeatures.map(({ item, icon }) => (
+            {iconGridFeatures.map(({ item, icon }) => (
               <li key={item} className="flex items-center gap-2">
                 <Icon path={icon} size={1} className="size-4 shrink-0 text-foreground" />
                 <span className="font-body text-14 text-body">{item}</span>

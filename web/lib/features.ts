@@ -25,18 +25,22 @@ import {
   mdiWifi,
 } from '@mdi/js'
 
-type FeatureEntry = { keywords: string[]; icon: string }
+type FeatureEntry = { keywords: string[]; icon: string; iconGrid?: true }
 
-const FEATURE_MAP: FeatureEntry[] = [
-  { keywords: ['android auto'], icon: mdiAndroid },
-  { keywords: ['apple carplay', 'carplay'], icon: mdiApple },
+export const FEATURE_MAP: FeatureEntry[] = [
+  { keywords: ['android auto'], icon: mdiAndroid, iconGrid: true },
+  { keywords: ['apple carplay', 'carplay'], icon: mdiApple, iconGrid: true },
   { keywords: ['bluetooth'], icon: mdiBluetooth },
-  { keywords: ['navigation', 'sat nav', 'gps'], icon: mdiNavigation },
+  { keywords: ['navigation', 'sat nav', 'gps'], icon: mdiNavigation, iconGrid: true },
   { keywords: ['air condition', 'climate control'], icon: mdiAirConditioner },
   { keywords: ['sound system', 'audio', 'jbl', 'speaker', 'multimedia system'], icon: mdiSpeaker },
   { keywords: ['tv', 'television', 'full segment'], icon: mdiTelevision },
   { keywords: ['360', 'panoram', 'panoramic'], icon: mdiPanorama },
-  { keywords: ['camera', 'monitor system', 'terrain monitor', 'trail camera'], icon: mdiCamera },
+  {
+    keywords: ['camera', 'monitor system', 'terrain monitor', 'trail camera'],
+    icon: mdiCamera,
+    iconGrid: true,
+  },
   { keywords: ['keyless', 'push start'], icon: mdiKey },
   { keywords: ['cruise control'], icon: mdiCarCruiseControl },
   { keywords: ['blind spot'], icon: mdiEye },
@@ -45,6 +49,7 @@ const FEATURE_MAP: FeatureEntry[] = [
   {
     keywords: ['touchscreen', 'infotainment', 'heads-up display', 'hud', 'display screen'],
     icon: mdiMonitor,
+    iconGrid: true,
   },
   { keywords: ['heated seat', 'seat heat', 'heated,', 'heated '], icon: mdiHeatWave },
   {
@@ -65,4 +70,27 @@ const FEATURE_MAP: FeatureEntry[] = [
 export function matchFeature(item: string): string | null {
   const lower = item.toLowerCase()
   return FEATURE_MAP.find(e => e.keywords.some(k => lower.includes(k)))?.icon ?? null
+}
+
+// Scans free-form text for known feature keywords. Returns one entry per
+// matched feature type (deduplicated by icon). No specific format required —
+// works on raw descriptions, not just pre-split equipment lists.
+export function scanFeaturesFromText(
+  text: string
+): { item: string; icon: string; iconGrid: boolean }[] {
+  const lower = text.toLowerCase()
+  const seen = new Set<string>()
+  const results: { item: string; icon: string; iconGrid: boolean }[] = []
+  for (const entry of FEATURE_MAP) {
+    const matched = entry.keywords.find(k => lower.includes(k))
+    if (matched && !seen.has(entry.icon)) {
+      seen.add(entry.icon)
+      results.push({
+        item: matched.replace(/\b\w/g, c => c.toUpperCase()),
+        icon: entry.icon,
+        iconGrid: entry.iconGrid ?? false,
+      })
+    }
+  }
+  return results
 }
