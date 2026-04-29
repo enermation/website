@@ -1,7 +1,6 @@
 'use client'
 
-import { Icon } from '@mdi/react'
-import { mdiCheck } from '@mdi/js'
+import { CheckIcon } from '@heroicons/react/24/outline'
 import { Menu as MenuPrimitive } from '@base-ui/react/menu'
 import { Menubar as MenubarPrimitive } from '@base-ui/react/menubar'
 import type * as React from 'react'
@@ -121,7 +120,7 @@ function MenubarCheckboxItem({
     >
       <span className="pointer-events-none absolute left-1.5 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenuPrimitive.CheckboxItemIndicator>
-          <Icon path={mdiCheck} />
+          <CheckIcon className="size-4" />
         </MenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
@@ -153,7 +152,7 @@ function MenubarRadioItem({
     >
       <span className="pointer-events-none absolute left-1.5 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenuPrimitive.RadioItemIndicator>
-          <Icon path={mdiCheck} />
+          <CheckIcon className="size-4" />
         </MenuPrimitive.RadioItemIndicator>
       </span>
       {children}

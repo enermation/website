@@ -1,7 +1,6 @@
 'use client'
 
-import { mdiCart, mdiCash } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { Banknote, ShoppingCart } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/lib/cart-context'
@@ -52,7 +51,7 @@ export function AddToCartButton({
           'disabled:opacity-50 disabled:cursor-not-allowed'
         )}
       >
-        <Icon path={mdiCart} size={1} className="mr-2 size-4" aria-hidden="true" />
+        <ShoppingCart className="mr-2 size-4" aria-hidden="true" />
         {isAdding ? 'Adding...' : 'Add to Cart'}
       </Button>
       <Button
@@ -66,7 +65,7 @@ export function AddToCartButton({
           'disabled:opacity-50 disabled:cursor-not-allowed'
         )}
       >
-        <Icon path={mdiCash} size={1} className="mr-2 size-4" aria-hidden="true" />
+        <Banknote className="mr-2 size-4" aria-hidden="true" />
         {isAdding ? 'Adding...' : 'Buy Now'}
       </Button>
     </div>

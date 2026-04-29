@@ -1,5 +1,4 @@
-import { mdiChevronRight } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { ChevronRightIcon } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -149,24 +148,14 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
           <Link href="/" className="transition-colors hover:text-foreground scroll-mt-20">
             {productPage.breadcrumb.home}
           </Link>
-          <Icon
-            path={mdiChevronRight}
-            size={1}
-            className="size-3 text-muted-foreground"
-            aria-hidden="true"
-          />
+          <ChevronRightIcon className="size-3 text-muted-foreground" aria-hidden="true" />
           <Link
             href={showroomHref}
             className="transition-colors hover:text-foreground scroll-mt-20"
           >
             {showroomLabel}
           </Link>
-          <Icon
-            path={mdiChevronRight}
-            size={1}
-            className="size-3 text-muted-foreground"
-            aria-hidden="true"
-          />
+          <ChevronRightIcon className="size-3 text-muted-foreground" aria-hidden="true" />
           <span className="truncate text-foreground">{product.title}</span>
         </div>
       </nav>
@@ -213,7 +202,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-brand-green bg-brand-green px-4 py-3 font-heading text-13 font-semibold uppercase tracking-widest text-background transition-colors hover:border-brand-red hover:bg-brand-red"
                 >
                   View All Stock
-                  <Icon path={mdiChevronRight} size={1} className="size-4" />
+                  <ChevronRightIcon className="size-4" />
                 </Link>
               </div>
             </aside>

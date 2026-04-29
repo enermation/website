@@ -1,33 +1,21 @@
 'use client'
 
 import {
-  mdiArrowBottomRight,
-  mdiArrowRight,
-  mdiBike,
-  mdiBus,
-  mdiBusArticulatedEnd,
-  mdiCar,
-  mdiCarConvertible,
-  mdiCarElectric,
-  mdiCarEstate,
-  mdiCarHatchback,
-  mdiCarPickup,
-  mdiCarSports,
-  mdiCart,
-  mdiCarWrench,
-  mdiChevronDown,
-  mdiChevronRight,
-  mdiFlash,
-  mdiHome,
-  mdiJeepney,
-  mdiMenu,
-  mdiMotorbike,
-  mdiTractorVariant,
-  mdiTruck,
-  mdiTruckCargoContainer,
-  mdiVanPassenger,
-} from '@mdi/js'
-import { Icon } from '@mdi/react'
+  ArrowRightIcon,
+  Bike,
+  Bus,
+  Car,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  Home,
+  Menu,
+  ShoppingCart,
+  Tractor,
+  Truck,
+  Van,
+  Wrench,
+  Zap,
+} from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { HeaderSearch } from '@/components/header-search'
@@ -49,42 +37,42 @@ function hasHref(href: string): boolean {
   return href !== '#'
 }
 
-function menuItemIcon(label: string) {
+function menuItemIcon(
+  label: string
+): React.ComponentType<{ className?: string; 'aria-hidden'?: boolean }> {
   const normalized = label.toLowerCase()
 
-  if (normalized.includes('part') || normalized.includes('spare')) return mdiCarWrench
+  if (normalized.includes('part') || normalized.includes('spare')) return Wrench
 
   if (
     normalized.includes('motorcycle') ||
     normalized.includes('motor cycle') ||
     normalized.includes('motorbike')
   )
-    return mdiMotorbike
-  if (normalized.includes('cycle') || normalized.includes('bike')) return mdiBike
+    return Bike
+  if (normalized.includes('cycle') || normalized.includes('bike')) return Bike
 
-  if (normalized.includes('machinery') || normalized.includes('machine')) return mdiTractorVariant
-  if (normalized.includes('tractor') || normalized.includes('semi')) return mdiTractorVariant
-  if (normalized.includes('bus') && normalized.includes('articulated')) return mdiBusArticulatedEnd
-  if (normalized.includes('bus')) return mdiBus
+  if (normalized.includes('machinery') || normalized.includes('machine')) return Tractor
+  if (normalized.includes('tractor') || normalized.includes('semi')) return Tractor
+  if (normalized.includes('bus') && normalized.includes('articulated')) return Bus
+  if (normalized.includes('bus')) return Bus
 
-  if (normalized.includes('cargo') || normalized.includes('container'))
-    return mdiTruckCargoContainer
-  if (normalized.includes('truck')) return mdiTruck
-  if (normalized.includes('commercial') || normalized.includes('heavy')) return mdiTruck
+  if (normalized.includes('cargo') || normalized.includes('container')) return Truck
+  if (normalized.includes('truck')) return Truck
+  if (normalized.includes('commercial') || normalized.includes('heavy')) return Truck
 
-  if (normalized.includes('van')) return mdiVanPassenger
-  if (normalized.includes('jeep') || normalized.includes('suv')) return mdiJeepney
+  if (normalized.includes('van')) return Van
+  if (normalized.includes('jeep') || normalized.includes('suv')) return Jeep
+  if (normalized.includes('estate') || normalized.includes('station')) return Car
+  if (normalized.includes('hatchback') || normalized.includes('compact')) return Car
+  if (normalized.includes('pickup') || normalized.includes('ute')) return Car
+  if (normalized.includes('sports') || normalized.includes('performance')) return Car
+  if (normalized.includes('convertible') || normalized.includes('cabrio')) return Car
+  if (normalized.includes('electric')) return Car
 
-  if (normalized.includes('estate') || normalized.includes('station')) return mdiCarEstate
-  if (normalized.includes('hatchback') || normalized.includes('compact')) return mdiCarHatchback
-  if (normalized.includes('pickup') || normalized.includes('ute')) return mdiCarPickup
-  if (normalized.includes('sports') || normalized.includes('performance')) return mdiCarSports
-  if (normalized.includes('convertible') || normalized.includes('cabrio')) return mdiCarConvertible
+  if (normalized.includes('renewable') || normalized.includes('energy')) return Zap
 
-  if (normalized.includes('electric')) return mdiCarElectric
-  if (normalized.includes('renewable') || normalized.includes('energy')) return mdiFlash
-
-  return mdiCar
+  return Car
 }
 
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
@@ -105,12 +93,10 @@ function MobileNavAccordion({ item, onClose }: { item: HeaderNavItem; onClose: (
         )}
         aria-expanded={expanded}
       >
-        <Icon path={mdiCar} size={1} className="size-5 text-white-50" aria-hidden="true" />
+        <Car className="size-5 text-white-50" aria-hidden="true" />
         <span className="flex-1 text-left">{item.label}</span>
         {hasChildren && (
-          <Icon
-            path={mdiChevronRight}
-            size={1}
+          <ChevronRightIcon
             className={cn(
               'size-4 text-white-50 transition-transform duration-200',
               expanded && 'rotate-90'
@@ -132,25 +118,21 @@ function MobileNavAccordion({ item, onClose }: { item: HeaderNavItem; onClose: (
                 )}
                 onClick={onClose}
               >
-                <Icon
-                  path={menuItemIcon(child.label)}
-                  size={1}
-                  className="size-4"
-                  aria-hidden="true"
-                />
+                {(() => {
+                  const IconComponent = menuItemIcon(child.label)
+                  return <IconComponent className="size-4" aria-hidden="true" />
+                })()}
                 <span>{child.label}</span>
               </Link>
             ) : (
               <span
-                key={`${item.label}-${child.label}`}
+                key={`${item.label}-${child.label}-no-href`}
                 className="flex items-center gap-3 rounded-lg px-4 py-2.5 font-body text-sm text-white-50"
               >
-                <Icon
-                  path={menuItemIcon(child.label)}
-                  size={1}
-                  className="size-4"
-                  aria-hidden="true"
-                />
+                {(() => {
+                  const IconComponent = menuItemIcon(child.label)
+                  return <IconComponent className="size-4" aria-hidden="true" />
+                })()}
                 <span>{child.label}</span>
               </span>
             )
@@ -164,8 +146,6 @@ function MobileNavAccordion({ item, onClose }: { item: HeaderNavItem; onClose: (
 function DesktopNavItem({ item }: { item: HeaderNavItem }) {
   const hasChildren = item.children.length > 0
   const featured = item.children[0]
-  const isInventory = item.label === 'Inventory'
-  const childIcon = isInventory ? mdiArrowBottomRight : mdiChevronDown
 
   return (
     <div className={cn('relative', hasChildren && 'group')}>
@@ -178,12 +158,12 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
           )}
         >
           {item.label}
-          {hasChildren && <Icon path={childIcon} size={1} className="size-3" aria-hidden="true" />}
+          {hasChildren && <ChevronDownIcon className="size-3" aria-hidden="true" />}
         </Link>
       ) : (
         <span className="inline-flex items-center gap-1 rounded-md px-2 py-1 font-heading text-13 font-semibold uppercase tracking-wide text-background">
           {item.label}
-          {hasChildren && <Icon path={childIcon} size={1} className="size-3" aria-hidden="true" />}
+          {hasChildren && <ChevronDownIcon className="size-3" aria-hidden="true" />}
         </span>
       )}
 
@@ -206,7 +186,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
             {item.children.length >= 8 ? (
               <div className="grid grid-cols-3 gap-x-4">
                 {item.children.map(child => {
-                  const iconPath = menuItemIcon(child.label)
+                  const IconComponent = menuItemIcon(child.label)
 
                   return hasHref(child.href) ? (
                     <Link
@@ -218,7 +198,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                       )}
                     >
                       <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
-                        <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
+                        <IconComponent className="size-3.5" aria-hidden="true" />
                       </span>
                       <span>{child.label}</span>
                     </Link>
@@ -228,7 +208,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                       className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-on-dark-muted"
                     >
                       <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
-                        <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
+                        <IconComponent className="size-3.5" aria-hidden="true" />
                       </span>
                       <span>{child.label}</span>
                     </span>
@@ -237,7 +217,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
               </div>
             ) : (
               item.children.map(child => {
-                const iconPath = menuItemIcon(child.label)
+                const IconComponent = menuItemIcon(child.label)
 
                 return hasHref(child.href) ? (
                   <Link
@@ -249,7 +229,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                     )}
                   >
                     <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
-                      <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
+                      <IconComponent className="size-3.5" aria-hidden="true" />
                     </span>
                     <span>{child.label}</span>
                   </Link>
@@ -259,7 +239,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                     className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-on-dark-muted"
                   >
                     <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
-                      <Icon path={iconPath} size={1} className="size-3.5" aria-hidden="true" />
+                      <IconComponent className="size-3.5" aria-hidden="true" />
                     </span>
                     <span>{child.label}</span>
                   </span>
@@ -281,7 +261,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                 <p className="mt-1 font-body text-sm text-background">{featured.label}</p>
                 <span className="mt-2 inline-flex items-center gap-1 font-heading text-13 text-background">
                   {headerDropdownCopy.browseLabel}
-                  <Icon path={mdiArrowRight} size={1} className="size-3.5" aria-hidden="true" />
+                  <ArrowRightIcon className="size-3.5" aria-hidden="true" />
                 </span>
               </Link>
             )}
@@ -346,7 +326,7 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                 )}
                 aria-label="Open cart"
               >
-                <Icon path={mdiCart} size={1} className="size-5" aria-hidden="true" />
+                <ShoppingCart className="size-5" aria-hidden="true" />
                 {totalItemCount > 0 && (
                   <Badge className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-green px-1 p-0 font-heading text-11 font-semibold text-background">
                     {totalItemCount}
@@ -397,7 +377,7 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                 )}
                 aria-label="Open cart"
               >
-                <Icon path={mdiCart} size={1} className="size-5" aria-hidden="true" />
+                <ShoppingCart className="size-5" aria-hidden="true" />
                 {totalItemCount > 0 && (
                   <Badge className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-green px-1 p-0 font-heading text-11 font-semibold text-background">
                     {totalItemCount}
@@ -444,7 +424,7 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                 )}
                 aria-label="Open menu"
               >
-                <Icon path={mdiMenu} size={1} className="size-5" />
+                <Menu className="size-5" />
               </DrawerTrigger>
               <DrawerContent
                 data-slot="drawer-content"
@@ -484,22 +464,16 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                               )}
                               onClick={() => setMobileOpen(false)}
                             >
-                              <Icon
-                                path={item.label === 'Home' ? mdiHome : mdiCar}
-                                size={1}
-                                className="size-5 text-white-50"
-                                aria-hidden="true"
-                              />
+                              {item.label === 'Home' ? (
+                                <Home className="size-5 text-white-50" aria-hidden="true" />
+                              ) : (
+                                <Car className="size-5 text-white-50" aria-hidden="true" />
+                              )}
                               {item.label}
                             </Link>
                           ) : (
                             <p className="flex items-center gap-3 rounded-lg px-4 py-3 font-heading text-13 font-semibold uppercase tracking-wide text-background">
-                              <Icon
-                                path={mdiCar}
-                                size={1}
-                                className="size-5 text-white-50"
-                                aria-hidden="true"
-                              />
+                              <Car className="size-5 text-white-50" aria-hidden="true" />
                               {item.label}
                             </p>
                           )}

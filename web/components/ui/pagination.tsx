@@ -1,5 +1,6 @@
-import { Icon } from '@mdi/react'
-import { mdiChevronLeft, mdiChevronRight, mdiDotsHorizontal } from '@mdi/js'
+'use client'
+
+import { ChevronLeftIcon, ChevronRightIcon, EllipsisHorizontalIcon } from '@heroicons/react/24/outline'
 import type * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -66,7 +67,7 @@ function PaginationPrevious({
       className={cn('pl-1.5!', className)}
       {...props}
     >
-      <Icon path={mdiChevronLeft} data-icon="inline-start" />
+      <ChevronLeftIcon className="size-4" data-icon="inline-start" />
       <span className="hidden sm:block">{text}</span>
     </PaginationLink>
   )
@@ -85,7 +86,7 @@ function PaginationNext({
       {...props}
     >
       <span className="hidden sm:block">{text}</span>
-      <Icon path={mdiChevronRight} data-icon="inline-end" />
+      <ChevronRightIcon className="size-4" data-icon="inline-end" />
     </PaginationLink>
   )
 }
@@ -101,7 +102,7 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<'span'
       )}
       {...props}
     >
-      <Icon path={mdiDotsHorizontal} />
+      <EllipsisHorizontalIcon className="size-4" />
       <span className="sr-only">More pages</span>
     </span>
   )

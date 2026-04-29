@@ -1,7 +1,6 @@
 'use client'
 
-import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
@@ -208,7 +207,7 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
             aria-label="Show previous model"
             onClick={() => navigateModel(-1)}
           >
-            <Icon path={mdiChevronLeft} size={1} className="size-5" aria-hidden="true" />
+            <ChevronLeftIcon className="size-5" aria-hidden="true" />
           </button>
           <div className="hero-stage__dots" role="tablist" aria-label="Choose hero model">
             {heroShowcaseVehicles.map((vehicle, index) => (
@@ -233,7 +232,7 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
             aria-label="Show next model"
             onClick={() => navigateModel(1)}
           >
-            <Icon path={mdiChevronRight} size={1} className="size-5" aria-hidden="true" />
+            <ChevronRightIcon className="size-5" aria-hidden="true" />
           </button>
         </fieldset>
       </div>

@@ -1,7 +1,6 @@
 'use client'
 
-import { Icon } from '@mdi/react'
-import { mdiChevronDown, mdiChevronLeft, mdiChevronRight } from '@mdi/js'
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import * as React from 'react'
 import { type DayButton, DayPicker, getDefaultClassNames, type Locale } from 'react-day-picker'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -118,14 +117,14 @@ function Calendar({
         },
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === 'left') {
-            return <Icon path={mdiChevronLeft} size={1} className={cn('size-4', className)} {...props} />
+            return <ChevronLeftIcon className={cn('size-4', className)} {...props} />
           }
 
           if (orientation === 'right') {
-            return <Icon path={mdiChevronRight} size={1} className={cn('size-4', className)} {...props} />
+            return <ChevronRightIcon className={cn('size-4', className)} {...props} />
           }
 
-          return <Icon path={mdiChevronDown} size={1} className={cn('size-4', className)} {...props} />
+          return <ChevronDownIcon className={cn('size-4', className)} {...props} />
         },
         DayButton: ({ ...props }) => <CalendarDayButton locale={locale} {...props} />,
         WeekNumber: ({ children, ...props }) => {

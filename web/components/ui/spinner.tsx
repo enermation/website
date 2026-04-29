@@ -1,10 +1,15 @@
-import { Icon } from '@mdi/react'
-import { mdiLoading } from '@mdi/js'
+'use client'
+
 import { cn } from '@/lib/utils'
 
 function Spinner({ className }: { className?: string }) {
   return (
-    <Icon path={mdiLoading} size={1} className={cn('size-4 animate-spin', className)} />
+    <span
+      className={cn(
+        'size-4 animate-spin rounded-full border-2 border-current border-t-transparent',
+        className
+      )}
+    />
   )
 }
 

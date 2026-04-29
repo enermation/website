@@ -1,7 +1,7 @@
 'use client'
 
-import { mdiFilter, mdiGrid, mdiHeart } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { Bars3Icon, Squares2X2Icon } from '@heroicons/react/24/outline'
+import { Heart } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
@@ -127,7 +127,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
               aria-label="View all products and reset filters"
               className="h-10 justify-center rounded-none border-2 border-foreground bg-background font-heading text-xs font-semibold uppercase tracking-wide text-foreground hover:bg-accent"
             >
-              <Icon path={mdiGrid} size={1} className="size-3.5" aria-hidden="true" />
+              <Squares2X2Icon className="size-3.5" aria-hidden="true" />
               View All
             </Button>
             <Button
@@ -136,7 +136,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
               aria-label="Wishlist (currently unavailable)"
               className="h-10 justify-center rounded-none border-2 border-foreground bg-background font-heading text-xs font-semibold uppercase tracking-wide text-foreground disabled:opacity-50"
             >
-              <Icon path={mdiHeart} size={1} className="size-3.5" aria-hidden="true" />
+              <Heart className="size-3.5" aria-hidden="true" />
               Wishlist (0)
             </Button>
             <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
@@ -148,7 +148,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
                   />
                 }
               >
-                <Icon path={mdiFilter} size={1} className="size-3.5" aria-hidden="true" />
+                <Bars3Icon className="size-3.5" aria-hidden="true" />
                 Filter Stock
               </SheetTrigger>
               <SheetContent
@@ -270,7 +270,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
                 aria-label="View all products and reset filters"
                 className="h-10 px-5 border-2 border-foreground font-heading font-semibold text-xs uppercase tracking-wider hover:bg-accent"
               >
-                <Icon path={mdiGrid} size={1} className="size-3.5 shrink-0" aria-hidden="true" />
+                <Squares2X2Icon className="size-3.5 shrink-0" aria-hidden="true" />
                 View All
               </Button>
               <Button
@@ -280,7 +280,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
                 aria-label="Wishlist (currently unavailable)"
                 className="h-10 px-5 border-2 border-l-0 border-foreground font-heading font-semibold text-xs uppercase tracking-wider disabled:opacity-50"
               >
-                <Icon path={mdiHeart} size={1} className="size-3.5 shrink-0" aria-hidden="true" />
+                <Heart className="size-3.5 shrink-0" aria-hidden="true" />
                 Wishlist (0)
               </Button>
               <Button
@@ -290,7 +290,7 @@ export function FilterBar({ makeOptions, currentMake, currentSort }: FilterBarPr
                 aria-label="Open filter stock menu"
                 className="h-10 px-5 border-2 border-foreground bg-foreground text-background hover:bg-foreground/90 font-heading font-semibold text-xs uppercase tracking-wider"
               >
-                <Icon path={mdiFilter} size={1} className="size-3.5 shrink-0" aria-hidden="true" />
+                <Bars3Icon className="size-3.5 shrink-0" aria-hidden="true" />
                 Filter Stock
               </Button>
             </div>

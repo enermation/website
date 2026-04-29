@@ -1,5 +1,4 @@
-import { mdiMagnify } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -49,7 +48,7 @@ export default async function SearchPage({
           {results.length === 0 ? (
             <div className="flex flex-col items-center py-24 text-center">
               <div className="mb-6 flex size-16 items-center justify-center rounded-full bg-muted">
-                <Icon path={mdiMagnify} size={1} className="size-8 text-muted-foreground" />
+                <MagnifyingGlassIcon className="size-8 text-muted-foreground" />
               </div>
               <p className="font-heading text-lg font-semibold text-foreground">No results found</p>
               <p className="mt-2 max-w-md font-body text-15 text-muted-foreground">
@@ -78,7 +77,7 @@ export default async function SearchPage({
                       />
                     ) : (
                       <div className="flex size-full items-center justify-center">
-                        <Icon path={mdiMagnify} size={1} className="size-8 text-muted-foreground" />
+                        <MagnifyingGlassIcon className="size-8 text-muted-foreground" />
                       </div>
                     )}
                   </div>

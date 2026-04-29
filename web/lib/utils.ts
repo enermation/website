@@ -117,3 +117,21 @@ export function formatVehicleDescription(raw: string): {
 
   return { specs, equipment }
 }
+
+export function cleanSuggestionMarkers(content: string): string {
+  return content.replace(/\s*SUGGESTION:[\s\S]*$/i, '').trim()
+}
+
+export function stripMarkdown(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/_(.+?)_/g, '$1')
+    .replace(/`(.+?)`/g, '$1')
+    .replace(/~~(.+?)~~/g, '$1')
+    .replace(/\[(.+?)\]\(.+?\)/g, '$1')
+    .replace(/^#+\s+/gm, '')
+    .replace(/^[*-]\s+/gm, '')
+    .replace(/^\d+\.\s+/gm, '')
+    .trim()
+}

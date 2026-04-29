@@ -1,13 +1,12 @@
 'use client'
 
-import { Icon } from '@mdi/react'
 import {
-  mdiCheckCircle,
-  mdiInformation,
-  mdiLoading,
-  mdiCloseCircle,
-  mdiAlert,
-} from '@mdi/js'
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  Loader2,
+  XCircle,
+} from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { Toaster as Sonner, type ToasterProps } from 'sonner'
 
@@ -19,11 +18,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps['theme']}
       className="toaster group"
       icons={{
-        success: <Icon path={mdiCheckCircle} size={1} className="size-4" />,
-        info: <Icon path={mdiInformation} size={1} className="size-4" />,
-        warning: <Icon path={mdiAlert} size={1} className="size-4" />,
-        error: <Icon path={mdiCloseCircle} size={1} className="size-4" />,
-        loading: <Icon path={mdiLoading} size={1} className="size-4 animate-spin" />,
+        success: <CheckCircle className="size-4" />,
+        info: <Info className="size-4" />,
+        warning: <AlertTriangle className="size-4" />,
+        error: <XCircle className="size-4" />,
+        loading: <Loader2 className="size-4 animate-spin" />,
       }}
       style={
         {

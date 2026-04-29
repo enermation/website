@@ -1,5 +1,4 @@
-import { Icon } from '@mdi/react'
-import { mdiChevronRight, mdiDotsHorizontal } from '@mdi/js'
+import { ChevronRightIcon, EllipsisHorizontalIcon } from '@heroicons/react/24/outline'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import type * as React from 'react'
@@ -70,7 +69,7 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
       className={cn('[&>svg]:size-3.5', className)}
       {...props}
     >
-      {children ?? <Icon path={mdiChevronRight} size={1} />}
+      {children ?? <ChevronRightIcon className="size-3.5" />}
     </li>
   )
 }
@@ -84,7 +83,7 @@ function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<'span'
       className={cn('flex size-5 items-center justify-center [&>svg]:size-4', className)}
       {...props}
     >
-      <Icon path={mdiDotsHorizontal} size={1} />
+      <EllipsisHorizontalIcon className="size-4" />
       <span className="sr-only">More</span>
     </span>
   )

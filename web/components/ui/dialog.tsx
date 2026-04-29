@@ -1,7 +1,6 @@
 'use client'
 
-import { Icon } from '@mdi/react'
-import { mdiClose } from '@mdi/js'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog'
 import type * as React from 'react'
 import { Button } from '@/components/ui/button'
@@ -61,7 +60,7 @@ function DialogContent({
             data-slot="dialog-close"
             render={<Button variant="ghost" className="absolute top-2 right-2" size="icon-sm" />}
           >
-            <Icon path={mdiClose} />
+            <XMarkIcon className="size-4" />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}

@@ -4,8 +4,8 @@ import Lightbox, { isImageSlide } from 'yet-another-react-lightbox'
 import Counter from 'yet-another-react-lightbox/plugins/counter'
 import 'yet-another-react-lightbox/styles.css'
 import 'yet-another-react-lightbox/plugins/counter.css'
-import { mdiChevronLeft, mdiChevronRight, mdiClose, mdiImageMultiple } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Images } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import { ProductGallery1 } from '@/components/product-gallery1'
@@ -110,7 +110,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 font-heading text-11 text-gray-60 uppercase tracking-widest">
-            <Icon path={mdiImageMultiple} size={1} className="size-3.5" />
+            <Images className="size-3.5" />
             <span>
               {desktopPageStart + 1}–{desktopPageEnd} of {images.length}
             </span>
@@ -125,7 +125,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                 className="h-11 rounded-full border border-white-20 bg-black-40 px-4 font-heading text-13 font-semibold uppercase tracking-wide text-white transition-colors hover:border-white-40 hover:bg-black-50"
                 onClick={showPreviousDesktopPage}
               >
-                <Icon path={mdiChevronLeft} size={1} className="size-4" />
+                <ChevronLeftIcon className="size-4" />
                 <span>Prev</span>
                 <span className="sr-only">Previous images</span>
               </Button>
@@ -137,7 +137,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                 onClick={showNextDesktopPage}
               >
                 <span>Next</span>
-                <Icon path={mdiChevronRight} size={1} className="size-4" />
+                <ChevronRightIcon className="size-4" />
                 <span className="sr-only">Next images</span>
               </Button>
             </div>
@@ -154,15 +154,9 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
         plugins={[Counter]}
         counter={{ container: { className: 'yarl-counter-pill' } }}
         render={{
-          iconPrev: () => (
-            <Icon path={mdiChevronLeft} size={1} className="size-5" aria-label="Previous image" />
-          ),
-          iconNext: () => (
-            <Icon path={mdiChevronRight} size={1} className="size-5" aria-label="Next image" />
-          ),
-          iconClose: () => (
-            <Icon path={mdiClose} size={1} className="size-5" aria-label="Close lightbox" />
-          ),
+          iconPrev: () => <ChevronLeftIcon className="size-5" aria-label="Previous image" />,
+          iconNext: () => <ChevronRightIcon className="size-5" aria-label="Next image" />,
+          iconClose: () => <XMarkIcon className="size-5" aria-label="Close lightbox" />,
           slide: ({ slide, offset }) => {
             if (!isImageSlide(slide)) return undefined
             return (

@@ -1,7 +1,6 @@
 'use client'
 
-import { mdiClose } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -105,7 +104,7 @@ export function ShoppingCart1({ className, onCheckoutClick }: ShoppingCart1Props
                 disabled={isUpdating}
                 aria-label={`Remove ${line.productTitle} from cart`}
               >
-                <Icon path={mdiClose} size={1} className="size-4" aria-hidden="true" />
+                <XMarkIcon className="size-4" aria-hidden="true" />
               </Button>
             </div>
           </div>

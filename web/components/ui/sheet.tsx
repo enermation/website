@@ -1,7 +1,6 @@
 'use client'
 
-import { Icon } from '@mdi/react'
-import { mdiClose } from '@mdi/js'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Dialog as SheetPrimitive } from '@base-ui/react/dialog'
 import type * as React from 'react'
 import { Button } from '@/components/ui/button'
@@ -64,7 +63,7 @@ function SheetContent({
             data-slot="sheet-close"
             render={<Button variant="ghost" className="absolute top-3 right-3" size="icon-sm" />}
           >
-            <Icon path={mdiClose} />
+            <XMarkIcon className="size-4" />
             <span className="sr-only">Close</span>
           </SheetPrimitive.Close>
         )}

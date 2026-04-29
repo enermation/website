@@ -1,5 +1,5 @@
-import { mdiCalendar, mdiCog, mdiFuel, mdiShieldCheck } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
+import { Calendar, Fuel, ShieldCheck } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { productPage } from '@/lib/data'
@@ -55,46 +55,46 @@ export function CarCard({ product }: CarCardProps) {
 
       <div className="mt-4 grid grid-cols-2 gap-y-1 border-t border-border-subtle px-2 pt-3 pb-1 md:hidden">
         <div className="flex items-center gap-2 px-2 py-1">
-          <Icon path={mdiCog} size={1} className="size-3.5 text-heading shrink-0" />
+          <Cog6ToothIcon className="size-3.5 text-heading shrink-0" />
           <span className="font-body font-medium text-13 text-foreground truncate">
             {transmission}
           </span>
         </div>
         <div className="flex items-center gap-2 px-2 py-1">
-          <Icon path={mdiFuel} size={1} className="size-3.5 text-heading shrink-0" />
+          <Fuel className="size-3.5 text-heading shrink-0" />
           <span className="font-body font-medium text-13 text-foreground truncate">{fuelType}</span>
         </div>
         <div className="flex items-center gap-2 px-2 py-1">
-          <Icon path={mdiShieldCheck} size={1} className="size-3.5 text-heading shrink-0" />
+          <ShieldCheck className="size-3.5 text-heading shrink-0" />
           <span className="font-body font-medium text-13 text-foreground truncate">
             {itemCondition}
           </span>
         </div>
         <div className="flex items-center gap-2 px-2 py-1">
-          <Icon path={mdiCalendar} size={1} className="size-3.5 text-heading shrink-0" />
+          <Calendar className="size-3.5 text-heading shrink-0" />
           <span className="font-body font-medium text-13 text-foreground truncate">{year}</span>
         </div>
       </div>
 
       <div className="mt-3 hidden grid-cols-2 gap-y-1 border-t border-border-subtle pt-2 md:grid">
         <div className="flex items-center gap-2 px-2 py-1">
-          <Icon path={mdiCog} size={1} className="size-3.5 text-heading shrink-0" />
+          <Cog6ToothIcon className="size-3.5 text-heading shrink-0" />
           <span className="font-body font-medium text-13 text-foreground truncate">
             {transmission}
           </span>
         </div>
         <div className="flex items-center gap-2 px-2 py-1">
-          <Icon path={mdiFuel} size={1} className="size-3.5 text-heading shrink-0" />
+          <Fuel className="size-3.5 text-heading shrink-0" />
           <span className="font-body font-medium text-13 text-foreground truncate">{fuelType}</span>
         </div>
         <div className="flex items-center gap-2 px-2 py-1">
-          <Icon path={mdiShieldCheck} size={1} className="size-3.5 text-heading shrink-0" />
+          <ShieldCheck className="size-3.5 text-heading shrink-0" />
           <span className="font-body font-medium text-13 text-foreground truncate">
             {itemCondition}
           </span>
         </div>
         <div className="flex items-center gap-2 px-2 py-1">
-          <Icon path={mdiCalendar} size={1} className="size-3.5 text-heading shrink-0" />
+          <Calendar className="size-3.5 text-heading shrink-0" />
           <span className="font-body font-medium text-13 text-foreground truncate">{year}</span>
         </div>
       </div>

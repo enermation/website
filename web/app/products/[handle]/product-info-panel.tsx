@@ -1,7 +1,7 @@
 'use client'
 
-import { mdiChevronDown } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import type { LucideIcon } from 'lucide-react'
+import { ChevronDownIcon } from 'lucide-react'
 import { useState } from 'react'
 import { AddToCartButton } from '@/components/add-to-cart-button'
 import { Badge } from '@/components/ui/badge'
@@ -109,7 +109,7 @@ export function ProductInfoPanel({
       const entry = FEATURE_MAP.find(e => e.keywords.some(k => item.toLowerCase().includes(k)))
       return entry ? { item, icon: entry.icon, iconGrid: entry.iconGrid ?? false } : null
     })
-    .filter((f): f is { item: string; icon: string; iconGrid: boolean } => f !== null)
+    .filter((f): f is { item: string; icon: LucideIcon; iconGrid: boolean } => f !== null)
 
   // Scan description for additional features not already covered by metafields
   const coveredIcons = new Set(metafieldIconFeatures.map(f => f.icon))
@@ -120,7 +120,7 @@ export function ProductInfoPanel({
     })
     .filter(f => !coveredIcons.has(f.icon))
 
-  const allIconFeatures: { item: string; icon: string; iconGrid: boolean }[] = [
+  const allIconFeatures: { item: string; icon: LucideIcon; iconGrid: boolean }[] = [
     ...metafieldIconFeatures,
     ...descriptionIconFeatures,
   ]
@@ -220,11 +220,7 @@ export function ProductInfoPanel({
             <span className="font-display text-xl text-heading">
               {productPage.sections.statsAndPerformance}
             </span>
-            <Icon
-              path={mdiChevronDown}
-              size={1}
-              className="size-4 text-muted-foreground transition-transform [[data-state=open]_&]:rotate-180"
-            />
+            <ChevronDownIcon className="size-4 text-muted-foreground transition-transform [[data-state=open]_&]:rotate-180" />
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="border border-t-0 border-border">
@@ -240,9 +236,9 @@ export function ProductInfoPanel({
             {productPage.sections.vehicleFeatures}
           </h2>
           <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-            {iconGridFeatures.map(({ item, icon }) => (
+            {iconGridFeatures.map(({ item, icon: IconComponent }) => (
               <li key={item} className="flex items-center gap-2">
-                <Icon path={icon} size={1} className="size-4 shrink-0 text-foreground" />
+                <IconComponent className="size-4 shrink-0 text-foreground" />
                 <span className="font-body text-14 text-body">{item}</span>
               </li>
             ))}
@@ -256,11 +252,7 @@ export function ProductInfoPanel({
             <span className="font-body text-14 font-medium text-foreground">
               {productPage.sections.moreFeatures}
             </span>
-            <Icon
-              path={mdiChevronDown}
-              size={1}
-              className="size-4 text-muted-foreground transition-transform [[data-state=open]_&]:rotate-180"
-            />
+            <ChevronDownIcon className="size-4 text-muted-foreground transition-transform [[data-state=open]_&]:rotate-180" />
           </CollapsibleTrigger>
           <CollapsibleContent>
             <ul className="flex flex-col gap-1 border border-t-0 border-border px-4 py-3">

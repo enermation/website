@@ -1,7 +1,6 @@
 'use client'
 
-import { Icon } from '@mdi/react'
-import { mdiCheck, mdiChevronDown, mdiChevronUp } from '@mdi/js'
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
 import { Select as SelectPrimitive } from '@base-ui/react/select'
 import type * as React from 'react'
 import { cn } from '@/lib/utils'
@@ -48,7 +47,7 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon
-        render={<Icon path={mdiChevronDown} size={1} className="pointer-events-none size-4 text-muted-foreground" />}
+        render={<ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground" />}
       />
     </SelectPrimitive.Trigger>
   )
@@ -124,7 +123,7 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
           <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center" />
         }
       >
-        <Icon path={mdiCheck} className="pointer-events-none" />
+        <CheckIcon className="pointer-events-none size-4" />
       </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>
   )
@@ -153,7 +152,7 @@ function SelectScrollUpButton({
       )}
       {...props}
     >
-      <Icon path={mdiChevronUp} />
+      <ChevronUpIcon className="size-4" />
     </SelectPrimitive.ScrollUpArrow>
   )
 }
@@ -171,7 +170,7 @@ function SelectScrollDownButton({
       )}
       {...props}
     >
-      <Icon path={mdiChevronDown} />
+      <ChevronDownIcon className="size-4" />
     </SelectPrimitive.ScrollDownArrow>
   )
 }

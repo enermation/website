@@ -1,7 +1,6 @@
 'use client'
 
-import { mdiCalendar, mdiCar, mdiCarShiftPattern, mdiSpeedometer } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { Calendar, Car, Gauge, Settings } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -48,13 +47,6 @@ export function LatestArrivalsCarousel({ products }: { products: ShopifyProduct[
           const transmissionFuel = [transmission, fuelType].filter(Boolean).join(' / ') || null
           const isAvailable = product.availableForSale
 
-          const detailRows = [
-            { icon: mdiCar, label: make },
-            { icon: mdiCarShiftPattern, label: transmissionFuel },
-            { icon: mdiSpeedometer, label: mileage },
-            { icon: mdiCalendar, label: year },
-          ].filter(row => row.label)
-
           return (
             <CarouselItem key={product.id} className="basis-full md:basis-1/2 lg:basis-1/3 pl-4">
               <Link href={`/products/${product.handle}`} className="flex flex-col group">
@@ -91,26 +83,40 @@ export function LatestArrivalsCarousel({ products }: { products: ShopifyProduct[
 
                 {/* Details grid — mobile */}
                 <div className="mt-4 grid grid-cols-2 gap-y-1 border-t border-border-subtle px-2 pt-3 pb-1 md:hidden">
-                  {detailRows.map(({ icon: iconPath, label }) => (
-                    <div key={label} className="flex items-center gap-2 px-2 py-1">
-                      <Icon path={iconPath} size={1} className="size-3.5 text-heading shrink-0" />
-                      <span className="font-body font-medium text-13 text-foreground truncate">
-                        {label}
-                      </span>
-                    </div>
-                  ))}
+                  {[
+                    { icon: Car, label: make },
+                    { icon: Settings, label: transmissionFuel },
+                    { icon: Gauge, label: mileage },
+                    { icon: Calendar, label: year },
+                  ]
+                    .filter(row => row.label)
+                    .map(({ icon: IconComponent, label }) => (
+                      <div key={label} className="flex items-center gap-2 px-2 py-1">
+                        <IconComponent className="size-3.5 text-heading shrink-0" />
+                        <span className="font-body font-medium text-13 text-foreground truncate">
+                          {label}
+                        </span>
+                      </div>
+                    ))}
                 </div>
 
                 {/* Details grid — desktop */}
                 <div className="mt-3 hidden grid-cols-2 gap-y-1 border-t border-border-subtle pt-2 md:grid">
-                  {detailRows.map(({ icon: iconPath, label }) => (
-                    <div key={label} className="flex items-center gap-2 px-2 py-1">
-                      <Icon path={iconPath} size={1} className="size-3.5 text-heading shrink-0" />
-                      <span className="font-body font-medium text-13 text-foreground truncate">
-                        {label}
-                      </span>
-                    </div>
-                  ))}
+                  {[
+                    { icon: Car, label: make },
+                    { icon: Settings, label: transmissionFuel },
+                    { icon: Gauge, label: mileage },
+                    { icon: Calendar, label: year },
+                  ]
+                    .filter(row => row.label)
+                    .map(({ icon: IconComponent, label }) => (
+                      <div key={label} className="flex items-center gap-2 px-2 py-1">
+                        <IconComponent className="size-3.5 text-heading shrink-0" />
+                        <span className="font-body font-medium text-13 text-foreground truncate">
+                          {label}
+                        </span>
+                      </div>
+                    ))}
                 </div>
 
                 {/* Price — desktop */}

@@ -1,7 +1,6 @@
 'use client'
 
-import { Icon } from '@mdi/react'
-import { mdiCheck, mdiChevronRight } from '@mdi/js'
+import { CheckIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { Menu as MenuPrimitive } from '@base-ui/react/menu'
 import type * as React from 'react'
 import { cn } from '@/lib/utils'
@@ -119,7 +118,7 @@ function DropdownMenuSubTrigger({
       {...props}
     >
       {children}
-      <Icon path={mdiChevronRight} className="ml-auto" />
+      <ChevronRightIcon className="ml-auto size-4" />
     </MenuPrimitive.SubmenuTrigger>
   )
 }
@@ -173,7 +172,7 @@ function DropdownMenuCheckboxItem({
         data-slot="dropdown-menu-checkbox-item-indicator"
       >
         <MenuPrimitive.CheckboxItemIndicator>
-          <Icon path={mdiCheck} />
+          <CheckIcon className="size-4" />
         </MenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
@@ -208,7 +207,7 @@ function DropdownMenuRadioItem({
         data-slot="dropdown-menu-radio-item-indicator"
       >
         <MenuPrimitive.RadioItemIndicator>
-          <Icon path={mdiCheck} />
+          <CheckIcon className="size-4" />
         </MenuPrimitive.RadioItemIndicator>
       </span>
       {children}

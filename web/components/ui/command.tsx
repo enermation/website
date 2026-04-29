@@ -1,7 +1,6 @@
 'use client'
 
-import { Icon } from '@mdi/react'
-import { mdiCheck, mdiMagnify } from '@mdi/js'
+import { CheckIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { Command as CommandPrimitive } from 'cmdk'
 import type * as React from 'react'
 import {
@@ -73,7 +72,7 @@ function CommandInput({
           {...props}
         />
         <InputGroupAddon>
-          <Icon path={mdiMagnify} className="size-4 shrink-0 opacity-50" />
+          <MagnifyingGlassIcon className="size-4 shrink-0 opacity-50" />
         </InputGroupAddon>
       </InputGroup>
     </div>
@@ -150,7 +149,7 @@ function CommandItem({
       {...props}
     >
       {children}
-      <Icon path={mdiCheck} className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />
+      <CheckIcon className="ml-auto opacity-0 size-4 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />
     </CommandPrimitive.Item>
   )
 }

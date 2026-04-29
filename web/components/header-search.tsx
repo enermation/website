@@ -1,7 +1,6 @@
 'use client'
 
-import { mdiClose, mdiMagnify } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -173,7 +172,7 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
             )}
             aria-label={searchCopy.label}
           >
-            <Icon path={mdiMagnify} size={1} className="size-5" aria-hidden="true" />
+            <MagnifyingGlassIcon className="size-5" aria-hidden="true" />
           </button>
         ) : (
           <div className="relative w-full">
@@ -192,19 +191,14 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
                 aria-label={searchCopy.label}
                 aria-expanded={results.length > 0}
               />
-              <Icon
-                path={mdiMagnify}
-                size={1}
-                className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-on-dark-muted"
-                aria-hidden="true"
-              />
+              <MagnifyingGlassIcon className="size-4" aria-hidden="true" />
               <button
                 type="button"
                 onClick={handleClose}
                 className="absolute top-1/2 right-3.5 flex size-4 -translate-y-1/2 items-center justify-center text-on-dark-muted transition-colors hover:text-background"
                 aria-label={searchCopy.closeLabel}
               >
-                <Icon path={mdiClose} size={1} className="size-3" aria-hidden="true" />
+                <XMarkIcon className="size-3" aria-hidden="true" />
               </button>
             </form>
 
@@ -308,12 +302,7 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
               aria-label={searchCopy.label}
               aria-expanded={results.length > 0}
             />
-            <Icon
-              path={mdiMagnify}
-              size={1}
-              className="absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-on-dark-muted"
-              aria-hidden="true"
-            />
+            <MagnifyingGlassIcon className="size-3.5" aria-hidden="true" />
             {query ? (
               <button
                 type="button"
@@ -321,7 +310,7 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
                 className="absolute top-1/2 right-2.5 flex size-5 -translate-y-1/2 items-center justify-center rounded-full text-on-dark-muted transition-colors hover:bg-white-30 hover:text-background"
                 aria-label={searchCopy.clearLabel}
               >
-                <Icon path={mdiClose} size={1} className="size-3" aria-hidden="true" />
+                <XMarkIcon className="size-3" aria-hidden="true" />
               </button>
             ) : (
               <button
@@ -330,7 +319,7 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
                 className="absolute top-1/2 right-2.5 flex size-5 -translate-y-1/2 items-center justify-center rounded-full text-on-dark-muted transition-colors hover:bg-white-30 hover:text-background"
                 aria-label={searchCopy.closeLabel}
               >
-                <Icon path={mdiClose} size={1} className="size-3" aria-hidden="true" />
+                <XMarkIcon className="size-3" aria-hidden="true" />
               </button>
             )}
           </form>

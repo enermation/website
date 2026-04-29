@@ -1,7 +1,6 @@
 'use client'
 
-import { Icon } from '@mdi/react'
-import { mdiChevronDown, mdiChevronUp } from '@mdi/js'
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 import { cn } from '@/lib/utils'
 
@@ -37,17 +36,13 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
         {...props}
       >
         {children}
-        <Icon
+        <ChevronDownIcon
           data-slot="accordion-trigger-icon"
-          path={mdiChevronDown}
-          size={1}
-          className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+          className="pointer-events-none shrink-0 text-muted-foreground group-aria-expanded/accordion-trigger:hidden"
         />
-        <Icon
+        <ChevronUpIcon
           data-slot="accordion-trigger-icon"
-          path={mdiChevronUp}
-          size={1}
-          className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+          className="pointer-events-none hidden shrink-0 text-muted-foreground group-aria-expanded/accordion-trigger:inline"
         />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>

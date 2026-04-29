@@ -1,7 +1,6 @@
 'use client'
 
-import { Icon } from '@mdi/react'
-import { mdiMinus } from '@mdi/js'
+import { MinusIcon } from '@heroicons/react/24/outline'
 import { OTPInput, OTPInputContext } from 'input-otp'
 import * as React from 'react'
 import { cn } from '@/lib/utils'
@@ -78,7 +77,7 @@ function InputOTPSeparator({ ...props }: React.ComponentProps<'div'>) {
       role="separator"
       {...props}
     >
-      <Icon path={mdiMinus} />
+      <MinusIcon className="size-4" />
     </div>
   )
 }

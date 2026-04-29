@@ -1,5 +1,4 @@
-import { mdiChevronRight, mdiInstagram } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { ChevronRightIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -85,7 +84,7 @@ function MobileCollectionCard({ collection }: { collection: ShopifyCollection })
         {collection.title}
       </h3>
       <div className="flex items-center gap-2 px-1 font-heading text-13 text-body">
-        <Icon path={mdiChevronRight} size={1} className="size-3 shrink-0" aria-hidden="true" />
+        <ChevronRightIcon className="size-3 shrink-0" aria-hidden="true" />
         <span>Discover More</span>
       </div>
     </Link>
@@ -223,9 +222,11 @@ async function InstagramSection() {
               </span>
               <div className="flex flex-col items-center gap-3">
                 <div className="flex size-12 items-center justify-center rounded-full bg-muted">
-                  <Icon
-                    path={mdiInstagram}
-                    size={1}
+                  <img
+                    src="/instagram-logo.svg"
+                    alt="Instagram"
+                    width={20}
+                    height={20}
                     className="size-5 text-foreground"
                     aria-hidden="true"
                   />

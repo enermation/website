@@ -1,7 +1,6 @@
 'use client'
 
-import { Icon } from '@mdi/react'
-import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react'
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
@@ -184,7 +183,7 @@ function CarouselPrevious({
       onClick={scrollPrev}
       {...props}
     >
-      <Icon path={mdiChevronLeft} size={1} />
+      <ChevronLeftIcon className="size-4" />
       <span className="sr-only">Previous slide</span>
     </Button>
   )
@@ -214,7 +213,7 @@ function CarouselNext({
       onClick={scrollNext}
       {...props}
     >
-      <Icon path={mdiChevronRight} size={1} />
+      <ChevronRightIcon className="size-4" />
       <span className="sr-only">Next slide</span>
     </Button>
   )

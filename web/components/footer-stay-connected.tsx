@@ -1,8 +1,7 @@
 'use client'
 
 import { useGSAP } from '@gsap/react'
-import { mdiArrowRight } from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import gsap from 'gsap'
 import { useActionState, useCallback, useEffect, useRef, useState } from 'react'
 
@@ -143,7 +142,7 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
         >
           <span ref={buttonLabelRef}>{content.actionLabel}</span>
           <span ref={arrowRef}>
-            <Icon path={mdiArrowRight} size={1} className="size-5" />
+            <ArrowRightIcon className="size-5" />
           </span>
         </button>
       </form>

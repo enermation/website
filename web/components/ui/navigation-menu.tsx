@@ -1,5 +1,4 @@
-import { Icon } from '@mdi/react'
-import { mdiChevronDown } from '@mdi/js'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { NavigationMenu as NavigationMenuPrimitive } from '@base-ui/react/navigation-menu'
 import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
@@ -67,9 +66,7 @@ function NavigationMenuTrigger({
       {...props}
     >
       {children}{' '}
-      <Icon
-        path={mdiChevronDown}
-        size={1}
+      <ChevronDownIcon
         className="relative top-px ml-1 size-3 transition duration-300 group-data-popup-open/navigation-menu-trigger:rotate-180 group-data-open/navigation-menu-trigger:rotate-180"
         aria-hidden="true"
       />

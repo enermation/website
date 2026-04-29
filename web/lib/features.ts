@@ -1,86 +1,85 @@
+import type { LucideIcon } from 'lucide-react'
 import {
-  mdiAirbag,
-  mdiAirConditioner,
-  mdiAndroid,
-  mdiApple,
-  mdiBluetooth,
-  mdiCamera,
-  mdiCameraControl,
-  mdiCar,
-  mdiCarBrakeAlert,
-  mdiCarCruiseControl,
-  mdiCarSeatCooler,
-  mdiCarTireAlert,
-  mdiCarWireless,
-  mdiEye,
-  mdiHeatWave,
-  mdiKey,
-  mdiMonitor,
-  mdiNavigation,
-  mdiPanorama,
-  mdiSeat,
-  mdiShieldCheck,
-  mdiSpeaker,
-  mdiTelevision,
-  mdiWifi,
-} from '@mdi/js'
+  AirVent,
+  Apple,
+  Armchair,
+  Astroid,
+  Bluetooth,
+  Camera,
+  Eye,
+  Flame,
+  Gauge,
+  Key,
+  Monitor,
+  Navigation,
+  Scan,
+  Shield,
+  ShieldCheck,
+  Smartphone,
+  Snowflake,
+  Speaker,
+  TriangleAlert,
+  Tv,
+  Wifi,
+} from 'lucide-react'
 
-type FeatureEntry = { keywords: string[]; icon: string; iconGrid?: true }
+type FeatureEntry = { keywords: string[]; icon: LucideIcon; iconGrid?: true }
 
 export const FEATURE_MAP: FeatureEntry[] = [
-  { keywords: ['android auto'], icon: mdiAndroid, iconGrid: true },
-  { keywords: ['apple carplay', 'carplay'], icon: mdiApple, iconGrid: true },
-  { keywords: ['bluetooth'], icon: mdiBluetooth },
-  { keywords: ['navigation', 'sat nav', 'gps'], icon: mdiNavigation, iconGrid: true },
-  { keywords: ['air condition', 'climate control'], icon: mdiAirConditioner },
-  { keywords: ['sound system', 'audio', 'jbl', 'speaker', 'multimedia system'], icon: mdiSpeaker },
-  { keywords: ['tv', 'television', 'full segment'], icon: mdiTelevision },
-  { keywords: ['360', 'panoram', 'panoramic'], icon: mdiPanorama },
+  { keywords: ['android auto'], icon: Astroid, iconGrid: true },
+  { keywords: ['apple carplay', 'carplay'], icon: Apple, iconGrid: true },
+  { keywords: ['bluetooth'], icon: Bluetooth },
+  { keywords: ['navigation', 'sat nav', 'gps'], icon: Navigation, iconGrid: true },
+  { keywords: ['air condition', 'climate control'], icon: AirVent },
+  { keywords: ['sound system', 'audio', 'jbl', 'speaker', 'multimedia system'], icon: Speaker },
+  { keywords: ['tv', 'television', 'full segment'], icon: Tv },
+  { keywords: ['360', 'panoram', 'panoramic'], icon: Scan, iconGrid: true },
   {
     keywords: ['camera', 'monitor system', 'terrain monitor', 'trail camera'],
-    icon: mdiCamera,
+    icon: Camera,
     iconGrid: true,
   },
-  { keywords: ['keyless', 'push start'], icon: mdiKey },
-  { keywords: ['cruise control'], icon: mdiCarCruiseControl },
-  { keywords: ['blind spot'], icon: mdiEye },
-  { keywords: ['collision', 'brake alert', 'braking'], icon: mdiCarBrakeAlert },
-  { keywords: ['airbag', 'air bag'], icon: mdiAirbag },
+  { keywords: ['keyless', 'push start'], icon: Key },
+  { keywords: ['cruise control', 'lane departure', 'lane keeping', 'lane assist'], icon: Gauge },
+  { keywords: ['blind spot'], icon: Eye },
+  {
+    keywords: ['collision', 'brake alert', 'braking', 'hill descent', 'hill climb', 'hill assist'],
+    icon: TriangleAlert,
+  },
+  { keywords: ['airbag', 'air bag'], icon: Shield },
   {
     keywords: ['touchscreen', 'infotainment', 'heads-up display', 'hud', 'display screen'],
-    icon: mdiMonitor,
+    icon: Monitor,
     iconGrid: true,
   },
-  { keywords: ['heated seat', 'seat heat', 'heated,', 'heated '], icon: mdiHeatWave },
+  { keywords: ['heated seat', 'seat heat', 'heated,', 'heated '], icon: Flame },
   {
     keywords: ['ventilated seat', 'seat ventil', 'iso-dynamic', 'performance seat'],
-    icon: mdiCarSeatCooler,
+    icon: Snowflake,
   },
-  { keywords: ['wireless charg'], icon: mdiCarWireless },
-  { keywords: ['wifi', 'wi-fi'], icon: mdiWifi },
-  { keywords: ['lane departure', 'lane keeping', 'lane assist'], icon: mdiCarCruiseControl },
-  { keywords: ['rear cross traffic', 'cross traffic'], icon: mdiCar },
-  { keywords: ['hill descent', 'hill climb', 'hill assist'], icon: mdiCarTireAlert },
-  { keywords: ['traction control', 'stability control'], icon: mdiShieldCheck },
-  { keywords: ['abs', 'ebd', 'anti-lock'], icon: mdiShieldCheck },
-  { keywords: ['cctv', 'back camera', 'rear camera'], icon: mdiCameraControl },
-  { keywords: ['seat', 'seating'], icon: mdiSeat },
+  { keywords: ['wireless charg'], icon: Smartphone },
+  { keywords: ['wifi', 'wi-fi'], icon: Wifi },
+  {
+    keywords: ['traction control', 'stability control', 'abs', 'ebd', 'anti-lock'],
+    icon: ShieldCheck,
+  },
+  { keywords: ['rear cross traffic', 'cross traffic'], icon: TriangleAlert },
+  { keywords: ['hill descent', 'hill climb', 'hill assist'], icon: TriangleAlert },
+  { keywords: ['cctv', 'back camera', 'rear camera'], icon: Camera },
+  { keywords: ['seat', 'seating'], icon: Armchair },
 ]
 
-export function matchFeature(item: string): string | null {
+export function matchFeature(item: string): LucideIcon | null {
   const lower = item.toLowerCase()
   return FEATURE_MAP.find(e => e.keywords.some(k => lower.includes(k)))?.icon ?? null
 }
 
-// Scans free-form text for known feature keywords. Returns one entry per
-// matched feature type (deduplicated by icon). No specific format required —
-// works on raw descriptions, not just pre-split equipment lists.
 export function scanFeaturesFromText(
   text: string
-): { item: string; icon: string; iconGrid: boolean }[] {
+): { item: string; icon: LucideIcon; iconGrid: boolean }[] {
   const lower = text.toLowerCase()
-  const seen = new Set<string>()
-  const results: { item: string; icon: string; iconGrid: boolean }[] = []
+  const seen = new Set<LucideIcon>()
+  const results: { item: string; icon: LucideIcon; iconGrid: boolean }[] = []
   for (const entry of FEATURE_MAP) {
     const matched = entry.keywords.find(k => lower.includes(k))
     if (matched && !seen.has(entry.icon)) {
