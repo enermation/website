@@ -4,6 +4,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Suspense, useRef } from 'react'
 
 import { FooterStayConnected } from '@/components/footer-stay-connected'
@@ -119,6 +120,10 @@ type SiteFooterProps = {
 }
 
 export function SiteFooter({ exploreGroups }: SiteFooterProps) {
+  const pathname = usePathname()
+
+  if (pathname === '/assistant') return null
+
   return (
     <footer
       data-slot="site-footer"

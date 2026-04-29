@@ -36,6 +36,32 @@ import { SUGGESTED_QUESTIONS_WITH_ICONS } from '@/lib/assistant-data'
 import type { FullRagChatMessageMetadata } from '@/lib/rag/types'
 import { cleanSuggestionMarkers, cn } from '@/lib/utils'
 
+interface AttachmentChipProps {
+  file: File
+  preview: string
+  onRemove: () => void
+}
+
+function AttachmentChip({ file, preview, onRemove }: AttachmentChipProps) {
+  return (
+    <div className="relative flex items-center gap-2 rounded-t-xl border border-b-0 border-border bg-card px-3 pb-5 pt-2 text-xs text-foreground -mb-3">
+      <div className="h-9 w-9 shrink-0 overflow-hidden rounded-md bg-muted">
+        {/* biome-ignore lint/performance/noImgElement: File preview thumbnail */}
+        <img alt={file.name} className="h-full w-full object-cover" src={preview} />
+      </div>
+      <span className="max-w-48 truncate">{file.name}</span>
+      <button
+        aria-label="Remove attachment"
+        className="ml-auto flex h-6 w-6 items-center justify-center rounded-full hover:bg-foreground/10 transition-colors"
+        onClick={onRemove}
+        type="button"
+      >
+        <XMarkIcon className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  )
+}
+
 interface UserMessageProps {
   message: {
     id: string
@@ -253,39 +279,49 @@ export function AssistantCore({
 
   return (
     <div className="relative flex h-full flex-col bg-background">
-      {/* Header with logo and greeting */}
-      <div className="flex flex-shrink-0 flex-col items-center justify-center border-b border-border py-6">
-        <Image
-          alt="Enermation"
-          className="mb-3 h-8 w-8 object-contain"
-          height={32}
-          src="/chat-logo-32.webp"
-          width={32}
-        />
-        {greeting && (
-          <h1 className="text-foreground animate-in fade-in slide-in-from-bottom-4 font-sans text-2xl font-normal sm:text-3xl md:text-4xl">
-            {greeting}
-          </h1>
-        )}
-        <p className="mt-2 text-sm text-muted-foreground">Ask me about vehicles or parts</p>
-      </div>
-
-      {/* Conversation area */}
       <Conversation className="flex-1 overflow-hidden">
         <ConversationContent className="flex-1 gap-8 p-4 pb-32 sm:pb-40">
           <div className="h-full overflow-auto" ref={contentRef}>
-            {messages.length === 0 && showSuggestedQuestions && (
-              <div className="flex items-center justify-center p-4 sm:p-6 md:p-8">
-                <div className="grid w-full max-w-2xl gap-3 sm:grid-cols-2 sm:gap-3">
-                  {SUGGESTED_QUESTIONS_WITH_ICONS.map(suggestionItem => (
-                    <SuggestionButton
-                      key={suggestionItem.text}
-                      display={suggestionItem.text}
-                      icon={suggestionItem.icon}
-                      prompt={suggestionItem.text}
-                      sendMessage={handleSuggestion}
+            {messages.length === 0 && (
+              <div className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8">
+                <div className="w-full max-w-2xl space-y-6 sm:space-y-8">
+                  <div className="flex flex-col items-center space-y-3 text-center sm:space-y-4">
+                    <Image
+                      alt="Enermation"
+                      className="h-8 w-8 object-contain"
+                      height={32}
+                      src="/chat-logo-32.webp"
+                      width={32}
                     />
-                  ))}
+                    {greeting ? (
+                      <h1
+                        key={greeting}
+                        className="animate-in fade-in slide-in-from-bottom-4 font-sans text-2xl font-normal text-foreground duration-500 sm:text-3xl md:text-4xl"
+                        suppressHydrationWarning
+                      >
+                        {greeting}
+                      </h1>
+                    ) : (
+                      <div className="font-sans text-2xl sm:text-3xl md:text-4xl" />
+                    )}
+                    <p className="font-sans text-sm text-muted-foreground sm:text-base">
+                      Ask me about vehicles or parts
+                    </p>
+                  </div>
+
+                  {showSuggestedQuestions && (
+                    <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3">
+                      {SUGGESTED_QUESTIONS_WITH_ICONS.map(suggestionItem => (
+                        <SuggestionButton
+                          key={suggestionItem.text}
+                          display={suggestionItem.text}
+                          icon={suggestionItem.icon}
+                          prompt={suggestionItem.text}
+                          sendMessage={handleSuggestion}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -304,7 +340,7 @@ export function AssistantCore({
                 <div className="flex items-center gap-2 sm:gap-3">
                   <Image
                     alt="Assistant"
-                    className="h-6 w-6 shrink-0 animate-spin sm:h-6 sm:w-6"
+                    className="h-6 w-6 shrink-0 animate-spin"
                     height={32}
                     src="/chat-logo-32.webp"
                     width={32}
@@ -341,7 +377,7 @@ export function AssistantCore({
       {showButton && (
         <button
           aria-label="Scroll to bottom"
-          className="absolute bottom-28 right-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-background shadow-lg hover:opacity-90 active:scale-95 transition-all animate-in fade-in zoom-in-95 duration-200 sm:bottom-32 sm:right-6"
+          className="absolute bottom-28 right-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-background shadow-lg transition-all animate-in fade-in zoom-in-95 duration-200 hover:opacity-90 active:scale-95 sm:bottom-32 sm:right-6"
           onClick={scrollToBottom}
           type="button"
         >
@@ -349,44 +385,31 @@ export function AssistantCore({
         </button>
       )}
 
-      {/* Error display */}
-      {inputError && (
-        <div className="absolute bottom-28 left-4 right-4 z-10 mx-auto max-w-3xl rounded-t-lg bg-destructive px-3 py-2 text-sm text-destructive-foreground sm:left-auto sm:right-6 sm:max-w-sm">
-          <div className="flex items-center justify-between gap-2">
-            <span>{inputError}</span>
-            <button
-              className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-destructive/20"
-              onClick={() => setInputError(null)}
-              type="button"
-            >
-              <XMarkIcon className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Pending files preview */}
-      {pendingFiles.length > 0 && (
-        <div className="absolute bottom-28 left-4 right-4 z-10 mx-auto flex flex-wrap gap-2 max-w-3xl px-4 sm:left-auto sm:right-6 sm:max-w-sm">
-          {pendingFiles.map(({ preview, file }) => (
-            <div className="relative size-16" key={preview}>
-              {/* biome-ignore lint/performance/noImgElement: User file preview */}
-              <img alt={file.name} className="size-full rounded-md object-cover" src={preview} />
-              <button
-                className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-background text-muted-foreground"
-                onClick={() => removeFile(preview)}
-                type="button"
-              >
-                <XMarkIcon className="h-3 w-3" />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
       {/* Input area */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 p-3 sm:p-4 w-full max-w-3xl mx-auto pointer-events-none">
+      <div className="absolute bottom-0 left-0 right-0 z-10 mx-auto w-full max-w-3xl p-3 pointer-events-none sm:p-4">
         <div className="pointer-events-auto">
+          {inputError && (
+            <div className="rounded-t-lg border border-b-0 border-destructive/30 bg-destructive px-3 py-2 text-sm text-destructive-foreground -mb-3">
+              <div className="flex items-center justify-between gap-2">
+                <span>{inputError}</span>
+                <button
+                  className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-destructive-foreground/10"
+                  onClick={() => setInputError(null)}
+                  type="button"
+                >
+                  <XMarkIcon className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
+          {pendingFiles.map(({ preview, file }) => (
+            <AttachmentChip
+              key={preview}
+              file={file}
+              preview={preview}
+              onRemove={() => removeFile(preview)}
+            />
+          ))}
           <PromptInputProvider>
             <form
               className="rounded-2xl border border-border bg-background shadow-sm"
@@ -439,9 +462,9 @@ export function AssistantCore({
                         : 'bg-foreground text-background hover:opacity-90'
                     )}
                     disabled={isSendDisabled}
-                    status={status}
                     onStop={status === 'streaming' ? stop : undefined}
                     size="icon"
+                    status={status}
                     type="submit"
                   >
                     {status === 'streaming' ? (

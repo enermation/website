@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { AssistantPageClient } from '@/components/assistant/assistant-thread'
+import { SiteHeader } from '@/components/site-header'
 
 export const metadata: Metadata = {
   title: 'Assistant — Enermation',
@@ -7,5 +8,12 @@ export const metadata: Metadata = {
 }
 
 export default function AssistantPage() {
-  return <AssistantPageClient />
+  return (
+    <>
+      <SiteHeader />
+      <main className="flex flex-1 flex-col overflow-hidden">
+        <AssistantPageClient />
+      </main>
+    </>
+  )
 }
