@@ -245,7 +245,7 @@ export function ProductInfoPanel({
           <h2 className="font-display text-xl text-heading">
             {productPage.sections.vehicleFeatures}
           </h2>
-          <ul className="grid grid-cols-2 gap-x-8 gap-y-2 sm:grid-cols-3 md:grid-cols-4">
+          <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
             {iconFeatures.map(({ item, icon }) => (
               <li key={item} className="flex items-center gap-2">
                 <Icon path={icon} size={1} className="size-4 shrink-0 text-foreground" />
