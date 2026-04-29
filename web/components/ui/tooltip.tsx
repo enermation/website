@@ -13,7 +13,19 @@ function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
 }
 
 function TooltipTrigger(props: TooltipPrimitive.Trigger.Props) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" nativeButton={false} {...props} />
+  const { children, render, ...rest } = props
+
+  if (render) {
+    return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" render={render} {...rest} />
+  }
+
+  // When children is a ReactElement, use render to avoid nested button from Base UI's default button
+  if (children && typeof children === 'object' && 'type' in (children as object)) {
+    // @ts-expect-error render prop accepts ReactElement but TS narrower doesn't capture the object check
+    return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" render={children} {...rest} />
+  }
+
+  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...rest}>{children}</TooltipPrimitive.Trigger>
 }
 
 function TooltipContent({
