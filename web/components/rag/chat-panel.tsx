@@ -24,7 +24,7 @@ import { ProductCitation } from '@/components/rag/product-citation'
 import { SuggestionButton } from '@/components/ui/suggestion-button'
 import { useTimeBasedGreeting } from '@/hooks/use-time-based-greeting'
 import { SUGGESTED_QUESTIONS_WITH_ICONS } from '@/lib/assistant-data'
-import type { FullRagChatMessageMetadata } from '@/lib/rag/types'
+import type { FullRagChatMessageMetadata, ProductCitationData } from '@/lib/rag/types'
 import { cn } from '@/lib/utils'
 import {
   Collapsible,
@@ -34,6 +34,45 @@ import {
 
 const MAX_FILES = 2
 const MAX_FILE_SIZE = 4 * 1024 * 1024
+
+// ============================================================================
+// Interleaved Block Parsing
+// ============================================================================
+
+interface InterleavedBlock {
+  text: string
+  cards: ProductCitationData[]
+}
+
+// Splits AI text into per-paragraph blocks and attaches the first-mention
+// product card to each paragraph that references a [handle]. Subsequent
+// mentions of the same handle in later paragraphs don't duplicate the card.
+function parseInterleavedBlocks(
+  text: string,
+  citations: ProductCitationData[]
+): InterleavedBlock[] {
+  const citationMap = new Map(citations.map(c => [c.handle, c]))
+  const shownHandles = new Set<string>()
+  const paragraphs = text.split(/\n\n+/)
+
+  const blocks: InterleavedBlock[] = []
+  for (const para of paragraphs) {
+    if (!para.trim()) continue
+    const handles = [...para.matchAll(/\[([a-z0-9][a-z0-9-]*)\]/g)].map(m => m[1])
+    const newHandles = handles.filter(h => !shownHandles.has(h) && citationMap.has(h))
+    const cards = newHandles.map(h => citationMap.get(h)!)
+    newHandles.forEach(h => shownHandles.add(h))
+    const cleanedText = para.replace(/\[([a-z0-9][a-z0-9-]*)\]/g, '').trim()
+    if (cleanedText || cards.length) blocks.push({ text: cleanedText, cards })
+  }
+
+  return blocks
+}
+
+// Strips [handle] brackets from text without parsing citations (used during streaming)
+function stripHandles(text: string): string {
+  return text.replace(/\[([a-z0-9][a-z0-9-]*)\]/g, '')
+}
 
 interface ChatPanelProps {
   /** Endpoint for the chat API. Defaults to /api/rag/chat */
@@ -123,12 +162,12 @@ function ReasoningCollapsible({ reasoning }: { reasoning: string }) {
 
 function AssistantMessage({
   message,
-  citations,
-  hasCitations,
+  allCitations,
+  isStreaming,
 }: {
   message: { id: string; parts: Array<{ type: string; text?: string; reason?: string }> }
-  citations: FullRagChatMessageMetadata['citations'] | null
-  hasCitations: boolean
+  allCitations: ProductCitationData[] | null
+  isStreaming?: boolean
 }) {
   const reasoningPart = message.parts.find(p => p.type === 'reasoning') as
     | { type: 'reasoning'; text: string }
@@ -138,6 +177,24 @@ function AssistantMessage({
     .filter(p => p.type === 'text')
     .map(p => p.text)
     .join('')
+
+  // After streaming completes, parse text into interleaved text+card blocks
+  const blocks = useMemo(
+    () =>
+      !isStreaming && allCitations?.length
+        ? parseInterleavedBlocks(textContent, allCitations)
+        : null,
+    [isStreaming, allCitations, textContent]
+  )
+
+  // If the AI didn't cite any handles, fall back to showing the top 2 products
+  const hasCards = blocks?.some(b => b.cards.length > 0) ?? false
+  const fallbackCards = !isStreaming && !hasCards && allCitations?.length
+    ? allCitations.slice(0, 2)
+    : null
+
+  // During streaming, strip [handle] from display text to avoid showing raw citation syntax
+  const streamText = isStreaming ? stripHandles(textContent) : null
 
   return (
     <div className="flex justify-start items-start gap-2">
@@ -153,21 +210,38 @@ function AssistantMessage({
           {reasoningPart?.text && (
             <ReasoningCollapsible reasoning={reasoningPart.text} />
           )}
-          {textContent && (
-            <MessageResponse>{textContent}</MessageResponse>
+
+          {blocks ? (
+            // Interleaved: paragraph → product card → paragraph → product card → verdict
+            <div className="space-y-4">
+              {blocks.map((block, i) => (
+                <div key={i} className="space-y-3">
+                  {block.text && <MessageResponse>{block.text}</MessageResponse>}
+                  {block.cards.map(c => (
+                    <ProductCitation key={c.handle} product={c} />
+                  ))}
+                </div>
+              ))}
+            </div>
+          ) : (streamText ?? textContent) ? (
+            <MessageResponse isAnimating={isStreaming}>
+              {streamText ?? textContent}
+            </MessageResponse>
+          ) : null}
+
+          {fallbackCards && (
+            <div className="flex flex-col gap-3 pt-1">
+              <h3 className="font-sans text-xs font-medium text-muted-foreground">Related vehicles</h3>
+              {fallbackCards.map(c => (
+                <ProductCitation key={c.handle} product={c} />
+              ))}
+            </div>
           )}
-          {textContent && (
+
+          {textContent && !isStreaming && (
             <CopyButton content={textContent} />
           )}
         </div>
-
-        {hasCitations && citations && citations.length > 0 && (
-          <div className="mt-2 flex flex-col gap-2">
-            {citations.map(c => (
-              <ProductCitation key={c.handle} product={c} />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   )
@@ -182,7 +256,7 @@ function ThinkingIndicator() {
     <div className="flex items-center gap-2 sm:gap-3">
       <Image
         alt="Thinking"
-        className="h-6 w-6 flex-shrink-0 animate-spin sm:h-6 sm:w-6"
+        className="h-6 w-6 flex-shrink-0 motion-safe:animate-spin sm:h-6 sm:w-6"
         height={24}
         src="/chat-logo-32.webp"
         width={24}
@@ -191,15 +265,15 @@ function ThinkingIndicator() {
         <span className="text-sm">Thinking </span>
         <div className="flex gap-1">
           <div
-            className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground"
+            className="h-1 w-1 motion-safe:animate-bounce rounded-full bg-muted-foreground"
             style={{ animationDelay: '0ms' }}
           />
           <div
-            className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground"
+            className="h-1 w-1 motion-safe:animate-bounce rounded-full bg-muted-foreground"
             style={{ animationDelay: '150ms' }}
           />
           <div
-            className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground"
+            className="h-1 w-1 motion-safe:animate-bounce rounded-full bg-muted-foreground"
             style={{ animationDelay: '300ms' }}
           />
         </div>
@@ -363,14 +437,6 @@ export function ChatPanel({
     [isSendDisabled, inputValue, pendingFiles, handleSubmit]
   )
 
-  const lastMsg = messages[messages.length - 1]
-  const citations =
-    lastMsg?.role === 'assistant' && lastMsg.metadata != null
-      ? (lastMsg.metadata as FullRagChatMessageMetadata).citations
-      : null
-
-  const hasCitations = !!(citations && citations.length > 0)
-
   return (
     <PromptInputProvider>
       <div className="flex h-full flex-col overflow-hidden">
@@ -425,47 +491,23 @@ export function ChatPanel({
               if (msg.role === 'user') {
                 return <UserMessage key={msg.id} message={msg} />
               }
-              if (status === 'streaming' && index === messages.length - 1) {
-                return null
-              }
+              const msgCitations =
+                msg.metadata != null
+                  ? ((msg.metadata as FullRagChatMessageMetadata).citations ?? null)
+                  : null
+              const isStreamingThisMsg =
+                status === 'streaming' && index === messages.length - 1
               return (
                 <AssistantMessage
                   key={msg.id}
                   message={msg}
-                  citations={citations}
-                  hasCitations={hasCitations}
+                  allCitations={msgCitations}
+                  isStreaming={isStreamingThisMsg}
                 />
               )
             })}
 
-            {(status === 'submitted' || status === 'streaming') && (
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Image
-                  src="/chat-logo-32.webp"
-                  alt="Thinking"
-                  width={32}
-                  height={32}
-                  className="h-6 w-6 flex-shrink-0 animate-spin sm:h-6 sm:w-6"
-                />
-                <div className="flex items-center gap-2 font-sans text-xs text-muted-foreground sm:text-sm">
-                  <span className="text-sm">Thinking </span>
-                  <div className="flex gap-1">
-                    <div
-                      className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground"
-                      style={{ animationDelay: '0ms' }}
-                    />
-                    <div
-                      className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground"
-                      style={{ animationDelay: '150ms' }}
-                    />
-                    <div
-                      className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground"
-                      style={{ animationDelay: '300ms' }}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+            {status === 'submitted' && <ThinkingIndicator />}
 
             {/* Spacer for sticky prompt bar clearance */}
             <div className="h-28" aria-hidden />

@@ -40,6 +40,9 @@ export type ProductCitationData = Pick<
   | 'make'
   | 'model'
   | 'year'
+  | 'fuelType'
+  | 'transmission'
+  | 'condition'
 >
 
 export type FullRagChatMessageMetadata = {

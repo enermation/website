@@ -99,6 +99,9 @@ export async function POST(request: Request) {
     make: p.metadata.make,
     model: p.metadata.model,
     year: p.metadata.year,
+    fuelType: p.metadata.fuelType,
+    transmission: p.metadata.transmission,
+    condition: p.metadata.condition,
   }))
 
   const result = streamText({
