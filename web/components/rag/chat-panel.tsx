@@ -1,18 +1,16 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
-import { Paperclip } from 'lucide-react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import type { FileUIPart } from 'ai'
 import { DefaultChatTransport } from 'ai'
 import Image from 'next/image'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
 } from '@/components/ai-elements/conversation'
-import { InlineCitation, InlineCitationText } from '@/components/ai-elements/inline-citation'
 import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message'
 import {
   PromptInputBody,
@@ -22,8 +20,10 @@ import {
   PromptInputTextarea,
 } from '@/components/ai-elements/prompt-input'
 import { SuggestionButton } from '@/components/assistant/suggestion-button'
+import { CopyButton } from '@/components/ui/copy-button'
 import { ProductCitation } from '@/components/rag/product-citation'
 import { Button } from '@/components/ui/button'
+import { SpeechInput } from '@/components/ai-elements/speech-input'
 import { SUGGESTED_QUESTIONS_WITH_ICONS } from '@/lib/assistant-data'
 import type { FullRagChatMessageMetadata } from '@/lib/rag/types'
 
@@ -42,6 +42,7 @@ export function ChatPanel({
   showSuggestedQuestions = true,
 }: ChatPanelProps) {
   const [error, setError] = useState<string | null>(null)
+  const [inputValue, setInputValue] = useState('')
   const [pendingFiles, setPendingFiles] = useState<Array<{ file: File; preview: string }>>([])
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -118,6 +119,16 @@ export function ChatPanel({
     [sendMessage]
   )
 
+  const handleSpeechTranscription = useCallback((text: string) => {
+    setInputValue(text)
+  }, [])
+
+  const isSendDisabled = useMemo(() => {
+    const hasText = inputValue.trim().length > 0
+    const hasValidAttachments = pendingFiles.length > 0
+    return !hasText && !hasValidAttachments
+  }, [inputValue, pendingFiles])
+
   const lastMsg = messages[messages.length - 1]
   const citations =
     lastMsg?.role === 'assistant' && lastMsg.metadata != null
@@ -154,6 +165,11 @@ export function ChatPanel({
                   p.type === 'file' && !!p.url && p.mediaType.startsWith('image/')
               )
 
+              const textContent = msg.parts
+                .filter(p => p.type === 'text')
+                .map(p => p.text)
+                .join('')
+
               return (
                 <Message key={msg.id} from={msg.role}>
                   <MessageContent>
@@ -174,12 +190,10 @@ export function ChatPanel({
                         })}
                       </div>
                     )}
-                    <MessageResponse>
-                      {msg.parts
-                        .filter(p => p.type === 'text')
-                        .map(p => p.text)
-                        .join('')}
-                    </MessageResponse>
+                    <MessageResponse>{textContent}</MessageResponse>
+                    {msg.role === 'assistant' && textContent && (
+                      <CopyButton content={textContent} />
+                    )}
                   </MessageContent>
 
                   {msg.role === 'assistant' && hasCitations && (
@@ -243,8 +257,8 @@ export function ChatPanel({
         className="border-t border-border"
         onSubmit={e => {
           e.preventDefault()
-          const fd = new FormData(e.currentTarget)
-          const text = (fd.get('message') as string) ?? ''
+          if (isSendDisabled) return
+          const text = inputValue.trim()
           const files: FileUIPart[] = pendingFiles.map(pf => ({
             type: 'file' as const,
             mediaType: pf.file.type,
@@ -252,11 +266,11 @@ export function ChatPanel({
             filename: pf.file.name,
           }))
           handleSubmit({ text, files })
+          setInputValue('')
         }}
       >
         <PromptInputBody>
           <PromptInputFooter className="px-4 py-2">
-            <PromptInputTextarea name="message" placeholder="Ask about vehicles or parts..." />
             <input
               accept="image/jpeg,image/png,image/webp"
               className="hidden"
@@ -266,19 +280,33 @@ export function ChatPanel({
               type="file"
             />
             <div className="flex shrink-0 items-center gap-1">
-              <PromptInputSubmit
-                status={status}
-                onStop={status === 'streaming' ? stop : undefined}
+              <SpeechInput
+                className="size-7"
+                onAudioRecorded={async () => ''}
+                onTranscriptionChange={handleSpeechTranscription}
+                size="icon"
+                variant="ghost"
               />
               <PromptInputSubmit
-                className="[&>svg]:size-4"
-                onClick={() => fileInputRef.current?.click()}
-                type="button"
-                variant="ghost"
-              >
-                <Paperclip className="size-4" />
-              </PromptInputSubmit>
+                className={
+                  isSendDisabled
+                    ? 'bg-muted text-muted-foreground hover:bg-muted'
+                    : 'bg-foreground text-background hover:opacity-90'
+                }
+                disabled={isSendDisabled}
+                onStop={status === 'streaming' ? stop : undefined}
+                size="icon"
+                status={status}
+                type="submit"
+              />
             </div>
+            <PromptInputTextarea
+              className="font-sans text-sm"
+              name="message"
+              onChange={e => setInputValue(e.target.value)}
+              placeholder="Ask about vehicles or parts..."
+              value={inputValue}
+            />
           </PromptInputFooter>
         </PromptInputBody>
       </form>

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { AssistantPageClient } from '@/components/assistant/assistant-thread'
+import { ChatPanel } from '@/components/rag/chat-panel'
 import { SiteHeader } from '@/components/site-header'
 
 export const metadata: Metadata = {
@@ -12,7 +12,7 @@ export default function AssistantPage() {
     <>
       <SiteHeader />
       <main className="flex flex-1 flex-col overflow-hidden">
-        <AssistantPageClient />
+        <ChatPanel api="/api/rag/chat" />
       </main>
     </>
   )
