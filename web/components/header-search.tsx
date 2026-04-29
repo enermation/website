@@ -185,17 +185,20 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 className={cn(
-                  'h-10 rounded-full border-white-30 bg-white-20 pr-10 pl-10 text-sm text-background placeholder:text-on-dark-muted focus-visible:border-brand-green',
+                  'h-10 rounded-full border-white-30 bg-white-20 pr-10 pl-10 text-sm text-background placeholder:text-white-70 focus-visible:border-brand-green',
                   focusRing
                 )}
                 aria-label={searchCopy.label}
                 aria-expanded={results.length > 0}
               />
-              <MagnifyingGlassIcon className="size-4" aria-hidden="true" />
+              <MagnifyingGlassIcon
+                className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-white-70 pointer-events-none"
+                aria-hidden="true"
+              />
               <button
                 type="button"
                 onClick={handleClose}
-                className="absolute top-1/2 right-3.5 flex size-4 -translate-y-1/2 items-center justify-center text-on-dark-muted transition-colors hover:text-background"
+                className="absolute top-1/2 right-3.5 flex size-4 -translate-y-1/2 items-center justify-center text-white-70 transition-colors hover:text-background"
                 aria-label={searchCopy.closeLabel}
               >
                 <XMarkIcon className="size-3" aria-hidden="true" />
@@ -225,11 +228,7 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
                         />
                       ) : (
                         <div className="flex size-full items-center justify-center">
-                          <Icon
-                            path={mdiMagnify}
-                            size={1}
-                            className="size-4 text-muted-foreground"
-                          />
+                          <MagnifyingGlassIcon className="size-4 text-muted-foreground" />
                         </div>
                       )}
                     </div>
@@ -237,7 +236,7 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
                       <p className="truncate font-heading text-13 font-semibold text-background">
                         {result.title}
                       </p>
-                      <p className="font-body text-xs text-on-dark-muted">
+                      <p className="font-body text-xs text-white-70">
                         {result.price.currencyCode} {result.price.amount}
                       </p>
                     </div>
@@ -255,13 +254,13 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
 
             {loading && (
               <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-2xl border border-white-20 bg-surface-dark p-4 text-center shadow-xl">
-                <p className="font-body text-sm text-on-dark-muted">{searchCopy.searchingLabel}</p>
+                <p className="font-body text-sm text-white-70">{searchCopy.searchingLabel}</p>
               </div>
             )}
 
             {!loading && query && results.length === 0 && (
               <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-2xl border border-white-20 bg-surface-dark p-4 text-center shadow-xl">
-                <p className="font-body text-sm text-on-dark-muted">{searchCopy.noResultsLabel}</p>
+                <p className="font-body text-sm text-white-70">{searchCopy.noResultsLabel}</p>
               </div>
             )}
           </div>
@@ -283,7 +282,7 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
           )}
           aria-label={searchCopy.label}
         >
-          <Icon path={mdiMagnify} size={1} className="size-5" aria-hidden="true" />
+          <MagnifyingGlassIcon className="size-5" aria-hidden="true" />
         </button>
       ) : (
         <div className="relative">
@@ -296,18 +295,21 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
               onChange={e => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               className={cn(
-                'h-8 w-64 rounded-full border-white-30 bg-white-20 pr-10 pl-9 text-sm text-background placeholder:text-on-dark-muted focus-visible:border-brand-green',
+                'h-8 w-64 rounded-full border-white-30 bg-white-20 pr-10 pl-9 text-sm text-background placeholder:text-white-70 focus-visible:border-brand-green',
                 focusRing
               )}
               aria-label={searchCopy.label}
               aria-expanded={results.length > 0}
             />
-            <MagnifyingGlassIcon className="size-3.5" aria-hidden="true" />
+            <MagnifyingGlassIcon
+              className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-white-70 pointer-events-none"
+              aria-hidden="true"
+            />
             {query ? (
               <button
                 type="button"
                 onClick={() => setQuery('')}
-                className="absolute top-1/2 right-2.5 flex size-5 -translate-y-1/2 items-center justify-center rounded-full text-on-dark-muted transition-colors hover:bg-white-30 hover:text-background"
+                className="absolute top-1/2 right-2.5 flex size-5 -translate-y-1/2 items-center justify-center rounded-full text-white-70 transition-colors hover:bg-white-30 hover:text-background"
                 aria-label={searchCopy.clearLabel}
               >
                 <XMarkIcon className="size-3" aria-hidden="true" />
@@ -316,7 +318,7 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
               <button
                 type="button"
                 onClick={handleClose}
-                className="absolute top-1/2 right-2.5 flex size-5 -translate-y-1/2 items-center justify-center rounded-full text-on-dark-muted transition-colors hover:bg-white-30 hover:text-background"
+                className="absolute top-1/2 right-2.5 flex size-5 -translate-y-1/2 items-center justify-center rounded-full text-white-70 transition-colors hover:bg-white-30 hover:text-background"
                 aria-label={searchCopy.closeLabel}
               >
                 <XMarkIcon className="size-3" aria-hidden="true" />
@@ -347,7 +349,7 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
                       />
                     ) : (
                       <div className="flex size-full items-center justify-center">
-                        <Icon path={mdiMagnify} size={1} className="size-4 text-muted-foreground" />
+                        <MagnifyingGlassIcon className="size-4 text-muted-foreground" />
                       </div>
                     )}
                   </div>
@@ -355,7 +357,7 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
                     <p className="truncate font-heading text-13 font-semibold text-background">
                       {result.title}
                     </p>
-                    <p className="font-body text-xs text-on-dark-muted">
+                    <p className="font-body text-xs text-white-70">
                       {result.price.currencyCode} {result.price.amount}
                     </p>
                   </div>
@@ -373,13 +375,13 @@ export function HeaderSearch({ variant = 'desktop' }: HeaderSearchProps) {
 
           {loading && (
             <div className="absolute left-0 top-full mt-2 w-80 rounded-2xl border border-white-20 bg-surface-dark p-4 text-center shadow-xl">
-              <p className="font-body text-sm text-on-dark-muted">{searchCopy.searchingLabel}</p>
+              <p className="font-body text-sm text-white-70">{searchCopy.searchingLabel}</p>
             </div>
           )}
 
           {!loading && query && results.length === 0 && (
             <div className="absolute left-0 top-full mt-2 w-80 rounded-2xl border border-white-20 bg-surface-dark p-4 text-center shadow-xl">
-              <p className="font-body text-sm text-on-dark-muted">{searchCopy.noResultsLabel}</p>
+              <p className="font-body text-sm text-white-70">{searchCopy.noResultsLabel}</p>
             </div>
           )}
         </div>

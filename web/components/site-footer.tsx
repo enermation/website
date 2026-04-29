@@ -67,7 +67,7 @@ function FooterNavLinks({
       aria-label="Footer navigation"
     >
       {title && (
-        <p className="font-heading text-sm font-semibold uppercase tracking-wide text-white-50">
+        <p className="font-heading text-sm font-semibold uppercase tracking-wide text-white-70">
           {title}
         </p>
       )}
