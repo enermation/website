@@ -1,17 +1,26 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { ChevronRight, Paperclip, X } from 'lucide-react'
 import type { FileUIPart } from 'ai'
 import { DefaultChatTransport } from 'ai'
 import Image from 'next/image'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
 } from '@/components/ai-elements/conversation'
-import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message'
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from '@/components/ai-elements/message'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   PromptInputBody,
   PromptInputFooter,
@@ -19,14 +28,16 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
 } from '@/components/ai-elements/prompt-input'
-import { SuggestionButton } from '@/components/assistant/suggestion-button'
-import { CopyButton } from '@/components/ui/copy-button'
-import { ProductCitation } from '@/components/rag/product-citation'
-import { Button } from '@/components/ui/button'
 import { SpeechInput } from '@/components/ai-elements/speech-input'
+import { VoiceWaveform } from '@/components/ai-elements/voice-waveform'
+import { CopyButton } from '@/components/ui/copy-button'
+import { Button } from '@/components/ui/button'
+import { ProductCitation } from '@/components/rag/product-citation'
+import { SuggestionButton } from '@/components/assistant/suggestion-button'
 import { useTimeBasedGreeting } from '@/hooks/use-time-based-greeting'
 import { SUGGESTED_QUESTIONS_WITH_ICONS } from '@/lib/assistant-data'
 import type { FullRagChatMessageMetadata } from '@/lib/rag/types'
+import { cn } from '@/lib/utils'
 
 const MAX_FILES = 2
 const MAX_FILE_SIZE = 4 * 1024 * 1024
@@ -38,14 +49,187 @@ interface ChatPanelProps {
   showSuggestedQuestions?: boolean
 }
 
+// ============================================================================
+// User Message Component
+// ============================================================================
+
+function UserMessage({
+  message,
+}: {
+  message: { id: string; parts: Array<{ type: string; url?: string; mediaType?: string; text?: string; filename?: string }> }
+}) {
+  const imageParts = message.parts.filter(
+    (p): p is { type: 'file'; url: string; mediaType: string; filename?: string } =>
+      p.type === 'file' && !!p.url && !!p.mediaType?.startsWith('image/')
+  )
+
+  const textContent = message.parts
+    .filter(p => p.type === 'text')
+    .map(p => p.text)
+    .join('')
+
+  return (
+    <div className="flex justify-end items-end gap-2">
+      <div className="max-w-[95%] gap-2 sm:max-w-[85%] sm:gap-3 md:max-w-[80%] flex flex-col">
+        <div className="flex flex-col gap-2">
+          {imageParts.length > 0 && (
+            <div className="flex flex-wrap gap-2 justify-end">
+              {imageParts.map((img, i) => (
+                <Image
+                  key={`img-${i}-${img.url}`}
+                  alt={img.filename || 'Attachment'}
+                  className="max-h-48 max-w-48 rounded-xl object-cover"
+                  height={192}
+                  src={img.url}
+                  width={192}
+                />
+              ))}
+            </div>
+          )}
+          {textContent.trim() && (
+            <div className="rounded-2xl bg-secondary px-4 py-3 text-sm text-foreground">
+              {textContent}
+            </div>
+          )}
+        </div>
+      </div>
+      <Image
+        alt="User"
+        className="h-8 w-8 flex-shrink-0 rounded-full"
+        height={32}
+        src="/loom-avatar-64.webp"
+        width={32}
+      />
+    </div>
+  )
+}
+
+// ============================================================================
+// Reasoning Collapsible Component
+// ============================================================================
+
+function ReasoningCollapsible({ reasoning }: { reasoning: string }) {
+  return (
+    <Collapsible defaultOpen={false}>
+      <CollapsibleTrigger className="flex items-center gap-1 font-sans text-xs text-muted-foreground transition-colors hover:text-foreground group">
+        <ChevronRight className="h-3 w-3 transition-transform group-data-[state=open]:rotate-90" />
+        <span>View thinking process</span>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="mt-2">
+        <div className="prose prose-sm max-w-full break-words rounded-xl border border-border bg-muted/50 p-3 font-sans text-xs leading-relaxed text-muted-foreground dark:prose-invert sm:p-4 sm:text-sm">
+          {reasoning}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  )
+}
+
+// ============================================================================
+// Assistant Message Component
+// ============================================================================
+
+function AssistantMessage({
+  message,
+  citations,
+  hasCitations,
+}: {
+  message: { id: string; parts: Array<{ type: string; text?: string; reason?: string }> }
+  citations: FullRagChatMessageMetadata['citations'] | null
+  hasCitations: boolean
+}) {
+  const reasoningPart = message.parts.find(p => p.type === 'reasoning') as
+    | { type: 'reasoning'; text: string }
+    | undefined
+
+  const textContent = message.parts
+    .filter(p => p.type === 'text')
+    .map(p => p.text)
+    .join('')
+
+  return (
+    <div className="flex justify-start items-start gap-2">
+      <Image
+        alt="Enermation"
+        className="h-8 w-8 flex-shrink-0"
+        height={32}
+        src="/chat-logo-32.webp"
+        width={32}
+      />
+      <div className="w-full max-w-full gap-2 sm:gap-3 lg:max-w-5xl flex flex-col">
+        <div className="flex-1 space-y-3 min-w-0">
+          {reasoningPart?.text && (
+            <ReasoningCollapsible reasoning={reasoningPart.text} />
+          )}
+          {textContent && (
+            <MessageResponse>{textContent}</MessageResponse>
+          )}
+          {textContent && (
+            <CopyButton content={textContent} />
+          )}
+        </div>
+
+        {hasCitations && citations && citations.length > 0 && (
+          <div className="mt-2 flex flex-col gap-2">
+            {citations.map(c => (
+              <ProductCitation key={c.handle} product={c} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================================
+// Thinking Indicator Component
+// ============================================================================
+
+function ThinkingIndicator() {
+  return (
+    <div className="flex items-center gap-2 sm:gap-3">
+      <Image
+        alt="Thinking"
+        className="h-6 w-6 flex-shrink-0 animate-spin sm:h-6 sm:w-6"
+        height={24}
+        src="/chat-logo-32.webp"
+        width={24}
+      />
+      <div className="flex items-center gap-2 font-sans text-xs text-muted-foreground sm:text-sm">
+        <span className="text-sm">Thinking </span>
+        <div className="flex gap-1">
+          <div
+            className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground"
+            style={{ animationDelay: '0ms' }}
+          />
+          <div
+            className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground"
+            style={{ animationDelay: '150ms' }}
+          />
+          <div
+            className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground"
+            style={{ animationDelay: '300ms' }}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ============================================================================
+// Main ChatPanel Component
+// ============================================================================
+
 export function ChatPanel({
   api = '/api/rag/chat',
   showSuggestedQuestions = true,
 }: ChatPanelProps) {
   const [error, setError] = useState<string | null>(null)
   const [inputValue, setInputValue] = useState('')
+  const [suggestion, setSuggestion] = useState('')
   const [pendingFiles, setPendingFiles] = useState<Array<{ file: File; preview: string }>>([])
+  const [recordingStream, setRecordingStream] = useState<MediaStream | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   const { messages, sendMessage, status, regenerate, stop } = useChat({
     transport: new DefaultChatTransport({ api }),
@@ -98,6 +282,7 @@ export function ChatPanel({
     async (message: { text: string; files: FileUIPart[] }) => {
       setError(null)
       setPendingFiles([])
+      setSuggestion('')
       await sendMessage({
         text: message.text,
         files: message.files.map(f => ({
@@ -115,6 +300,7 @@ export function ChatPanel({
     (q: string) => {
       setError(null)
       setPendingFiles([])
+      setSuggestion('')
       sendMessage({ text: q, files: [] })
     },
     [sendMessage]
@@ -126,11 +312,46 @@ export function ChatPanel({
     setInputValue(text)
   }, [])
 
+  const handleStartRecording = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      setRecordingStream(stream)
+    } catch {
+      setError('Failed to access microphone')
+    }
+  }, [])
+
+  const handleStopRecording = useCallback(() => {
+    if (recordingStream) {
+      recordingStream.getTracks().forEach(track => track.stop())
+      setRecordingStream(null)
+    }
+  }, [recordingStream])
+
   const isSendDisabled = useMemo(() => {
     const hasText = inputValue.trim().length > 0
     const hasValidAttachments = pendingFiles.length > 0
     return !hasText && !hasValidAttachments
   }, [inputValue, pendingFiles])
+
+  // Apply suggestion with Tab or ArrowRight when textarea is empty
+  useEffect(() => {
+    const inputElement = inputRef.current
+    if (!inputElement) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const shouldApplySuggestion =
+        (e.key === 'Tab' || e.key === 'ArrowRight') && suggestion && !inputValue
+      if (shouldApplySuggestion) {
+        e.preventDefault()
+        setInputValue(suggestion)
+        setSuggestion('')
+      }
+    }
+
+    inputElement.addEventListener('keydown', handleKeyDown)
+    return () => inputElement.removeEventListener('keydown', handleKeyDown)
+  }, [suggestion, inputValue])
 
   const handleFormSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -159,203 +380,218 @@ export function ChatPanel({
 
   return (
     <PromptInputProvider>
-      <Conversation className="flex-1">
-        <ConversationContent>
-          {messages.length === 0 ? (
-            showSuggestedQuestions ? (
-              <div className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8">
-                <div className="w-full max-w-2xl space-y-6 sm:space-y-8">
-                  <div className="flex flex-col items-center space-y-3 text-center sm:space-y-4">
-                    <Image
-                      alt="Enermation"
-                      className="h-8 w-8 object-contain"
-                      height={32}
-                      src="/chat-logo-32.webp"
-                      width={32}
-                    />
-                    {greeting ? (
-                      <h1
-                        key={greeting}
-                        className="animate-in fade-in slide-in-from-bottom-4 font-sans text-2xl font-normal text-foreground duration-500 sm:text-3xl md:text-4xl"
-                        suppressHydrationWarning
-                      >
-                        {greeting}
-                      </h1>
-                    ) : (
-                      <div className="font-sans text-2xl sm:text-3xl md:text-4xl" />
-                    )}
-                    <p className="font-sans text-sm text-muted-foreground sm:text-base">
-                      Ask me about vehicles or parts
-                    </p>
-                  </div>
-                  <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3">
-                    {SUGGESTED_QUESTIONS_WITH_ICONS.map(item => (
-                      <SuggestionButton
-                        key={item.text}
-                        display={item.text}
-                        icon={item.icon}
-                        prompt={item.text}
-                        sendMessage={({ text }) => handleSuggestion(text)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : null
-          ) : (
-            messages.map(msg => {
-              const imageParts = msg.parts.filter(
-                (p): p is { type: 'file'; url: string; mediaType: string; filename?: string } =>
-                  p.type === 'file' && !!p.url && p.mediaType.startsWith('image/')
-              )
-
-              const textContent = msg.parts
-                .filter(p => p.type === 'text')
-                .map(p => p.text)
-                .join('')
-
-              return (
-                <Message key={msg.id} from={msg.role}>
-                  <MessageContent>
-                    {imageParts.length > 0 && (
-                      <div className="mb-2 flex flex-wrap gap-2">
-                        {imageParts.map((p, imageIdx) => {
-                          const imageId = `img-${msg.id}-${imageIdx}`
-                          return (
-                            <Image
-                              alt={p.filename ?? 'Image'}
-                              className="size-16 rounded-md object-cover"
-                              height={64}
-                              key={imageId}
-                              src={p.url}
-                              width={64}
-                            />
-                          )
-                        })}
+      <div className="flex h-full flex-col overflow-hidden">
+        {/* Conversation area */}
+        <div className="flex flex-1 overflow-hidden">
+          <Conversation className="flex-1">
+            <ConversationContent className="pb-32 sm:pb-40">
+              {messages.length === 0 ? (
+                showSuggestedQuestions ? (
+                  <div className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8">
+                    <div className="w-full max-w-2xl space-y-6 sm:space-y-8">
+                      <div className="flex flex-col items-center space-y-3 text-center sm:space-y-4">
+                        <Image
+                          alt="Enermation"
+                          className="h-8 w-8 object-contain"
+                          height={32}
+                          src="/chat-logo-32.webp"
+                          width={32}
+                        />
+                        {greeting ? (
+                          <h1
+                            key={greeting}
+                            className="animate-in fade-in slide-in-from-bottom-4 font-sans text-2xl font-normal text-foreground duration-500 sm:text-3xl md:text-4xl"
+                            suppressHydrationWarning
+                          >
+                            {greeting}
+                          </h1>
+                        ) : (
+                          <div className="font-sans text-2xl sm:text-3xl md:text-4xl" />
+                        )}
+                        <p className="font-sans text-sm text-muted-foreground sm:text-base">
+                          Ask me about vehicles or parts
+                        </p>
                       </div>
-                    )}
-                    <MessageResponse>{textContent}</MessageResponse>
-                    {msg.role === 'assistant' && textContent && (
-                      <CopyButton content={textContent} />
-                    )}
-                  </MessageContent>
+                      <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3">
+                        {SUGGESTED_QUESTIONS_WITH_ICONS.map(item => (
+                          <SuggestionButton
+                            key={item.text}
+                            display={item.text}
+                            icon={item.icon}
+                            prompt={item.text}
+                            sendMessage={({ text }) => handleSuggestion(text)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : null
+              ) : (
+                <div className="space-y-4 container px-3 mt-12 md:mt-30 py-6 max-w-4xl mx-auto sm:space-y-6 sm:px-4 sm:py-8 md:px-12">
+                  {messages.map((msg, index) => {
+                    // Skip streaming assistant messages (they'll be replaced when complete)
+                    if (msg.role === 'assistant' && status === 'streaming' && index === messages.length - 1) {
+                      return null
+                    }
 
-                  {msg.role === 'assistant' && hasCitations && (
-                    <div className="mt-2 flex flex-col gap-2">
-                      {citations?.map(c => (
-                        <ProductCitation key={c.handle} product={c} />
-                      ))}
+                    if (msg.role === 'user') {
+                      return <UserMessage key={msg.id} message={msg} />
+                    }
+
+                    return (
+                      <AssistantMessage
+                        key={msg.id}
+                        message={msg}
+                        citations={citations}
+                        hasCitations={hasCitations}
+                      />
+                    )
+                  })}
+
+                  {/* Thinking indicator when streaming */}
+                  {(status === 'submitted' || status === 'streaming') && (
+                    <div className="mt-4">
+                      <ThinkingIndicator />
                     </div>
                   )}
-                </Message>
+                </div>
+              )}
+            </ConversationContent>
+            <ConversationScrollButton />
+          </Conversation>
+        </div>
+
+        {/* Error bar */}
+        {status === 'error' && (
+          <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2">
+            <span className="text-13 text-muted-foreground">Something went wrong. Try again.</span>
+            <Button
+              className="text-13"
+              onClick={() => regenerate()}
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
+              Retry
+            </Button>
+          </div>
+        )}
+
+        {/* Pending files preview */}
+        {pendingFiles.length > 0 && (
+          <div className="flex flex-wrap gap-2 px-4 py-2">
+            {pendingFiles.map(({ preview, file }, fileIdx) => {
+              const fileKey = `file-${fileIdx}`
+              return (
+                <div className="relative size-16" key={fileKey}>
+                  <Image
+                    alt={file.name}
+                    className="size-full rounded-md object-cover"
+                    height={64}
+                    src={preview}
+                    width={64}
+                    unoptimized
+                  />
+                  <button
+                    className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-background text-muted-foreground"
+                    onClick={() => removeFile(fileIdx)}
+                    type="button"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </div>
               )
-            })
-          )}
-        </ConversationContent>
-        <ConversationScrollButton />
-      </Conversation>
+            })}
+          </div>
+        )}
 
-      {status === 'error' && (
-        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2">
-          <span className="text-13 text-muted-foreground">Something went wrong. Try again.</span>
-          <Button
-            className="text-13"
-            onClick={() => regenerate()}
-            size="sm"
-            type="button"
-            variant="ghost"
-          >
-            Retry
-          </Button>
-        </div>
-      )}
+        {/* Prompt input area */}
+        <div className="shrink-0 border-t border-border p-3 sm:p-4">
+          <div className="mx-auto max-w-3xl">
+            {error && (
+              <div className="mb-2 rounded-t-lg border border-destructive/30 bg-destructive px-3 py-2 text-sm text-destructive-foreground">
+                <div className="flex items-center justify-between gap-2">
+                  <span>{error}</span>
+                  <button
+                    className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-destructive-foreground/10"
+                    onClick={() => setError(null)}
+                    type="button"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
 
-      {pendingFiles.length > 0 && (
-        <div className="flex flex-wrap gap-2 px-4 py-2">
-          {pendingFiles.map(({ preview, file }, fileIdx) => {
-            const fileKey = `file-${fileIdx}`
-            return (
-              <div className="relative size-16" key={fileKey}>
-                <Image
-                  alt={file.name}
-                  className="size-full rounded-md object-cover"
-                  height={64}
-                  src={preview}
-                  width={64}
-                  unoptimized
-                />
+            {/* Voice waveform when recording */}
+            {recordingStream && (
+              <div className="mb-2">
+                <VoiceWaveform stream={recordingStream} />
                 <button
-                  className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-background text-muted-foreground"
-                  onClick={() => removeFile(fileIdx)}
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-sm text-white hover:bg-red-600"
+                  onClick={handleStopRecording}
                   type="button"
                 >
-                  <XMarkIcon className="size-3" />
+                  <X className="size-4" />
+                  Stop recording
                 </button>
               </div>
-            )
-          })}
-        </div>
-      )}
+            )}
 
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 p-3 sm:p-4">
-        <div className="pointer-events-auto mx-auto max-w-3xl">
-          {error && (
-            <div className="mb-2 rounded-t-lg border border-destructive/30 bg-destructive px-3 py-2 text-sm text-destructive-foreground">
-              <div className="flex items-center justify-between gap-2">
-                <span>{error}</span>
-                <button
-                  className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-destructive-foreground/10"
-                  onClick={() => setError(null)}
-                  type="button"
-                >
-                  <XMarkIcon className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          )}
-          <div className="rounded-2xl border border-border bg-background shadow-sm">
-            <form onSubmit={handleFormSubmit}>
-              <PromptInputBody>
-                <PromptInputFooter className="px-4 py-2">
-                  <input
-                    accept="image/jpeg,image/png,image/webp"
-                    className="hidden"
-                    multiple
-                    onChange={handleFileChange}
-                    ref={fileInputRef}
-                    type="file"
-                  />
-                  <div className="flex shrink-0 items-center gap-1">
-                    <SpeechInput
-                      className="size-7"
-                      onAudioRecorded={async () => ''}
-                      onTranscriptionChange={handleSpeechTranscription}
-                      size="icon"
-                      variant="ghost"
+            <div className="rounded-2xl border border-border bg-background shadow-sm">
+              <form onSubmit={handleFormSubmit}>
+                <PromptInputBody>
+                  <PromptInputFooter className="px-4 py-2">
+                    <input
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      multiple
+                      onChange={handleFileChange}
+                      ref={fileInputRef}
+                      type="file"
                     />
-                  </div>
-                  <PromptInputTextarea
-                    className="font-sans text-sm"
-                    name="message"
-                    onChange={e => setInputValue(e.target.value)}
-                    placeholder="Ask about vehicles or parts..."
-                    value={inputValue}
-                  />
-                  <PromptInputSubmit
-                    className={
-                      isSendDisabled
-                        ? 'bg-muted text-muted-foreground hover:bg-muted'
-                        : 'bg-foreground text-background hover:opacity-90'
-                    }
-                    disabled={isSendDisabled}
-                    onStop={status === 'streaming' ? stop : undefined}
-                    size="icon"
-                    status={status}
-                    type="submit"
-                  />
-                </PromptInputFooter>
-              </PromptInputBody>
-            </form>
+                    <div className="flex shrink-0 items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex h-7 w-7 items-center justify-center text-muted-foreground hover:opacity-70 transition-opacity"
+                        aria-label="Attach file"
+                      >
+                        <Paperclip className="h-4 w-4" />
+                      </button>
+                      <SpeechInput
+                        className="size-7"
+                        onAudioRecorded={async () => ''}
+                        onTranscriptionChange={handleSpeechTranscription}
+                        onClick={recordingStream ? handleStopRecording : handleStartRecording}
+                        size="icon-sm"
+                        variant="ghost"
+                      />
+                    </div>
+                    <PromptInputTextarea
+                      className="font-sans text-sm"
+                      name="message"
+                      onChange={e => setInputValue(e.target.value)}
+                      placeholder="Ask about vehicles or parts..."
+                      ref={inputRef}
+                      value={inputValue}
+                    />
+                    <PromptInputSubmit
+                      className={
+                        isSendDisabled
+                          ? 'bg-muted text-muted-foreground hover:bg-muted'
+                          : 'bg-foreground text-background hover:opacity-90'
+                      }
+                      disabled={isSendDisabled}
+                      onStop={status === 'streaming' ? stop : undefined}
+                      size="icon-sm"
+                      status={status}
+                      type="submit"
+                    />
+                  </PromptInputFooter>
+                </PromptInputBody>
+              </form>
+            </div>
           </div>
         </div>
       </div>
