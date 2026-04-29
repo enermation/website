@@ -10,7 +10,7 @@ export function buildGroundedSystemPrompt(products: RagRetrievalResult[]): strin
     .map(
       p =>
         `[${p.metadata.handle}] ${p.metadata.title} — ${p.metadata.priceAmount} ${p.metadata.priceCurrency}\n` +
-        `  make=${p.metadata.make ?? '—'} model=${p.metadata.model ?? '—'} year=${p.metadata.year ?? '—'} mileage=${p.metadata.mileage ?? '—'} fuel=${p.metadata.fuelType ?? '—'} transmission=${p.metadata.transmission ?? '—'}\n` +
+        `  make=${p.metadata.make ?? '—'} model=${p.metadata.model ?? '—'} year=${p.metadata.year ?? '—'} fuel=${p.metadata.fuelType ?? '—'} transmission=${p.metadata.transmission ?? '—'} condition=${p.metadata.condition ?? '—'}\n` +
         `  collections=${p.metadata.collectionHandles.join(', ') || '—'}\n` +
         `  snippet: ${p.metadata.textSnippet}`
     )

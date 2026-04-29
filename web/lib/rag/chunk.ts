@@ -12,14 +12,25 @@ export function chunkFromShopifyProduct(
   product: ShopifyProduct,
   collectionHandles: string[]
 ): { id: string; text: string; metadata: ProductChunkMetadata } {
-  // Vehicle metafields (resolved via resolveVehicleMetafields in shopify.ts)
-  // make/model are parsed from title, not stored as metafields
-  // mileage, colour, originCountry, engine not set on Shopify
-  const metafield = (mf: { value: string | null } | null): string | null => mf?.value ?? null
+  const resolvedSpecs = product.resolvedSpecs ?? []
+  const getSpec = (namespace: string, key: string) =>
+    resolvedSpecs.find(s => s.namespace === namespace && s.key === key)?.value ?? null
 
   const { make: makeFromTitle, model: modelFromTitle } = parseVehicleFromTitle(product.title)
   const make = makeFromTitle
   const model = modelFromTitle
+
+  const year = getSpec('custom', 'model_year')
+  const fuelType = getSpec('shopify', 'fuel-supply')
+  const transmission = getSpec('shopify', 'transmission-type')
+  const condition = getSpec('shopify', 'item-condition')
+  const driveType = getSpec('shopify', 'drive-type')
+
+  // All remaining resolvedSpecs as dynamic lines (exclude vehicle-features)
+  const additionalSpecLines = resolvedSpecs
+    .filter(s => !['shopify.vehicle-features'].includes(`${s.namespace}.${s.key}`))
+    .map(s => `${s.label}: ${s.value}`)
+    .join('\n')
 
   const collections = collectionHandles.length > 0 ? collectionHandles.join(', ') : '—'
 
@@ -27,12 +38,14 @@ export function chunkFromShopifyProduct(
     `Title: ${product.title}`,
     `Vendor: ${product.vendor || '—'}`,
     `Collections: ${collections}`,
-    `Make: ${orDash(make)} | Model: ${orDash(model)} | Year: ${orDash(metafield(product.year))}`,
-    `Engine: ${orDash(metafield(product.engine))} | Fuel: ${orDash(metafield(product.fuelType))} | Transmission: ${orDash(metafield(product.transmission))}`,
-    `Mileage: ${orDash(metafield(product.mileage))} | Colour: ${orDash(metafield(product.colour))} | Condition: ${orDash(metafield(product.condition))}`,
-    `Origin: ${orDash(metafield(product.originCountry))}`,
+    `Make: ${orDash(make)} | Model: ${orDash(model)} | Year: ${orDash(year)}`,
+    `Fuel: ${orDash(fuelType)} | Transmission: ${orDash(transmission)}`,
+    `Condition: ${orDash(condition)}`,
+    additionalSpecLines,
     `Description: ${product.description.slice(0, 1500)}`,
-  ].join('\n')
+  ]
+    .filter(line => line.trim() !== '')
+    .join('\n')
 
   const descriptionSnippet = product.description.replace(/\s+/g, ' ').trim().slice(0, 240)
 
@@ -48,14 +61,11 @@ export function chunkFromShopifyProduct(
     vendor: product.vendor || null,
     make: makeFromTitle,
     model: modelFromTitle,
-    year: metafield(product.year),
-    mileage: metafield(product.mileage),
-    colour: metafield(product.colour),
-    fuelType: metafield(product.fuelType),
-    transmission: metafield(product.transmission),
-    originCountry: metafield(product.originCountry),
-    condition: metafield(product.condition),
-    engine: metafield(product.engine),
+    year,
+    fuelType,
+    transmission,
+    condition,
+    driveType,
     imageUrl,
     url: `/products/${product.handle}`,
     textSnippet: descriptionSnippet,

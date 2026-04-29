@@ -9,13 +9,10 @@ export type ProductChunkMetadata = {
   make: string | null
   model: string | null
   year: string | null
-  mileage: string | null
-  colour: string | null
   fuelType: string | null
   transmission: string | null
-  originCountry: string | null
   condition: string | null
-  engine: string | null
+  driveType: string | null
   imageUrl: string | null
   url: string
   textSnippet: string
