@@ -10,8 +10,8 @@
 | `web/lib/shopify.ts` | Creates the Storefront API client and enforces required env vars | [web/lib/shopify.ts:3-17](https://github.com/syedaliabbas1/enermation-website/blob/main/web/lib/shopify.ts#L3-L17) |
 | `web/lib/queries.ts` | Centralized GraphQL queries for products, collections, and cart | [web/lib/queries.ts:3-441](https://github.com/syedaliabbas1/enermation-website/blob/main/web/lib/queries.ts#L3-L441) |
 | `web/app/page.tsx` | Homepage sections + collection fetch from Shopify | [web/app/page.tsx:104-161](https://github.com/syedaliabbas1/enermation-website/blob/main/web/app/page.tsx#L104-L161) |
-| `web/app/collections/[handle]/page.tsx` | Server-side sorting/filtering and collection rendering | [web/app/collections/[handle]/page.tsx:30-90](https://github.com/syedaliabbas1/enermation-website/blob/main/web/app/collections/%5Bhandle%5D/page.tsx#L30-L90) |
-| `web/app/products/[handle]/page.tsx` | Product detail page + metadata + similar cars | [web/app/products/[handle]/page.tsx:73-126](https://github.com/syedaliabbas1/enermation-website/blob/main/web/app/products/%5Bhandle%5D/page.tsx#L73-L126) |
+| `web/app/collections/\[handle\]/page.tsx` | Server-side sorting/filtering and collection rendering | `web/app/collections/[handle]/page.tsx:30-90` |
+| `web/app/products/\[handle\]/page.tsx` | Product detail page + metadata + similar cars | `web/app/products/[handle]/page.tsx:73-126` |
 
 ## Architecture
 
@@ -19,8 +19,8 @@
 flowchart LR
   U[User Browser] --> N[Next.js App Router<br>web/app]
   N --> H[Homepage<br>app/page.tsx]
-  N --> C[Collections Page<br>app/collections/[handle]/page.tsx]
-  N --> P[Product Page<br>app/products/[handle]/page.tsx]
+  N --> C[Collections Page<br>app/collections/\[handle\]/page.tsx]
+  N --> P[Product Page<br>app/products/\[handle\]/page.tsx]
   H --> Q[GraphQL Queries<br>web/lib/queries.ts]
   C --> Q
   P --> Q
@@ -30,7 +30,7 @@ flowchart LR
   classDef dark fill:#2d333b,stroke:#6d5dfc,color:#e6edf3;
   class U,N,H,C,P,Q,S,API dark;
 ```
-<!-- Sources: web/app/page.tsx:104, web/app/collections/[handle]/page.tsx:62, web/app/products/[handle]/page.tsx:91, web/lib/queries.ts:3, web/lib/shopify.ts:13 -->
+<!-- Sources: web/app/page.tsx:104, web/app/collections/\[handle\]/page.tsx:62, web/app/products/\[handle\]/page.tsx:91, web/lib/queries.ts:3, web/lib/shopify.ts:13 -->
 
 ### Product page request flow
 
@@ -51,7 +51,7 @@ sequenceDiagram
   S-->>R: data
   R-->>B: Render product details + similar cars
 ```
-<!-- Sources: web/app/products/[handle]/page.tsx:94-125, web/lib/queries.ts:51-180, web/lib/shopify.ts:13-19 -->
+<!-- Sources: web/app/products/\[handle\]/page.tsx:94-125, web/lib/queries.ts:51-180, web/lib/shopify.ts:13-19 -->
 
 ### Collection filtering behavior
 
@@ -68,12 +68,12 @@ stateDiagram-v2
   EmptyState --> [*]
   ProductCards --> [*]
 ```
-<!-- Sources: web/app/collections/[handle]/page.tsx:30-90, web/app/collections/[handle]/page.tsx:161-171 -->
+<!-- Sources: web/app/collections/\[handle\]/page.tsx:30-90, web/app/collections/\[handle\]/page.tsx:161-171 -->
 
 ## Why this structure
 
 The app keeps **Shopify access centralized** (`web/lib/shopify.ts`, `web/lib/queries.ts`) so pages stay focused on rendering and route-level behavior, not API client setup. This reduces duplication and makes query updates straightforward across homepage, collections, and product pages.  
-Sources: [web/lib/shopify.ts:13-19](https://github.com/syedaliabbas1/enermation-website/blob/main/web/lib/shopify.ts#L13-L19), [web/lib/queries.ts:3-441](https://github.com/syedaliabbas1/enermation-website/blob/main/web/lib/queries.ts#L3-L441), [web/app/page.tsx:104-108](https://github.com/syedaliabbas1/enermation-website/blob/main/web/app/page.tsx#L104-L108), [web/app/products/[handle]/page.tsx:94-101](https://github.com/syedaliabbas1/enermation-website/blob/main/web/app/products/%5Bhandle%5D/page.tsx#L94-L101)
+Sources: [web/lib/shopify.ts:13-19], [web/lib/queries.ts:3-441], [web/app/page.tsx:104-108], [web/app/products/[handle]/page.tsx:94-101]
 
 ## Getting started
 
