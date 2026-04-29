@@ -1,6 +1,7 @@
 import type { TextStreamPart, UIMessage } from 'ai'
-import { convertToModelMessages, streamText, type ToolSet } from 'ai'
+import { convertToModelMessages, generateObject, streamText, type ToolSet } from 'ai'
 import { NextResponse } from 'next/server'
+import { z } from 'zod'
 
 import { getChatModel } from '@/lib/rag/clients'
 import { buildGroundedSystemPrompt } from '@/lib/rag/prompt'
@@ -88,6 +89,24 @@ export async function POST(request: Request) {
 
   const modelMessages = await convertToModelMessages(messages)
 
+  const suggestionsPromise = generateObject({
+    model: getChatModel(),
+    schema: z.object({
+      suggestions: z.array(z.string()).min(2).max(3),
+    }),
+    system:
+      'Generate 2-3 short follow-up questions (max 10 words each) a user might ask next about vehicles or parts. Be specific to what was asked. Return only the questions.',
+    prompt: `User asked: "${userText}". Top products found: ${products
+      .slice(0, 4)
+      .map(p => p.metadata.title)
+      .join(', ')}.`,
+  })
+    .then(r => r.object.suggestions)
+    .catch(err => {
+      console.error('[rag/chat] suggestion generation failed:', err)
+      return []
+    })
+
   const citations: ProductCitationData[] = products.map(p => ({
     handle: p.metadata.handle,
     title: p.metadata.title,
@@ -104,6 +123,8 @@ export async function POST(request: Request) {
     condition: p.metadata.condition,
   }))
 
+  const resolvedSuggestions = await suggestionsPromise
+
   const result = streamText({
     model: getChatModel(),
     system,
@@ -114,7 +135,7 @@ export async function POST(request: Request) {
   return result.toUIMessageStreamResponse({
     messageMetadata({ part }: { part: TextStreamPart<ToolSet> }) {
       if (part.type === 'finish') {
-        return { citations } as FullRagChatMessageMetadata
+        return { citations, suggestions: resolvedSuggestions } as FullRagChatMessageMetadata
       }
       return undefined
     },

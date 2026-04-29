@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { generateText } from 'ai'
-import { getChatModel } from '@/lib/rag/clients'
+import { getVisionModel } from '@/lib/rag/clients'
 import { DESCRIBE_PROMPT } from '@/lib/rag/prompt'
 
 export async function describeImagesForRetrieval(
@@ -19,9 +19,27 @@ export async function describeImagesForRetrieval(
     if (!validTypes.has(part.mediaType)) {
       continue
     }
-    if (typeof part.data === 'string' && part.data.length > 4 * 1024 * 1024 * 0.75) {
-      continue
+
+    // Block blob:// and data: URLs — providers cannot fetch these
+    if (typeof part.data === 'string') {
+      const lower = part.data.toLowerCase()
+      if (lower.startsWith('blob:') || lower.startsWith('data:')) {
+        console.warn('[rag/vision] skipped unsupported URL scheme:', part.data.slice(0, 50))
+        continue
+      }
+      // Size check is only meaningful for base64 data, not URL strings
+      if (part.data.length > 4 * 1024 * 1024 * 0.75) {
+        console.warn('[rag/vision] skipped oversized URL:', part.data.slice(0, 50))
+        continue
+      }
+    } else if (part.data instanceof URL) {
+      const scheme = part.data.protocol.toLowerCase()
+      if (scheme === 'blob:' || scheme === 'data:') {
+        console.warn('[rag/vision] skipped unsupported URL scheme:', part.data.href.slice(0, 50))
+        continue
+      }
     }
+
     validParts.push(part)
   }
 
@@ -42,7 +60,7 @@ export async function describeImagesForRetrieval(
     DESCRIBE_PROMPT + (accompanyingText ? `\n\nUser said: ${accompanyingText}` : '')
 
   const { text: description } = await generateText({
-    model: getChatModel(),
+    model: getVisionModel(),
     messages: [
       {
         role: 'user',

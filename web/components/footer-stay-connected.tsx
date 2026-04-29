@@ -1,15 +1,11 @@
 'use client'
 
-import { useGSAP } from '@gsap/react'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
-import gsap from 'gsap'
 import { useActionState, useCallback, useEffect, useRef, useState } from 'react'
 
 import { subscribeEmail } from '@/app/actions/subscribe'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-
-gsap.registerPlugin(useGSAP)
 
 type FormState = 'idle' | 'loading' | 'success' | 'error'
 
@@ -32,43 +28,16 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
   const [email, setEmail] = useState('')
 
   const buttonLabelRef = useRef<HTMLSpanElement>(null)
-  const arrowRef = useRef<HTMLDivElement>(null)
-
-  useGSAP(
-    () => {
-      if (!arrowRef.current) return
-      const el = arrowRef.current
-      el.addEventListener('mouseenter', () => {
-        gsap.to(el, { x: 4, duration: 0.2, ease: 'power2.out' })
-      })
-      el.addEventListener('mouseleave', () => {
-        gsap.to(el, { x: 0, duration: 0.2, ease: 'power2.out' })
-      })
-    },
-    { scope: arrowRef }
-  )
 
   const animateLabel = useCallback((incoming: string | null) => {
     if (!buttonLabelRef.current) return
-    const _tl = gsap
-      .timeline()
-      .to(buttonLabelRef.current, {
-        y: -20,
-        opacity: 0,
-        duration: 0.15,
-        ease: 'power2.in',
-      })
-      .call(() => {
-        if (buttonLabelRef.current) {
-          buttonLabelRef.current.textContent = incoming
-        }
-      })
-      .to(buttonLabelRef.current, {
-        y: 0,
-        opacity: 1,
-        duration: 0.2,
-        ease: 'power2.out',
-      })
+    buttonLabelRef.current.classList.add('is-out')
+    setTimeout(() => {
+      if (buttonLabelRef.current) {
+        buttonLabelRef.current.textContent = incoming
+        buttonLabelRef.current.classList.remove('is-out')
+      }
+    }, 150)
   }, [])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -140,8 +109,13 @@ export function FooterStayConnected({ content, className }: FooterStayConnectedP
             buttonColor
           )}
         >
-          <span ref={buttonLabelRef}>{content.actionLabel}</span>
-          <span ref={arrowRef}>
+          <span
+            ref={buttonLabelRef}
+            className="footer-btn-label transition-opacity duration-150 ease-in"
+          >
+            {content.actionLabel}
+          </span>
+          <span className="transition-transform duration-200 hover:translate-x-4">
             <ArrowRightIcon className="size-5" />
           </span>
         </button>

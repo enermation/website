@@ -43,7 +43,8 @@ export function InstagramTile({ href, mediaUrl, thumbnailUrl, alt, isReel }: Pro
       target="_blank"
       rel="noopener noreferrer"
       className="group relative overflow-hidden rounded-xl"
-      data-instagram-item
+      data-reveal
+      data-variant="scale"
     >
       <AspectRatio ratio={1} className="bg-surface-elevated">
         {/* Thumbnail — fades out when video starts playing */}

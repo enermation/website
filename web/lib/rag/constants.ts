@@ -5,6 +5,7 @@ export const RERANK_MODEL = 'rerank-v3.5'
 export const DEFAULT_CHAT_PROVIDER = 'anthropic'
 export const DEFAULT_ANTHROPIC_MODEL = 'claude-haiku-4-5'
 export const DEFAULT_GROQ_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct'
+export const VISION_MODEL_ID = 'llama-3.3-70b-versatile'
 
 export const TOP_K_RETRIEVE = 25
 export const TOP_K_RERANK = 6

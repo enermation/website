@@ -47,4 +47,5 @@ export type ProductCitationData = Pick<
 
 export type FullRagChatMessageMetadata = {
   citations?: ProductCitationData[]
+  suggestions?: string[]
 }

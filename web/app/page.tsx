@@ -215,7 +215,8 @@ async function InstagramSection() {
               target="_blank"
               rel="noopener noreferrer"
               className="group col-span-2 flex flex-col items-center justify-center gap-6 rounded-xl bg-card p-8 transition-colors duration-200 hover:bg-accent"
-              data-instagram-item
+              data-reveal
+              data-variant="scale"
             >
               <span className="font-display text-2xl font-normal leading-snug text-heading">
                 Connect With Us Online

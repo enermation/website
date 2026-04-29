@@ -126,6 +126,32 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* ─── Scroll-reveal animation tokens ─── */
+  --stagger: 0.1s;
+  --animate-reveal-in: reveal-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-reveal-scale: reveal-scale 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes reveal-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes reveal-scale {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 }
 
 :root {
@@ -306,109 +332,79 @@
   }
 }
 
-/* ─── Scroll-driven section reveals ─── */
+/* ─── Unified scroll-driven reveals ─── */
+/* Base: opacity 0 + initial transform (varies by variant) */
 [data-reveal] {
   opacity: 0;
+}
+[data-reveal]:not([data-variant]) {
   transform: translateY(24px);
 }
-@supports (animation-timeline: view()) {
-  [data-reveal] {
-    animation: reveal-in linear both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 100%;
-  }
-  [data-reveal]:nth-child(1) {
-    animation-delay: 0s;
-  }
-  [data-reveal]:nth-child(2) {
-    animation-delay: 0.1s;
-  }
-  [data-reveal]:nth-child(3) {
-    animation-delay: 0.25s;
-  }
-  [data-reveal]:nth-child(4) {
-    animation-delay: 0.4s;
-  }
-  [data-reveal]:nth-child(5) {
-    animation-delay: 0.55s;
-  }
-  [data-reveal]:nth-child(6) {
-    animation-delay: 0.7s;
-  }
-  [data-reveal]:nth-child(7) {
-    animation-delay: 0.85s;
-  }
-  [data-reveal]:nth-child(8) {
-    animation-delay: 1s;
-  }
+[data-reveal][data-variant="slide-up"] {
+  transform: translateY(15px);
 }
-@keyframes reveal-in {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Fallback for browsers without scroll-driven animation support */
-@supports not (animation-timeline: view()) {
-  [data-reveal] {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* ─── Instagram grid scroll-driven reveals ─── */
-[data-instagram-item] {
-  opacity: 0;
+[data-reveal][data-variant="scale"] {
   transform: scale(0.8);
 }
+
+/* Scroll-driven layer: only apply when browser supports it */
 @supports (animation-timeline: view()) {
-  [data-instagram-item] {
-    animation: instagram-reveal linear both;
+  [data-reveal] {
+    animation: var(--animate-reveal-in);
     animation-timeline: view();
     animation-range: entry 0% entry 100%;
   }
-  [data-instagram-item]:nth-child(1) {
-    animation-delay: 0s;
+  [data-reveal][data-variant="scale"] {
+    animation: var(--animate-reveal-scale);
   }
-  [data-instagram-item]:nth-child(2) {
-    animation-delay: 0.06s;
+  /* nth-child stagger: stagger gap = --stagger = 0.1s */
+  [data-reveal]:nth-child(1) {
+    animation-delay: calc(var(--stagger) * 0);
   }
-  [data-instagram-item]:nth-child(3) {
-    animation-delay: 0.12s;
+  [data-reveal]:nth-child(2) {
+    animation-delay: calc(var(--stagger) * 1);
   }
-  [data-instagram-item]:nth-child(4) {
-    animation-delay: 0.18s;
+  [data-reveal]:nth-child(3) {
+    animation-delay: calc(var(--stagger) * 2.5);
   }
-  [data-instagram-item]:nth-child(5) {
-    animation-delay: 0.24s;
+  [data-reveal]:nth-child(4) {
+    animation-delay: calc(var(--stagger) * 4);
   }
-  [data-instagram-item]:nth-child(6) {
-    animation-delay: 0.3s;
+  [data-reveal]:nth-child(5) {
+    animation-delay: calc(var(--stagger) * 5.5);
   }
-  [data-instagram-item]:nth-child(7) {
-    animation-delay: 0.36s;
+  [data-reveal]:nth-child(6) {
+    animation-delay: calc(var(--stagger) * 7);
   }
-  [data-instagram-item]:nth-child(8) {
-    animation-delay: 0.42s;
+  [data-reveal]:nth-child(7) {
+    animation-delay: calc(var(--stagger) * 8.5);
   }
-}
-@keyframes instagram-reveal {
-  to {
-    opacity: 1;
-    transform: scale(1);
+  [data-reveal]:nth-child(8) {
+    animation-delay: calc(var(--stagger) * 10);
   }
 }
 
-/* Fallback for browsers without scroll-driven animation support */
+/* Fallback for unsupported browsers: show immediately */
 @supports not (animation-timeline: view()) {
-  [data-instagram-item] {
+  [data-reveal] {
     opacity: 1;
     transform: none;
   }
 }
 
-/* ─── Hero wordmark text stroke draw (replaces motion/react) ─── */
+/* ─── Footer subscribe button label ─── */
+.footer-btn-label {
+  display: inline-block;
+  transition:
+    opacity 0.15s ease-in,
+    transform 0.15s ease-in;
+}
+.footer-btn-label.is-out {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+
+/* ─── Hero wordmark text stroke draw ─── */
 .text-draw-primary {
   stroke-dasharray: 1000;
   animation: text-draw-primary 3s ease-in-out 0s forwards;
@@ -417,7 +413,6 @@
   stroke-dasharray: 1000;
   animation: text-draw-trail 3.5s ease-out 0.15s forwards;
 }
-
 @keyframes text-draw-primary {
   from {
     stroke-dashoffset: 1000;
@@ -435,17 +430,16 @@
   }
 }
 
-/* ─── Respect prefers-reduced-motion ─── */
+/* ─── prefers-reduced-motion ─── */
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal],
-  [data-instagram-item] {
-    animation: none !important;
+  [data-reveal] {
+    animation-play-state: paused;
     opacity: 1;
     transform: none;
   }
   .text-draw-primary,
   .text-draw-trail {
-    animation: none !important;
+    animation-play-state: paused;
     stroke-dashoffset: 0;
   }
 }

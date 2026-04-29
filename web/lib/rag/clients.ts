@@ -6,6 +6,7 @@ import {
   DEFAULT_ANTHROPIC_MODEL,
   DEFAULT_CHAT_PROVIDER,
   DEFAULT_GROQ_MODEL,
+  VISION_MODEL_ID,
 } from '@/lib/rag/constants'
 
 function getRequiredEnv(name: string): string {
@@ -56,4 +57,9 @@ export function getChatModel(): ChatModel {
     }
   }
   return chatModelInstance
+}
+
+export function getVisionModel(): ChatModel {
+  const modelId = process.env.VISION_MODEL_ID ?? VISION_MODEL_ID
+  return groq(modelId)
 }

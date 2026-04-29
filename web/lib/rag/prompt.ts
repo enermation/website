@@ -6,13 +6,15 @@ part type, material, visible codes or markings, apparent vehicle make/model if i
 If you cannot identify the object, output: unknown object.`
 
 export function buildGroundedSystemPrompt(products: RagRetrievalResult[]): string {
+  const SNIPPET_TRUNCATE = 200
+
   const productLines = products
     .map(
       p =>
         `[${p.metadata.handle}] ${p.metadata.title} — ${p.metadata.priceAmount} ${p.metadata.priceCurrency}\n` +
         `  make=${p.metadata.make ?? '—'} model=${p.metadata.model ?? '—'} year=${p.metadata.year ?? '—'} fuel=${p.metadata.fuelType ?? '—'} transmission=${p.metadata.transmission ?? '—'} condition=${p.metadata.condition ?? '—'}\n` +
         `  collections=${p.metadata.collectionHandles.join(', ') || '—'}\n` +
-        `  snippet: ${p.metadata.textSnippet}`
+        `  snippet: ${p.metadata.textSnippet.replace(/\s+/g, ' ').trim().slice(0, SNIPPET_TRUNCATE)}`
     )
     .join('\n\n')
 

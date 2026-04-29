@@ -1,7 +1,7 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
-import { ChevronRight, Paperclip, X } from 'lucide-react'
+import { AudioLines, Camera, ChevronRight, Paperclip, Square, X } from 'lucide-react'
 import type { FileUIPart } from 'ai'
 import { DefaultChatTransport } from 'ai'
 import Image from 'next/image'
@@ -10,6 +10,7 @@ import {
   MessageResponse,
 } from '@/components/ai-elements/message'
 import {
+  PromptInputAction,
   PromptInputBody,
   PromptInputFooter,
   PromptInputProvider,
@@ -295,6 +296,7 @@ export function ChatPanel({
   const [pendingFiles, setPendingFiles] = useState<Array<{ file: File; preview: string }>>([])
   const [recordingStream, setRecordingStream] = useState<MediaStream | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const cameraInputRef = useRef<HTMLInputElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   const { messages, sendMessage, status, regenerate, stop } = useChat({
@@ -399,6 +401,13 @@ export function ChatPanel({
     const hasValidAttachments = pendingFiles.length > 0
     return !hasText && !hasValidAttachments
   }, [inputValue, pendingFiles])
+
+  const followUps = useMemo(() => {
+    if (status === 'streaming' || status === 'submitted') return []
+    const last = [...messages].reverse().find(m => m.role === 'assistant')
+    if (!last?.metadata) return []
+    return ((last.metadata as FullRagChatMessageMetadata).suggestions ?? [])
+  }, [messages, status])
 
   // Apply suggestion with Tab or ArrowRight when textarea is empty
   useEffect(() => {
@@ -508,6 +517,21 @@ export function ChatPanel({
 
             {status === 'submitted' && <ThinkingIndicator />}
 
+            {followUps.length > 0 && (
+              <div className="flex flex-wrap gap-2 pl-10 animate-in fade-in duration-300">
+                {followUps.map(q => (
+                  <button
+                    key={q}
+                    type="button"
+                    onClick={() => handleSuggestion(q)}
+                    className="rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {/* Spacer for sticky prompt bar clearance */}
             <div className="h-28" aria-hidden />
           </div>
@@ -602,23 +626,54 @@ export function ChatPanel({
                       ref={fileInputRef}
                       type="file"
                     />
+                    <input
+                      accept="image/jpeg,image/png,image/webp"
+                      capture="environment"
+                      className="hidden"
+                      onChange={handleFileChange}
+                      ref={cameraInputRef}
+                      type="file"
+                    />
                     <div className="flex shrink-0 items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-                        aria-label="Attach file"
-                      >
-                        <Paperclip className="h-4 w-4" />
-                      </button>
-                      <SpeechInput
-                        className="size-8"
-                        onAudioRecorded={async () => ''}
-                        onTranscriptionChange={handleSpeechTranscription}
-                        onClick={recordingStream ? handleStopRecording : handleStartRecording}
-                        size="icon-sm"
-                        variant="ghost"
-                      />
+                      <PromptInputAction tooltip="Attach file">
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors sm:h-9 sm:w-9"
+                          aria-label="Attach file"
+                        >
+                          <Paperclip className="h-4 w-4 sm:h-5 sm:w-5" />
+                        </button>
+                      </PromptInputAction>
+                      <PromptInputAction tooltip="Take photo">
+                        <button
+                          type="button"
+                          onClick={() => cameraInputRef.current?.click()}
+                          className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors sm:h-9 sm:w-9"
+                          aria-label="Take photo"
+                        >
+                          <Camera className="h-4 w-4 sm:h-5 sm:w-5" />
+                        </button>
+                      </PromptInputAction>
+                      <PromptInputAction tooltip="Use voice mode">
+                        <button
+                          type="button"
+                          onClick={recordingStream ? handleStopRecording : handleStartRecording}
+                          className={cn(
+                            'flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 ease-[cubic-bezier(0.165,0.85,0.45,1)] active:scale-[0.98] sm:h-9 sm:w-9',
+                            recordingStream
+                              ? 'bg-destructive text-white hover:bg-destructive/80 hover:text-white'
+                              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                          )}
+                          aria-label={recordingStream ? 'Stop recording' : 'Start recording'}
+                        >
+                          {recordingStream ? (
+                            <Square className="h-3 w-3 sm:h-4 sm:w-4 fill-current" />
+                          ) : (
+                            <AudioLines className="h-4 w-4 sm:h-5 sm:w-5" />
+                          )}
+                        </button>
+                      </PromptInputAction>
                     </div>
                     <PromptInputTextarea
                       className="font-sans text-sm"

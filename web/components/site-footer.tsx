@@ -1,18 +1,13 @@
 'use client'
 
-import { useGSAP } from '@gsap/react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Suspense, useRef } from 'react'
+import { Suspense } from 'react'
 
 import { FooterStayConnected } from '@/components/footer-stay-connected'
 import { footerContent, footerSocialLinks } from '@/lib/data'
 import type { FooterNavGroup } from '@/lib/header-navigation'
 import { cn } from '@/lib/utils'
-
-gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 function FooterWordmark() {
   return (
@@ -39,29 +34,8 @@ function FooterNavLinks({
   title?: string
   className?: string
 }) {
-  const containerRef = useRef<HTMLElement>(null)
-
-  useGSAP(
-    () => {
-      gsap.from('li', {
-        y: 15,
-        opacity: 0,
-        duration: 0.4,
-        ease: 'power2.out',
-        stagger: 0.06,
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 90%',
-          once: true,
-        },
-      })
-    },
-    { scope: containerRef }
-  )
-
   return (
     <nav
-      ref={containerRef}
       data-slot="footer-nav-links"
       className={cn('flex flex-col gap-y-2 overflow-hidden', className)}
       aria-label="Footer navigation"
@@ -73,7 +47,7 @@ function FooterNavLinks({
       )}
       <ul className="flex flex-col gap-y-2 text-on-dark">
         {links.map(({ label, href }) => (
-          <li key={label}>
+          <li key={label} data-reveal data-variant="slide-up">
             <Link
               href={href}
               className="inline-flex w-fit font-heading text-xl font-semibold uppercase leading-none tracking-tight text-on-dark transition-colors hover:text-on-dark"

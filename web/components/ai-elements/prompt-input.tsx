@@ -1,6 +1,10 @@
 // @ts-nocheck
 "use client";
 
+import React from "react";
+import {
+  mergeProps,
+} from "@base-ui/react/merge-props";
 import {
   Command,
   CommandEmpty,
@@ -1120,6 +1124,30 @@ export type PromptInputButtonTooltip =
       shortcut?: string;
       side?: ComponentProps<typeof TooltipContent>["side"];
     };
+
+export type PromptInputActionProps = {
+  tooltip: React.ReactNode
+  children: React.ReactNode
+  side?: 'top' | 'bottom' | 'left' | 'right'
+  className?: string
+}
+
+export const PromptInputAction = ({
+  tooltip,
+  children,
+  className,
+  side = 'top',
+  ...props
+}: PromptInputActionProps) => {
+  return (
+    <Tooltip {...props}>
+      <TooltipTrigger>{children}</TooltipTrigger>
+      <TooltipContent side={side} className={className}>
+        {tooltip}
+      </TooltipContent>
+    </Tooltip>
+  )
+}
 
 export type PromptInputButtonProps = ComponentProps<typeof InputGroupButton> & {
   tooltip?: PromptInputButtonTooltip;
