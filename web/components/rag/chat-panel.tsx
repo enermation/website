@@ -10,7 +10,6 @@ import { useCallback, useRef, useState } from 'react'
 import {
   Conversation,
   ConversationContent,
-  ConversationEmptyState,
   ConversationScrollButton,
 } from '@/components/ai-elements/conversation'
 import { InlineCitation, InlineCitationText } from '@/components/ai-elements/inline-citation'
@@ -22,14 +21,10 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
 } from '@/components/ai-elements/prompt-input'
-import { Suggestion, Suggestions } from '@/components/ai-elements/suggestion'
+import { SuggestionButton } from '@/components/assistant/suggestion-button'
 import { ProductCitation } from '@/components/rag/product-citation'
 import { Button } from '@/components/ui/button'
-import {
-  ASSISTANT_EMPTY_DESCRIPTION,
-  ASSISTANT_GREETING,
-  SUGGESTED_QUESTIONS,
-} from '@/lib/assistant-data'
+import { SUGGESTED_QUESTIONS_WITH_ICONS } from '@/lib/assistant-data'
 import type { FullRagChatMessageMetadata } from '@/lib/rag/types'
 
 const MAX_FILES = 2
@@ -136,10 +131,21 @@ export function ChatPanel({
       <Conversation className="flex-1">
         <ConversationContent>
           {messages.length === 0 ? (
-            <ConversationEmptyState
-              description={ASSISTANT_EMPTY_DESCRIPTION}
-              title={ASSISTANT_GREETING}
-            />
+            showSuggestedQuestions ? (
+              <div className="flex h-full items-center justify-center p-4">
+                <div className="grid w-full gap-2.5 grid-cols-2">
+                  {SUGGESTED_QUESTIONS_WITH_ICONS.map(item => (
+                    <SuggestionButton
+                      key={item.text}
+                      display={item.text}
+                      icon={item.icon}
+                      prompt={item.text}
+                      sendMessage={({ text }) => handleSuggestion(text)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : null
           ) : (
             messages.map(msg => {
               const imageParts = msg.parts.filter(
@@ -202,16 +208,6 @@ export function ChatPanel({
           >
             Retry
           </Button>
-        </div>
-      )}
-
-      {messages.length === 0 && showSuggestedQuestions && (
-        <div className="border-t border-border px-4 py-3">
-          <Suggestions>
-            {SUGGESTED_QUESTIONS.map(q => (
-              <Suggestion key={q} suggestion={q} onClick={handleSuggestion} />
-            ))}
-          </Suggestions>
         </div>
       )}
 
