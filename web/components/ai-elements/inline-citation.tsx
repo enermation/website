@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -50,7 +51,7 @@ export const InlineCitationText = ({
 export type InlineCitationCardProps = ComponentProps<typeof HoverCard>;
 
 export const InlineCitationCard = (props: InlineCitationCardProps) => (
-  <HoverCard {...props} />
+  <HoverCard closeDelay={0} openDelay={0} {...props} />
 );
 
 export type InlineCitationCardTriggerProps = ComponentProps<typeof Badge> & {

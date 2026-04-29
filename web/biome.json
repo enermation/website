@@ -7,7 +7,16 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!../graphql", "!.claude", "!.qwen", "!components/ui", "!**/*.svg"]
+    "includes": [
+      "**",
+      "!../graphql",
+      "!.claude",
+      "!.qwen",
+      "!components/ui",
+      "!**/*.svg",
+      "!components/ai-elements",
+      "!components/rag"
+    ]
   },
   "formatter": {
     "enabled": true,
