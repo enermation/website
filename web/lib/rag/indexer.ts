@@ -11,12 +11,21 @@ import {
   QDRANT_VECTOR_SIZE,
 } from '@/lib/rag/constants'
 import { embedDocuments } from '@/lib/rag/embed'
-import { UpsertError } from '@/lib/rag/errors'
 import { enqueueJob, setLastReindex } from '@/lib/rag/queue'
 import { withRetry } from '@/lib/rag/retry'
 import type { ProductChunkMetadata } from '@/lib/rag/types'
 import { getClient, resolveVehicleMetafields } from '@/lib/shopify'
 import type { ShopifyProduct } from '@/lib/types'
+
+// Qdrant requires point IDs to be unsigned integers or UUIDs.
+// Deterministic hash of a string handle → positive integer.
+function handleToIntId(handle: string): number {
+  let hash = 0
+  for (let i = 0; i < handle.length; i++) {
+    hash = (Math.imul(31, hash) + handle.charCodeAt(i)) | 0
+  }
+  return Math.abs(hash)
+}
 
 async function ensureCollection(client: QdrantClient): Promise<void> {
   const exists = await client.collectionExists(QDRANT_COLLECTION)
@@ -32,7 +41,7 @@ async function ensureCollection(client: QdrantClient): Promise<void> {
 
 async function upsertBatchWithRetry(
   client: QdrantClient,
-  items: Array<{ id: string; vector: number[]; payload: Record<string, unknown> }>
+  items: Array<{ id: number; vector: number[]; payload: Record<string, unknown> }>
 ): Promise<void> {
   await withRetry(
     async () => {
@@ -57,10 +66,11 @@ async function upsertBatchWithRetry(
 
 async function deleteByIds(client: QdrantClient, ids: string[]): Promise<void> {
   if (ids.length === 0) return
+  const intIds = ids.map(handleToIntId)
   await withRetry(
     async () => {
       await client.delete(QDRANT_COLLECTION, {
-        points: ids,
+        points: intIds,
       })
     },
     { retries: 6 }
@@ -69,12 +79,13 @@ async function deleteByIds(client: QdrantClient, ids: string[]): Promise<void> {
 
 function buildChunksAndVectors(
   enrichedProducts: ShopifyProduct[]
-): Array<{ id: string; vector: number[]; payload: ProductChunkMetadata }> {
+): Array<{ id: number; handle: string; vector: number[]; payload: ProductChunkMetadata }> {
   return enrichedProducts.map(product => {
     const collections = product.collections?.edges.map(e => e.node.handle) ?? []
     const chunk = chunkFromShopifyProduct(product, collections)
     return {
-      id: chunk.id,
+      id: handleToIntId(chunk.id),
+      handle: chunk.id,
       vector: [] as number[], // filled by caller
       payload: chunk.metadata,
     }

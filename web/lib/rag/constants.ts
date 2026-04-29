@@ -1,6 +1,6 @@
-export const EMBED_MODEL = 'voyage-3-large'
+export const EMBED_MODEL = 'embed-english-v3.0'
 export const EMBED_DIMENSIONS = 1024
-export const RERANK_MODEL = 'rerank-2.5'
+export const RERANK_MODEL = 'rerank-v3.5'
 
 export const DEFAULT_CHAT_PROVIDER = 'anthropic'
 export const DEFAULT_ANTHROPIC_MODEL = 'claude-haiku-4-5'

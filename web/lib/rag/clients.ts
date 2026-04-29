@@ -2,7 +2,6 @@ import { anthropic } from '@ai-sdk/anthropic'
 import { groq } from '@ai-sdk/groq'
 import { QdrantClient } from '@qdrant/qdrant-js'
 import { Redis } from '@upstash/redis'
-import { VoyageAIClient } from 'voyageai'
 import {
   DEFAULT_ANTHROPIC_MODEL,
   DEFAULT_CHAT_PROVIDER,
@@ -21,18 +20,9 @@ type AnthropicModel = ReturnType<typeof anthropic>
 type GroqModel = ReturnType<typeof groq>
 type ChatModel = AnthropicModel | GroqModel
 
-let voyageClient: VoyageAIClient | undefined
 let redisClient: Redis | undefined
 let qdrantClient: QdrantClient | undefined
 let chatModelInstance: ChatModel | undefined
-
-export function getVoyageClient(): VoyageAIClient {
-  if (!voyageClient) {
-    const apiKey = getRequiredEnv('VOYAGE_API_KEY')
-    voyageClient = new VoyageAIClient({ apiKey })
-  }
-  return voyageClient
-}
 
 export function getQdrantClient(): QdrantClient {
   if (!qdrantClient) {
