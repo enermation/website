@@ -14,7 +14,7 @@ import type { ResolvedSpec, ShopifyCollection, ShopifyProduct, ShopifyShopInfo }
 // The Storefront API lacks `unauthenticated_read_metafields` scope in the
 // Headless channel, so metafields are fetched server-side via the Admin API.
 
-async function adminGraphQL<T>(query: string): Promise<{ data: T | null }> {
+export async function adminGraphQL<T>(query: string): Promise<{ data: T | null }> {
   const domain = process.env.PUBLIC_STORE_DOMAIN ?? process.env.SHOPIFY_ADMIN_STORE_DOMAIN ?? ''
   const token = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN ?? ''
   const res = await fetch(`https://${domain}/admin/api/2026-04/graphql.json`, {

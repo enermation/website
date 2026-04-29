@@ -1,16 +1,10 @@
-import { mdiCalendar, mdiCar, mdiFuel, mdiSpeedometer } from '@mdi/js'
+import { mdiCalendar, mdiCog, mdiFuel, mdiShieldCheck } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { productPage } from '@/lib/data'
 import type { ShopifyProduct } from '@/lib/types'
-import {
-  cn,
-  formatPrice,
-  metaValue,
-  parseVehicleDescription,
-  parseVehicleFromTitle,
-} from '@/lib/utils'
+import { cn, formatPrice } from '@/lib/utils'
 
 type CarCardProps = {
   product: ShopifyProduct
@@ -21,15 +15,14 @@ export function CarCard({ product }: CarCardProps) {
   const { amount, currencyCode } = product.priceRange.minVariantPrice
   const price = formatPrice(amount, currencyCode)
 
-  // Derive make from title — not stored as metafields
-  const { make: makeFromTitle } = parseVehicleFromTitle(product.title)
-  const make = makeFromTitle ?? product.vendor
+  const resolvedSpecs = product.resolvedSpecs ?? []
+  const getSpec = (namespace: string, key: string) =>
+    resolvedSpecs.find(s => s.namespace === namespace && s.key === key)?.value ?? null
 
-  const year = metaValue(product.year)
-  const fuelType = metaValue(product.fuelType)
-
-  const mileage =
-    parseVehicleDescription(product.description).find(s => s.label === 'Mileage')?.value ?? null
+  const year = getSpec('custom', 'model_year')
+  const fuelType = getSpec('shopify', 'fuel-supply')
+  const transmission = getSpec('shopify', 'transmission-type')
+  const itemCondition = getSpec('shopify', 'item-condition')
 
   return (
     <Link href={`/products/${product.handle}`} className="flex flex-col group">
@@ -62,16 +55,20 @@ export function CarCard({ product }: CarCardProps) {
 
       <div className="mt-4 grid grid-cols-2 gap-y-1 border-t border-border-subtle px-2 pt-3 pb-1 md:hidden">
         <div className="flex items-center gap-2 px-2 py-1">
-          <Icon path={mdiCar} size={1} className="size-3.5 text-heading shrink-0" />
-          <span className="font-body font-medium text-13 text-foreground truncate">{make}</span>
+          <Icon path={mdiCog} size={1} className="size-3.5 text-heading shrink-0" />
+          <span className="font-body font-medium text-13 text-foreground truncate">
+            {transmission}
+          </span>
         </div>
         <div className="flex items-center gap-2 px-2 py-1">
           <Icon path={mdiFuel} size={1} className="size-3.5 text-heading shrink-0" />
           <span className="font-body font-medium text-13 text-foreground truncate">{fuelType}</span>
         </div>
         <div className="flex items-center gap-2 px-2 py-1">
-          <Icon path={mdiSpeedometer} size={1} className="size-3.5 text-heading shrink-0" />
-          <span className="font-body font-medium text-13 text-foreground truncate">{mileage}</span>
+          <Icon path={mdiShieldCheck} size={1} className="size-3.5 text-heading shrink-0" />
+          <span className="font-body font-medium text-13 text-foreground truncate">
+            {itemCondition}
+          </span>
         </div>
         <div className="flex items-center gap-2 px-2 py-1">
           <Icon path={mdiCalendar} size={1} className="size-3.5 text-heading shrink-0" />
@@ -80,21 +77,26 @@ export function CarCard({ product }: CarCardProps) {
       </div>
 
       <div className="mt-3 hidden grid-cols-2 gap-y-1 border-t border-border-subtle pt-2 md:grid">
-        {[
-          { icon: mdiCar, label: make },
-          { icon: mdiFuel, label: fuelType },
-          { icon: mdiSpeedometer, label: mileage },
-          { icon: mdiCalendar, label: year },
-        ]
-          .filter(row => row.label)
-          .map(({ icon: iconPath, label }) => (
-            <div key={label} className="flex items-center gap-2 px-2 py-1">
-              <Icon path={iconPath} size={1} className="size-3.5 text-heading shrink-0" />
-              <span className="font-body font-medium text-13 text-foreground truncate">
-                {label}
-              </span>
-            </div>
-          ))}
+        <div className="flex items-center gap-2 px-2 py-1">
+          <Icon path={mdiCog} size={1} className="size-3.5 text-heading shrink-0" />
+          <span className="font-body font-medium text-13 text-foreground truncate">
+            {transmission}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 px-2 py-1">
+          <Icon path={mdiFuel} size={1} className="size-3.5 text-heading shrink-0" />
+          <span className="font-body font-medium text-13 text-foreground truncate">{fuelType}</span>
+        </div>
+        <div className="flex items-center gap-2 px-2 py-1">
+          <Icon path={mdiShieldCheck} size={1} className="size-3.5 text-heading shrink-0" />
+          <span className="font-body font-medium text-13 text-foreground truncate">
+            {itemCondition}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 px-2 py-1">
+          <Icon path={mdiCalendar} size={1} className="size-3.5 text-heading shrink-0" />
+          <span className="font-body font-medium text-13 text-foreground truncate">{year}</span>
+        </div>
       </div>
 
       <div className="mt-3 hidden flex-1 flex-col px-1 pb-4 md:flex">
