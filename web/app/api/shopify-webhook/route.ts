@@ -1,8 +1,10 @@
 import { revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { enqueueJob } from '@/lib/rag/queue'
+
 /**
- * Shopify webhook handler for cache invalidation.
+ * Shopify webhook handler for cache invalidation + RAG index updates.
  *
  * Configure these webhooks in Shopify Admin → Settings → Notifications → Webhooks:
  *   - products/create   → POST /api/shopify-webhook
@@ -14,6 +16,9 @@ import { NextResponse } from 'next/server'
  *
  * Aligns with next-cache-components: uses revalidateTag() for background
  * revalidation so the next request sees fresh data.
+ *
+ * For product events, also enqueues a RAG index job (non-blocking, processed
+ * by the /api/rag/process-queue cron endpoint).
  */
 export async function POST(request: Request) {
   const topic = request.headers.get('x-shopify-topic')
@@ -32,13 +37,36 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid webhook signature' }, { status: 401 })
   }
 
-  // Route by topic to the right cache tag
+  // Route by topic to the right cache tag + RAG job
   switch (topic) {
     case 'products/create':
-    case 'products/update':
-    case 'products/delete':
+    case 'products/update': {
       revalidateTag('products', 'max')
+      try {
+        const payload = JSON.parse(body)
+        const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
+        if (handle) {
+          await enqueueJob(handle, 'upsert')
+        }
+      } catch {
+        // parse error — still revalidated cache above
+      }
       break
+    }
+
+    case 'products/delete': {
+      revalidateTag('products', 'max')
+      try {
+        const payload = JSON.parse(body)
+        const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
+        if (handle) {
+          await enqueueJob(handle, 'delete')
+        }
+      } catch {
+        // parse error — still revalidated cache above
+      }
+      break
+    }
 
     case 'collections/create':
     case 'collections/update':
@@ -52,6 +80,12 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({ handled: true, topic, shop })
+}
+
+function extractHandleFromUrl(adminUrl: string | undefined): string | null {
+  if (!adminUrl || typeof adminUrl !== 'string') return null
+  const match = adminUrl.match(/\/products\/([^/?#]+)/)
+  return match ? match[1] : null
 }
 
 async function computeHmac(body: string, secret?: string): Promise<string | null> {
