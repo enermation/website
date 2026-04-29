@@ -24,6 +24,7 @@ import { CopyButton } from '@/components/ui/copy-button'
 import { ProductCitation } from '@/components/rag/product-citation'
 import { Button } from '@/components/ui/button'
 import { SpeechInput } from '@/components/ai-elements/speech-input'
+import { useTimeBasedGreeting } from '@/hooks/use-time-based-greeting'
 import { SUGGESTED_QUESTIONS_WITH_ICONS } from '@/lib/assistant-data'
 import type { FullRagChatMessageMetadata } from '@/lib/rag/types'
 
@@ -119,6 +120,8 @@ export function ChatPanel({
     [sendMessage]
   )
 
+  const greeting = useTimeBasedGreeting()
+
   const handleSpeechTranscription = useCallback((text: string) => {
     setInputValue(text)
   }, [])
@@ -143,18 +146,42 @@ export function ChatPanel({
         <ConversationContent>
           {messages.length === 0 ? (
             showSuggestedQuestions ? (
-              <div className="flex h-full items-center justify-center p-4">
-                <div className="grid w-full gap-2 grid-cols-2">
-                  {SUGGESTED_QUESTIONS_WITH_ICONS.map(item => (
-                    <SuggestionButton
-                      key={item.text}
-                      display={item.text}
-                      icon={item.icon}
-                      prompt={item.text}
-                      sendMessage={({ text }) => handleSuggestion(text)}
-                      className="p-3 text-xs"
+              <div className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8">
+                <div className="w-full max-w-2xl space-y-6 sm:space-y-8">
+                  <div className="flex flex-col items-center space-y-3 text-center sm:space-y-4">
+                    <Image
+                      alt="Enermation"
+                      className="h-8 w-8 object-contain"
+                      height={32}
+                      src="/chat-logo-32.webp"
+                      width={32}
                     />
-                  ))}
+                    {greeting ? (
+                      <h1
+                        key={greeting}
+                        className="animate-in fade-in slide-in-from-bottom-4 font-sans text-2xl font-normal text-foreground duration-500 sm:text-3xl md:text-4xl"
+                        suppressHydrationWarning
+                      >
+                        {greeting}
+                      </h1>
+                    ) : (
+                      <div className="font-sans text-2xl sm:text-3xl md:text-4xl" />
+                    )}
+                    <p className="font-sans text-sm text-muted-foreground sm:text-base">
+                      Ask me about vehicles or parts
+                    </p>
+                  </div>
+                  <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3">
+                    {SUGGESTED_QUESTIONS_WITH_ICONS.map(item => (
+                      <SuggestionButton
+                        key={item.text}
+                        display={item.text}
+                        icon={item.icon}
+                        prompt={item.text}
+                        sendMessage={({ text }) => handleSuggestion(text)}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
             ) : null
@@ -287,18 +314,6 @@ export function ChatPanel({
                 size="icon"
                 variant="ghost"
               />
-              <PromptInputSubmit
-                className={
-                  isSendDisabled
-                    ? 'bg-muted text-muted-foreground hover:bg-muted'
-                    : 'bg-foreground text-background hover:opacity-90'
-                }
-                disabled={isSendDisabled}
-                onStop={status === 'streaming' ? stop : undefined}
-                size="icon"
-                status={status}
-                type="submit"
-              />
             </div>
             <PromptInputTextarea
               className="font-sans text-sm"
@@ -306,6 +321,18 @@ export function ChatPanel({
               onChange={e => setInputValue(e.target.value)}
               placeholder="Ask about vehicles or parts..."
               value={inputValue}
+            />
+            <PromptInputSubmit
+              className={
+                isSendDisabled
+                  ? 'bg-muted text-muted-foreground hover:bg-muted'
+                  : 'bg-foreground text-background hover:opacity-90'
+              }
+              disabled={isSendDisabled}
+              onStop={status === 'streaming' ? stop : undefined}
+              size="icon"
+              status={status}
+              type="submit"
             />
           </PromptInputFooter>
         </PromptInputBody>
