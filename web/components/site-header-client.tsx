@@ -62,7 +62,7 @@ function menuItemIcon(
   if (normalized.includes('commercial') || normalized.includes('heavy')) return Truck
 
   if (normalized.includes('van')) return Van
-  if (normalized.includes('jeep') || normalized.includes('suv')) return Jeep
+  if (normalized.includes('jeep') || normalized.includes('suv')) return Car
   if (normalized.includes('estate') || normalized.includes('station')) return Car
   if (normalized.includes('hatchback') || normalized.includes('compact')) return Car
   if (normalized.includes('pickup') || normalized.includes('ute')) return Car
@@ -93,7 +93,7 @@ function MobileNavAccordion({ item, onClose }: { item: HeaderNavItem; onClose: (
         )}
         aria-expanded={expanded}
       >
-        <Car className="size-5 text-white-50" aria-hidden="true" />
+        <Car className="size-5 text-white-50" aria-hidden={true} />
         <span className="flex-1 text-left">{item.label}</span>
         {hasChildren && (
           <ChevronRightIcon
@@ -101,7 +101,7 @@ function MobileNavAccordion({ item, onClose }: { item: HeaderNavItem; onClose: (
               'size-4 text-white-50 transition-transform duration-200',
               expanded && 'rotate-90'
             )}
-            aria-hidden="true"
+            aria-hidden={true}
           />
         )}
       </button>
@@ -120,7 +120,7 @@ function MobileNavAccordion({ item, onClose }: { item: HeaderNavItem; onClose: (
               >
                 {(() => {
                   const IconComponent = menuItemIcon(child.label)
-                  return <IconComponent className="size-4" aria-hidden="true" />
+                  return <IconComponent className="size-4" aria-hidden={true} />
                 })()}
                 <span>{child.label}</span>
               </Link>
@@ -131,7 +131,7 @@ function MobileNavAccordion({ item, onClose }: { item: HeaderNavItem; onClose: (
               >
                 {(() => {
                   const IconComponent = menuItemIcon(child.label)
-                  return <IconComponent className="size-4" aria-hidden="true" />
+                  return <IconComponent className="size-4" aria-hidden={true} />
                 })()}
                 <span>{child.label}</span>
               </span>
@@ -158,18 +158,18 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
           )}
         >
           {item.label}
-          {hasChildren && <ChevronDownIcon className="size-3" aria-hidden="true" />}
+          {hasChildren && <ChevronDownIcon className="size-3" aria-hidden={true} />}
         </Link>
       ) : (
         <span className="inline-flex items-center gap-1 rounded-md px-2 py-1 font-heading text-13 font-semibold uppercase tracking-wide text-background">
           {item.label}
-          {hasChildren && <ChevronDownIcon className="size-3" aria-hidden="true" />}
+          {hasChildren && <ChevronDownIcon className="size-3" aria-hidden={true} />}
         </span>
       )}
 
       {hasChildren && (
         <div
-          aria-hidden="true"
+          aria-hidden={true}
           className={cn(
             'pointer-events-none invisible absolute left-1/2 top-full z-50 -translate-x-1/2 pt-2 opacity-0 transition-opacity transition-[visibility] duration-150',
             'group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100',
@@ -198,7 +198,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                       )}
                     >
                       <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
-                        <IconComponent className="size-3.5" aria-hidden="true" />
+                        <IconComponent className="size-3.5" aria-hidden={true} />
                       </span>
                       <span>{child.label}</span>
                     </Link>
@@ -208,7 +208,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                       className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-on-dark-muted"
                     >
                       <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
-                        <IconComponent className="size-3.5" aria-hidden="true" />
+                        <IconComponent className="size-3.5" aria-hidden={true} />
                       </span>
                       <span>{child.label}</span>
                     </span>
@@ -229,7 +229,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                     )}
                   >
                     <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
-                      <IconComponent className="size-3.5" aria-hidden="true" />
+                      <IconComponent className="size-3.5" aria-hidden={true} />
                     </span>
                     <span>{child.label}</span>
                   </Link>
@@ -239,7 +239,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                     className="inline-flex items-center gap-2 rounded-lg px-2 py-2 font-body text-base text-on-dark-muted"
                   >
                     <span className="inline-flex size-7 items-center justify-center rounded-md border border-white-30 bg-white-20">
-                      <IconComponent className="size-3.5" aria-hidden="true" />
+                      <IconComponent className="size-3.5" aria-hidden={true} />
                     </span>
                     <span>{child.label}</span>
                   </span>
@@ -261,7 +261,7 @@ function DesktopNavItem({ item }: { item: HeaderNavItem }) {
                 <p className="mt-1 font-body text-sm text-background">{featured.label}</p>
                 <span className="mt-2 inline-flex items-center gap-1 font-heading text-13 text-background">
                   {headerDropdownCopy.browseLabel}
-                  <ArrowRightIcon className="size-3.5" aria-hidden="true" />
+                  <ArrowRightIcon className="size-3.5" aria-hidden={true} />
                 </span>
               </Link>
             )}
@@ -326,7 +326,7 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                 )}
                 aria-label="Open cart"
               >
-                <ShoppingCart className="size-5" aria-hidden="true" />
+                <ShoppingCart className="size-5" aria-hidden={true} />
                 {totalItemCount > 0 && (
                   <Badge className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-green px-1 p-0 font-heading text-11 font-semibold text-background">
                     {totalItemCount}
@@ -377,7 +377,7 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                 )}
                 aria-label="Open cart"
               >
-                <ShoppingCart className="size-5" aria-hidden="true" />
+                <ShoppingCart className="size-5" aria-hidden={true} />
                 {totalItemCount > 0 && (
                   <Badge className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-green px-1 p-0 font-heading text-11 font-semibold text-background">
                     {totalItemCount}
@@ -465,15 +465,15 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                               onClick={() => setMobileOpen(false)}
                             >
                               {item.label === 'Home' ? (
-                                <Home className="size-5 text-white-50" aria-hidden="true" />
+                                <Home className="size-5 text-white-50" aria-hidden={true} />
                               ) : (
-                                <Car className="size-5 text-white-50" aria-hidden="true" />
+                                <Car className="size-5 text-white-50" aria-hidden={true} />
                               )}
                               {item.label}
                             </Link>
                           ) : (
                             <p className="flex items-center gap-3 rounded-lg px-4 py-3 font-heading text-13 font-semibold uppercase tracking-wide text-background">
-                              <Car className="size-5 text-white-50" aria-hidden="true" />
+                              <Car className="size-5 text-white-50" aria-hidden={true} />
                               {item.label}
                             </p>
                           )}

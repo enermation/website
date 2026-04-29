@@ -11,7 +11,7 @@ export default function AssistantPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex flex-1 flex-col overflow-hidden">
+      <main className="fixed inset-0 flex flex-col overflow-hidden">
         <ChatPanel api="/api/rag/chat" />
       </main>
     </>

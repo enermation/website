@@ -7,20 +7,8 @@ import { DefaultChatTransport } from 'ai'
 import Image from 'next/image'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  Conversation,
-  ConversationContent,
-  ConversationScrollButton,
-} from '@/components/ai-elements/conversation'
-import {
-  Message,
-  MessageContent,
   MessageResponse,
 } from '@/components/ai-elements/message'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
 import {
   PromptInputBody,
   PromptInputFooter,
@@ -33,11 +21,16 @@ import { VoiceWaveform } from '@/components/ai-elements/voice-waveform'
 import { CopyButton } from '@/components/ui/copy-button'
 import { Button } from '@/components/ui/button'
 import { ProductCitation } from '@/components/rag/product-citation'
-import { SuggestionButton } from '@/components/assistant/suggestion-button'
+import { SuggestionButton } from '@/components/ui/suggestion-button'
 import { useTimeBasedGreeting } from '@/hooks/use-time-based-greeting'
 import { SUGGESTED_QUESTIONS_WITH_ICONS } from '@/lib/assistant-data'
 import type { FullRagChatMessageMetadata } from '@/lib/rag/types'
 import { cn } from '@/lib/utils'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 
 const MAX_FILES = 2
 const MAX_FILE_SIZE = 4 * 1024 * 1024
@@ -381,84 +374,102 @@ export function ChatPanel({
   return (
     <PromptInputProvider>
       <div className="flex h-full flex-col overflow-hidden">
-        {/* Conversation area */}
-        <div className="flex flex-1 overflow-hidden">
-          <Conversation className="flex-1">
-            <ConversationContent className="pb-32 sm:pb-40">
-              {messages.length === 0 ? (
-                showSuggestedQuestions ? (
-                  <div className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8">
-                    <div className="w-full max-w-2xl space-y-6 sm:space-y-8">
-                      <div className="flex flex-col items-center space-y-3 text-center sm:space-y-4">
-                        <Image
-                          alt="Enermation"
-                          className="h-8 w-8 object-contain"
-                          height={32}
-                          src="/chat-logo-32.webp"
-                          width={32}
-                        />
-                        {greeting ? (
-                          <h1
-                            key={greeting}
-                            className="animate-in fade-in slide-in-from-bottom-4 font-sans text-2xl font-normal text-foreground duration-500 sm:text-3xl md:text-4xl"
-                            suppressHydrationWarning
-                          >
-                            {greeting}
-                          </h1>
-                        ) : (
-                          <div className="font-sans text-2xl sm:text-3xl md:text-4xl" />
-                        )}
-                        <p className="font-sans text-sm text-muted-foreground sm:text-base">
-                          Ask me about vehicles or parts
-                        </p>
-                      </div>
-                      <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3">
-                        {SUGGESTED_QUESTIONS_WITH_ICONS.map(item => (
-                          <SuggestionButton
-                            key={item.text}
-                            display={item.text}
-                            icon={item.icon}
-                            prompt={item.text}
-                            sendMessage={({ text }) => handleSuggestion(text)}
-                          />
-                        ))}
-                      </div>
-                    </div>
+        {/* Messages area — scrolls, prompt bar is sticky INSIDE this */}
+        <div className="flex-1 overflow-y-auto">
+          {messages.length === 0 && showSuggestedQuestions && (
+            <div className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8">
+              <div className="w-full max-w-2xl space-y-6 sm:space-y-8">
+                <div className="space-y-3 text-center sm:space-y-4">
+                  <div className="flex justify-center">
+                    <Image
+                      src="/chat-logo-32.webp"
+                      alt="Enermation"
+                      width={32}
+                      height={32}
+                      className="h-8 w-8 object-contain"
+                    />
                   </div>
-                ) : null
-              ) : (
-                <div className="space-y-4 container px-3 mt-12 md:mt-30 py-6 max-w-4xl mx-auto sm:space-y-6 sm:px-4 sm:py-8 md:px-12">
-                  {messages.map((msg, index) => {
-                    // Skip streaming assistant messages (they'll be replaced when complete)
-                    if (msg.role === 'assistant' && status === 'streaming' && index === messages.length - 1) {
-                      return null
-                    }
-
-                    if (msg.role === 'user') {
-                      return <UserMessage key={msg.id} message={msg} />
-                    }
-
-                    return (
-                      <AssistantMessage
-                        key={msg.id}
-                        message={msg}
-                        citations={citations}
-                        hasCitations={hasCitations}
-                      />
-                    )
-                  })}
-
-                  {/* Thinking indicator when streaming */}
-                  {(status === 'submitted' || status === 'streaming') && (
-                    <div className="mt-4">
-                      <ThinkingIndicator />
-                    </div>
+                  {greeting ? (
+                    <h2
+                      key={greeting}
+                      className="font-sans text-2xl font-normal text-foreground sm:text-3xl md:text-4xl animate-in fade-in slide-in-from-bottom-4 duration-500"
+                      suppressHydrationWarning
+                    >
+                      {greeting}
+                    </h2>
+                  ) : (
+                    <div className="font-sans text-2xl font-normal text-foreground sm:text-3xl md:text-4xl" />
                   )}
+                  <p className="font-sans text-sm text-muted-foreground sm:text-base">
+                    Ask me about vehicles or parts
+                  </p>
                 </div>
-              )}
-            </ConversationContent>
-            <ConversationScrollButton />
-          </Conversation>
+
+                <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3">
+                  {SUGGESTED_QUESTIONS_WITH_ICONS.map(item => (
+                    <SuggestionButton
+                      key={item.text}
+                      display={item.text}
+                      prompt={item.text}
+                      sendMessage={({ text }) => handleSuggestion(text)}
+                      icon={item.icon}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-4 container px-3 py-6 max-w-4xl mx-auto sm:space-y-6 sm:px-4 sm:py-8 md:px-12">
+            {messages.map((msg, index) => {
+              if (msg.role === 'user') {
+                return <UserMessage key={msg.id} message={msg} />
+              }
+              if (status === 'streaming' && index === messages.length - 1) {
+                return null
+              }
+              return (
+                <AssistantMessage
+                  key={msg.id}
+                  message={msg}
+                  citations={citations}
+                  hasCitations={hasCitations}
+                />
+              )
+            })}
+
+            {(status === 'submitted' || status === 'streaming') && (
+              <div className="flex items-center gap-2 sm:gap-3">
+                <Image
+                  src="/chat-logo-32.webp"
+                  alt="Thinking"
+                  width={32}
+                  height={32}
+                  className="h-6 w-6 flex-shrink-0 animate-spin sm:h-6 sm:w-6"
+                />
+                <div className="flex items-center gap-2 font-sans text-xs text-muted-foreground sm:text-sm">
+                  <span className="text-sm">Thinking </span>
+                  <div className="flex gap-1">
+                    <div
+                      className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground"
+                      style={{ animationDelay: '0ms' }}
+                    />
+                    <div
+                      className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground"
+                      style={{ animationDelay: '150ms' }}
+                    />
+                    <div
+                      className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground"
+                      style={{ animationDelay: '300ms' }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Spacer for sticky prompt bar clearance */}
+            <div className="h-28" aria-hidden />
+          </div>
         </div>
 
         {/* Error bar */}
@@ -505,11 +516,11 @@ export function ChatPanel({
           </div>
         )}
 
-        {/* Prompt input area */}
-        <div className="shrink-0 border-t border-border p-3 sm:p-4">
-          <div className="mx-auto max-w-3xl">
+        {/* Prompt input — fixed overlay at viewport bottom */}
+        <div className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-6 pt-3 sm:px-4 sm:pb-6">
+          <div className="max-w-3xl mx-auto">
             {error && (
-              <div className="mb-2 rounded-t-lg border border-destructive/30 bg-destructive px-3 py-2 text-sm text-destructive-foreground">
+              <div className="mb-2 rounded-lg border border-destructive/30 bg-destructive px-3 py-2 text-sm text-destructive-foreground">
                 <div className="flex items-center justify-between gap-2">
                   <span>{error}</span>
                   <button
@@ -523,7 +534,6 @@ export function ChatPanel({
               </div>
             )}
 
-            {/* Voice waveform when recording */}
             {recordingStream && (
               <div className="mb-2">
                 <VoiceWaveform stream={recordingStream} />
@@ -538,10 +548,11 @@ export function ChatPanel({
               </div>
             )}
 
-            <div className="rounded-2xl border border-border bg-background shadow-sm">
+            <div className="relative rounded-2xl border border-border/80 bg-background shadow-sm shadow-foreground/5">
+              <div className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
               <form onSubmit={handleFormSubmit}>
                 <PromptInputBody>
-                  <PromptInputFooter className="px-4 py-2">
+                  <PromptInputFooter className="px-4 py-3">
                     <input
                       accept="image/jpeg,image/png,image/webp"
                       className="hidden"
@@ -554,13 +565,13 @@ export function ChatPanel({
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex h-7 w-7 items-center justify-center text-muted-foreground hover:opacity-70 transition-opacity"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                         aria-label="Attach file"
                       >
                         <Paperclip className="h-4 w-4" />
                       </button>
                       <SpeechInput
-                        className="size-7"
+                        className="size-8"
                         onAudioRecorded={async () => ''}
                         onTranscriptionChange={handleSpeechTranscription}
                         onClick={recordingStream ? handleStopRecording : handleStartRecording}
