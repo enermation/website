@@ -7,7 +7,7 @@ import {
   GET_SHOP_INFO,
   SEARCH_PRODUCTS,
 } from '@/lib/queries'
-import type { ShopifyCollection, ShopifyProduct, ShopifyShopInfo } from '@/lib/types'
+import type { ResolvedSpec, ShopifyCollection, ShopifyProduct, ShopifyShopInfo } from '@/lib/types'
 
 // ── Admin API (for metafield + metaobject resolution) ─────────────────────────
 //
@@ -25,15 +25,26 @@ async function adminGraphQL<T>(query: string): Promise<{ data: T | null }> {
   return res.json() as Promise<{ data: T | null }>
 }
 
-type RawMetafield = { namespace: string; key: string; value: string; type: string }
+type RawMetafield = {
+  namespace: string
+  key: string
+  value: string
+  type: string
+  definition: { name: string } | null
+}
 
 async function fetchProductMetafieldsAdmin(productId: string): Promise<RawMetafield[]> {
   const { data } = await adminGraphQL<{
     product: { metafields: { edges: { node: RawMetafield }[] } } | null
   }>(
-    `{ product(id: "${productId}") { metafields(first: 20) { edges { node { namespace key value type } } } } }`
+    `{ product(id: "${productId}") { metafields(first: 50) { edges { node { namespace key value type definition { name } } } } } }`
   )
   return data?.product?.metafields?.edges.map(e => e.node) ?? []
+}
+
+function metafieldLabel(mf: RawMetafield): string {
+  if (mf.definition?.name) return mf.definition.name
+  return mf.key.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
 }
 
 function getRequiredEnv(
@@ -105,34 +116,81 @@ async function resolveMetaobjectLabel(value: string | null): Promise<string | nu
   return metaobjectLabel(data?.metaobject ?? null)
 }
 
-// Fetches vehicle metafields via Admin API (Storefront API lacks the required
-// unauthenticated_read_metafields scope in the Headless channel), then resolves
-// list.metaobject_reference GIDs to human-readable labels.
+async function resolveAllMetaobjectLabels(value: string | null): Promise<string[]> {
+  const gids = parseMetaobjectGIDs(value)
+  if (gids.length === 0) return []
+  const results = await Promise.all(
+    gids.map(async gid => {
+      const { data } = await adminGraphQL<{ metaobject: Metaobject | null }>(
+        `{ metaobject(id: "${gid}") { id type handle fields { key value } } }`
+      )
+      return metaobjectLabel(data?.metaobject ?? null)
+    })
+  )
+  return results.filter((l): l is string => l !== null)
+}
+
+// Fetches ALL product metafields via Admin API and resolves them dynamically.
+// - list.metaobject_reference / metaobject_reference → resolved to labels via Admin API
+// - All other types → raw value used directly
+// - vehicle-features is separated into resolvedFeatures (not a spec row)
+// Adding new metafields in Shopify automatically surfaces them here.
 export async function resolveVehicleMetafields(product: ShopifyProduct): Promise<ShopifyProduct> {
   const raw = await fetchProductMetafieldsAdmin(product.id)
-  const get = (ns: string, key: string) =>
-    raw.find(m => m.namespace === ns && m.key === key) ?? null
 
-  const yearMf = get('custom', 'model_year')
-  const transmissionMf = get('shopify', 'transmission-type')
-  const conditionMf = get('shopify', 'item-condition')
-  const fuelTypeMf = get('shopify', 'fuel-supply')
-  const driveTypeMf = get('shopify', 'drive-type')
+  const FEATURES_KEY = 'shopify.vehicle-features'
+  const specFields = raw.filter(mf => `${mf.namespace}.${mf.key}` !== FEATURES_KEY)
+  const featuresMf = raw.find(mf => `${mf.namespace}.${mf.key}` === FEATURES_KEY) ?? null
 
-  const [transmissionLabel, conditionLabel, fuelTypeLabel, driveTypeLabel] = await Promise.all([
-    resolveMetaobjectLabel(transmissionMf?.value ?? null),
-    resolveMetaobjectLabel(conditionMf?.value ?? null),
-    resolveMetaobjectLabel(fuelTypeMf?.value ?? null),
-    resolveMetaobjectLabel(driveTypeMf?.value ?? null),
-  ])
+  const resolvedSpecsRaw = await Promise.all(
+    specFields.map(async mf => {
+      let value: string | null = null
+      if (mf.type === 'list.metaobject_reference') {
+        const labels = await resolveAllMetaobjectLabels(mf.value)
+        value = labels.join(', ') || null
+      } else if (mf.type === 'metaobject_reference') {
+        value = await resolveMetaobjectLabel(mf.value)
+      } else {
+        value = mf.value || null
+      }
+      if (!value) return null
+      return {
+        namespace: mf.namespace,
+        key: mf.key,
+        label: metafieldLabel(mf),
+        value,
+      } satisfies ResolvedSpec
+    })
+  )
+
+  const resolvedSpecs = resolvedSpecsRaw.filter((s): s is ResolvedSpec => s !== null)
+  const resolvedFeatures = await resolveAllMetaobjectLabels(featuresMf?.value ?? null)
+
+  const getResolved = (ns: string, key: string) =>
+    resolvedSpecs.find(s => s.namespace === ns && s.key === key)?.value ?? null
 
   return {
     ...product,
-    year: yearMf ? { value: yearMf.value, type: yearMf.type } : null,
-    transmission: { value: transmissionLabel, type: transmissionMf?.type ?? null },
-    condition: { value: conditionLabel, type: conditionMf?.type ?? null },
-    fuelType: { value: fuelTypeLabel, type: fuelTypeMf?.type ?? null },
-    driveType: { value: driveTypeLabel, type: driveTypeMf?.type ?? null },
+    resolvedSpecs,
+    resolvedFeatures,
+    // Named fields kept for RAG chunk compatibility
+    year: getResolved('custom', 'model_year')
+      ? { value: getResolved('custom', 'model_year')!, type: 'number_integer' }
+      : null,
+    transmission: {
+      value: getResolved('shopify', 'transmission-type'),
+      type: 'list.metaobject_reference',
+    },
+    condition: {
+      value: getResolved('shopify', 'item-condition'),
+      type: 'list.metaobject_reference',
+    },
+    fuelType: { value: getResolved('shopify', 'fuel-supply'), type: 'list.metaobject_reference' },
+    driveType: { value: getResolved('shopify', 'drive-type'), type: 'list.metaobject_reference' },
+    vehicleFeatures:
+      resolvedFeatures.length > 0
+        ? { value: resolvedFeatures.join(','), type: featuresMf?.type ?? null }
+        : null,
   }
 }
 

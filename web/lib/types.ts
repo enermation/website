@@ -21,6 +21,15 @@ export type ShopifyMetafield = {
   type: string | null
 }
 
+// A fully resolved metafield ready for display — label comes from the Shopify
+// metafield definition name, value is already human-readable (GIDs resolved).
+export type ResolvedSpec = {
+  namespace: string
+  key: string
+  label: string
+  value: string
+}
+
 // Vehicle-specific metafields (from shopify.* and custom.* namespaces)
 // Metaobject references are stored as JSON arrays of GIDs.
 // Resolution (parsing GIDs → label strings) happens at the data layer.
@@ -36,6 +45,7 @@ export type VehicleMetafields = {
   condition: ShopifyMetafield | null // shopify.item-condition → list.metaobject_reference
   engine: ShopifyMetafield | null // not set on Shopify
   driveType: ShopifyMetafield | null // shopify.drive-type → list.metaobject_reference
+  vehicleFeatures: ShopifyMetafield | null // shopify.vehicle-features → list.metaobject_reference (comma-joined labels after resolution)
 }
 
 // Variant shape returned by GET_PRODUCT_BY_HANDLE (full detail).
@@ -79,6 +89,11 @@ export type ShopifyProduct = {
   condition: ShopifyMetafield | null
   engine: ShopifyMetafield | null
   driveType: ShopifyMetafield | null
+  vehicleFeatures: ShopifyMetafield | null
+  // Dynamically resolved specs for display — populated by resolveVehicleMetafields.
+  // Optional because Storefront API responses don't include this field.
+  resolvedSpecs?: ResolvedSpec[]
+  resolvedFeatures?: string[]
 }
 
 export type ShopifyProductMinimal = Pick<

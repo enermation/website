@@ -191,6 +191,8 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
                 description={product.description}
                 variants={variants}
                 defaultVariantId={variants[0]?.id}
+                resolvedSpecs={product.resolvedSpecs ?? []}
+                resolvedFeatures={product.resolvedFeatures ?? []}
               />
             </div>
 

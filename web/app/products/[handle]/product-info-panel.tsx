@@ -16,19 +16,12 @@ import {
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { productPage } from '@/lib/data'
 import { matchFeature } from '@/lib/features'
-import type { ShopifyProductVariant } from '@/lib/types'
-import { cn, formatPrice, parseVehicleDescription } from '@/lib/utils'
+import type { ResolvedSpec, ShopifyProductVariant } from '@/lib/types'
+import { cn, formatPrice } from '@/lib/utils'
 
-const TECH_SPEC_LABELS = new Set([
-  'Displacement',
-  'Max output',
-  'Drivetrain',
-  'Drive modes',
-  'Steering Modes',
-  'Suspension',
-  'Chassis',
-  'Frame',
-])
+// Metafields listed here appear in the collapsible "Stats & Performance" section
+// rather than the main key specs table. Add shopify.* keys as needed.
+const TECH_SPEC_KEYS = new Set<string>([])
 
 function SpecTable({ rows }: { rows: { label: string; value: string }[] }) {
   return (
@@ -56,6 +49,8 @@ type ProductInfoPanelProps = {
   description: string
   variants: ShopifyProductVariant[]
   defaultVariantId?: string
+  resolvedSpecs: ResolvedSpec[]
+  resolvedFeatures: string[]
 }
 
 export function ProductInfoPanel({
@@ -65,6 +60,8 @@ export function ProductInfoPanel({
   description,
   variants,
   defaultVariantId,
+  resolvedSpecs,
+  resolvedFeatures,
 }: ProductInfoPanelProps) {
   const [selectedVariantId, setSelectedVariantId] = useState<string>(
     defaultVariantId ?? variants[0]?.id ?? ''
@@ -83,55 +80,29 @@ export function ProductInfoPanel({
       option => option.name !== 'Title' && option.value !== 'Default Title'
     ) ?? []
 
-  const parsed = parseVehicleDescription(description)
-
-  const vehicleSpecLines = parsed
-    .filter(line => line.label !== 'Equipment')
-    .map(line => ({ label: line.label, value: line.value }))
-
-  const equipmentRaw = parsed
-    .filter(line => line.label === 'Equipment')
-    .map(line => line.value)
-    .join(' ')
-
-  const equipmentItems = equipmentRaw
-    ? equipmentRaw
-        .split(/[,/]/)
-        .map(s => s.trim())
-        .filter(Boolean)
-    : []
-
-  const hasStructuredSpecs = vehicleSpecLines.some(l => l.label !== '')
+  const equipmentItems = resolvedFeatures
 
   const allSpecRows = [
     ...specOptions.map(o => ({ label: o.name, value: o.value })),
-    ...vehicleSpecLines.filter(l => l.label !== ''),
-  ].filter(r => r.value)
+    ...resolvedSpecs,
+  ]
 
-  const keySpecRows = allSpecRows.filter(r => !TECH_SPEC_LABELS.has(r.label))
-  const techSpecRows = allSpecRows.filter(r => TECH_SPEC_LABELS.has(r.label))
+  const hasStructuredSpecs = allSpecRows.length > 0
 
-  const ICON_FEATURE_LABELS = new Set([
-    'android auto',
-    'apple carplay',
-    'cruise control',
-    'heated seats',
-    'navigation',
-    'parking camera',
-    'parking sensors',
-    'touchscreen infotainment',
-  ])
+  const keySpecRows = allSpecRows.filter(r => {
+    const id = 'namespace' in r ? `${r.namespace}.${r.key}` : null
+    return id === null || !TECH_SPEC_KEYS.has(id)
+  })
+  const techSpecRows = allSpecRows.filter(r => {
+    const id = 'namespace' in r ? `${r.namespace}.${r.key}` : null
+    return id !== null && TECH_SPEC_KEYS.has(id)
+  })
 
-  const matchedFeatures = equipmentItems
+  const iconFeatures = equipmentItems
     .map(item => ({ item, icon: matchFeature(item) }))
     .filter((f): f is { item: string; icon: string } => f.icon !== null)
 
-  const iconFeatures = matchedFeatures.filter(f => ICON_FEATURE_LABELS.has(f.item.toLowerCase()))
-  const extraMatchedFeatures = matchedFeatures.filter(
-    f => !ICON_FEATURE_LABELS.has(f.item.toLowerCase())
-  )
-  const unmatchedFeatures = equipmentItems.filter(item => matchFeature(item) === null)
-  const moreFeatures = [...extraMatchedFeatures.map(f => f.item), ...unmatchedFeatures]
+  const moreFeatures = equipmentItems.filter(item => matchFeature(item) === null)
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
