@@ -132,6 +132,23 @@ export function ChatPanel({
     return !hasText && !hasValidAttachments
   }, [inputValue, pendingFiles])
 
+  const handleFormSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      if (isSendDisabled) return
+      const text = inputValue.trim()
+      const files: FileUIPart[] = pendingFiles.map(pf => ({
+        type: 'file' as const,
+        mediaType: pf.file.type,
+        url: pf.preview,
+        filename: pf.file.name,
+      }))
+      handleSubmit({ text, files })
+      setInputValue('')
+    },
+    [isSendDisabled, inputValue, pendingFiles, handleSubmit]
+  )
+
   const lastMsg = messages[messages.length - 1]
   const citations =
     lastMsg?.role === 'assistant' && lastMsg.metadata != null
@@ -254,7 +271,7 @@ export function ChatPanel({
       )}
 
       {pendingFiles.length > 0 && (
-        <div className="flex flex-wrap gap-2 border-t border-border px-4 py-2">
+        <div className="flex flex-wrap gap-2 px-4 py-2">
           {pendingFiles.map(({ preview, file }, fileIdx) => {
             const fileKey = `file-${fileIdx}`
             return (
@@ -280,69 +297,68 @@ export function ChatPanel({
         </div>
       )}
 
-      <form
-        className="border-t border-border"
-        onSubmit={e => {
-          e.preventDefault()
-          if (isSendDisabled) return
-          const text = inputValue.trim()
-          const files: FileUIPart[] = pendingFiles.map(pf => ({
-            type: 'file' as const,
-            mediaType: pf.file.type,
-            url: pf.preview,
-            filename: pf.file.name,
-          }))
-          handleSubmit({ text, files })
-          setInputValue('')
-        }}
-      >
-        <PromptInputBody>
-          <PromptInputFooter className="px-4 py-2">
-            <input
-              accept="image/jpeg,image/png,image/webp"
-              className="hidden"
-              multiple
-              onChange={handleFileChange}
-              ref={fileInputRef}
-              type="file"
-            />
-            <div className="flex shrink-0 items-center gap-1">
-              <SpeechInput
-                className="size-7"
-                onAudioRecorded={async () => ''}
-                onTranscriptionChange={handleSpeechTranscription}
-                size="icon"
-                variant="ghost"
-              />
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 p-3 sm:p-4">
+        <div className="pointer-events-auto mx-auto max-w-3xl">
+          {error && (
+            <div className="mb-2 rounded-t-lg border border-destructive/30 bg-destructive px-3 py-2 text-sm text-destructive-foreground">
+              <div className="flex items-center justify-between gap-2">
+                <span>{error}</span>
+                <button
+                  className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-destructive-foreground/10"
+                  onClick={() => setError(null)}
+                  type="button"
+                >
+                  <XMarkIcon className="h-4 w-4" />
+                </button>
+              </div>
             </div>
-            <PromptInputTextarea
-              className="font-sans text-sm"
-              name="message"
-              onChange={e => setInputValue(e.target.value)}
-              placeholder="Ask about vehicles or parts..."
-              value={inputValue}
-            />
-            <PromptInputSubmit
-              className={
-                isSendDisabled
-                  ? 'bg-muted text-muted-foreground hover:bg-muted'
-                  : 'bg-foreground text-background hover:opacity-90'
-              }
-              disabled={isSendDisabled}
-              onStop={status === 'streaming' ? stop : undefined}
-              size="icon"
-              status={status}
-              type="submit"
-            />
-          </PromptInputFooter>
-        </PromptInputBody>
-      </form>
-
-      {error && (
-        <div className="border-t border-border px-4 py-2">
-          <span className="text-13 text-muted-foreground">{error}</span>
+          )}
+          <div className="rounded-2xl border border-border bg-background shadow-sm">
+            <form onSubmit={handleFormSubmit}>
+              <PromptInputBody>
+                <PromptInputFooter className="px-4 py-2">
+                  <input
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    multiple
+                    onChange={handleFileChange}
+                    ref={fileInputRef}
+                    type="file"
+                  />
+                  <div className="flex shrink-0 items-center gap-1">
+                    <SpeechInput
+                      className="size-7"
+                      onAudioRecorded={async () => ''}
+                      onTranscriptionChange={handleSpeechTranscription}
+                      size="icon"
+                      variant="ghost"
+                    />
+                  </div>
+                  <PromptInputTextarea
+                    className="font-sans text-sm"
+                    name="message"
+                    onChange={e => setInputValue(e.target.value)}
+                    placeholder="Ask about vehicles or parts..."
+                    value={inputValue}
+                  />
+                  <PromptInputSubmit
+                    className={
+                      isSendDisabled
+                        ? 'bg-muted text-muted-foreground hover:bg-muted'
+                        : 'bg-foreground text-background hover:opacity-90'
+                    }
+                    disabled={isSendDisabled}
+                    onStop={status === 'streaming' ? stop : undefined}
+                    size="icon"
+                    status={status}
+                    type="submit"
+                  />
+                </PromptInputFooter>
+              </PromptInputBody>
+            </form>
+          </div>
         </div>
-      )}
+      </div>
     </PromptInputProvider>
   )
 }
