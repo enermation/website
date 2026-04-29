@@ -47,8 +47,9 @@ export function ChatWidget() {
       className={cn(
         'chat-widget-in',
         'fixed z-50 flex flex-col overflow-hidden border-border bg-background p-0 gap-0',
-        'bottom-4 right-4 w-(--size-widget-w) h-(--size-widget-h) rounded-2xl shadow-2xl',
-        'sm:bottom-6 sm:right-6'
+        'inset-x-4 bottom-4 rounded-2xl shadow-2xl',
+        'sm:bottom-6 sm:right-6 sm:left-auto sm:w-(--size-widget-w) sm:h-(--size-widget-h) sm:max-h-(--size-widget-h)',
+        'h-[100dvh] max-h-[100dvh]'
       )}
       onWheel={e => e.stopPropagation()}
     >

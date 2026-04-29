@@ -581,8 +581,8 @@ export function ChatPanel({
           </div>
         )}
 
-        {/* Prompt input — fixed overlay at viewport bottom */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-6 pt-3 sm:px-4 sm:pb-6">
+        {/* Prompt input — sticky footer inside the card's flex column */}
+        <div className="flex-shrink-0 px-3 pb-6 pt-3 sm:px-4 sm:pb-6">
           <div className="max-w-3xl mx-auto">
             {error && (
               <div className="mb-2 rounded-lg border border-destructive/30 bg-destructive px-3 py-2 text-sm text-destructive-foreground">
