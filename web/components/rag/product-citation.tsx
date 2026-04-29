@@ -19,7 +19,7 @@ export function ProductCitation({ product }: ProductCitationProps) {
     <Link
       href={`/products/${product.handle}`}
       className={cn(
-        'group block overflow-hidden rounded-xl border border-border bg-card',
+        'group mx-auto block w-full max-w-72 overflow-hidden rounded-xl border border-border bg-card sm:max-w-sm',
         'transition-all duration-200 hover:border-border/60 hover:shadow-md',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
       )}

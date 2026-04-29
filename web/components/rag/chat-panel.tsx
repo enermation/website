@@ -212,7 +212,6 @@ function AssistantMessage({
           )}
 
           {blocks ? (
-            // Interleaved: paragraph → product card → paragraph → product card → verdict
             <div className="space-y-4">
               {blocks.map((block, i) => (
                 <div key={i} className="space-y-3">
