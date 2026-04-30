@@ -161,9 +161,7 @@ export function FilterBar({
                           </label>
                           <Select
                             value={active[dim.key] ?? 'Show All'}
-                            onValueChange={value =>
-                              updateParam(FILTER_PARAM_MAP[dim.key] ?? dim.key, value)
-                            }
+                            onValueChange={value => updateParam(dim.key, value)}
                             disabled={isPending}
                           >
                             <SelectTrigger
