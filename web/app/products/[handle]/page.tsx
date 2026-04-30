@@ -72,13 +72,10 @@ async function SimilarCarsSection({
     return (
       <section className="bg-muted py-12 md:py-16">
         <div className="mx-auto max-w-site px-4 md:px-6">
-          <div className="mb-8 flex items-center justify-between md:mb-10">
-            <h2 className="font-display text-2xl uppercase tracking-widest text-heading md:text-section">
+          <div className="mb-8 flex items-center justify-center md:mb-10">
+            <h2 className="flex-1 text-center font-display text-2xl uppercase tracking-widest text-heading md:text-section">
               {productPage.sections.youMayAlsoLike}
             </h2>
-            <div className="hidden md:block">
-              <StripeBar />
-            </div>
           </div>
           <p className="font-body text-15 text-muted-foreground">No similar listings found.</p>
           <div className="mt-8 flex justify-center md:mt-12">
@@ -97,13 +94,10 @@ async function SimilarCarsSection({
   return (
     <section className="bg-muted py-12 md:py-16">
       <div className="mx-auto max-w-site px-4 md:px-6">
-        <div className="mb-8 flex items-center justify-between md:mb-10">
-          <h2 className="font-display text-2xl uppercase tracking-widest text-heading md:text-section">
+        <div className="mb-8 flex items-center justify-center md:mb-10">
+          <h2 className="flex-1 text-center font-display text-2xl uppercase tracking-widest text-heading md:text-section">
             {productPage.sections.youMayAlsoLike}
           </h2>
-          <div className="hidden md:block">
-            <StripeBar />
-          </div>
         </div>
         <AnimatedSection className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {similarCars.map(car => (

@@ -271,11 +271,13 @@ function MyComponent({
 
 ### Icon System
 
-- **Library**: `@mdi/js` (icon paths) + `@mdi/react` (Icon component)
-- **Import**: `import { mdiIconName } from '@mdi/js'` and `import { Icon } from '@mdi/react'`
-- **Usage**: `<Icon path={mdiIconName} size={1} className="size-4" />` — `size={1}` renders at 24px; use Tailwind `size-*` classes on the Icon for other sizes
-- **Default size**: Icons without an explicit `size-*` class default to `size-4` (set by parent component styles via `[&_svg:not([class*='size-'])]:size-4`)
-- IMPORTANT: If Figma MCP returns a localhost asset URL for an SVG icon, use it directly — do not substitute an MDI icon unless it is a clear match
+- **Libraries**: `@heroicons/react` (outline/solid) + `lucide-react` (outline/fill) — use whichever best fits the design
+- **Heroicons Import**: `import { IconName } from '@heroicons/react/24/outline'` or `@heroicons/react/24/solid'`
+- **Lucide Import**: `import { IconName } from 'lucide-react'`
+- **Usage**: `<IconName className="size-5" />` — prefer `size-*` Tailwind classes over hardcoded pixel values
+- **Default size**: Icons without an explicit `size-*` class default to `size-5` (set by parent via `[&_svg:not([class*='size-'])]:size-5`)
+- IMPORTANT: If Figma MCP returns a localhost asset URL for an SVG icon, use it directly — do not substitute an icon library unless it is a clear match
+- **Deprecated**: `@mdi/js` and `@mdi/react` are uninstalled and must NOT be used
 
 ### Styling Rules
 
