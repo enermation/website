@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Suspense } from 'react'
 
-import { FooterStayConnected } from '@/components/footer-stay-connected'
-import { footerContent, footerSocialLinks } from '@/lib/data'
+import { FooterOfficeMap } from '@/components/footer-office-map'
+import { footerSocialLinks } from '@/lib/data'
 import type { FooterNavGroup } from '@/lib/header-navigation'
 import { cn } from '@/lib/utils'
 
@@ -107,17 +107,14 @@ export function SiteFooter({ exploreGroups }: SiteFooterProps) {
         <FooterWordmark />
       </div>
 
-      <div className="grid-layout footer-grid relative grid-rows-[auto_auto_28px] !gap-y-10 pb-2 pt-4 lg:grid-rows-[auto] lg:items-end lg:!gap-y-2 lg:py-0">
+      <div className="grid-layout footer-grid relative grid-rows-[auto_auto_28px] gap-y-6 pb-2 pt-4 lg:grid grid-cols-12 lg:grid-rows-1 lg:items-end lg:gap-0 lg:py-0">
         <div className="col-start-1 col-end-5 row-start-1 flex flex-col gap-6 border-b border-white-30 pb-4 lg:col-start-7 lg:col-end-9 lg:border-none lg:pb-0">
           {exploreGroups.map(group => (
             <FooterNavLinks key={group.title} links={group.children} title={group.title} />
           ))}
         </div>
 
-        <FooterStayConnected
-          content={footerContent}
-          className="col-start-1 col-end-5 row-start-2 hidden lg:row-auto lg:flex"
-        />
+        <FooterOfficeMap className="col-start-1 col-end-5 row-start-2 lg:col-start-1 lg:col-end-5 lg:row-start-auto" />
 
         {/* Mobile: social + copyright at bottom */}
         <div className="col-span-full row-start-3 flex flex-col justify-end gap-y-2 lg:hidden">

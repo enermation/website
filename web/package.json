@@ -51,6 +51,7 @@
     "input-otp": "^1.4.2",
     "lamina": "^1.2.2",
     "lucide-react": "^1.14.0",
+    "maplibre-gl": "^5.24.0",
     "media-chrome": "^4.19.0",
     "motion": "^12.38.0",
     "nanoid": "^5.1.9",

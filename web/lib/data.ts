@@ -370,6 +370,38 @@ export const collectionStories: RelatedStory[] = [
 
 // â”€â”€ Dealer info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
+export type OfficeLocation = {
+  id: string
+  name: string
+  address: string
+  lat: number
+  lng: number
+}
+
+export const officeLocations: OfficeLocation[] = [
+  {
+    id: 'pakistan',
+    name: 'Pakistan',
+    address: 'Karachi, Pakistan',
+    lat: 24.8607,
+    lng: 67.0011,
+  },
+  {
+    id: 'usa',
+    name: 'USA',
+    address: 'New York, USA',
+    lat: 40.7128,
+    lng: -74.006,
+  },
+  {
+    id: 'dubai',
+    name: 'UAE',
+    address: 'Dubai, UAE',
+    lat: 25.2048,
+    lng: 55.2708,
+  },
+]
+
 export const dealerInfo = {
   name: 'Enermation Supercars',
   address: 'Preston, Lancashire, UK',
