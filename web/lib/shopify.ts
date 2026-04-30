@@ -241,11 +241,10 @@ export async function resolveMetaobjectLabelsBatch(gids: string[]): Promise<Map<
 
 // ── Admin API: Collection products ──────────────────────────────────────────────
 //
-// Fetches all products in a collection via Admin API with all vehicle metafields
-// inlined in a single query — no per-product metafield calls needed.
+// Fetches all products in a collection, then resolves ALL metafields per-product
+// in parallel (same approach as the product detail page). Metaobject GIDs are
+// batched into a single nodes() query to avoid N×M Admin API calls.
 
-// Raw product shape returned by GET_PRODUCTS_ADMIN (Admin API) with aliased metafields
-type RawAdminProductMetafield = { value: string | null }
 type RawAdminProduct = {
   id: string
   title: string
@@ -261,22 +260,6 @@ type RawAdminProduct = {
     minVariantPrice: { amount: string; currencyCode: string }
     maxVariantPrice?: { amount: string; currencyCode: string }
   }
-  // Aliased metafield responses from Admin API
-  vehicle_make: RawAdminProductMetafield | null
-  vehicle_model: RawAdminProductMetafield | null
-  vehicle_year: RawAdminProductMetafield | null
-  vehicle_mileage: RawAdminProductMetafield | null
-  vehicle_colour: RawAdminProductMetafield | null
-  vehicle_fuel_type: RawAdminProductMetafield | null
-  vehicle_transmission: RawAdminProductMetafield | null
-  vehicle_origin_country: RawAdminProductMetafield | null
-  vehicle_condition: RawAdminProductMetafield | null
-  vehicle_engine: RawAdminProductMetafield | null
-  shopify_transmission_type: { value: string | null; type?: string | null } | null
-  shopify_item_condition: { value: string | null; type?: string | null } | null
-  shopify_fuel_supply: { value: string | null; type?: string | null } | null
-  shopify_drive_type: { value: string | null; type?: string | null } | null
-  shopify_vehicle_features: { value: string | null; type?: string | null } | null
 }
 
 function buildProductFromRawAdmin(
@@ -284,15 +267,10 @@ function buildProductFromRawAdmin(
   resolvedSpecs: ResolvedSpec[],
   resolvedFeatures: string[]
 ): ShopifyProduct {
-  // Helper to get a raw vehicle text metafield value
-  const getVehicleText = (field: RawAdminProductMetafield | null): string => {
-    return field?.value ?? ''
-  }
-
-  // Helper to resolve a shopify.* metaobject field from resolvedSpecs
-  const getShopifyResolved = (key: string): string | null => {
-    return resolvedSpecs.find(s => s.namespace === 'shopify' && s.key === key)?.value ?? null
-  }
+  const getSpec = (ns: string, key: string) =>
+    resolvedSpecs.find(s => s.namespace === ns && s.key === key)?.value ?? null
+  // Search by key across all namespaces for fields whose namespace varies per store config
+  const getSpecByKey = (key: string) => resolvedSpecs.find(s => s.key === key)?.value ?? null
 
   return {
     id: node.id,
@@ -300,47 +278,28 @@ function buildProductFromRawAdmin(
     handle: node.handle,
     vendor: node.vendor,
     description: node.description ?? '',
-    availableForSale: true, // Admin API doesn't expose this; assume available
+    availableForSale: true,
     createdAt: node.createdAt,
     tags: node.tags,
     images: node.images,
     priceRange: node.priceRange,
-    variants: { edges: [] }, // Admin API doesn't expose variants on the product connection
+    variants: { edges: [] },
     resolvedSpecs,
     resolvedFeatures,
-    // Inlined vehicle fields from actual metafields
-    make: { value: getVehicleText(node.vehicle_make) || null, type: 'single_line_text_field' },
-    model: { value: getVehicleText(node.vehicle_model) || null, type: 'single_line_text_field' },
-    year: { value: getVehicleText(node.vehicle_year) || null, type: 'number_integer' },
-    mileage: {
-      value: getVehicleText(node.vehicle_mileage) || null,
-      type: 'single_line_text_field',
-    },
-    colour: { value: getVehicleText(node.vehicle_colour) || null, type: 'single_line_text_field' },
-    fuelType: {
-      value: (getShopifyResolved('fuel-supply') ?? getVehicleText(node.vehicle_fuel_type)) || null,
-      type: 'list.metaobject_reference',
-    },
+    make: { value: getSpecByKey('make'), type: 'single_line_text_field' },
+    model: { value: getSpecByKey('model'), type: 'single_line_text_field' },
+    year: { value: getSpec('custom', 'model_year'), type: 'number_integer' },
+    mileage: { value: getSpecByKey('mileage'), type: 'single_line_text_field' },
+    colour: { value: getSpecByKey('colour'), type: 'single_line_text_field' },
+    fuelType: { value: getSpec('shopify', 'fuel-supply'), type: 'list.metaobject_reference' },
     transmission: {
-      value:
-        (getShopifyResolved('transmission-type') ?? getVehicleText(node.vehicle_transmission)) ||
-        null,
+      value: getSpec('shopify', 'transmission-type'),
       type: 'list.metaobject_reference',
     },
-    condition: {
-      value:
-        (getShopifyResolved('item-condition') ?? getVehicleText(node.vehicle_condition)) || null,
-      type: 'list.metaobject_reference',
-    },
-    driveType: {
-      value: getShopifyResolved('drive-type') || null,
-      type: 'list.metaobject_reference',
-    },
-    originCountry: {
-      value: getVehicleText(node.vehicle_origin_country) || null,
-      type: 'single_line_text_field',
-    },
-    engine: { value: getVehicleText(node.vehicle_engine) || null, type: 'single_line_text_field' },
+    condition: { value: getSpec('shopify', 'item-condition'), type: 'list.metaobject_reference' },
+    driveType: { value: getSpec('shopify', 'drive-type'), type: 'list.metaobject_reference' },
+    originCountry: { value: getSpecByKey('origin_country'), type: 'single_line_text_field' },
+    engine: { value: getSpecByKey('engine'), type: 'single_line_text_field' },
     vehicleFeatures:
       resolvedFeatures.length > 0
         ? { value: resolvedFeatures.join(','), type: 'list.metaobject_reference' }
@@ -407,141 +366,63 @@ export async function fetchCollectionProductsAdmin(
 
   if (!data?.collection) return null
 
-  // Collect all metaobject GIDs across all products for batch resolution
+  const productEdges = data.collection.products.edges
+
+  // Fetch all metafields for every product in parallel (gets correct namespace/key regardless of store config)
+  const allRawMetafields = await Promise.all(
+    productEdges.map(({ node }) => fetchProductMetafieldsAdmin(node.id))
+  )
+
+  // Collect all unique metaobject GIDs across all products for batch resolution
   const allGids: string[] = []
-  const productGids: Map<string, string[]> = new Map()
-
-  const shopifyMetaobjectFields = [
-    'shopify_transmission_type',
-    'shopify_item_condition',
-    'shopify_fuel_supply',
-    'shopify_drive_type',
-    'shopify_vehicle_features',
-  ] as const
-
-  for (const { node } of data.collection.products.edges) {
-    const gids: string[] = []
-    for (const key of shopifyMetaobjectFields) {
-      const mf = node[key]
-      if (mf?.value) {
-        try {
-          const parsed = JSON.parse(mf.value) as string[]
-          if (Array.isArray(parsed)) {
-            for (const gid of parsed) {
-              if (typeof gid === 'string') {
-                gids.push(gid)
-                if (!allGids.includes(gid)) allGids.push(gid)
-              }
-            }
-          }
-        } catch {
-          /* skip malformed JSON */
+  for (const rawMfs of allRawMetafields) {
+    for (const mf of rawMfs) {
+      if (mf.type === 'list.metaobject_reference' || mf.type === 'metaobject_reference') {
+        for (const gid of parseMetaobjectGIDs(mf.value)) {
+          if (!allGids.includes(gid)) allGids.push(gid)
         }
       }
     }
-    productGids.set(node.id, gids)
   }
 
   // Batch-resolve all metaobject labels in ONE query
   const resolvedLabels = await resolveMetaobjectLabelsBatch(allGids)
 
-  // Build resolved specs and features per product
-  const products: ShopifyProduct[] = data.collection.products.edges.map(({ node }) => {
-    // Build resolvedSpecs from vehicle.* text metafields
-    const resolvedSpecs: ResolvedSpec[] = [
-      { namespace: 'vehicle', key: 'make', label: 'Make', value: node.vehicle_make?.value ?? '' },
-      {
-        namespace: 'vehicle',
-        key: 'model',
-        label: 'Model',
-        value: node.vehicle_model?.value ?? '',
-      },
-      { namespace: 'vehicle', key: 'year', label: 'Year', value: node.vehicle_year?.value ?? '' },
-      {
-        namespace: 'vehicle',
-        key: 'mileage',
-        label: 'Mileage',
-        value: node.vehicle_mileage?.value ?? '',
-      },
-      {
-        namespace: 'vehicle',
-        key: 'colour',
-        label: 'Colour',
-        value: node.vehicle_colour?.value ?? '',
-      },
-      {
-        namespace: 'vehicle',
-        key: 'fuel_type',
-        label: 'Fuel Type',
-        value: node.vehicle_fuel_type?.value ?? '',
-      },
-      {
-        namespace: 'vehicle',
-        key: 'transmission',
-        label: 'Transmission',
-        value: node.vehicle_transmission?.value ?? '',
-      },
-      {
-        namespace: 'vehicle',
-        key: 'origin_country',
-        label: 'Origin Country',
-        value: node.vehicle_origin_country?.value ?? '',
-      },
-      {
-        namespace: 'vehicle',
-        key: 'condition',
-        label: 'Condition',
-        value: node.vehicle_condition?.value ?? '',
-      },
-      {
-        namespace: 'vehicle',
-        key: 'engine',
-        label: 'Engine',
-        value: node.vehicle_engine?.value ?? '',
-      },
-    ].filter(s => s.value)
+  const FEATURES_KEY = 'shopify.vehicle-features'
 
-    // Resolve shopify.* metaobject fields and merge into resolvedSpecs
-    type ShopifyMetaobjectField = { value: string | null; type?: string | null } | null
-    const shopifyFields: [string, ShopifyMetaobjectField, string][] = [
-      ['transmission-type', node.shopify_transmission_type, 'Transmission'],
-      ['item-condition', node.shopify_item_condition, 'Condition'],
-      ['fuel-supply', node.shopify_fuel_supply, 'Fuel Supply'],
-      ['drive-type', node.shopify_drive_type, 'Drive Type'],
-    ]
-    for (const [key, mf, labelKey] of shopifyFields) {
-      if (mf?.value) {
-        try {
-          const gids = JSON.parse(mf.value) as string[]
-          const labels = gids
-            .map(gid => resolvedLabels.get(gid))
-            .filter((v): v is string => Boolean(v))
-          if (labels.length > 0) {
-            resolvedSpecs.push({
-              namespace: 'shopify',
-              key,
-              label: labelKey,
-              value: labels.join(', '),
-            })
-          }
-        } catch {
-          /* skip */
-        }
-      }
-    }
+  const products: ShopifyProduct[] = productEdges.map(({ node }, i) => {
+    const rawMfs = allRawMetafields[i]
+    const specFields = rawMfs.filter(mf => `${mf.namespace}.${mf.key}` !== FEATURES_KEY)
+    const featuresMf = rawMfs.find(mf => `${mf.namespace}.${mf.key}` === FEATURES_KEY) ?? null
 
-    // Resolve vehicle-features
-    let resolvedFeatures: string[] = []
-    if (node.shopify_vehicle_features?.value) {
-      try {
-        const gids = JSON.parse(node.shopify_vehicle_features.value) as string[]
-        resolvedFeatures = gids
+    const resolvedSpecs: ResolvedSpec[] = []
+    for (const mf of specFields) {
+      let value: string | null = null
+      if (mf.type === 'list.metaobject_reference') {
+        const labels = parseMetaobjectGIDs(mf.value)
           .map(gid => resolvedLabels.get(gid))
           .filter((v): v is string => Boolean(v))
-      } catch {
-        /* skip */
+        value = labels.join(', ') || null
+      } else if (mf.type === 'metaobject_reference') {
+        const gid = parseMetaobjectGIDs(mf.value)[0]
+        value = gid ? (resolvedLabels.get(gid) ?? null) : null
+      } else {
+        value = mf.value || null
       }
+      if (!value) continue
+      resolvedSpecs.push({
+        namespace: mf.namespace,
+        key: mf.key,
+        label: metafieldLabel(mf),
+        value,
+      } satisfies ResolvedSpec)
     }
+
+    const resolvedFeatures = featuresMf
+      ? parseMetaobjectGIDs(featuresMf.value)
+          .map(gid => resolvedLabels.get(gid))
+          .filter((v): v is string => Boolean(v))
+      : []
 
     return buildProductFromRawAdmin(node, resolvedSpecs, resolvedFeatures)
   })

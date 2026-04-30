@@ -527,21 +527,6 @@ export const GET_PRODUCTS_ADMIN = `
                 currencyCode
               }
             }
-            vehicle_make: metafield(namespace: "vehicle", key: "make") { value }
-            vehicle_model: metafield(namespace: "vehicle", key: "model") { value }
-            vehicle_year: metafield(namespace: "vehicle", key: "year") { value }
-            vehicle_mileage: metafield(namespace: "vehicle", key: "mileage") { value }
-            vehicle_colour: metafield(namespace: "vehicle", key: "colour") { value }
-            vehicle_fuel_type: metafield(namespace: "vehicle", key: "fuel_type") { value }
-            vehicle_transmission: metafield(namespace: "vehicle", key: "transmission") { value }
-            vehicle_origin_country: metafield(namespace: "vehicle", key: "origin_country") { value }
-            vehicle_condition: metafield(namespace: "vehicle", key: "condition") { value }
-            vehicle_engine: metafield(namespace: "vehicle", key: "engine") { value }
-            shopify_transmission_type: metafield(namespace: "shopify", key: "transmission-type") { value type }
-            shopify_item_condition: metafield(namespace: "shopify", key: "item-condition") { value type }
-            shopify_fuel_supply: metafield(namespace: "shopify", key: "fuel-supply") { value type }
-            shopify_drive_type: metafield(namespace: "shopify", key: "drive-type") { value type }
-            shopify_vehicle_features: metafield(namespace: "shopify", key: "vehicle-features") { value type }
           }
         }
       }
