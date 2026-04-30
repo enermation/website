@@ -538,12 +538,14 @@ export async function fetchBlogByHandle(blogHandle: string): Promise<{
 
   if (!data?.blog) return null
 
-  const { id, handle, title, description, articles } = data.blog
+  const { id, handle, title, articles } = data.blog
   return {
     id,
     handle,
     title,
-    description: description ?? null,
+    // description not available via Storefront API Blog type
+    // @ts-expect-error — field does not exist on Shopify Blog API object
+    description: null,
     articles: articles.edges.map(e => e.node),
   }
 }
