@@ -164,9 +164,7 @@ async function LatestArrivalsSection() {
 
   return (
     <AnimatedSection className="bg-card">
-      <SectionHeading title="Latest Arrivals for Sale" />
-
-      <div className="mx-auto max-w-site px-4 pb-14 md:px-6 md:pb-16">
+      <div className="mx-auto max-w-site px-4 pb-14 pt-8 md:pt-12 md:px-6 md:pb-16">
         <LatestArrivalsCarousel products={latestArrivals} />
         <div className="mt-12 flex justify-center" data-reveal>
           <Link

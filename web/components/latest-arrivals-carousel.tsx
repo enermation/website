@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  mdiCalendarOutline,
-  mdiCogOutline,
-  mdiGasStation,
-  mdiMapMarkerOutline,
-  mdiShieldCheckOutline,
-} from '@mdi/js'
-import { Icon } from '@mdi/react'
+import { Calendar, Cog, Fuel, ShieldCheck } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -30,9 +23,9 @@ export function LatestArrivalsCarousel({ products }: { products: ShopifyProduct[
       }}
       className="w-full"
     >
-      {/* Heading row — mirrors carsales.com.au: title left, arrows right */}
+      {/* Heading row */}
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="font-display text-xl font-normal text-heading md:text-2xl">
+        <h2 className="flex-1 text-center font-display text-xl font-normal text-heading md:text-2xl">
           Latest Arrivals for Sale
         </h2>
         <div className="flex items-center gap-2">
@@ -58,10 +51,10 @@ export function LatestArrivalsCarousel({ products }: { products: ShopifyProduct[
           const isAvailable = product.availableForSale
 
           const specs = [
-            { icon: mdiCogOutline, label: transmission },
-            { icon: mdiGasStation, label: fuelType },
-            { icon: mdiShieldCheckOutline, label: itemCondition },
-            { icon: mdiCalendarOutline, label: year },
+            { icon: Cog, label: transmission },
+            { icon: Fuel, label: fuelType },
+            { icon: ShieldCheck, label: itemCondition },
+            { icon: Calendar, label: year },
           ].filter(row => row.label)
 
           return (
@@ -94,20 +87,16 @@ export function LatestArrivalsCarousel({ products }: { products: ShopifyProduct[
                   {/* Specs row */}
                   {specs.length > 0 && (
                     <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-                      {specs.map(({ icon, label }) => (
+                      {specs.map(({ icon: IconComponent, label }) => (
                         <div key={label} className="flex items-center gap-1">
-                          <Icon
-                            path={icon}
-                            size={0.7}
-                            className="text-muted-foreground [&_path]:fill-current"
-                          />
+                          <IconComponent className="size-3.5 text-muted-foreground" />
                           <span className="text-xs text-muted-foreground">{label}</span>
                         </div>
                       ))}
                     </div>
                   )}
 
-                  {/* Price + condition footer */}
+                  {/* Price footer */}
                   <div className="mt-auto flex items-end justify-between pt-3">
                     <p
                       className={cn(
@@ -117,16 +106,6 @@ export function LatestArrivalsCarousel({ products }: { products: ShopifyProduct[
                     >
                       {isAvailable ? price : productPage.labels.reservedMoreWanted}
                     </p>
-                    {itemCondition && (
-                      <div className="flex items-center gap-1">
-                        <Icon
-                          path={mdiMapMarkerOutline}
-                          size={0.7}
-                          className="text-muted-foreground [&_path]:fill-current"
-                        />
-                        <span className="text-xs text-muted-foreground">{itemCondition}</span>
-                      </div>
-                    )}
                   </div>
                 </div>
               </Link>

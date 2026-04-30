@@ -543,9 +543,7 @@ export async function fetchBlogByHandle(blogHandle: string): Promise<{
     id,
     handle,
     title,
-    // description not available via Storefront API Blog type
-    // @ts-expect-error — field does not exist on Shopify Blog API object
-    description: null,
+    description: null as unknown as string | null,
     articles: articles.edges.map(e => e.node),
   }
 }
