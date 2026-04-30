@@ -1,4 +1,5 @@
 import { ChevronRightIcon } from 'lucide-react'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -107,6 +108,29 @@ function SectionSkeleton() {
       </div>
     </section>
   )
+}
+
+export const metadata: Metadata = {
+  title: 'Enermation — Automotive Exports',
+  description:
+    'Enermation: Your premier automotive dealership exporting quality used cars and auto spare parts from strategic locations worldwide. Explore our wide selection today!',
+  openGraph: {
+    title: 'Enermation — Automotive Exports',
+    description:
+      'Enermation: Your premier automotive dealership exporting quality used cars and auto spare parts from strategic locations worldwide. Explore our wide selection today!',
+    images: [
+      {
+        url: '/miles_logo.png',
+        alt: 'Enermation — Automotive Exports',
+        width: 1200,
+        height: 630,
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
 }
 
 export default function Home() {

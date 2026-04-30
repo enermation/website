@@ -32,9 +32,10 @@ const body = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Enermation — Supplying the Finest Supercars',
+  metadataBase: new URL('https://www.enermation.com'),
+  title: 'Enermation — Automotive Exports',
   description:
-    "Enermation are internationally renowned for offering a unique selection of some of the world's finest automobiles. The premier supercar dealer in the UK.",
+    'Enermation: Your premier automotive dealership exporting quality used cars and auto spare parts from strategic locations worldwide. Explore our wide selection today!',
   icons: {
     icon: '/miles_logo.png',
     shortcut: '/miles_logo.png',
