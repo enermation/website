@@ -1,6 +1,6 @@
 'use client'
 
-import { Calendar, Car, Gauge, Settings } from 'lucide-react'
+import { CalendarIcon, Cog6ToothIcon, FireIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/carousel'
 import { productPage } from '@/lib/data'
 import type { ShopifyProduct } from '@/lib/types'
-import { cn, formatPrice, metaValue } from '@/lib/utils'
+import { cn, formatPrice } from '@/lib/utils'
 
 export function LatestArrivalsCarousel({ products }: { products: ShopifyProduct[] }) {
   return (
@@ -33,18 +33,14 @@ export function LatestArrivalsCarousel({ products }: { products: ShopifyProduct[
           const { amount, currencyCode } = product.priceRange.minVariantPrice
           const price = formatPrice(amount, currencyCode)
 
-          // Derive make from title — not stored as metafields
-          const make = product.title.split(' ')[0] ?? product.vendor
+          const resolvedSpecs = product.resolvedSpecs ?? []
+          const getSpec = (ns: string, key: string) =>
+            resolvedSpecs.find(s => s.namespace === ns && s.key === key)?.value ?? null
 
-          const year = metaValue(product.year)
-          const transmission = metaValue(product.transmission)
-          const fuelType = metaValue(product.fuelType)
-          const mileage = (() => {
-            const match = product.description.match(/Mileage[:\s]*([^\n,]+)/i)
-            return match ? match[1].trim() : null
-          })()
-
-          const transmissionFuel = [transmission, fuelType].filter(Boolean).join(' / ') || null
+          const year = getSpec('custom', 'model_year')
+          const fuelType = getSpec('shopify', 'fuel-supply')
+          const transmission = getSpec('shopify', 'transmission-type')
+          const itemCondition = getSpec('shopify', 'item-condition')
           const isAvailable = product.availableForSale
 
           return (
@@ -84,10 +80,10 @@ export function LatestArrivalsCarousel({ products }: { products: ShopifyProduct[
                 {/* Details grid — mobile */}
                 <div className="mt-4 grid grid-cols-2 gap-y-1 border-t border-border-subtle px-2 pt-3 pb-1 md:hidden">
                   {[
-                    { icon: Car, label: make },
-                    { icon: Settings, label: transmissionFuel },
-                    { icon: Gauge, label: mileage },
-                    { icon: Calendar, label: year },
+                    { icon: Cog6ToothIcon, label: transmission },
+                    { icon: FireIcon, label: fuelType },
+                    { icon: ShieldCheckIcon, label: itemCondition },
+                    { icon: CalendarIcon, label: year },
                   ]
                     .filter(row => row.label)
                     .map(({ icon: IconComponent, label }) => (
@@ -103,10 +99,10 @@ export function LatestArrivalsCarousel({ products }: { products: ShopifyProduct[
                 {/* Details grid — desktop */}
                 <div className="mt-3 hidden grid-cols-2 gap-y-1 border-t border-border-subtle pt-2 md:grid">
                   {[
-                    { icon: Car, label: make },
-                    { icon: Settings, label: transmissionFuel },
-                    { icon: Gauge, label: mileage },
-                    { icon: Calendar, label: year },
+                    { icon: Cog6ToothIcon, label: transmission },
+                    { icon: FireIcon, label: fuelType },
+                    { icon: ShieldCheckIcon, label: itemCondition },
+                    { icon: CalendarIcon, label: year },
                   ]
                     .filter(row => row.label)
                     .map(({ icon: IconComponent, label }) => (
