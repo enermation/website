@@ -96,7 +96,7 @@ type SiteFooterProps = {
 export function SiteFooter({ exploreGroups }: SiteFooterProps) {
   const pathname = usePathname()
 
-  if (pathname === '/assistant') return null
+  if (pathname === '/miles') return null
 
   return (
     <footer

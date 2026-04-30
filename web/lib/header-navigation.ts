@@ -124,7 +124,7 @@ export async function getHeaderNavigation(): Promise<HeaderNavigation> {
   const items = buildNavItems(collections)
 
   // Add Assistant link
-  items.push({ label: 'Assistant', href: '/assistant', children: [], showOnDesktop: true })
+  items.push({ label: 'Miles', href: '/miles', children: [], showOnDesktop: true })
 
   return {
     items,

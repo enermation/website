@@ -3,8 +3,8 @@ import { ChatPanel } from '@/components/rag/chat-panel'
 import { SiteHeader } from '@/components/site-header'
 
 export const metadata: Metadata = {
-  title: 'Assistant — Enermation',
-  description: 'Chat with Enermation to find vehicles, parts, and more from our inventory.',
+  title: 'Miles — Enermation Assistant',
+  description: 'Chat with Miles to find vehicles, prices, and shipping details instantly.',
 }
 
 export default function AssistantPage() {

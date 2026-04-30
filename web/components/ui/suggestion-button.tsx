@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  BriefcaseIcon,
-  CodeBracketIcon,
-  GlobeAltIcon,
-  UsersIcon,
-} from '@heroicons/react/24/outline'
+import { Car, DollarSign, Truck, Zap } from 'lucide-react'
 import type { ComponentProps, FC } from 'react'
 import type { SuggestionIcon as SuggestionIconType } from '@/lib/assistant-data'
 import { cn } from '@/lib/utils'
@@ -19,10 +14,10 @@ interface SuggestionButtonProps {
 }
 
 const iconMap: Record<SuggestionIconType, FC<{ className?: string }>> = {
-  briefcase: BriefcaseIcon,
-  users: UsersIcon,
-  code: CodeBracketIcon,
-  globe: GlobeAltIcon,
+  car: Car,
+  truck: Truck,
+  bolt: Zap,
+  dollar: DollarSign,
 }
 
 export function SuggestionButton({

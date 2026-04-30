@@ -13,7 +13,7 @@ export function ChatWidget() {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
 
-  if (pathname === '/assistant') {
+  if (pathname === '/miles') {
     return null
   }
 
@@ -31,11 +31,11 @@ export function ChatWidget() {
         type="button"
       >
         <Image
-          alt="Enermation Assistant"
+          alt="Miles"
           className="h-8 w-8 object-contain"
           height={32}
           loading="eager"
-          src="/chat-logo-32.webp"
+          src="/miles_logo.png"
           width={32}
         />
       </button>
@@ -56,10 +56,10 @@ export function ChatWidget() {
       <CardHeader className="flex flex-shrink-0 flex-row items-center justify-between gap-2 border-b border-border px-4 py-3">
         <div className="flex items-center gap-2">
           <Image
-            alt="Enermation"
+            alt="Miles"
             className="h-6 w-6 object-contain"
             height={24}
-            src="/chat-logo-32.webp"
+            src="/miles_logo.png"
             width={24}
           />
           <span className="text-sm font-medium text-foreground">{ASSISTANT_WIDGET_TITLE}</span>

@@ -1,23 +1,18 @@
 // ── Shared metafield fragment ─────────────────────────────────────────────────
 //
-// Actual Shopify structure (from Admin API):
-//   custom.model_year          → number_integer (e.g. "2025")
-//   shopify.transmission-type  → list.metaobject_reference (GIDs like "gid://shopify/Metaobject/...")
+// NOTE: Metafields are NOT fetched via the Storefront API fragment below.
+// `resolveVehicleMetafields()` in shopify.ts fetches ALL product metafields
+// dynamically via the Admin API (fetchProductMetafieldsAdmin), so the fragment
+// here was redundant and has been removed to avoid hardcoded namespace/key
+// coupling.
+//
+// Admin API metafield structure:
+//   custom.model_year          → number_integer
+//   shopify.transmission-type  → list.metaobject_reference (GIDs → labels resolved)
 //   shopify.item-condition     → list.metaobject_reference
 //   shopify.fuel-supply        → list.metaobject_reference
 //   shopify.drive-type         → list.metaobject_reference
-//   shopify.vehicle-features   → list.metaobject_reference (accessories/features)
-//
-// Metaobject reference values are JSON arrays of GIDs. The metaobject labels
-// (e.g. "Automatic", "Used", "Diesel") are resolved via the Admin API.
-
-const PRODUCT_METAFIELDS = `
-  year: metafield(namespace: "custom", key: "model_year") { value type }
-  transmission: metafield(namespace: "shopify", key: "transmission-type") { value type }
-  condition: metafield(namespace: "shopify", key: "item-condition") { value type }
-  fuelType: metafield(namespace: "shopify", key: "fuel-supply") { value type }
-  driveType: metafield(namespace: "shopify", key: "drive-type") { value type }
-`
+//   shopify.vehicle-features   → list.metaobject_reference
 
 const MENU_RESOURCE_FRAGMENT = `
   resource {
@@ -72,7 +67,6 @@ export const GET_ALL_PRODUCTS_FOR_INDEX = `
               }
             }
           }
-          ${PRODUCT_METAFIELDS}
         }
       }
       pageInfo {
@@ -125,8 +119,7 @@ export const GET_ALL_PRODUCTS = `
               }
             }
           }
-          ${PRODUCT_METAFIELDS}
-        }
+                  }
       }
     }
   }
@@ -198,8 +191,7 @@ export const GET_PRODUCT_BY_HANDLE = `
           }
         }
       }
-      ${PRODUCT_METAFIELDS}
-    }
+          }
   }
 `
 
@@ -324,8 +316,7 @@ export const GET_PRODUCTS_IN_COLLECTION = `
                 }
               }
             }
-            ${PRODUCT_METAFIELDS}
-          }
+                      }
         }
       }
     }
@@ -375,8 +366,7 @@ export const GET_RELATED_PRODUCTS_IN_COLLECTION = `
                 }
               }
             }
-            ${PRODUCT_METAFIELDS}
-          }
+                      }
         }
       }
     }

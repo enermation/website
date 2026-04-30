@@ -301,7 +301,7 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
         <div className="flex h-12 items-center rounded-full border border-black-40 bg-black-50 px-3 md:h-12 md:px-7">
           <Link href="/" aria-label="Enermation home" className="shrink-0">
             <img
-              src="/logo.svg"
+              src="/logo.jpg"
               alt="Enermation"
               width={124}
               height={32}
@@ -439,7 +439,7 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                       onClick={() => setMobileOpen(false)}
                     >
                       <img
-                        src="/logo.svg"
+                        src="/logo.jpg"
                         alt="Enermation"
                         width={132}
                         height={34}

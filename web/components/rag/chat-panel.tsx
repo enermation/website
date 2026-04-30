@@ -1,7 +1,7 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
-import { AudioLines, Camera, ChevronRight, Paperclip, Square, X } from 'lucide-react'
+import { AudioLines, Camera, ChevronRight, Hand, Paperclip, Square, X } from 'lucide-react'
 import type { FileUIPart } from 'ai'
 import { DefaultChatTransport } from 'ai'
 import Image from 'next/image'
@@ -203,7 +203,7 @@ function AssistantMessage({
         alt="Enermation"
         className="h-8 w-8 flex-shrink-0"
         height={32}
-        src="/chat-logo-32.webp"
+        src="/miles_logo.png"
         width={32}
       />
       <div className="w-full max-w-full gap-2 sm:gap-3 lg:max-w-5xl flex flex-col">
@@ -258,7 +258,7 @@ function ThinkingIndicator() {
         alt="Thinking"
         className="h-6 w-6 flex-shrink-0 motion-safe:animate-spin sm:h-6 sm:w-6"
         height={24}
-        src="/chat-logo-32.webp"
+        src="/miles_logo.png"
         width={24}
       />
       <div className="flex items-center gap-2 font-sans text-xs text-muted-foreground sm:text-sm">
@@ -456,8 +456,8 @@ export function ChatPanel({
                 <div className="space-y-3 text-center sm:space-y-4">
                   <div className="flex justify-center">
                     <Image
-                      src="/chat-logo-32.webp"
-                      alt="Enermation"
+                      src="/miles_logo.png"
+                      alt="Miles"
                       width={32}
                       height={32}
                       className="h-8 w-8 object-contain"
@@ -475,7 +475,7 @@ export function ChatPanel({
                     <div className="font-sans text-2xl font-normal text-foreground sm:text-3xl md:text-4xl" />
                   )}
                   <p className="font-sans text-sm text-muted-foreground sm:text-base">
-                    Ask me about vehicles or parts
+                    Hi, I'm Miles <Hand className="inline size-4 align-middle" /> — your Enermation assistant. I can help you find vehicles, prices, and shipping details instantly.
                   </p>
                 </div>
 

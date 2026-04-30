@@ -36,9 +36,9 @@ export const metadata: Metadata = {
   description:
     "Enermation are internationally renowned for offering a unique selection of some of the world's finest automobiles. The premier supercar dealer in the UK.",
   icons: {
-    icon: '/logo.svg',
-    shortcut: '/logo.svg',
-    apple: '/logo.svg',
+    icon: '/miles_logo.png',
+    shortcut: '/miles_logo.png',
+    apple: '/miles_logo.png',
   },
 }
 
