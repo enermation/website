@@ -307,14 +307,14 @@
   }
 
   .footer-grid {
-    grid-template-rows: auto auto 28px;
+    grid-template-rows: auto auto 36px;
     row-gap: 2.5rem; /* 40px = gap-y-10 */
   }
 
   @media (min-width: 1024px) {
     .footer-grid {
       grid-template-rows: auto;
-      row-gap: 0.5rem; /* 8px = gap-y-2 */
+      row-gap: 1rem; /* 16px = gap-y-4 */
     }
   }
 

@@ -380,25 +380,25 @@ export type OfficeLocation = {
 
 export const officeLocations: OfficeLocation[] = [
   {
-    id: 'pakistan',
-    name: 'Pakistan',
-    address: 'Karachi, Pakistan',
-    lat: 24.8607,
-    lng: 67.0011,
-  },
-  {
     id: 'usa',
     name: 'USA',
-    address: 'New York, USA',
-    lat: 40.7128,
-    lng: -74.006,
+    address: '30 N Gould St, Sheridan, WY 82801, USA',
+    lat: 44.7977595,
+    lng: -106.9549842,
   },
   {
     id: 'dubai',
     name: 'UAE',
-    address: 'Dubai, UAE',
-    lat: 25.2048,
-    lng: 55.2708,
+    address: 'FDAU0291 Compass Building, Al Hamra Industrial Zone, RAK, United Arab Emirates',
+    lat: 25.7103915,
+    lng: 55.8267258,
+  },
+  {
+    id: 'uk',
+    name: 'UK',
+    address: '71-75 Shelton Street, Covent Garden, London, WC2H 9JQ',
+    lat: 51.5147928,
+    lng: -0.1235399,
   },
 ]
 

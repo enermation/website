@@ -52,8 +52,8 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
       if (office.lat > bounds[1][1]) bounds[1][1] = office.lat
     })
 
-    // Larger padding on mobile for better visibility
-    const padding = 80
+    // Smaller padding for tighter zoom
+    const padding = 50
     map.fitBounds(bounds, { padding, duration: 0 })
   }, [])
 
@@ -70,8 +70,8 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
       <p className="font-heading text-xs font-semibold uppercase tracking-wide text-white-70 sm:text-sm">
         Our Locations
       </p>
-      {/* Mobile: taller map for better touch visibility. Full width on mobile. */}
-      <div className="h-64 w-full overflow-hidden rounded-sm border border-white-10 sm:h-60 md:h-60 lg:h-60">
+      {/* Map: taller on mobile for better touch visibility, consistent on desktop */}
+      <div className="h-56 w-full overflow-hidden rounded-sm border border-white-10 sm:h-60 md:h-64">
         <MapLibreMap
           ref={mapRef}
           center={MAP_CENTER}
@@ -99,13 +99,13 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
         </MapLibreMap>
       </div>
       {/* Location list: wrap on mobile, larger touch targets */}
-      <ul className="flex flex-row flex-wrap gap-x-3 gap-y-1.5 text-11 text-on-dark sm:text-13 md:gap-x-4">
+      <ul className="flex flex-col gap-x-3 gap-y-1.5 text-xs text-on-dark sm:text-sm md:flex-row md:gap-x-4">
         {officeLocations.map((office, index) => (
-          <li key={office.id} className="flex items-center gap-1.5">
-            <span className="flex size-5 items-center justify-center rounded-full border border-white-30 bg-white/10 text-[9px] font-bold text-white sm:size-4">
+          <li key={office.id} className="flex items-start gap-1.5">
+            <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border border-white-30 bg-white/10 text-[9px] font-bold text-white">
               {index + 1}
             </span>
-            <span className="text-xs sm:text-13">{office.address}</span>
+            <span className="text-xs leading-snug sm:text-sm">{office.address}</span>
           </li>
         ))}
       </ul>

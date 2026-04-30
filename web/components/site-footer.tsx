@@ -13,7 +13,7 @@ function FooterWordmark() {
   return (
     <div
       data-slot="footer-wordmark"
-      className="col-span-full mx-auto w-full overflow-hidden border-b border-white-30 pb-2 lg:pb-0"
+      className="col-span-full mx-auto w-full overflow-visible border-b border-white-30 pb-2 lg:pb-0"
     >
       <p
         aria-hidden="true"
@@ -37,7 +37,7 @@ function FooterNavLinks({
   return (
     <nav
       data-slot="footer-nav-links"
-      className={cn('flex flex-col gap-y-2 overflow-hidden', className)}
+      className={cn('flex flex-col gap-y-2 overflow-visible', className)}
       aria-label="Footer navigation"
     >
       {title && (
@@ -63,7 +63,7 @@ function FooterNavLinks({
 
 function FooterSocialLinks({ className }: { className?: string }) {
   return (
-    <div className={cn('flex flex-row flex-wrap gap-x-1 text-13 text-on-dark', className)}>
+    <div className={cn('flex flex-row flex-wrap gap-x-1 text-xs text-on-dark', className)}>
       {footerSocialLinks.map(({ label, href }, index) => (
         <span key={label} className="flex items-center gap-x-1">
           <Link
@@ -83,7 +83,7 @@ function FooterSocialLinks({ className }: { className?: string }) {
 
 function FooterCopyright({ className }: { className?: string }) {
   return (
-    <p className={cn('text-13 text-on-dark', className)}>
+    <p className={cn('text-xs text-on-dark', className)}>
       © Enermation {new Date().getFullYear()} all rights reserved
     </p>
   )
@@ -101,13 +101,13 @@ export function SiteFooter({ exploreGroups }: SiteFooterProps) {
   return (
     <footer
       data-slot="site-footer"
-      className="relative z-10 flex flex-col justify-between overflow-hidden bg-black pb-4 lg:h-[calc(100dvh-3.25rem)]"
+      className="relative z-10 flex flex-col justify-between overflow-visible bg-black pb-4 lg:min-h-[calc(100dvh-3.25rem)]"
     >
       <div className="grid-layout">
         <FooterWordmark />
       </div>
 
-      <div className="grid-layout footer-grid relative grid-rows-[auto_auto_28px] gap-y-6 pb-2 pt-4 lg:grid grid-cols-12 lg:grid-rows-1 lg:items-end lg:gap-0 lg:py-0">
+      <div className="grid-layout footer-grid relative gap-y-6 pb-2 pt-4 lg:grid lg:grid-cols-12 lg:grid-rows-1 lg:items-end lg:gap-0 lg:py-0">
         <div className="col-start-1 col-end-5 row-start-1 flex flex-col gap-6 border-b border-white-30 pb-4 lg:col-start-7 lg:col-end-9 lg:border-none lg:pb-0">
           {exploreGroups.map(group => (
             <FooterNavLinks key={group.title} links={group.children} title={group.title} />
