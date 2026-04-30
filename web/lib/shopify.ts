@@ -427,6 +427,28 @@ export async function fetchCollectionProductsAdmin(
     return buildProductFromRawAdmin(node, resolvedSpecs, resolvedFeatures)
   })
 
+  // Correct price scale: Admin API returns amounts in cents (dollars × 100),
+  // Storefront API returns them in dollars. Fetch correct prices via the Storefront
+  // collection query (same flow used on the product detail page).
+  const storefrontCollection = await fetchCollectionProducts(handle, {
+    sortKey: options?.sortKey ?? 'CREATED',
+    reverse: options?.reverse ?? true,
+    first: options?.first ?? 250,
+  })
+  const storefrontPriceMap = new Map(
+    (storefrontCollection?.products ?? []).map(p => [p.id, p.priceRange.minVariantPrice.amount])
+  )
+
+  for (const product of products) {
+    const storefrontAmount = storefrontPriceMap.get(product.id)
+    if (storefrontAmount) {
+      product.priceRange.minVariantPrice = {
+        ...product.priceRange.minVariantPrice,
+        amount: storefrontAmount,
+      }
+    }
+  }
+
   return {
     id: collection.id,
     title: data.collection.title,
