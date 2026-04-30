@@ -29,6 +29,22 @@ export async function generateMetadata({
   return {
     title: `${product.title} | Enermation`,
     description: truncated,
+    openGraph: {
+      title: product.title,
+      description: truncated,
+      images: [
+        {
+          url: product.images.edges[0]?.node.url ?? '',
+          alt: product.images.edges[0]?.node.altText ?? product.title,
+          width: 1200,
+          height: 630,
+        },
+      ],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+    },
   }
 }
 

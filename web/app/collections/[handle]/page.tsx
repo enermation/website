@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
@@ -49,6 +50,34 @@ function buildMakeOptions(products: ShopifyProduct[]): MakeOption[] {
       .sort(([left], [right]) => left.localeCompare(right))
       .map(([label, count]) => ({ label, count })),
   ]
+}
+
+// ── Metadata ──────────────────────────────────────────────────────────────────
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ handle: string }>
+}): Promise<Metadata> {
+  const { handle } = await params
+  const collection = await fetchCollectionProducts(handle, { sortKey: 'TITLE', reverse: false })
+
+  if (!collection) return {}
+  return {
+    title: `${collection.title} | Enermation`,
+    description: collection.description ?? undefined,
+    openGraph: {
+      title: collection.title,
+      description: collection.description ?? undefined,
+      images: collection.image
+        ? [{ url: collection.image.url, alt: collection.image.altText ?? collection.title }]
+        : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+    },
+  }
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
