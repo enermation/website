@@ -214,16 +214,6 @@ export type FilterDimension = {
   options: FilterOption[]
 }
 
-export type ActiveFilters = {
-  make?: string
-  model?: string
-  year?: string
-  condition?: string
-  fuelType?: string
-  transmission?: string
-  driveType?: string
-  originCountry?: string
-  colour?: string
-  engine?: string
-  mileage?: string
-}
+// Keys are `${namespace}.${key}` spec IDs (e.g. `shopify.fuel-supply`).
+// Built dynamically from product resolvedSpecs — no hardcoded field names.
+export type ActiveFilters = Record<string, string | undefined>

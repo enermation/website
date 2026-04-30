@@ -66,49 +66,18 @@ export default async function CollectionPage({
   searchParams,
 }: {
   params: Promise<{ handle: string }>
-  searchParams: Promise<{
-    make?: string
-    model?: string
-    year?: string
-    condition?: string
-    fuelType?: string
-    transmission?: string
-    driveType?: string
-    originCountry?: string
-    colour?: string
-    engine?: string
-    sort?: string
-  }>
+  searchParams: Promise<Record<string, string | undefined>>
 }) {
   const { handle } = await params
-  const {
-    make,
-    model,
-    year,
-    condition,
-    fuelType,
-    transmission,
-    driveType,
-    originCountry,
-    colour,
-    engine,
-    sort,
-  } = await searchParams
+  const rawParams = await searchParams
+  const { sort, ...rawFilters } = rawParams
 
   const { sortKey, reverse } = getSortConfig(sort)
 
-  const activeFilters: ActiveFilters = {
-    make: make && make !== 'Show All' ? make : undefined,
-    model,
-    year,
-    condition,
-    fuelType,
-    transmission,
-    driveType,
-    originCountry,
-    colour,
-    engine,
-  }
+  // Active filters: all searchParams except 'sort', keyed by namespace.key spec ID
+  const activeFilters: ActiveFilters = Object.fromEntries(
+    Object.entries(rawFilters).filter(([, v]) => v && v !== 'Show All')
+  )
 
   const [collection, collectionLinks, blog] = await Promise.all([
     fetchCollectionProductsAdmin(handle, { sortKey, reverse }),

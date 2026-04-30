@@ -25,20 +25,6 @@ type FilterBarProps = {
   filteredCount: number
 }
 
-const FILTER_PARAM_MAP: Record<string, string> = {
-  make: 'make',
-  model: 'model',
-  year: 'year',
-  condition: 'condition',
-  fuelType: 'fuelType',
-  transmission: 'transmission',
-  driveType: 'driveType',
-  originCountry: 'originCountry',
-  colour: 'colour',
-  engine: 'engine',
-  mileage: 'mileage',
-}
-
 export function FilterBar({
   dimensions,
   active,
@@ -92,7 +78,7 @@ export function FilterBar({
                 <button
                   type="button"
                   key={key}
-                  onClick={() => updateParam(FILTER_PARAM_MAP[key] ?? key, null)}
+                  onClick={() => updateParam(key, null)}
                   className="flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1 font-body text-xs font-medium text-background transition-opacity hover:opacity-80"
                 >
                   {value}
@@ -174,7 +160,7 @@ export function FilterBar({
                             {dim.label}
                           </label>
                           <Select
-                            value={active[dim.key as keyof ActiveFilters] ?? 'Show All'}
+                            value={active[dim.key] ?? 'Show All'}
                             onValueChange={value =>
                               updateParam(FILTER_PARAM_MAP[dim.key] ?? dim.key, value)
                             }
@@ -233,7 +219,7 @@ export function FilterBar({
               <button
                 type="button"
                 key={key}
-                onClick={() => updateParam(FILTER_PARAM_MAP[key] ?? key, null)}
+                onClick={() => updateParam(key, null)}
                 className="flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1 font-body text-xs font-medium text-background transition-opacity hover:opacity-80"
               >
                 {value}
@@ -260,8 +246,7 @@ export function FilterBar({
                   htmlFor={`desktop-${dim.key}`}
                   className={cn(
                     'font-heading font-semibold text-13 uppercase tracking-wider transition-colors',
-                    active[dim.key as keyof ActiveFilters] &&
-                      active[dim.key as keyof ActiveFilters] !== 'Show All'
+                    active[dim.key] && active[dim.key] !== 'Show All'
                       ? 'text-brand-green'
                       : 'text-foreground'
                   )}
@@ -269,8 +254,8 @@ export function FilterBar({
                   {dim.label}
                 </label>
                 <Select
-                  value={active[dim.key as keyof ActiveFilters] ?? 'Show All'}
-                  onValueChange={value => updateParam(FILTER_PARAM_MAP[dim.key] ?? dim.key, value)}
+                  value={active[dim.key] ?? 'Show All'}
+                  onValueChange={value => updateParam(dim.key, value)}
                   disabled={isPending}
                 >
                   <SelectTrigger
