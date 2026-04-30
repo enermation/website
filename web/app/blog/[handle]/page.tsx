@@ -74,8 +74,6 @@ export default async function BlogPage({ params }: { params: Promise<{ handle: s
               tagline="Latest"
               heading="From The Journal"
               description=""
-              buttonText=""
-              buttonUrl=""
               posts={posts}
             />
           </div>

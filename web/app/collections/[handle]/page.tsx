@@ -196,8 +196,6 @@ export default async function CollectionPage({
                 tagline="Latest"
                 heading="From The Journal"
                 description=""
-                buttonText=""
-                buttonUrl=""
                 posts={blog.articles.map(article => ({
                   id: article.id,
                   title: article.title,
