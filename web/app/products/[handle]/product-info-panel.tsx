@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
+import { WishlistButton } from '@/components/wishlist-button'
 import { productPage } from '@/lib/data'
 import { FEATURE_MAP, scanFeaturesFromText } from '@/lib/features'
 import type { ResolvedSpec, ShopifyProductVariant } from '@/lib/types'
@@ -140,9 +141,16 @@ export function ProductInfoPanel({
               {vendor}
             </p>
           )}
-          <h1 className="font-display text-3xl leading-tight text-heading md:text-4xl md:leading-snug">
-            {title}
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="font-display text-3xl leading-tight text-heading md:text-4xl md:leading-snug">
+              {title}
+            </h1>
+            <WishlistButton
+              merchandiseId={selectedVariantId}
+              productTitle={title}
+              className="mt-1 shrink-0 text-muted-foreground hover:text-destructive"
+            />
+          </div>
         </div>
 
         <div className="flex shrink-0 flex-col items-start gap-2 md:items-end">

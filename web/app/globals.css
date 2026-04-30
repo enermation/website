@@ -307,7 +307,7 @@
   }
 
   .footer-grid {
-    grid-template-rows: auto auto 36px;
+    grid-template-rows: auto auto auto;
     row-gap: 2.5rem; /* 40px = gap-y-10 */
   }
 

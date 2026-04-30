@@ -4,8 +4,10 @@ import { Suspense } from 'react'
 import './globals.css'
 import { ChatWidgetMount } from '@/components/chat-widget-mount'
 import { SiteFooter } from '@/components/site-footer'
+import { Toaster } from '@/components/ui/sonner'
 import { CartProvider } from '@/lib/cart-context'
 import { getFooterNavigation } from '@/lib/header-navigation'
+import { WishlistProvider } from '@/lib/wishlist-context'
 
 const display = Bebas_Neue({
   variable: '--font-display',
@@ -59,9 +61,12 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <Suspense>
           <CartProvider>
-            {children}
-            <SiteFooter exploreGroups={exploreGroups} />
-            <ChatWidgetMount />
+            <WishlistProvider>
+              {children}
+              <SiteFooter exploreGroups={exploreGroups} />
+              <ChatWidgetMount />
+              <Toaster />
+            </WishlistProvider>
           </CartProvider>
         </Suspense>
       </body>

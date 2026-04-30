@@ -3,12 +3,15 @@
 import {
   ADD_CART_LINES,
   CREATE_CART,
+  CREATE_WISHLIST_CART,
   GET_CART,
   REMOVE_CART_LINES,
   UPDATE_CART_LINES,
 } from '@/lib/queries'
 import { getClient } from '@/lib/shopify'
 import type { ShopifyCart } from '@/lib/types'
+
+const WISHLIST_CART_ATTRIBUTE = { key: 'type', value: 'wishlist' }
 
 type CartMutationResult = {
   cart: ShopifyCart | null
@@ -93,6 +96,72 @@ export async function removeCartLinesAction(
 }
 
 export async function getCartAction(cartId: string): Promise<ShopifyCart | null> {
+  const shopify = await getClient()
+
+  const { data } = await shopify.request<{ cart: ShopifyCart | null }>(GET_CART, {
+    variables: { cartId },
+  })
+
+  return data?.cart ?? null
+}
+
+// ─── Wishlist Cart ────────────────────────────────────────────────────────────
+
+export async function createWishlistCartAction(
+  lines: { merchandiseId: string; quantity: number }[]
+): Promise<ShopifyCart | null> {
+  const shopify = await getClient()
+
+  const { data } = await shopify.request<{
+    cartCreate: { cart: ShopifyCart | null }
+  }>(CREATE_WISHLIST_CART, {
+    variables: {
+      cartInput: {
+        lines,
+        attributes: [WISHLIST_CART_ATTRIBUTE],
+      },
+    },
+  })
+
+  return data?.cartCreate?.cart ?? null
+}
+
+export async function addWishlistLinesAction(
+  cartId: string,
+  lines: { merchandiseId: string; quantity: number }[]
+): Promise<ShopifyCart | null> {
+  const shopify = await getClient()
+
+  const { data } = await shopify.request<{
+    cartLinesAdd: { cart: ShopifyCart | null; userErrors?: { field: string[]; message: string }[] }
+  }>(ADD_CART_LINES, {
+    variables: { cartId, lines },
+  })
+
+  if (data?.cartLinesAdd?.userErrors?.length) return null
+  return data?.cartLinesAdd?.cart ?? null
+}
+
+export async function removeWishlistLinesAction(
+  cartId: string,
+  lineIds: string[]
+): Promise<ShopifyCart | null> {
+  const shopify = await getClient()
+
+  const { data } = await shopify.request<{
+    cartLinesRemove: {
+      cart: ShopifyCart | null
+      userErrors?: { field: string[]; message: string }[]
+    }
+  }>(REMOVE_CART_LINES, {
+    variables: { cartId, lineIds },
+  })
+
+  if (data?.cartLinesRemove?.userErrors?.length) return null
+  return data?.cartLinesRemove?.cart ?? null
+}
+
+export async function getWishlistCartAction(cartId: string): Promise<ShopifyCart | null> {
   const shopify = await getClient()
 
   const { data } = await shopify.request<{ cart: ShopifyCart | null }>(GET_CART, {

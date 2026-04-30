@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { productPage } from '@/lib/data'
 import type { ShopifyProduct } from '@/lib/types'
 import { cn, formatPrice } from '@/lib/utils'
+import { WishlistButton } from './wishlist-button'
 
 type CarCardProps = {
   product: ShopifyProduct
@@ -52,9 +53,16 @@ export function CarCard({ product }: CarCardProps) {
       {/* Content */}
       <div className="flex grow flex-col p-3">
         {/* Title */}
-        <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-heading">
-          {product.title}
-        </h3>
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-heading">
+            {product.title}
+          </h3>
+          <WishlistButton
+            merchandiseId={product.variants.edges[0]?.node.id ?? ''}
+            productTitle={product.title}
+            className="mt-0.5 shrink-0 text-muted-foreground hover:text-destructive [&_svg]:size-4"
+          />
+        </div>
 
         {/* Specs row */}
         {specs.length > 0 && (

@@ -684,6 +684,64 @@ export const CREATE_CART = `
   }
 `
 
+export const CREATE_WISHLIST_CART = `
+  mutation createWishlistCart($cartInput: CartInput) {
+    cartCreate(input: $cartInput) {
+      cart {
+        id
+        createdAt
+        updatedAt
+        checkoutUrl
+        lines(first: 50) {
+          edges {
+            node {
+              id
+              merchandise {
+                ... on ProductVariant {
+                  id
+                  title
+                  product {
+                    id
+                    title
+                    handle
+                    images(first: 1) {
+                      edges {
+                        node {
+                          url
+                          altText
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              quantity
+              attributes {
+                key
+                value
+              }
+            }
+          }
+        }
+        attributes {
+          key
+          value
+        }
+        cost {
+          totalAmount {
+            amount
+            currencyCode
+          }
+          subtotalAmount {
+            amount
+            currencyCode
+          }
+        }
+      }
+    }
+  }
+`
+
 export const UPDATE_CART_LINES = `
   mutation updateCartLines($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
     cartLinesUpdate(cartId: $cartId, lines: $lines) {

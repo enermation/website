@@ -7,6 +7,7 @@ import {
   Car,
   ChevronDownIcon,
   ChevronRightIcon,
+  Heart,
   Home,
   Menu,
   ShoppingCart,
@@ -364,6 +365,17 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                 </div>
               </SheetContent>
             </Sheet>
+
+            <Link
+              href="/wishlist"
+              className={cn(
+                'relative inline-flex h-8 w-8 items-center justify-center rounded-full text-background transition-colors hover:bg-white-20',
+                focusRing
+              )}
+              aria-label="Open wishlist"
+            >
+              <Heart className="size-5" aria-hidden={true} />
+            </Link>
           </div>
 
           <div className="ml-auto flex items-center gap-1 md:hidden">
@@ -480,6 +492,20 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                         </div>
                       )
                     })}
+
+                    <div className="mt-2 rounded-xl bg-white-5 p-1">
+                      <Link
+                        href="/wishlist"
+                        className={cn(
+                          'flex items-center gap-3 rounded-lg px-4 py-3 font-heading text-13 font-semibold uppercase tracking-wide text-background transition-colors hover:bg-white-20',
+                          focusRing
+                        )}
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        <Heart className="size-5 text-white-50" aria-hidden={true} />
+                        Wishlist
+                      </Link>
+                    </div>
                   </nav>
                 </div>
               </DrawerContent>

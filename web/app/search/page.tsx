@@ -1,13 +1,9 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
-import Image from 'next/image'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { SearchResultCard } from '@/components/search-result-card'
 import { SiteHeader } from '@/components/site-header'
 import { searchCopy } from '@/lib/data'
 import { searchProducts } from '@/lib/shopify'
-import { cn } from '@/lib/utils'
-
-const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
 
 export default async function SearchPage({
   searchParams,
@@ -57,44 +53,8 @@ export default async function SearchPage({
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-y-6 md:grid-cols-3 md:gap-6">
-              {results.map(result => (
-                <Link
-                  key={result.id}
-                  href={`/products/${result.handle}`}
-                  className={cn(
-                    'group flex flex-col rounded-2xl border border-gray-90 bg-card overflow-hidden transition-colors hover:border-brand-green',
-                    focusRing
-                  )}
-                >
-                  <div className="relative aspect-3-2 overflow-hidden bg-muted">
-                    {result.image ? (
-                      <Image
-                        src={result.image.url}
-                        alt={result.image.altText ?? result.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover transition-transform group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex size-full items-center justify-center">
-                        <MagnifyingGlassIcon className="size-8 text-muted-foreground" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-1 p-4">
-                    <p className="font-heading text-13 font-semibold text-foreground line-clamp-1">
-                      {result.title}
-                    </p>
-                    <p className="font-body text-sm text-muted-foreground">
-                      {result.price.currencyCode} {result.price.amount}
-                    </p>
-                    {!result.availableForSale && (
-                      <p className="font-heading text-11 font-semibold uppercase tracking-wide text-destructive">
-                        Sold
-                      </p>
-                    )}
-                  </div>
-                </Link>
+              {results.map((result, i) => (
+                <SearchResultCard key={result.id} result={result} index={i} />
               ))}
             </div>
           )}
