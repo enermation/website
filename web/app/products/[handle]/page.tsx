@@ -236,15 +236,10 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       {blog && blog.articles.length > 0 && (
         <section className="border-t border-border bg-background py-12 md:py-16">
           <div className="mx-auto max-w-site px-4 md:px-6">
-            <h2 className="mb-8 font-display text-2xl uppercase tracking-widest text-heading md:mb-10 md:text-section">
+            <h2 className="mb-6 flex-1 text-center font-display text-2xl uppercase tracking-widest text-heading md:mb-8 md:text-section">
               {productPage.sections.relatedStories}
             </h2>
             <BlogCardGrid
-              tagline="Latest"
-              heading=""
-              description=""
-              buttonText=""
-              buttonUrl=""
               posts={blog.articles.slice(0, 3).map(article => ({
                 id: article.id,
                 title: article.title,
