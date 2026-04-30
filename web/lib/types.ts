@@ -171,3 +171,59 @@ export type ShopifyShopInfo = {
     url: string
   } | null
 }
+
+export type ShopifyArticleAuthor = {
+  name: string
+  bio: string | null
+  email: string | null
+}
+
+export type ShopifyArticle = {
+  id: string
+  handle: string
+  title: string
+  excerpt: string | null
+  contentHtml: string | null
+  publishedAt: string
+  image: ShopifyImage | null
+  author: ShopifyArticleAuthor
+  tags: string[]
+  seo: { title: string | null; description: string | null } | null
+}
+
+export type ShopifyBlog = {
+  id: string
+  handle: string
+  title: string
+  description: string | null
+  articles: { edges: { node: ShopifyArticle }[] }
+}
+
+// ── Filter system types ─────────────────────────────────────────────────────────
+
+export type FilterOption = {
+  value: string
+  label: string
+  count: number
+}
+
+export type FilterDimension = {
+  key: string
+  label: string
+  type: 'text' | 'number' | 'metaobject'
+  options: FilterOption[]
+}
+
+export type ActiveFilters = {
+  make?: string
+  model?: string
+  year?: string
+  condition?: string
+  fuelType?: string
+  transmission?: string
+  driveType?: string
+  originCountry?: string
+  colour?: string
+  engine?: string
+  mileage?: string
+}

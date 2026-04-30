@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { ChevronRightIcon } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
@@ -5,11 +6,12 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { AnimatedSection } from '@/components/animated-section'
+import { BlogCardGrid } from '@/components/blog-card-grid'
 import { CarCard } from '@/components/car-card'
 import { SiteHeader } from '@/components/site-header'
 import { StripeBar } from '@/components/stripe-bar'
-import { productPage, relatedStories } from '@/lib/data'
-import { fetchCollectionProducts, fetchProduct } from '@/lib/shopify'
+import { productPage } from '@/lib/data'
+import { fetchBlogByHandle, fetchCollectionProducts, fetchProduct } from '@/lib/shopify'
 import { truncateForMeta } from '@/lib/text'
 import { ImageGallery } from './image-gallery'
 import { ProductInfoPanel } from './product-info-panel'
@@ -126,7 +128,7 @@ async function SimilarCarsSection({
 export default async function ProductPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
 
-  const product = await fetchProduct(handle)
+  const [product, blog] = await Promise.all([fetchProduct(handle), fetchBlogByHandle('news')])
   if (!product) notFound()
 
   const images = product.images.edges.map(edge => edge.node)
@@ -237,42 +239,32 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       )}
 
       {/* Related stories */}
-      <section className="border-t border-border bg-background py-12 md:py-16">
-        <div className="mx-auto max-w-site px-4 md:px-6">
-          <h2 className="mb-8 font-display text-2xl uppercase tracking-widest text-heading md:mb-10 md:text-section">
-            {productPage.sections.relatedStories}
-          </h2>
-          <AnimatedSection className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {relatedStories.map(story => (
-              <Link
-                key={story.id}
-                href={story.href}
-                data-reveal
-                className="group flex flex-col gap-3"
-              >
-                <div className="car-card-media relative overflow-hidden bg-surface-elevated">
-                  <Image
-                    src={story.image}
-                    alt={story.title}
-                    fill
-                    loading="lazy"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 100vw"
-                  />
-                </div>
-                <div className="flex items-center gap-2 font-heading text-13 text-body">
-                  <span>{story.date}</span>
-                  <span>|</span>
-                  <span>{story.category}</span>
-                </div>
-                <h3 className="font-display text-base leading-snug text-heading transition-colors group-hover:text-brand-green">
-                  {story.title}
-                </h3>
-              </Link>
-            ))}
-          </AnimatedSection>
-        </div>
-      </section>
+      {blog && blog.articles.length > 0 && (
+        <section className="border-t border-border bg-background py-12 md:py-16">
+          <div className="mx-auto max-w-site px-4 md:px-6">
+            <h2 className="mb-8 font-display text-2xl uppercase tracking-widest text-heading md:mb-10 md:text-section">
+              {productPage.sections.relatedStories}
+            </h2>
+            <BlogCardGrid
+              tagline="Latest"
+              heading=""
+              description=""
+              buttonText=""
+              buttonUrl=""
+              posts={blog.articles.slice(0, 3).map(article => ({
+                id: article.id,
+                title: article.title,
+                summary: article.excerpt ?? '',
+                label: article.tags[0] ?? 'Article',
+                author: article.author.name,
+                published: format(new Date(article.publishedAt), 'd MMM yyyy'),
+                url: `/blog/${blog.handle}/${article.handle}`,
+                image: article.image?.url ?? '',
+              }))}
+            />
+          </div>
+        </section>
+      )}
     </>
   )
 }

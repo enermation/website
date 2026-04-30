@@ -126,6 +126,9 @@ export async function getHeaderNavigation(): Promise<HeaderNavigation> {
   // Add Assistant link
   items.push({ label: 'Miles', href: '/miles', children: [], showOnDesktop: true })
 
+  // Add Blog link
+  items.push({ label: 'Journal', href: '/blog/news', children: [], showOnDesktop: true })
+
   return {
     items,
     actions: headerActions,

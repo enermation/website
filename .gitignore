@@ -6,6 +6,10 @@ qwen.md
 .gemini/
 .claude/
 .qwen/
+.playwright-mcp/
+
+# Reference screenshots
+carsales-*.png
 .env
 .playwright/
 .vercel
