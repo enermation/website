@@ -1,7 +1,7 @@
 import { QdrantClient } from '@qdrant/qdrant-js'
 import { Redis } from '@upstash/redis'
 import { gateway } from 'ai'
-import { DEFAULT_CHAT_PROVIDER, VISION_MODEL_ID } from '@/lib/rag/constants'
+import { DEFAULT_CHAT_PROVIDER, DEFAULT_COHERE_MODEL, VISION_MODEL_ID } from '@/lib/rag/constants'
 
 function getRequiredEnv(name: string): string {
   const value = process.env[name]?.trim()
@@ -38,14 +38,20 @@ export function getChatModel() {
     return gateway(modelId)
   }
 
-  if (provider === 'anthropic') {
-    return gateway('anthropic/claude-haiku-4.5')
+  if (provider === 'cohere') {
+    return gateway(`cohere/${DEFAULT_COHERE_MODEL}`, {
+      providerOptions: {
+        gateway: {
+          order: ['cohere', 'groq'],
+        },
+      },
+    })
   }
   if (provider === 'groq') {
     return gateway('groq/llama-4-scout-17b-16e-instruct')
   }
 
-  throw new Error(`Invalid CHAT_PROVIDER: "${provider}". Must be "anthropic" or "groq".`)
+  throw new Error(`Invalid CHAT_PROVIDER: "${provider}". Must be "cohere" or "groq".`)
 }
 
 export function getVisionModel() {

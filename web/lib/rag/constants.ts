@@ -2,8 +2,8 @@ export const EMBED_MODEL = 'embed-english-v3.0'
 export const EMBED_DIMENSIONS = 1024
 export const RERANK_MODEL = 'rerank-v3.5'
 
-export const DEFAULT_CHAT_PROVIDER = 'anthropic'
-export const DEFAULT_ANTHROPIC_MODEL = 'claude-haiku-4-5'
+export const DEFAULT_CHAT_PROVIDER = 'cohere'
+export const DEFAULT_COHERE_MODEL = 'command-r-plus-08-2024'
 export const DEFAULT_GROQ_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct'
 export const VISION_MODEL_ID = 'llama-3.3-70b-versatile'
 
