@@ -18,5 +18,7 @@ website-2k25
 .playwright-cli
 package-lock.json
 graphify-out/cache/
+graphify-out/benchmark.json
+graphify-out/cost.json
 .worktrees/
 components/ai-elements

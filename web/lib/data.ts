@@ -70,12 +70,18 @@ export type HeroShowcaseVehicle = {
 }
 
 export const heroShowcaseVehicles: HeroShowcaseVehicle[] = [
+  // { label: 'Porsche 911', href: primaryShowroomCollectionHref },
+  // { label: 'Lamborghini Aventador', href: primaryShowroomCollectionHref },
   {
-    label: 'Porsche 911',
+    label: 'Nissan Skyline R34 GTR',
     href: primaryShowroomCollectionHref,
   },
   {
-    label: 'Lamborghini Aventador',
+    label: 'Volvo FH750',
+    href: primaryShowroomCollectionHref,
+  },
+  {
+    label: 'Excavator',
     href: primaryShowroomCollectionHref,
   },
 ]

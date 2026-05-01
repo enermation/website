@@ -11,10 +11,16 @@ const CAMERA_IDLE_ORBIT_HEIGHT = 0.16
 const MOBILE_ORBIT_FACTOR = 2.2
 const READY_GATE_FRAMES = 4
 const DROP_START_Y = 3.4
-const PORSCHE_SCALE = 1.6
-const LAMBO_SCALE = 0.015
-const PORSCHE_MODEL_PATH = '/models/911-transformed.glb'
-const LAMBO_MODEL_PATH = '/models/lambo.glb'
+// const PORSCHE_SCALE = 1.6
+// const LAMBO_SCALE = 0.015
+const COMMERCIAL_SCALE = 1.3
+const SKYLINE_SCALE = 163
+const EXCAVATOR_SCALE = 0.48
+// const PORSCHE_MODEL_PATH = '/models/911-transformed.glb'
+// const LAMBO_MODEL_PATH = '/models/lambo.glb'
+const COMMERCIAL_MODEL_PATH = '/models/commercial.glb'
+const SKYLINE_MODEL_PATH = '/models/skyline.glb'
+const EXCAVATOR_MODEL_PATH = '/models/excavator.glb'
 
 const cameraTarget = new Vector3()
 
@@ -27,38 +33,111 @@ type HeroModelConfig = {
   idlePhase: number
 }
 
-const PORSCHE_CONFIG: HeroModelConfig = {
-  orbitRadius: 10.8,
-  lookAtY: 0.42,
-  restPosition: [0, -0.03, 0] as const,
-  restRotation: [0.02, 0.08, 0] as const,
-  dropRotation: [-0.12, 0.08, 0] as const,
-  idlePhase: 0,
+// const PORSCHE_CONFIG: HeroModelConfig = {
+//   orbitRadius: 10.8,
+//   lookAtY: 0.42,
+//   restPosition: [0, -0.03, 0] as const,
+//   restRotation: [0.02, 0.08, 0] as const,
+//   dropRotation: [-0.12, 0.08, 0] as const,
+//   idlePhase: 0,
+// }
+
+// const LAMBO_CONFIG: HeroModelConfig = {
+//   orbitRadius: 11.5,
+//   lookAtY: 0.34,
+//   restPosition: [0, -0.06, 0] as const,
+//   restRotation: [0.01, Math.PI / 1.56, 0] as const,
+//   dropRotation: [-0.14, Math.PI / 1.56, 0] as const,
+//   idlePhase: 1.35,
+// }
+
+const COMMERCIAL_CONFIG: HeroModelConfig = {
+  orbitRadius: 15,
+  lookAtY: 0.8,
+  restPosition: [0, -0.3, 0] as const,
+  restRotation: [0.02, Math.PI / 5, 0] as const,
+  dropRotation: [-0.12, Math.PI / 5, 0] as const,
+  idlePhase: 0.7,
 }
 
-const LAMBO_CONFIG: HeroModelConfig = {
-  orbitRadius: 11.5,
-  lookAtY: 0.34,
-  restPosition: [0, -0.06, 0] as const,
-  restRotation: [0.01, Math.PI / 1.56, 0] as const,
-  dropRotation: [-0.14, Math.PI / 1.56, 0] as const,
-  idlePhase: 1.35,
+const SKYLINE_CONFIG: HeroModelConfig = {
+  orbitRadius: 11.0,
+  lookAtY: 0.42,
+  restPosition: [0, -0.3, 0] as const,
+  restRotation: [0.02, Math.PI / 6, 0] as const,
+  dropRotation: [-0.12, Math.PI / 6, 0] as const,
+  idlePhase: 2.1,
 }
+
+const EXCAVATOR_CONFIG: HeroModelConfig = {
+  orbitRadius: 12,
+  lookAtY: 0.13,
+  restPosition: [0, -0.3, 0] as const,
+  restRotation: [0.02, Math.PI / 4, 0] as const,
+  dropRotation: [-0.1, Math.PI / 4, 0] as const,
+  idlePhase: 1.8,
+}
+
+const MODEL_CONFIGS = [SKYLINE_CONFIG, COMMERCIAL_CONFIG, EXCAVATOR_CONFIG]
+const MODEL_PATHS = [SKYLINE_MODEL_PATH, COMMERCIAL_MODEL_PATH, EXCAVATOR_MODEL_PATH]
 
 function getModelConfig(activeModelIndex: number) {
-  return activeModelIndex === 0 ? PORSCHE_CONFIG : LAMBO_CONFIG
+  return MODEL_CONFIGS[activeModelIndex] ?? SKYLINE_CONFIG
 }
 
 function getModelPath(activeModelIndex: number) {
-  return activeModelIndex === 0 ? PORSCHE_MODEL_PATH : LAMBO_MODEL_PATH
+  return MODEL_PATHS[activeModelIndex] ?? SKYLINE_MODEL_PATH
 }
 
 function getInactiveModelPath(activeModelIndex: number) {
-  return activeModelIndex === 0 ? LAMBO_MODEL_PATH : PORSCHE_MODEL_PATH
+  return MODEL_PATHS[(activeModelIndex + 1) % MODEL_PATHS.length]
 }
 
-function PorscheModel() {
-  const { scene, nodes, materials } = useGLTF(PORSCHE_MODEL_PATH)
+// function PorscheModel() {
+//   const { scene, nodes, materials } = useGLTF(PORSCHE_MODEL_PATH)
+//   useEffect(() => {
+//     Object.values(nodes).forEach(node => {
+//       if ((node as Mesh).isMesh) {
+//         const mesh = node as Mesh
+//         mesh.castShadow = true
+//         mesh.receiveShadow = true
+//       }
+//     })
+//     if (materials.rubber) applyProps(materials.rubber, { color: '#222', roughness: 0.6, roughnessMap: null, normalScale: [3, 3] })
+//     if (materials.window) applyProps(materials.window, { color: '#111', roughness: 0.05, clearcoat: 0.1 })
+//     if (materials.coat) applyProps(materials.coat, { envMapIntensity: 2.4, roughness: 0.35, metalness: 0.85 })
+//     if (materials.paint) applyProps(materials.paint, { color: '#A7A9A8', envMapIntensity: 1.7, roughness: 0.28, metalness: 0.7, clearcoat: 0.9, clearcoatRoughness: 0.08 })
+//   }, [materials, nodes])
+//   return <primitive object={scene} scale={PORSCHE_SCALE} />
+// }
+
+// function LamboModel() {
+//   const { scene, nodes, materials } = useGLTF(LAMBO_MODEL_PATH)
+//   useEffect(() => {
+//     Object.values(nodes).forEach(node => {
+//       if ((node as Mesh).isMesh) {
+//         const mesh = node as Mesh
+//         mesh.castShadow = true
+//         mesh.receiveShadow = true
+//         if (mesh.name.startsWith('glass')) mesh.geometry.computeVertexNormals()
+//         if (mesh.name === 'silver_001_BreakDiscs_0' && materials.BreakDiscs) mesh.material = applyProps(materials.BreakDiscs, { color: '#ddd' })
+//       }
+//     })
+//     if (nodes.glass_003) nodes.glass_003.scale.setScalar(2.7)
+//     if (materials.FrameBlack) applyProps(materials.FrameBlack, { metalness: 0.75, roughness: 0, color: '#111' })
+//     if (materials.Chrome) applyProps(materials.Chrome, { metalness: 1, roughness: 0, color: '#333' })
+//     if (materials.TiresGum) applyProps(materials.TiresGum, { metalness: 0, roughness: 0.4, color: '#181818' })
+//     if (materials.GreyElements) applyProps(materials.GreyElements, { metalness: 0, color: '#292929' })
+//     if (materials.emitbrake) applyProps(materials.emitbrake, { emissiveIntensity: 1.0 })
+//     if (materials.LightsFrontLed) applyProps(materials.LightsFrontLed, { emissiveIntensity: 1.0 })
+//     const paintNode = nodes.yellow_WhiteCar_0
+//     if (paintNode) applyProps((paintNode as Mesh).material, { roughness: 0.3, metalness: 0.05, color: '#A9A9A7', envMapIntensity: 0.75, clearcoatRoughness: 0, clearcoat: 1 })
+//   }, [materials, nodes])
+//   return <primitive object={scene} scale={LAMBO_SCALE} />
+// }
+
+function CommercialModel() {
+  const { scene, nodes, materials } = useGLTF(COMMERCIAL_MODEL_PATH)
 
   useEffect(() => {
     Object.values(nodes).forEach(node => {
@@ -69,123 +148,174 @@ function PorscheModel() {
       }
     })
 
-    if (materials.rubber) {
-      applyProps(materials.rubber, {
-        color: '#222',
-        roughness: 0.6,
-        roughnessMap: null,
-        normalScale: [3, 3],
+    Object.values(materials).forEach(material => {
+      applyProps(material, {
+        envMapIntensity: 1.5,
+        roughness: 0.4,
+        metalness: 0.55,
+      })
+    })
+  }, [materials, nodes])
+
+  return <primitive object={scene} scale={COMMERCIAL_SCALE} />
+}
+
+function SkylineModel() {
+  const { scene, nodes, materials } = useGLTF(SKYLINE_MODEL_PATH)
+
+  useEffect(() => {
+    Object.values(nodes).forEach(node => {
+      if ((node as Mesh).isMesh) {
+        const mesh = node as Mesh
+        mesh.castShadow = true
+        mesh.receiveShadow = true
+      }
+    })
+
+    // Body paint — silver Z-tune finish with clearcoat
+    const paint = materials.r3nNissan_SkylineGTRR34TNR2_2002PaintTNR_Material1
+    if (paint) {
+      applyProps(paint, {
+        color: '#B0B2B1',
+        envMapIntensity: 2.0,
+        roughness: 0.22,
+        metalness: 0.75,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.06,
       })
     }
 
-    if (materials.window) {
-      applyProps(materials.window, {
-        color: '#111',
+    // Windows — near-black tinted glass
+    const window = materials.r3nNissan_SkylineGTRR34TNR2_2002Window_Material1
+    if (window) {
+      applyProps(window, {
+        color: '#0a0a0a',
+        roughness: 0.04,
+        metalness: 0.0,
+        clearcoat: 0.2,
+      })
+    }
+
+    // Nismo alloy wheels — polished chrome
+    const wheels = materials.Nismo_alloy
+    if (wheels) {
+      applyProps(wheels, {
+        metalness: 1.0,
         roughness: 0.05,
-        clearcoat: 0.1,
+        envMapIntensity: 2.5,
       })
     }
 
-    if (materials.coat) {
-      applyProps(materials.coat, {
-        envMapIntensity: 2.4,
-        roughness: 0.35,
-        metalness: 0.85,
+    // Brake discs — dark cast iron
+    const brakeDiscs = materials.w_TNRRims_87A18NaBrakeDisc_ForgedDrilled_Material1
+    if (brakeDiscs) {
+      applyProps(brakeDiscs, {
+        metalness: 0.8,
+        roughness: 0.55,
+        color: '#2a2a2a',
       })
     }
 
-    if (materials.paint) {
-      applyProps(materials.paint, {
-        color: '#A7A9A8',
-        envMapIntensity: 1.7,
-        roughness: 0.28,
-        metalness: 0.7,
+    // Brake calipers — gloss red (Nismo spec)
+    const calipers = materials.r1Nissan_SkylineGTRR34TNR2_2002_CallipersCalliperGloss_Material1
+    if (calipers) {
+      applyProps(calipers, {
+        color: '#8B0000',
+        metalness: 0.1,
+        roughness: 0.15,
+        clearcoat: 1.0,
+      })
+    }
+
+    // Carbon fibre — dark with subtle sheen
+    const carbon = materials.r3nNissan_SkylineGTRR34TNR2_2002Carbon1_Material1
+    if (carbon) {
+      applyProps(carbon, { roughness: 0.3, metalness: 0.1, envMapIntensity: 0.8 })
+    }
+
+    // Interior — matte dark
+    const interior = materials.r3nNissan_SkylineGTRR34TNR2_2002InteriorA_Material1
+    if (interior) {
+      applyProps(interior, { roughness: 0.85, metalness: 0.0, envMapIntensity: 0.3 })
+    }
+
+    // Brake / tail lights — natural red glow
+    const brakeLight = materials.red_glass
+    if (brakeLight) {
+      applyProps(brakeLight, {
+        color: '#cc0000',
+        emissive: '#cc0000',
+        emissiveIntensity: 0.8,
+        roughness: 0.1,
+        metalness: 0.0,
+      })
+    }
+  }, [materials, nodes])
+
+  return <primitive object={scene} scale={SKYLINE_SCALE} />
+}
+
+function ExcavatorModel() {
+  const { scene, nodes, materials } = useGLTF(EXCAVATOR_MODEL_PATH)
+
+  useEffect(() => {
+    Object.values(nodes).forEach(node => {
+      if ((node as Mesh).isMesh) {
+        const mesh = node as Mesh
+        mesh.castShadow = true
+        mesh.receiveShadow = true
+      }
+    })
+
+    // Main body — bright construction yellow, polished clearcoat
+    const body1 = materials.Excavator_01
+    if (body1) {
+      applyProps(body1, {
+        color: '#FFC107',
+        envMapIntensity: 2.8,
+        roughness: 0.18,
+        metalness: 0.3,
         clearcoat: 0.9,
         clearcoatRoughness: 0.08,
       })
     }
-  }, [materials, nodes])
 
-  return <primitive object={scene} scale={PORSCHE_SCALE} />
-}
-
-function LamboModel() {
-  const { scene, nodes, materials } = useGLTF(LAMBO_MODEL_PATH)
-
-  useEffect(() => {
-    Object.values(nodes).forEach(node => {
-      if ((node as Mesh).isMesh) {
-        const mesh = node as Mesh
-        mesh.castShadow = true
-        mesh.receiveShadow = true
-
-        if (mesh.name.startsWith('glass')) {
-          mesh.geometry.computeVertexNormals()
-        }
-
-        if (mesh.name === 'silver_001_BreakDiscs_0' && materials.BreakDiscs) {
-          mesh.material = applyProps(materials.BreakDiscs, { color: '#ddd' })
-        }
-      }
-    })
-
-    if (nodes.glass_003) {
-      nodes.glass_003.scale.setScalar(2.7)
-    }
-
-    if (materials.FrameBlack) {
-      applyProps(materials.FrameBlack, {
-        metalness: 0.75,
-        roughness: 0,
-        color: '#111',
+    // Secondary panels — same yellow, slightly less polished
+    const body2 = materials.Excavator_02
+    if (body2) {
+      applyProps(body2, {
+        color: '#FFC107',
+        envMapIntensity: 2.4,
+        roughness: 0.25,
+        metalness: 0.3,
+        clearcoat: 0.75,
+        clearcoatRoughness: 0.1,
       })
     }
 
-    if (materials.Chrome) {
-      applyProps(materials.Chrome, {
-        metalness: 1,
-        roughness: 0,
-        color: '#333',
+    // Tracks / undercarriage — dark steel, worn
+    const tracks = materials.Excavator_03
+    if (tracks) {
+      applyProps(tracks, {
+        envMapIntensity: 1.0,
+        roughness: 0.7,
+        metalness: 0.85,
       })
     }
 
-    if (materials.TiresGum) {
-      applyProps(materials.TiresGum, {
-        metalness: 0,
-        roughness: 0.4,
-        color: '#181818',
-      })
-    }
-
-    if (materials.GreyElements) {
-      applyProps(materials.GreyElements, {
-        metalness: 0,
-        color: '#292929',
-      })
-    }
-
-    if (materials.emitbrake) {
-      applyProps(materials.emitbrake, { emissiveIntensity: 1.0 })
-    }
-
-    if (materials.LightsFrontLed) {
-      applyProps(materials.LightsFrontLed, { emissiveIntensity: 1.0 })
-    }
-
-    const paintNode = nodes.yellow_WhiteCar_0
-    if (paintNode) {
-      applyProps((paintNode as Mesh).material, {
-        roughness: 0.3,
-        metalness: 0.05,
-        color: '#A9A9A7',
-        envMapIntensity: 0.75,
-        clearcoatRoughness: 0,
-        clearcoat: 1,
+    // Cab glass — tinted, reflective
+    const glass = materials.Excavator_Glass
+    if (glass) {
+      applyProps(glass, {
+        color: '#1a2a1a',
+        roughness: 0.04,
+        metalness: 0.0,
+        clearcoat: 0.4,
       })
     }
   }, [materials, nodes])
 
-  return <primitive object={scene} scale={LAMBO_SCALE} />
+  return <primitive object={scene} scale={EXCAVATOR_SCALE} />
 }
 
 type AnimatedVehicleProps = {
@@ -250,14 +380,15 @@ function CameraRig({
   const lookAtY = useRef(getModelConfig(activeModelIndex).lookAtY)
 
   useFrame((state, delta) => {
+    const clampedDelta = Math.min(delta, 0.05)
     const elapsedTime = state.clock.elapsedTime
     const activeConfig = getModelConfig(activeModelIndex)
     const targetStrength = prefersReducedMotion ? 0 : allowIdleOrbit ? 1 : 0
     const targetRadius = activeConfig.orbitRadius * (isMobile ? MOBILE_ORBIT_FACTOR : 1)
 
-    orbitStrength.current = MathUtils.damp(orbitStrength.current, targetStrength, 3.2, delta)
-    orbitRadius.current = MathUtils.damp(orbitRadius.current, targetRadius, 4, delta)
-    lookAtY.current = MathUtils.damp(lookAtY.current, activeConfig.lookAtY, 4, delta)
+    orbitStrength.current = MathUtils.damp(orbitStrength.current, targetStrength, 3.2, clampedDelta)
+    orbitRadius.current = MathUtils.damp(orbitRadius.current, targetRadius, 4, clampedDelta)
+    lookAtY.current = MathUtils.damp(lookAtY.current, activeConfig.lookAtY, 4, clampedDelta)
 
     const orbitX = Math.sin(elapsedTime / 4.8) * orbitRadius.current * orbitStrength.current
     const orbitY =
@@ -325,21 +456,30 @@ function SceneContent({
 
       {activeModelIndex === 0 ? (
         <AnimatedVehicle
-          key="porsche"
+          key="skyline"
           shouldDropModel={shouldDropModel}
           prefersReducedMotion={prefersReducedMotion}
           config={activeConfig}
         >
-          <PorscheModel />
+          <SkylineModel />
+        </AnimatedVehicle>
+      ) : activeModelIndex === 1 ? (
+        <AnimatedVehicle
+          key="commercial"
+          shouldDropModel={shouldDropModel}
+          prefersReducedMotion={prefersReducedMotion}
+          config={activeConfig}
+        >
+          <CommercialModel />
         </AnimatedVehicle>
       ) : (
         <AnimatedVehicle
-          key="lambo"
+          key="excavator"
           shouldDropModel={shouldDropModel}
           prefersReducedMotion={prefersReducedMotion}
           config={activeConfig}
         >
-          <LamboModel />
+          <ExcavatorModel />
         </AnimatedVehicle>
       )}
 
@@ -388,6 +528,10 @@ export function HeroCarouselScene({
     useGLTF.preload(getModelPath(activeModelIndex))
     useEnvironment.preload({ preset: 'forest' })
   }, [activeModelIndex])
+
+  useEffect(() => {
+    for (const path of MODEL_PATHS) useGLTF.preload(path)
+  }, [])
 
   useEffect(() => {
     if (!preloadInactiveModel) return

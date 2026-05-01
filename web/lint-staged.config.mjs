@@ -8,7 +8,7 @@ const config = {
         !f.includes('components\\ai-elements\\')
     )
     if (!toCheck.length) return []
-    return `biome check --write ${toCheck.join(' ')}`
+    return `biome check --write ${toCheck.map(f => `"${f}"`).join(' ')}`
   },
   '**/*.ts?(x)': () => 'echo "skipping tsc check - ai-elements external" && exit 0',
 }
