@@ -180,7 +180,9 @@ async function LatestArrivalsSection() {
 }
 
 async function CollectionsSection() {
-  const collections = await fetchCollections()
+  const collections = (await fetchCollections()).filter(
+    c => c.handle !== primaryShowroomCollectionHandle
+  )
 
   return (
     <AnimatedSection className="bg-card">
