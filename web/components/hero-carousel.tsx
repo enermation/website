@@ -13,7 +13,7 @@ const READY_GATE_FRAMES = 4
 const DROP_START_Y = 3.4
 // const PORSCHE_SCALE = 1.6
 // const LAMBO_SCALE = 0.015
-const SCANIA_SCALE = 1.3
+const SCANIA_SCALE = 1400
 const SKYLINE_SCALE = 163
 const EXCAVATOR_SCALE = 0.48
 // const PORSCHE_MODEL_PATH = '/models/911-transformed.glb'
@@ -150,9 +150,11 @@ function ScaniaModel() {
 
     Object.values(materials).forEach(material => {
       applyProps(material, {
-        envMapIntensity: 1.5,
-        roughness: 0.4,
-        metalness: 0.55,
+        envMapIntensity: 2.6,
+        roughness: 0.18,
+        metalness: 0.75,
+        clearcoat: 0.9,
+        clearcoatRoughness: 0.08,
       })
     })
   }, [materials, nodes])
