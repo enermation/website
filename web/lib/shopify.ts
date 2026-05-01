@@ -48,7 +48,7 @@ type RawMetafield = {
   definition: { name: string } | null
 }
 
-async function fetchProductMetafieldsAdmin(productId: string): Promise<RawMetafield[]> {
+export async function fetchProductMetafieldsAdmin(productId: string): Promise<RawMetafield[]> {
   const { data } = await adminGraphQL<{
     product: { metafields: { edges: { node: RawMetafield }[] } } | null
   }>(
@@ -57,7 +57,7 @@ async function fetchProductMetafieldsAdmin(productId: string): Promise<RawMetafi
   return data?.product?.metafields?.edges.map(e => e.node) ?? []
 }
 
-function metafieldLabel(mf: RawMetafield): string {
+export function metafieldLabel(mf: RawMetafield): string {
   if (mf.definition?.name) return mf.definition.name
   return mf.key.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
 }
@@ -108,7 +108,7 @@ type Metaobject = {
   fields: MetaobjectField[]
 }
 
-function parseMetaobjectGIDs(value: string | null): string[] {
+export function parseMetaobjectGIDs(value: string | null): string[] {
   if (!value) return []
   try {
     const parsed = JSON.parse(value)
@@ -500,7 +500,89 @@ export async function fetchCollectionProducts(
 
   const { title, description, image, products } = data.collection
 
-  const resolved = await Promise.all(products.edges.map(e => resolveVehicleMetafields(e.node)))
+  // Step 1: Fetch all metafields for every product in parallel (1 call per product)
+  const allRawMetafields = await Promise.all(
+    products.edges.map(e => fetchProductMetafieldsAdmin(e.node.id))
+  )
+
+  // Step 2: Collect all unique metaobject GIDs across all products for batch resolution
+  const allGids: string[] = []
+  for (const rawMfs of allRawMetafields) {
+    for (const mf of rawMfs) {
+      if (mf.type === 'list.metaobject_reference' || mf.type === 'metaobject_reference') {
+        for (const gid of parseMetaobjectGIDs(mf.value)) {
+          if (!allGids.includes(gid)) allGids.push(gid)
+        }
+      }
+    }
+  }
+
+  // Step 3: Batch-resolve all metaobject labels in ONE query
+  const resolvedLabels = await resolveMetaobjectLabelsBatch(allGids)
+
+  const FEATURES_KEY = 'shopify.vehicle-features'
+
+  // Step 4: Build resolved specs using the batch map (no per-GID API calls)
+  const resolved: ShopifyProduct[] = products.edges.map(({ node }, i) => {
+    const rawMfs = allRawMetafields[i]
+    const specFields = rawMfs.filter(mf => `${mf.namespace}.${mf.key}` !== FEATURES_KEY)
+    const featuresMf = rawMfs.find(mf => `${mf.namespace}.${mf.key}` === FEATURES_KEY) ?? null
+
+    const resolvedSpecs: ResolvedSpec[] = []
+    for (const mf of specFields) {
+      let value: string | null = null
+      if (mf.type === 'list.metaobject_reference') {
+        const labels = parseMetaobjectGIDs(mf.value)
+          .map(gid => resolvedLabels.get(gid))
+          .filter((v): v is string => Boolean(v))
+        value = labels.join(', ') || null
+      } else if (mf.type === 'metaobject_reference') {
+        const gid = parseMetaobjectGIDs(mf.value)[0]
+        value = gid ? (resolvedLabels.get(gid) ?? null) : null
+      } else {
+        value = mf.value || null
+      }
+      if (!value) continue
+      resolvedSpecs.push({
+        namespace: mf.namespace,
+        key: mf.key,
+        label: metafieldLabel(mf),
+        value,
+      } satisfies ResolvedSpec)
+    }
+
+    const resolvedFeatures = featuresMf
+      ? parseMetaobjectGIDs(featuresMf.value)
+          .map(gid => resolvedLabels.get(gid))
+          .filter((v): v is string => Boolean(v))
+      : []
+
+    const getResolved = (ns: string, key: string) =>
+      resolvedSpecs.find(s => s.namespace === ns && s.key === key)?.value ?? null
+
+    return {
+      ...node,
+      resolvedSpecs,
+      resolvedFeatures,
+      year: getResolved('custom', 'model_year')
+        ? { value: getResolved('custom', 'model_year')!, type: 'number_integer' }
+        : null,
+      transmission: {
+        value: getResolved('shopify', 'transmission-type'),
+        type: 'list.metaobject_reference',
+      },
+      condition: {
+        value: getResolved('shopify', 'item-condition'),
+        type: 'list.metaobject_reference',
+      },
+      fuelType: { value: getResolved('shopify', 'fuel-supply'), type: 'list.metaobject_reference' },
+      driveType: { value: getResolved('shopify', 'drive-type'), type: 'list.metaobject_reference' },
+      vehicleFeatures:
+        resolvedFeatures.length > 0
+          ? { value: resolvedFeatures.join(','), type: featuresMf?.type ?? null }
+          : null,
+    }
+  })
 
   return {
     id: data.collection.id,
