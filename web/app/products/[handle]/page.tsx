@@ -96,13 +96,13 @@ async function SimilarCarsSection({
             {productPage.sections.youMayAlsoLike}
           </h2>
         </div>
-        <AnimatedSection className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {similarCars.map(car => (
             <div key={car.id} data-reveal>
               <CarCard product={car} />
             </div>
           ))}
-        </AnimatedSection>
+        </div>
         <div className="mt-8 flex justify-center md:mt-12">
           <Link
             href={showroomHref}
