@@ -1,7 +1,12 @@
 import { QdrantClient } from '@qdrant/qdrant-js'
 import { Redis } from '@upstash/redis'
 import { gateway } from 'ai'
-import { DEFAULT_CHAT_PROVIDER, DEFAULT_COHERE_MODEL, VISION_MODEL_ID } from '@/lib/rag/constants'
+import {
+  DEFAULT_CHAT_PROVIDER,
+  DEFAULT_COHERE_MODEL,
+  DEFAULT_GROQ_MODEL,
+  DEFAULT_VISION_MODEL,
+} from '@/lib/rag/constants'
 
 function getRequiredEnv(name: string): string {
   const value = process.env[name]?.trim()
@@ -33,11 +38,6 @@ export function getRedis(): Redis {
 export function getChatModel() {
   const provider = process.env.CHAT_PROVIDER ?? DEFAULT_CHAT_PROVIDER
 
-  const modelId = process.env.CHAT_MODEL_ID
-  if (modelId) {
-    return gateway(modelId)
-  }
-
   if (provider === 'groq') {
     return gateway(`groq/${DEFAULT_GROQ_MODEL}`, {
       providerOptions: {
@@ -55,6 +55,5 @@ export function getChatModel() {
 }
 
 export function getVisionModel() {
-  const modelId = process.env.VISION_MODEL_ID ?? VISION_MODEL_ID
-  return gateway(modelId)
+  return gateway(`groq/${DEFAULT_VISION_MODEL}`)
 }

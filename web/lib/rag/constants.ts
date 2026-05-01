@@ -5,7 +5,7 @@ export const RERANK_MODEL = 'rerank-v3.5'
 export const DEFAULT_CHAT_PROVIDER = 'groq'
 export const DEFAULT_GROQ_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct'
 export const DEFAULT_COHERE_MODEL = 'command-r-plus-08-2024'
-export const VISION_MODEL_ID = 'llama-3.3-70b-versatile'
+export const DEFAULT_VISION_MODEL = 'llama-3.3-70b-versatile'
 
 export const TOP_K_RETRIEVE = 25
 export const TOP_K_RERANK = 6
