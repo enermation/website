@@ -3,8 +3,8 @@ export const EMBED_DIMENSIONS = 1024
 export const RERANK_MODEL = 'rerank-v3.5'
 
 export const DEFAULT_CHAT_PROVIDER = 'groq'
-export const DEFAULT_GROQ_MODEL = 'groq/openai/gpt-oss-120b'
-export const DEFAULT_VISION_MODEL = 'groq/llama-3.3-70b-versatile'
+export const DEFAULT_GROQ_MODEL = 'openai/gpt-oss-120b'
+export const DEFAULT_VISION_MODEL = 'llama-3.3-70b-versatile'
 export const DEFAULT_COHERE_MODEL = 'cohere/command-r-plus-08-2024'
 
 export const TOP_K_RETRIEVE = 25
