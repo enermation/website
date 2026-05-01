@@ -84,6 +84,10 @@ export const heroShowcaseVehicles: HeroShowcaseVehicle[] = [
     label: 'Excavator',
     href: primaryShowroomCollectionHref,
   },
+  {
+    label: 'Toyota Hiace',
+    href: primaryShowroomCollectionHref,
+  },
 ]
 
 export const heroBrandWordmark = 'ENERMATION' as const

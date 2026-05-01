@@ -3,7 +3,14 @@
 import { ContactShadows, Environment, useEnvironment, useGLTF } from '@react-three/drei'
 import { applyProps, Canvas, useFrame } from '@react-three/fiber'
 import { type ReactNode, Suspense, useEffect, useRef } from 'react'
-import { type Group, MathUtils, type Mesh, Vector3 } from 'three'
+import {
+  type Group,
+  MathUtils,
+  type Mesh,
+  MeshPhysicalMaterial,
+  type MeshStandardMaterial,
+  Vector3,
+} from 'three'
 
 const CAMERA_Y = 1
 const CAMERA_LERP_FACTOR = 0.05
@@ -16,11 +23,13 @@ const DROP_START_Y = 3.4
 const SCANIA_SCALE = 1400
 const SKYLINE_SCALE = 163
 const EXCAVATOR_SCALE = 0.48
+const HIACE_SCALE = 0.012
 // const PORSCHE_MODEL_PATH = '/models/911-transformed.glb'
 // const LAMBO_MODEL_PATH = '/models/lambo.glb'
 const SCANIA_MODEL_PATH = '/models/scania-opt.glb'
 const SKYLINE_MODEL_PATH = '/models/skyline-opt.glb'
 const EXCAVATOR_MODEL_PATH = '/models/excavator-opt.glb'
+const HIACE_MODEL_PATH = '/models/hiace-layered-opt.glb'
 
 const cameraTarget = new Vector3()
 
@@ -78,8 +87,17 @@ const EXCAVATOR_CONFIG: HeroModelConfig = {
   idlePhase: 1.8,
 }
 
-const MODEL_CONFIGS = [SKYLINE_CONFIG, SCANIA_CONFIG, EXCAVATOR_CONFIG]
-const MODEL_PATHS = [SKYLINE_MODEL_PATH, SCANIA_MODEL_PATH, EXCAVATOR_MODEL_PATH]
+const HIACE_CONFIG: HeroModelConfig = {
+  orbitRadius: 14,
+  lookAtY: 0.9,
+  restPosition: [0, 1.4, 0] as const,
+  restRotation: [0.02, Math.PI / 4.5, 0] as const,
+  dropRotation: [-0.1, Math.PI / 4.5, 0] as const,
+  idlePhase: 0.3,
+}
+
+const MODEL_CONFIGS = [SKYLINE_CONFIG, SCANIA_CONFIG, EXCAVATOR_CONFIG, HIACE_CONFIG]
+const MODEL_PATHS = [SKYLINE_MODEL_PATH, SCANIA_MODEL_PATH, EXCAVATOR_MODEL_PATH, HIACE_MODEL_PATH]
 
 function getModelConfig(activeModelIndex: number) {
   return MODEL_CONFIGS[activeModelIndex] ?? SKYLINE_CONFIG
@@ -179,11 +197,12 @@ function SkylineModel() {
     if (paint) {
       applyProps(paint, {
         color: '#B0B2B1',
-        envMapIntensity: 2.6,
-        roughness: 0.18,
-        metalness: 0.78,
+        envMapIntensity: 2.0,
+        roughness: 0.22,
+        metalness: 0.75,
         clearcoat: 1.0,
-        clearcoatRoughness: 0.05,
+        clearcoatRoughness: 0.06,
+        normalScale: [2.5, 2.5],
       })
     }
 
@@ -192,9 +211,9 @@ function SkylineModel() {
     if (window) {
       applyProps(window, {
         color: '#0a0a0a',
-        roughness: 0.04,
+        roughness: 0.02,
         metalness: 0.0,
-        clearcoat: 0.2,
+        clearcoat: 0.4,
       })
     }
 
@@ -203,8 +222,8 @@ function SkylineModel() {
     if (wheels) {
       applyProps(wheels, {
         metalness: 1.0,
-        roughness: 0.05,
-        envMapIntensity: 2.8,
+        roughness: 0.03,
+        envMapIntensity: 3.5,
       })
     }
 
@@ -318,6 +337,108 @@ function ExcavatorModel() {
   }, [materials, nodes])
 
   return <primitive object={scene} scale={EXCAVATOR_SCALE} />
+}
+
+const HIACE_OVERLAY_MATS = new Set([
+  'side_glass',
+  'clear_glass',
+  'windshield',
+  'plastic_glass',
+  'red_lights',
+  'turn_signals',
+  'headlights',
+  'bulbs',
+  'chrome_parts',
+  'chrome_hl',
+  'logo',
+  'wipers',
+])
+
+function HiaceModel() {
+  const { scene } = useGLTF(HIACE_MODEL_PATH)
+
+  useEffect(() => {
+    // Upgrade body panels to MeshPhysicalMaterial for clearcoat — created once, shared across all body meshes
+    const bodyMat = new MeshPhysicalMaterial({
+      color: '#B0B2B1',
+      envMapIntensity: 2.0,
+      roughness: 0.22,
+      metalness: 0.75,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.06,
+    })
+
+    scene.traverse(obj => {
+      const mesh = obj as Mesh
+      if (!mesh.isMesh) return
+      mesh.castShadow = true
+      mesh.receiveShadow = true
+
+      const mat = mesh.material as MeshStandardMaterial
+      if (!mat?.isMaterial) return
+
+      if (HIACE_OVERLAY_MATS.has(mat.name)) {
+        mat.polygonOffset = true
+        mat.polygonOffsetFactor = -1
+        mat.polygonOffsetUnits = -1
+      }
+
+      switch (mat.name) {
+        case 'body':
+        case 'body_misc':
+          mesh.material = bodyMat
+          break
+        case 'chrome_parts':
+        case 'chrome_hl':
+          applyProps(mat, { envMapIntensity: 5.5, roughness: 0.03, metalness: 0.98 })
+          break
+        case 'rims':
+        case 'hub_caps':
+          applyProps(mat, { envMapIntensity: 4.2, roughness: 0.07, metalness: 0.95 })
+          break
+        case 'mirrors':
+          applyProps(mat, { envMapIntensity: 4.5, roughness: 0.04, metalness: 0.95 })
+          break
+        case 'disc_brake':
+          applyProps(mat, { envMapIntensity: 1.2, roughness: 0.55, metalness: 0.75 })
+          break
+        case 'tires':
+          applyProps(mat, { envMapIntensity: 0.3, roughness: 0.95, metalness: 0.0 })
+          break
+        case 'black_plastic':
+        case 'black_metal':
+          applyProps(mat, { envMapIntensity: 0.5, roughness: 0.88, metalness: 0.0 })
+          break
+        case 'grille':
+          applyProps(mat, { envMapIntensity: 1.8, roughness: 0.4, metalness: 0.65 })
+          break
+        case 'side_glass':
+        case 'windshield':
+        case 'clear_glass':
+        case 'plastic_glass':
+          applyProps(mat, { envMapIntensity: 4.0, roughness: 0.02, metalness: 0.0 })
+          break
+        case 'red_lights':
+        case 'headlights':
+        case 'turn_signals':
+        case 'bulbs':
+          applyProps(mat, { envMapIntensity: 2.5, roughness: 0.04, metalness: 0.0 })
+          break
+        case 'interior':
+        case 'dash':
+        case 'window_frames':
+          applyProps(mat, { envMapIntensity: 0.4, roughness: 0.85, metalness: 0.05 })
+          break
+        case 'seats':
+          applyProps(mat, { envMapIntensity: 0.3, roughness: 0.92, metalness: 0.0 })
+          break
+        default:
+          applyProps(mat, { envMapIntensity: 1.5 })
+      }
+    })
+  }, [scene])
+
+  return <primitive object={scene} scale={HIACE_SCALE} />
 }
 
 type AnimatedVehicleProps = {
@@ -479,7 +600,7 @@ function SceneContent({
         >
           <ScaniaModel />
         </AnimatedVehicle>
-      ) : (
+      ) : activeModelIndex === 2 ? (
         <AnimatedVehicle
           key="excavator"
           shouldDropModel={shouldDropModel}
@@ -487,6 +608,15 @@ function SceneContent({
           config={activeConfig}
         >
           <ExcavatorModel />
+        </AnimatedVehicle>
+      ) : (
+        <AnimatedVehicle
+          key="hiace"
+          shouldDropModel={shouldDropModel}
+          prefersReducedMotion={prefersReducedMotion}
+          config={activeConfig}
+        >
+          <HiaceModel />
         </AnimatedVehicle>
       )}
 
