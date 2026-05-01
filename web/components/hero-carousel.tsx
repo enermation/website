@@ -18,9 +18,9 @@ const SKYLINE_SCALE = 163
 const EXCAVATOR_SCALE = 0.48
 // const PORSCHE_MODEL_PATH = '/models/911-transformed.glb'
 // const LAMBO_MODEL_PATH = '/models/lambo.glb'
-const SCANIA_MODEL_PATH = '/models/scania.glb'
-const SKYLINE_MODEL_PATH = '/models/skyline.glb'
-const EXCAVATOR_MODEL_PATH = '/models/excavator.glb'
+const SCANIA_MODEL_PATH = '/models/scania-opt.glb'
+const SKYLINE_MODEL_PATH = '/models/skyline-opt.glb'
+const EXCAVATOR_MODEL_PATH = '/models/excavator-opt.glb'
 
 const cameraTarget = new Vector3()
 
@@ -179,11 +179,11 @@ function SkylineModel() {
     if (paint) {
       applyProps(paint, {
         color: '#B0B2B1',
-        envMapIntensity: 2.0,
-        roughness: 0.22,
-        metalness: 0.75,
+        envMapIntensity: 2.6,
+        roughness: 0.18,
+        metalness: 0.78,
         clearcoat: 1.0,
-        clearcoatRoughness: 0.06,
+        clearcoatRoughness: 0.05,
       })
     }
 
@@ -204,7 +204,7 @@ function SkylineModel() {
       applyProps(wheels, {
         metalness: 1.0,
         roughness: 0.05,
-        envMapIntensity: 2.5,
+        envMapIntensity: 2.8,
       })
     }
 
