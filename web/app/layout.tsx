@@ -16,7 +16,7 @@ const display = Bebas_Neue({
   weight: '400',
   subsets: ['latin'],
   display: 'swap',
-  preload: true,
+  preload: false,
 })
 
 const heading = Barlow_Semi_Condensed({

@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import { AnimatedSection } from '@/components/animated-section'
 import { SiteHeader } from '@/components/site-header'
 import { StripeBar } from '@/components/stripe-bar'
 import { aboutData, type NarrativeSection } from '@/lib/about-data'
@@ -87,7 +86,7 @@ export default function AboutPage() {
 
       <main className="flex-1" data-slot="about-page">
         {/* HERO SECTION */}
-        <AnimatedSection className="bg-surface py-20 lg:py-32">
+        <div className="bg-surface py-20 lg:py-32">
           <div className="mx-auto max-w-site px-4 md:px-6 text-center">
             <h1
               data-reveal
@@ -105,19 +104,19 @@ export default function AboutPage() {
               {aboutData.hero.description}
             </p>
           </div>
-        </AnimatedSection>
+        </div>
 
         {/* NARRATIVE SECTIONS */}
-        <AnimatedSection className="bg-card">
+        <div className="bg-card">
           <div className="mx-auto max-w-site px-4 md:px-6">
             {aboutData.sections.map(section => (
               <NarrativeRow key={section.heading} section={section} />
             ))}
           </div>
-        </AnimatedSection>
+        </div>
 
         {/* CTA SECTION */}
-        <AnimatedSection className="bg-muted py-20 lg:py-24">
+        <div className="bg-muted py-20 lg:py-24">
           <div className="mx-auto max-w-site px-4 md:px-6 text-center">
             <div data-reveal className="mb-10">
               <SectionHeading title="Ready to Find Your Next Masterpiece?" />
@@ -131,7 +130,7 @@ export default function AboutPage() {
               </Link>
             </div>
           </div>
-        </AnimatedSection>
+        </div>
       </main>
     </>
   )
