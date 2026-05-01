@@ -1,3 +1,5 @@
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import type { Metadata } from 'next'
 import { Barlow_Semi_Condensed, Bebas_Neue, Inter } from 'next/font/google'
 import { Suspense } from 'react'
@@ -66,6 +68,8 @@ export default async function RootLayout({
               <SiteFooter exploreGroups={exploreGroups} />
               <ChatWidgetMount />
               <Toaster />
+              <Analytics />
+              <SpeedInsights />
             </WishlistProvider>
           </CartProvider>
         </Suspense>

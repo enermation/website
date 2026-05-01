@@ -1,13 +1,7 @@
-import { anthropic } from '@ai-sdk/anthropic'
-import { groq } from '@ai-sdk/groq'
 import { QdrantClient } from '@qdrant/qdrant-js'
 import { Redis } from '@upstash/redis'
-import {
-  DEFAULT_ANTHROPIC_MODEL,
-  DEFAULT_CHAT_PROVIDER,
-  DEFAULT_GROQ_MODEL,
-  VISION_MODEL_ID,
-} from '@/lib/rag/constants'
+import { gateway } from 'ai'
+import { DEFAULT_CHAT_PROVIDER, VISION_MODEL_ID } from '@/lib/rag/constants'
 
 function getRequiredEnv(name: string): string {
   const value = process.env[name]?.trim()
@@ -17,13 +11,8 @@ function getRequiredEnv(name: string): string {
   return value
 }
 
-type AnthropicModel = ReturnType<typeof anthropic>
-type GroqModel = ReturnType<typeof groq>
-type ChatModel = AnthropicModel | GroqModel
-
 let redisClient: Redis | undefined
 let qdrantClient: QdrantClient | undefined
-let chatModelInstance: ChatModel | undefined
 
 export function getQdrantClient(): QdrantClient {
   if (!qdrantClient) {
@@ -41,25 +30,25 @@ export function getRedis(): Redis {
   return redisClient
 }
 
-export function getChatModel(): ChatModel {
-  if (!chatModelInstance) {
-    const provider = process.env.CHAT_PROVIDER ?? DEFAULT_CHAT_PROVIDER
-    const modelId =
-      process.env.CHAT_MODEL_ID ??
-      (provider === 'anthropic' ? DEFAULT_ANTHROPIC_MODEL : DEFAULT_GROQ_MODEL)
+export function getChatModel() {
+  const provider = process.env.CHAT_PROVIDER ?? DEFAULT_CHAT_PROVIDER
 
-    if (provider === 'anthropic') {
-      chatModelInstance = anthropic(modelId)
-    } else if (provider === 'groq') {
-      chatModelInstance = groq(modelId)
-    } else {
-      throw new Error(`Invalid CHAT_PROVIDER: "${provider}". Must be "anthropic" or "groq".`)
-    }
+  const modelId = process.env.CHAT_MODEL_ID
+  if (modelId) {
+    return gateway(modelId)
   }
-  return chatModelInstance
+
+  if (provider === 'anthropic') {
+    return gateway('anthropic/claude-haiku-4.5')
+  }
+  if (provider === 'groq') {
+    return gateway('groq/llama-4-scout-17b-16e-instruct')
+  }
+
+  throw new Error(`Invalid CHAT_PROVIDER: "${provider}". Must be "anthropic" or "groq".`)
 }
 
-export function getVisionModel(): ChatModel {
+export function getVisionModel() {
   const modelId = process.env.VISION_MODEL_ID ?? VISION_MODEL_ID
-  return groq(modelId)
+  return gateway(modelId)
 }

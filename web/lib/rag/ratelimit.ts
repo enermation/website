@@ -15,3 +15,14 @@ export function getChatLimiter(): Ratelimit {
   }
   return limiter
 }
+
+type RateLimitKeyOptions = {
+  sessionId?: string
+  ip?: string
+}
+
+export function getRateLimitKey({ sessionId, ip }: RateLimitKeyOptions): string {
+  if (sessionId) return `session:${sessionId}`
+  if (ip) return `ip:${ip}`
+  return `ip:unknown`
+}

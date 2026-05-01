@@ -6,21 +6,30 @@ import { z } from 'zod'
 import { getChatModel } from '@/lib/rag/clients'
 import { buildGroundedSystemPrompt } from '@/lib/rag/prompt'
 import { findRelevantProducts } from '@/lib/rag/query'
-import { getChatLimiter } from '@/lib/rag/ratelimit'
+import { getChatLimiter, getRateLimitKey } from '@/lib/rag/ratelimit'
 import type { FullRagChatMessageMetadata, ProductCitationData } from '@/lib/rag/types'
 import { describeImagesForRetrieval } from '@/lib/rag/vision'
 
-export const maxDuration = 30
-
 type ChatRequestBody = {
   messages: UIMessage[]
+  sessionId?: string
 }
 
 export async function POST(request: Request) {
+  let body: ChatRequestBody
+
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
+
+  const { messages, sessionId } = body
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anon'
 
   const limiter = getChatLimiter()
-  const { success, reset } = await limiter.limit(ip)
+  const key = getRateLimitKey({ sessionId, ip })
+  const { success, reset } = await limiter.limit(key)
 
   if (!success) {
     return NextResponse.json(
@@ -31,16 +40,6 @@ export async function POST(request: Request) {
       }
     )
   }
-
-  let body: ChatRequestBody
-
-  try {
-    body = await request.json()
-  } catch {
-    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
-  }
-
-  const { messages } = body
 
   const lastUserMessage = [...messages].reverse().find(m => m.role === 'user')
 

@@ -114,9 +114,9 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* ─── Font Mapping ─── */
-  --font-sans: var(--font-body);
-  --font-mono: var(--font-heading);
-  --font-heading: var(--font-heading);
+  --font-sans: "Inter", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Barlow Semi Condensed", "Geist Mono", ui-monospace, monospace;
+  --font-heading: "Barlow Semi Condensed", "Geist", ui-sans-serif, system-ui, sans-serif;
 
   /* ─── Border Radius ─── */
   --radius-sm: calc(var(--radius) * 0.6);
