@@ -38,20 +38,20 @@ export function getChatModel() {
     return gateway(modelId)
   }
 
-  if (provider === 'cohere') {
-    return gateway(`cohere/${DEFAULT_COHERE_MODEL}`, {
+  if (provider === 'groq') {
+    return gateway(`groq/${DEFAULT_GROQ_MODEL}`, {
       providerOptions: {
         gateway: {
-          order: ['cohere', 'groq'],
+          order: ['groq', 'cohere'],
         },
       },
     })
   }
-  if (provider === 'groq') {
-    return gateway('groq/llama-4-scout-17b-16e-instruct')
+  if (provider === 'cohere') {
+    return gateway(`cohere/${DEFAULT_COHERE_MODEL}`)
   }
 
-  throw new Error(`Invalid CHAT_PROVIDER: "${provider}". Must be "cohere" or "groq".`)
+  throw new Error(`Invalid CHAT_PROVIDER: "${provider}". Must be "groq" or "cohere".`)
 }
 
 export function getVisionModel() {
