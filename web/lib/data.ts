@@ -77,7 +77,7 @@ export const heroShowcaseVehicles: HeroShowcaseVehicle[] = [
     href: primaryShowroomCollectionHref,
   },
   {
-    label: 'Volvo FH750',
+    label: 'Scania S730',
     href: primaryShowroomCollectionHref,
   },
   {

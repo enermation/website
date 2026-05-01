@@ -13,12 +13,12 @@ const READY_GATE_FRAMES = 4
 const DROP_START_Y = 3.4
 // const PORSCHE_SCALE = 1.6
 // const LAMBO_SCALE = 0.015
-const COMMERCIAL_SCALE = 1.3
+const SCANIA_SCALE = 1.3
 const SKYLINE_SCALE = 163
 const EXCAVATOR_SCALE = 0.48
 // const PORSCHE_MODEL_PATH = '/models/911-transformed.glb'
 // const LAMBO_MODEL_PATH = '/models/lambo.glb'
-const COMMERCIAL_MODEL_PATH = '/models/commercial.glb'
+const SCANIA_MODEL_PATH = '/models/scania.glb'
 const SKYLINE_MODEL_PATH = '/models/skyline.glb'
 const EXCAVATOR_MODEL_PATH = '/models/excavator.glb'
 
@@ -51,7 +51,7 @@ type HeroModelConfig = {
 //   idlePhase: 1.35,
 // }
 
-const COMMERCIAL_CONFIG: HeroModelConfig = {
+const SCANIA_CONFIG: HeroModelConfig = {
   orbitRadius: 15,
   lookAtY: 0.8,
   restPosition: [0, -0.3, 0] as const,
@@ -78,8 +78,8 @@ const EXCAVATOR_CONFIG: HeroModelConfig = {
   idlePhase: 1.8,
 }
 
-const MODEL_CONFIGS = [SKYLINE_CONFIG, COMMERCIAL_CONFIG, EXCAVATOR_CONFIG]
-const MODEL_PATHS = [SKYLINE_MODEL_PATH, COMMERCIAL_MODEL_PATH, EXCAVATOR_MODEL_PATH]
+const MODEL_CONFIGS = [SKYLINE_CONFIG, SCANIA_CONFIG, EXCAVATOR_CONFIG]
+const MODEL_PATHS = [SKYLINE_MODEL_PATH, SCANIA_MODEL_PATH, EXCAVATOR_MODEL_PATH]
 
 function getModelConfig(activeModelIndex: number) {
   return MODEL_CONFIGS[activeModelIndex] ?? SKYLINE_CONFIG
@@ -136,8 +136,8 @@ function getInactiveModelPath(activeModelIndex: number) {
 //   return <primitive object={scene} scale={LAMBO_SCALE} />
 // }
 
-function CommercialModel() {
-  const { scene, nodes, materials } = useGLTF(COMMERCIAL_MODEL_PATH)
+function ScaniaModel() {
+  const { scene, nodes, materials } = useGLTF(SCANIA_MODEL_PATH)
 
   useEffect(() => {
     Object.values(nodes).forEach(node => {
@@ -157,7 +157,7 @@ function CommercialModel() {
     })
   }, [materials, nodes])
 
-  return <primitive object={scene} scale={COMMERCIAL_SCALE} />
+  return <primitive object={scene} scale={SCANIA_SCALE} />
 }
 
 function SkylineModel() {
@@ -465,12 +465,12 @@ function SceneContent({
         </AnimatedVehicle>
       ) : activeModelIndex === 1 ? (
         <AnimatedVehicle
-          key="commercial"
+          key="scania"
           shouldDropModel={shouldDropModel}
           prefersReducedMotion={prefersReducedMotion}
           config={activeConfig}
         >
-          <CommercialModel />
+          <ScaniaModel />
         </AnimatedVehicle>
       ) : (
         <AnimatedVehicle
