@@ -335,28 +335,31 @@ function AnimatedVehicle({
 }: AnimatedVehicleProps) {
   const groupRef = useRef<Group>(null)
   const revealProgress = useRef(prefersReducedMotion ? 1 : 0)
+  const idleTime = useRef(config.idlePhase)
 
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     const group = groupRef.current
     if (!group) return
+
+    const clampedDelta = Math.min(delta, 0.05)
+    idleTime.current += clampedDelta
 
     const targetProgress = shouldDropModel || prefersReducedMotion ? 1 : 0
     revealProgress.current = MathUtils.damp(
       revealProgress.current,
       targetProgress,
       prefersReducedMotion ? 10 : 4.5,
-      delta
+      clampedDelta
     )
 
     const progress = revealProgress.current
     const idleStrength = prefersReducedMotion ? 0 : MathUtils.smoothstep(progress, 0.76, 1)
-    const idleTime = state.clock.elapsedTime + config.idlePhase
 
     group.position.x = config.restPosition[0]
     group.position.z = config.restPosition[2]
     group.position.y =
       MathUtils.lerp(DROP_START_Y, config.restPosition[1], progress) +
-      Math.sin(idleTime * 0.7) * 0.04 * idleStrength
+      Math.sin(idleTime.current * 0.7) * 0.04 * idleStrength
 
     group.rotation.x = MathUtils.lerp(config.dropRotation[0], config.restRotation[0], progress)
     group.rotation.y = MathUtils.lerp(config.dropRotation[1], config.restRotation[1], progress)
@@ -380,10 +383,12 @@ function CameraRig({
   const orbitStrength = useRef(allowIdleOrbit ? 1 : 0)
   const orbitRadius = useRef(getModelConfig(activeModelIndex).orbitRadius)
   const lookAtY = useRef(getModelConfig(activeModelIndex).lookAtY)
+  const orbitTime = useRef(0)
 
   useFrame((state, delta) => {
     const clampedDelta = Math.min(delta, 0.05)
-    const elapsedTime = state.clock.elapsedTime
+    orbitTime.current += clampedDelta
+    const elapsedTime = orbitTime.current
     const activeConfig = getModelConfig(activeModelIndex)
     const targetStrength = prefersReducedMotion ? 0 : allowIdleOrbit ? 1 : 0
     const targetRadius = activeConfig.orbitRadius * (isMobile ? MOBILE_ORBIT_FACTOR : 1)
