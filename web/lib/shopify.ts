@@ -1,5 +1,6 @@
 import { createStorefrontApiClient } from '@shopify/storefront-api-client'
 import { cacheLife, cacheTag } from 'next/cache'
+import { cache } from 'react'
 import {
   GET_ARTICLE_BY_HANDLE,
   GET_BLOG_BY_HANDLE,
@@ -593,7 +594,7 @@ export async function fetchCollectionProducts(
   }
 }
 
-export async function fetchProduct(handle: string): Promise<ShopifyProduct | null> {
+export const fetchProduct = cache(async (handle: string): Promise<ShopifyProduct | null> => {
   'use cache'
   cacheLife('minutes')
   cacheTag('products', `product-${handle}`)
@@ -606,7 +607,7 @@ export async function fetchProduct(handle: string): Promise<ShopifyProduct | nul
   if (!data?.product) return null
 
   return resolveVehicleMetafields(data.product)
-}
+})
 
 export async function fetchShopInfo(): Promise<ShopifyShopInfo | null> {
   'use cache'
@@ -627,6 +628,10 @@ export async function fetchBlogByHandle(blogHandle: string): Promise<{
   description: string | null
   articles: ShopifyArticle[]
 } | null> {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('blog', `blog-${blogHandle}`)
+
   const { data, errors } = await getClient().request<{
     blog: {
       id: string

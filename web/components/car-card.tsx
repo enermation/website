@@ -44,6 +44,7 @@ export function CarCard({ product }: CarCardProps) {
             src={image.url}
             alt={image.altText ?? product.title}
             fill
+            priority
             className="object-cover"
             sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 100vw"
           />

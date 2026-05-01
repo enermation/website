@@ -86,6 +86,7 @@ export function ImageGallery({ images }: { images: ShopifyImage[] }) {
                         src={image.url}
                         alt={image.altText ?? ''}
                         fill
+                        priority={i < 1}
                         className="object-cover"
                         sizes="(min-width: 1320px) 330px, 25vw"
                       />
