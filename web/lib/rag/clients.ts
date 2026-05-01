@@ -39,7 +39,7 @@ export function getChatModel() {
   const provider = process.env.CHAT_PROVIDER ?? DEFAULT_CHAT_PROVIDER
 
   if (provider === 'groq') {
-    return gateway(`groq/${DEFAULT_GROQ_MODEL}`, {
+    return gateway(DEFAULT_GROQ_MODEL, {
       providerOptions: {
         gateway: {
           order: ['groq', 'cohere'],
@@ -55,5 +55,5 @@ export function getChatModel() {
 }
 
 export function getVisionModel() {
-  return gateway(`groq/${DEFAULT_VISION_MODEL}`)
+  return gateway(DEFAULT_VISION_MODEL)
 }
