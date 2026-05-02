@@ -25,6 +25,7 @@ const SCANIA_SCALE = 1400
 const SKYLINE_SCALE = 163
 const EXCAVATOR_SCALE = 0.48
 const MAN_SCALE = 3.5
+const MAN_MOBILE_SCALE = 2.6
 // const PORSCHE_MODEL_PATH = '/models/911-transformed.glb'
 // const LAMBO_MODEL_PATH = '/models/lambo.glb'
 const SCANIA_MODEL_PATH = '/models/scania-opt.glb'
@@ -340,7 +341,7 @@ function ExcavatorModel() {
   return <primitive object={scene} scale={EXCAVATOR_SCALE} />
 }
 
-function ManBusModel() {
+function ManBusModel({ isMobile }: { isMobile: boolean }) {
   const { scene, nodes, materials } = useGLTF(MAN_MODEL_PATH)
 
   useEffect(() => {
@@ -434,7 +435,7 @@ function ManBusModel() {
     scene.position.y = -box.min.y
   }, [scene, nodes, materials])
 
-  return <primitive object={scene} scale={MAN_SCALE} />
+  return <primitive object={scene} scale={isMobile ? MAN_MOBILE_SCALE : MAN_SCALE} />
 }
 
 type AnimatedVehicleProps = {
@@ -616,7 +617,7 @@ function SceneContent({
           prefersReducedMotion={prefersReducedMotion}
           config={activeConfig}
         >
-          <ManBusModel />
+          <ManBusModel isMobile={isMobile} />
         </AnimatedVehicle>
       )}
 
