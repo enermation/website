@@ -649,6 +649,7 @@ type HeroCarouselSceneProps = {
   preloadInactiveModel: boolean
   isMobile: boolean
   sceneVisible: boolean
+  isInViewport: boolean
 }
 
 export function HeroCarouselScene({
@@ -660,6 +661,7 @@ export function HeroCarouselScene({
   preloadInactiveModel,
   isMobile,
   sceneVisible,
+  isInViewport,
 }: HeroCarouselSceneProps) {
   useEffect(() => {
     useGLTF.preload(getModelPath(activeModelIndex))
@@ -687,7 +689,7 @@ export function HeroCarouselScene({
 
   return (
     <Canvas
-      frameloop={sceneVisible ? 'always' : 'demand'}
+      frameloop={sceneVisible && isInViewport ? 'always' : 'demand'}
       shadows
       camera={{ position: [0, CAMERA_Y, initialOrbitRadius], fov: 38 }}
       dpr={[1, 1.25]}

@@ -3,7 +3,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { TextHoverEffect } from '@/components/ui/text-hover-effect'
 import { useIsMobile } from '@/hooks/use-mobile'
 import {
@@ -63,6 +63,18 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
   const [activeModelIndex, setActiveModelIndex] = useState(() =>
     Math.min(Math.max(initialIndex, 0), heroShowcaseVehicles.length - 1)
   )
+  const [isInViewport, setIsInViewport] = useState(true)
+  const sequenceRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = sequenceRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(([entry]) => setIsInViewport(entry.isIntersecting), {
+      threshold: 0,
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   const handleSceneReady = useCallback(() => {
     setSceneReady(true)
@@ -157,7 +169,12 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
   }, [])
 
   return (
-    <div data-slot="hero-sequence" data-phase={phase} className="hero-stage__sequence">
+    <div
+      ref={sequenceRef}
+      data-slot="hero-sequence"
+      data-phase={phase}
+      className="hero-stage__sequence"
+    >
       <div className="hero-stage__scene-shell">
         {shouldMountScene ? (
           <div
@@ -172,6 +189,7 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
               preloadInactiveModel={showCarouselControls}
               isMobile={isMobile}
               sceneVisible={shouldRevealScene}
+              isInViewport={isInViewport}
             />
           </div>
         ) : null}
