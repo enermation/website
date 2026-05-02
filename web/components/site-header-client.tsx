@@ -3,6 +3,7 @@
 import {
   ArrowRightIcon,
   Bike,
+  BotIcon,
   Bus,
   Car,
   ChevronDownIcon,
@@ -478,6 +479,8 @@ export function SiteHeaderClient({ navigation, isHomePage = false }: SiteHeaderC
                             >
                               {item.label === 'Home' ? (
                                 <Home className="size-5 text-white-50" aria-hidden={true} />
+                              ) : item.label === 'Miles' ? (
+                                <BotIcon className="size-5 text-white-50" aria-hidden={true} />
                               ) : (
                                 <Car className="size-5 text-white-50" aria-hidden={true} />
                               )}

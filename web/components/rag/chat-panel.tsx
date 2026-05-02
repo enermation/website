@@ -2,7 +2,7 @@
 
 import { useChat } from '@ai-sdk/react'
 import { AudioLines, Camera, ChevronRight, Hand, Paperclip, Square, X } from 'lucide-react'
-import type { FileUIPart } from 'ai'
+import type { ChatStatus, FileUIPart } from 'ai'
 import { DefaultChatTransport } from 'ai'
 import Image from 'next/image'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -16,6 +16,7 @@ import {
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTextarea,
+  useOptionalPromptInputController,
 } from '@/components/ai-elements/prompt-input'
 import { SpeechInput } from '@/components/ai-elements/speech-input'
 import { VoiceWaveform } from '@/components/ai-elements/voice-waveform'
@@ -283,6 +284,221 @@ function ThinkingIndicator() {
 }
 
 // ============================================================================
+// Chat Input Area (must render inside PromptInputProvider to access controller)
+// ============================================================================
+
+interface ChatInputAreaProps {
+  inputValue: string
+  setInputValue: (v: string) => void
+  pendingFiles: Array<{ file: File; preview: string }>
+  removeFile: (index: number) => void
+  status: ChatStatus
+  stop: () => void
+  fileInputRef: React.RefObject<HTMLInputElement | null>
+  cameraInputRef: React.RefObject<HTMLInputElement | null>
+  inputRef: React.RefObject<HTMLTextAreaElement | null>
+  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onSubmit: (message: { text: string; files: FileUIPart[] }) => void
+  error: string | null
+  setError: (e: string | null) => void
+  recordingStream: MediaStream | null
+  onStartRecording: () => void
+  onStopRecording: () => void
+}
+
+function ChatInputArea({
+  inputValue,
+  setInputValue,
+  pendingFiles,
+  removeFile,
+  status,
+  stop,
+  fileInputRef,
+  cameraInputRef,
+  inputRef,
+  handleFileChange,
+  onSubmit,
+  error,
+  setError,
+  recordingStream,
+  onStartRecording,
+  onStopRecording,
+}: ChatInputAreaProps) {
+  const controller = useOptionalPromptInputController()
+
+  const isSendDisabled = !inputValue.trim() && pendingFiles.length === 0
+
+  const handleFormSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      if (isSendDisabled) return
+      const text = inputValue.trim()
+      const files: FileUIPart[] = pendingFiles.map(pf => ({
+        type: 'file' as const,
+        mediaType: pf.file.type,
+        url: pf.preview,
+        filename: pf.file.name,
+      }))
+      onSubmit({ text, files })
+      setInputValue('')
+      controller?.textInput.clear()
+    },
+    [isSendDisabled, inputValue, pendingFiles, onSubmit, setInputValue, controller]
+  )
+
+  return (
+    <>
+      {pendingFiles.length > 0 && (
+        <div className="flex flex-wrap gap-2 px-4 py-2">
+          {pendingFiles.map(({ preview, file }, fileIdx) => {
+            const fileKey = `file-${fileIdx}`
+            return (
+              <div className="relative size-16" key={fileKey}>
+                <Image
+                  alt={file.name}
+                  className="size-full rounded-md object-cover"
+                  height={64}
+                  src={preview}
+                  width={64}
+                  unoptimized
+                />
+                <button
+                  className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-background text-muted-foreground"
+                  onClick={() => removeFile(fileIdx)}
+                  type="button"
+                >
+                  <X className="size-3" />
+                </button>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <div className="flex-shrink-0 px-3 pb-6 pt-3 sm:px-4 sm:pb-6">
+        <div className="max-w-3xl mx-auto">
+          {error && (
+            <div className="mb-2 rounded-lg border border-destructive/30 bg-destructive px-3 py-2 text-sm text-destructive-foreground">
+              <div className="flex items-center justify-between gap-2">
+                <span>{error}</span>
+                <button
+                  className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-destructive-foreground/10"
+                  onClick={() => setError(null)}
+                  type="button"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {recordingStream && (
+            <div className="mb-2">
+              <VoiceWaveform stream={recordingStream} />
+              <button
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-sm text-white hover:bg-red-600"
+                onClick={onStopRecording}
+                type="button"
+              >
+                <X className="size-4" />
+                Stop recording
+              </button>
+            </div>
+          )}
+
+          <div className="relative rounded-2xl border border-border/80 bg-background shadow-sm shadow-foreground/5">
+            <div className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
+            <form onSubmit={handleFormSubmit}>
+              <PromptInputBody>
+                <PromptInputFooter className="px-4 py-3">
+                  <input
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    multiple
+                    onChange={handleFileChange}
+                    ref={fileInputRef}
+                    type="file"
+                  />
+                  <input
+                    accept="image/jpeg,image/png,image/webp"
+                    capture="environment"
+                    className="hidden"
+                    onChange={handleFileChange}
+                    ref={cameraInputRef}
+                    type="file"
+                  />
+                  <div className="flex shrink-0 items-center gap-1">
+                    <PromptInputAction tooltip="Attach file">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors sm:h-9 sm:w-9"
+                        aria-label="Attach file"
+                      >
+                        <Paperclip className="h-4 w-4 sm:h-5 sm:w-5" />
+                      </button>
+                    </PromptInputAction>
+                    <PromptInputAction tooltip="Take photo">
+                      <button
+                        type="button"
+                        onClick={() => cameraInputRef.current?.click()}
+                        className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors sm:h-9 sm:w-9"
+                        aria-label="Take photo"
+                      >
+                        <Camera className="h-4 w-4 sm:h-5 sm:w-5" />
+                      </button>
+                    </PromptInputAction>
+                    <PromptInputAction tooltip="Use voice mode">
+                      <button
+                        type="button"
+                        onClick={recordingStream ? onStopRecording : onStartRecording}
+                        className={cn(
+                          'flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 ease-[cubic-bezier(0.165,0.85,0.45,1)] active:scale-[0.98] sm:h-9 sm:w-9',
+                          recordingStream
+                            ? 'bg-destructive text-white hover:bg-destructive/80 hover:text-white'
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        )}
+                        aria-label={recordingStream ? 'Stop recording' : 'Start recording'}
+                      >
+                        {recordingStream ? (
+                          <Square className="h-3 w-3 sm:h-4 sm:w-4 fill-current" />
+                        ) : (
+                          <AudioLines className="h-4 w-4 sm:h-5 sm:w-5" />
+                        )}
+                      </button>
+                    </PromptInputAction>
+                  </div>
+                  <PromptInputTextarea
+                    className="font-sans text-sm"
+                    name="message"
+                    onChange={e => setInputValue(e.target.value)}
+                    placeholder="Ask about vehicles or parts..."
+                    ref={inputRef}
+                    value={inputValue}
+                  />
+                  <PromptInputSubmit
+                    className={
+                      isSendDisabled
+                        ? 'bg-muted text-muted-foreground hover:bg-muted'
+                        : 'bg-foreground text-background hover:opacity-90'
+                    }
+                    disabled={isSendDisabled}
+                    onStop={status === 'streaming' ? stop : undefined}
+                    size="icon-sm"
+                    status={status}
+                    type="submit"
+                  />
+                </PromptInputFooter>
+              </PromptInputBody>
+            </form>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+// ============================================================================
 // Main ChatPanel Component
 // ============================================================================
 
@@ -396,12 +612,6 @@ export function ChatPanel({
     }
   }, [recordingStream])
 
-  const isSendDisabled = useMemo(() => {
-    const hasText = inputValue.trim().length > 0
-    const hasValidAttachments = pendingFiles.length > 0
-    return !hasText && !hasValidAttachments
-  }, [inputValue, pendingFiles])
-
   const followUps = useMemo(() => {
     if (status === 'streaming' || status === 'submitted') return []
     const last = [...messages].reverse().find(m => m.role === 'assistant')
@@ -427,23 +637,6 @@ export function ChatPanel({
     inputElement.addEventListener('keydown', handleKeyDown)
     return () => inputElement.removeEventListener('keydown', handleKeyDown)
   }, [suggestion, inputValue])
-
-  const handleFormSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
-      if (isSendDisabled) return
-      const text = inputValue.trim()
-      const files: FileUIPart[] = pendingFiles.map(pf => ({
-        type: 'file' as const,
-        mediaType: pf.file.type,
-        url: pf.preview,
-        filename: pf.file.name,
-      }))
-      handleSubmit({ text, files })
-      setInputValue('')
-    },
-    [isSendDisabled, inputValue, pendingFiles, handleSubmit]
-  )
 
   return (
     <PromptInputProvider>
@@ -553,154 +746,24 @@ export function ChatPanel({
           </div>
         )}
 
-        {/* Pending files preview */}
-        {pendingFiles.length > 0 && (
-          <div className="flex flex-wrap gap-2 px-4 py-2">
-            {pendingFiles.map(({ preview, file }, fileIdx) => {
-              const fileKey = `file-${fileIdx}`
-              return (
-                <div className="relative size-16" key={fileKey}>
-                  <Image
-                    alt={file.name}
-                    className="size-full rounded-md object-cover"
-                    height={64}
-                    src={preview}
-                    width={64}
-                    unoptimized
-                  />
-                  <button
-                    className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-background text-muted-foreground"
-                    onClick={() => removeFile(fileIdx)}
-                    type="button"
-                  >
-                    <X className="size-3" />
-                  </button>
-                </div>
-              )
-            })}
-          </div>
-        )}
-
-        {/* Prompt input — sticky footer inside the card's flex column */}
-        <div className="flex-shrink-0 px-3 pb-6 pt-3 sm:px-4 sm:pb-6">
-          <div className="max-w-3xl mx-auto">
-            {error && (
-              <div className="mb-2 rounded-lg border border-destructive/30 bg-destructive px-3 py-2 text-sm text-destructive-foreground">
-                <div className="flex items-center justify-between gap-2">
-                  <span>{error}</span>
-                  <button
-                    className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-destructive-foreground/10"
-                    onClick={() => setError(null)}
-                    type="button"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {recordingStream && (
-              <div className="mb-2">
-                <VoiceWaveform stream={recordingStream} />
-                <button
-                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-sm text-white hover:bg-red-600"
-                  onClick={handleStopRecording}
-                  type="button"
-                >
-                  <X className="size-4" />
-                  Stop recording
-                </button>
-              </div>
-            )}
-
-            <div className="relative rounded-2xl border border-border/80 bg-background shadow-sm shadow-foreground/5">
-              <div className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
-              <form onSubmit={handleFormSubmit}>
-                <PromptInputBody>
-                  <PromptInputFooter className="px-4 py-3">
-                    <input
-                      accept="image/jpeg,image/png,image/webp"
-                      className="hidden"
-                      multiple
-                      onChange={handleFileChange}
-                      ref={fileInputRef}
-                      type="file"
-                    />
-                    <input
-                      accept="image/jpeg,image/png,image/webp"
-                      capture="environment"
-                      className="hidden"
-                      onChange={handleFileChange}
-                      ref={cameraInputRef}
-                      type="file"
-                    />
-                    <div className="flex shrink-0 items-center gap-1">
-                      <PromptInputAction tooltip="Attach file">
-                        <button
-                          type="button"
-                          onClick={() => fileInputRef.current?.click()}
-                          className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors sm:h-9 sm:w-9"
-                          aria-label="Attach file"
-                        >
-                          <Paperclip className="h-4 w-4 sm:h-5 sm:w-5" />
-                        </button>
-                      </PromptInputAction>
-                      <PromptInputAction tooltip="Take photo">
-                        <button
-                          type="button"
-                          onClick={() => cameraInputRef.current?.click()}
-                          className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors sm:h-9 sm:w-9"
-                          aria-label="Take photo"
-                        >
-                          <Camera className="h-4 w-4 sm:h-5 sm:w-5" />
-                        </button>
-                      </PromptInputAction>
-                      <PromptInputAction tooltip="Use voice mode">
-                        <button
-                          type="button"
-                          onClick={recordingStream ? handleStopRecording : handleStartRecording}
-                          className={cn(
-                            'flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 ease-[cubic-bezier(0.165,0.85,0.45,1)] active:scale-[0.98] sm:h-9 sm:w-9',
-                            recordingStream
-                              ? 'bg-destructive text-white hover:bg-destructive/80 hover:text-white'
-                              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                          )}
-                          aria-label={recordingStream ? 'Stop recording' : 'Start recording'}
-                        >
-                          {recordingStream ? (
-                            <Square className="h-3 w-3 sm:h-4 sm:w-4 fill-current" />
-                          ) : (
-                            <AudioLines className="h-4 w-4 sm:h-5 sm:w-5" />
-                          )}
-                        </button>
-                      </PromptInputAction>
-                    </div>
-                    <PromptInputTextarea
-                      className="font-sans text-sm"
-                      name="message"
-                      onChange={e => setInputValue(e.target.value)}
-                      placeholder="Ask about vehicles or parts..."
-                      ref={inputRef}
-                      value={inputValue}
-                    />
-                    <PromptInputSubmit
-                      className={
-                        isSendDisabled
-                          ? 'bg-muted text-muted-foreground hover:bg-muted'
-                          : 'bg-foreground text-background hover:opacity-90'
-                      }
-                      disabled={isSendDisabled}
-                      onStop={status === 'streaming' ? stop : undefined}
-                      size="icon-sm"
-                      status={status}
-                      type="submit"
-                    />
-                  </PromptInputFooter>
-                </PromptInputBody>
-              </form>
-            </div>
-          </div>
-        </div>
+        <ChatInputArea
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          pendingFiles={pendingFiles}
+          removeFile={removeFile}
+          status={status}
+          stop={stop}
+          fileInputRef={fileInputRef}
+          cameraInputRef={cameraInputRef}
+          inputRef={inputRef}
+          handleFileChange={handleFileChange}
+          onSubmit={handleSubmit}
+          error={error}
+          setError={setError}
+          recordingStream={recordingStream}
+          onStartRecording={handleStartRecording}
+          onStopRecording={handleStopRecording}
+        />
       </div>
     </PromptInputProvider>
   )
