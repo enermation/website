@@ -171,6 +171,7 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
               allowIdleOrbit={allowIdleOrbit}
               preloadInactiveModel={showCarouselControls}
               isMobile={isMobile}
+              sceneVisible={shouldRevealScene}
             />
           </div>
         ) : null}

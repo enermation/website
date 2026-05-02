@@ -85,12 +85,12 @@ export const heroShowcaseVehicles: HeroShowcaseVehicle[] = [
     href: primaryShowroomCollectionHref,
   },
   {
-    label: 'Toyota Hiace',
+    label: "MAN Lion's Intercity",
     href: primaryShowroomCollectionHref,
   },
 ]
 
-export const heroBrandWordmark = 'ENERMATION' as const
+export const heroBrandWordmark = 'enermation' as const
 
 // â”€â”€ Section images â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 

@@ -1,9 +1,10 @@
 'use client'
 
 import { ContactShadows, Environment, useEnvironment, useGLTF } from '@react-three/drei'
-import { applyProps, Canvas, useFrame } from '@react-three/fiber'
+import { applyProps, Canvas, useFrame, useThree } from '@react-three/fiber'
 import { type ReactNode, Suspense, useEffect, useRef } from 'react'
 import {
+  Box3,
   type Group,
   MathUtils,
   type Mesh,
@@ -23,13 +24,13 @@ const DROP_START_Y = 3.4
 const SCANIA_SCALE = 1400
 const SKYLINE_SCALE = 163
 const EXCAVATOR_SCALE = 0.48
-const HIACE_SCALE = 0.012
+const MAN_SCALE = 3.5
 // const PORSCHE_MODEL_PATH = '/models/911-transformed.glb'
 // const LAMBO_MODEL_PATH = '/models/lambo.glb'
 const SCANIA_MODEL_PATH = '/models/scania-opt.glb'
 const SKYLINE_MODEL_PATH = '/models/skyline-opt.glb'
 const EXCAVATOR_MODEL_PATH = '/models/excavator-opt.glb'
-const HIACE_MODEL_PATH = '/models/hiace-layered-opt.glb'
+const MAN_MODEL_PATH = '/models/man-intercity-opt.glb'
 
 const cameraTarget = new Vector3()
 
@@ -87,17 +88,17 @@ const EXCAVATOR_CONFIG: HeroModelConfig = {
   idlePhase: 1.8,
 }
 
-const HIACE_CONFIG: HeroModelConfig = {
+const MAN_CONFIG: HeroModelConfig = {
   orbitRadius: 14,
-  lookAtY: 0.9,
-  restPosition: [0, 1.4, 0] as const,
-  restRotation: [0.02, Math.PI / 4.5, 0] as const,
-  dropRotation: [-0.1, Math.PI / 4.5, 0] as const,
-  idlePhase: 0.3,
+  lookAtY: 0.8,
+  restPosition: [0, -0.3, 0] as const,
+  restRotation: [0.02, Math.PI / 5, 0] as const,
+  dropRotation: [-0.1, Math.PI / 5, 0] as const,
+  idlePhase: 0.5,
 }
 
-const MODEL_CONFIGS = [SKYLINE_CONFIG, SCANIA_CONFIG, EXCAVATOR_CONFIG, HIACE_CONFIG]
-const MODEL_PATHS = [SKYLINE_MODEL_PATH, SCANIA_MODEL_PATH, EXCAVATOR_MODEL_PATH, HIACE_MODEL_PATH]
+const MODEL_CONFIGS = [SKYLINE_CONFIG, SCANIA_CONFIG, EXCAVATOR_CONFIG, MAN_CONFIG]
+const MODEL_PATHS = [SKYLINE_MODEL_PATH, SCANIA_MODEL_PATH, EXCAVATOR_MODEL_PATH, MAN_MODEL_PATH]
 
 function getModelConfig(activeModelIndex: number) {
   return MODEL_CONFIGS[activeModelIndex] ?? SKYLINE_CONFIG
@@ -339,106 +340,101 @@ function ExcavatorModel() {
   return <primitive object={scene} scale={EXCAVATOR_SCALE} />
 }
 
-const HIACE_OVERLAY_MATS = new Set([
-  'side_glass',
-  'clear_glass',
-  'windshield',
-  'plastic_glass',
-  'red_lights',
-  'turn_signals',
-  'headlights',
-  'bulbs',
-  'chrome_parts',
-  'chrome_hl',
-  'logo',
-  'wipers',
-])
-
-function HiaceModel() {
-  const { scene } = useGLTF(HIACE_MODEL_PATH)
+function ManBusModel() {
+  const { scene, nodes, materials } = useGLTF(MAN_MODEL_PATH)
 
   useEffect(() => {
-    // Upgrade body panels to MeshPhysicalMaterial for clearcoat — created once, shared across all body meshes
+    Object.values(nodes).forEach(node => {
+      const mesh = node as Mesh
+      if (!mesh.isMesh) return
+      mesh.castShadow = true
+      mesh.receiveShadow = true
+    })
+
+    // Polygon offset for glass overlays to prevent z-fighting
+    ;['clearglass', 'windowglass', 'darkglass', 'orangeglass', 'redglass'].forEach(name => {
+      const mat = materials[name] as MeshStandardMaterial | undefined
+      if (!mat) return
+      mat.polygonOffset = true
+      mat.polygonOffsetFactor = -1
+      mat.polygonOffsetUnits = -1
+    })
+
+    // Upgrade carpaint to MeshPhysicalMaterial for clearcoat support — silver finish matching Skyline
     const bodyMat = new MeshPhysicalMaterial({
       color: '#B0B2B1',
-      envMapIntensity: 2.0,
+      envMapIntensity: 2.5,
       roughness: 0.22,
       metalness: 0.75,
       clearcoat: 1.0,
       clearcoatRoughness: 0.06,
     })
-
     scene.traverse(obj => {
       const mesh = obj as Mesh
-      if (!mesh.isMesh) return
-      mesh.castShadow = true
-      mesh.receiveShadow = true
-
-      const mat = mesh.material as MeshStandardMaterial
-      if (!mat?.isMaterial) return
-
-      if (HIACE_OVERLAY_MATS.has(mat.name)) {
-        mat.polygonOffset = true
-        mat.polygonOffsetFactor = -1
-        mat.polygonOffsetUnits = -1
-      }
-
-      switch (mat.name) {
-        case 'body':
-        case 'body_misc':
-          mesh.material = bodyMat
-          break
-        case 'chrome_parts':
-        case 'chrome_hl':
-          applyProps(mat, { envMapIntensity: 5.5, roughness: 0.03, metalness: 0.98 })
-          break
-        case 'rims':
-        case 'hub_caps':
-          applyProps(mat, { envMapIntensity: 4.2, roughness: 0.07, metalness: 0.95 })
-          break
-        case 'mirrors':
-          applyProps(mat, { envMapIntensity: 4.5, roughness: 0.04, metalness: 0.95 })
-          break
-        case 'disc_brake':
-          applyProps(mat, { envMapIntensity: 1.2, roughness: 0.55, metalness: 0.75 })
-          break
-        case 'tires':
-          applyProps(mat, { envMapIntensity: 0.3, roughness: 0.95, metalness: 0.0 })
-          break
-        case 'black_plastic':
-        case 'black_metal':
-          applyProps(mat, { envMapIntensity: 0.5, roughness: 0.88, metalness: 0.0 })
-          break
-        case 'grille':
-          applyProps(mat, { envMapIntensity: 1.8, roughness: 0.4, metalness: 0.65 })
-          break
-        case 'side_glass':
-        case 'windshield':
-        case 'clear_glass':
-        case 'plastic_glass':
-          applyProps(mat, { envMapIntensity: 4.0, roughness: 0.02, metalness: 0.0 })
-          break
-        case 'red_lights':
-        case 'headlights':
-        case 'turn_signals':
-        case 'bulbs':
-          applyProps(mat, { envMapIntensity: 2.5, roughness: 0.04, metalness: 0.0 })
-          break
-        case 'interior':
-        case 'dash':
-        case 'window_frames':
-          applyProps(mat, { envMapIntensity: 0.4, roughness: 0.85, metalness: 0.05 })
-          break
-        case 'seats':
-          applyProps(mat, { envMapIntensity: 0.3, roughness: 0.92, metalness: 0.0 })
-          break
-        default:
-          applyProps(mat, { envMapIntensity: 1.5 })
+      if (mesh.isMesh && (mesh.material as MeshStandardMaterial)?.name === 'carpaint') {
+        mesh.material = bodyMat
       }
     })
-  }, [scene])
 
-  return <primitive object={scene} scale={HIACE_SCALE} />
+    if (materials.chrome)
+      applyProps(materials.chrome, { envMapIntensity: 6.0, roughness: 0.02, metalness: 1.0 })
+    if (materials.mirror)
+      applyProps(materials.mirror, { envMapIntensity: 5.5, roughness: 0.02, metalness: 1.0 })
+    if (materials.clearglass)
+      applyProps(materials.clearglass, { envMapIntensity: 4.5, roughness: 0.02, metalness: 0.0 })
+    if (materials.windowglass)
+      applyProps(materials.windowglass, { envMapIntensity: 4.5, roughness: 0.02, metalness: 0.0 })
+    if (materials.darkglass)
+      applyProps(materials.darkglass, {
+        color: '#0a0a0a',
+        envMapIntensity: 4.0,
+        roughness: 0.02,
+        metalness: 0.0,
+      })
+    if (materials.orangeglass)
+      applyProps(materials.orangeglass, { envMapIntensity: 3.0, roughness: 0.03, metalness: 0.0 })
+    if (materials.redglass)
+      applyProps(materials.redglass, {
+        color: '#cc0000',
+        emissive: '#cc0000',
+        emissiveIntensity: 0.8,
+        roughness: 0.03,
+        metalness: 0.0,
+      })
+    if (materials.tire)
+      applyProps(materials.tire, { envMapIntensity: 0.3, roughness: 0.95, metalness: 0.0 })
+    if (materials.black)
+      applyProps(materials.black, { envMapIntensity: 0.6, roughness: 0.85, metalness: 0.0 })
+    if (materials.white)
+      applyProps(materials.white, { envMapIntensity: 1.8, roughness: 0.35, metalness: 0.15 })
+    if (materials.mattemetal)
+      applyProps(materials.mattemetal, { envMapIntensity: 2.5, roughness: 0.45, metalness: 0.85 })
+    if (materials.material) applyProps(materials.material, { envMapIntensity: 1.5 })
+    if (materials.material_21) applyProps(materials.material_21, { envMapIntensity: 1.5 })
+    ;[
+      'interior',
+      'interior_second',
+      'interior_third',
+      'interior_fourth',
+      'interior_fifth',
+      'interior_sixth',
+      'interior_seventh',
+    ].forEach(name => {
+      if (materials[name])
+        applyProps(materials[name], { envMapIntensity: 0.4, roughness: 0.85, metalness: 0.05 })
+    })
+    ;['LicPlate_black', 'LicPlate_blue', 'LicPlate_white', 'LicPlate_yellow'].forEach(name => {
+      if (materials[name]) applyProps(materials[name], { envMapIntensity: 1.0 })
+    })
+
+    // Align wheel contact point (Y_min) to Y=0 so restPosition controls wheel height directly
+    scene.position.y = 0
+    scene.updateWorldMatrix(false, true)
+    const box = new Box3().setFromObject(scene)
+    scene.position.y = -box.min.y
+  }, [scene, nodes, materials])
+
+  return <primitive object={scene} scale={MAN_SCALE} />
 }
 
 type AnimatedVehicleProps = {
@@ -537,12 +533,16 @@ function CameraRig({
 function ReadyGate({ onReady }: { onReady: () => void }) {
   const called = useRef(false)
   const frames = useRef(0)
+  const { invalidate } = useThree()
 
   useFrame(() => {
     if (called.current) return
 
     frames.current += 1
-    if (frames.current < READY_GATE_FRAMES) return
+    if (frames.current < READY_GATE_FRAMES) {
+      invalidate()
+      return
+    }
 
     called.current = true
     onReady()
@@ -611,12 +611,12 @@ function SceneContent({
         </AnimatedVehicle>
       ) : (
         <AnimatedVehicle
-          key="hiace"
+          key="man-bus"
           shouldDropModel={shouldDropModel}
           prefersReducedMotion={prefersReducedMotion}
           config={activeConfig}
         >
-          <HiaceModel />
+          <ManBusModel />
         </AnimatedVehicle>
       )}
 
@@ -650,6 +650,7 @@ type HeroCarouselSceneProps = {
   allowIdleOrbit: boolean
   preloadInactiveModel: boolean
   isMobile: boolean
+  sceneVisible: boolean
 }
 
 export function HeroCarouselScene({
@@ -660,15 +661,12 @@ export function HeroCarouselScene({
   allowIdleOrbit,
   preloadInactiveModel,
   isMobile,
+  sceneVisible,
 }: HeroCarouselSceneProps) {
   useEffect(() => {
     useGLTF.preload(getModelPath(activeModelIndex))
     useEnvironment.preload({ preset: 'forest' })
   }, [activeModelIndex])
-
-  useEffect(() => {
-    for (const path of MODEL_PATHS) useGLTF.preload(path)
-  }, [])
 
   useEffect(() => {
     if (!preloadInactiveModel) return
@@ -691,7 +689,7 @@ export function HeroCarouselScene({
 
   return (
     <Canvas
-      frameloop="always"
+      frameloop={sceneVisible ? 'always' : 'demand'}
       shadows
       camera={{ position: [0, CAMERA_Y, initialOrbitRadius], fov: 38 }}
       dpr={[1, 1.25]}

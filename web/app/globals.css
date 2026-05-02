@@ -2,6 +2,14 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@font-face {
+  font-family: "Alphacorsa";
+  src: url("/fonts/alphacorsa.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -9,6 +17,7 @@
   --font-display: var(--font-display);
   --font-heading: var(--font-heading);
   --font-body: var(--font-body);
+  --font-alphacorsa: "Alphacorsa", sans-serif;
 
   /* ─── Font sizes ─── */
   --text-11: 0.6875rem; /* 11px — keyboard hints, fine print */
@@ -76,8 +85,9 @@
   --color-black-40: var(--black-40);
   --color-black-50: var(--black-50);
   --color-white-solid: var(--white-solid);
-  --color-white-30: var(--white-30);
   --color-white-20: var(--white-20);
+  --color-white-30: var(--white-30);
+  --color-white-50: var(--white-50);
   --color-white-70: var(--white-70);
 
   /* ─── Shadcn/ui Semantic Tokens ─── */
@@ -226,7 +236,15 @@
   --white-solid: oklch(1 0 0);
   --white-20: oklch(1 0 0 / 20%);
   --white-30: oklch(1 0 0 / 30%);
+  --white-50: oklch(1 0 0 / 50%);
   --white-70: oklch(1 0 0 / 70%);
+
+  /* ─── Hero text hover gradient ─── */
+  --hero-gradient-1: oklch(0.77 0.21 91);
+  --hero-gradient-2: oklch(0.64 0.24 26);
+  --hero-gradient-3: oklch(0.62 0.22 260);
+  --hero-gradient-4: oklch(0.71 0.14 215);
+  --hero-gradient-5: oklch(0.63 0.26 305);
 
   /* ─── Sidebar ─── */
   --sidebar: oklch(0.98 0 0);
@@ -410,16 +428,8 @@
   transform: translateY(-12px);
 }
 
-/* ─── Hero wordmark text stroke draw ─── */
-.text-draw-primary {
-  stroke-dasharray: 1000;
-  animation: text-draw-primary 3s ease-in-out 0s forwards;
-}
-.text-draw-trail {
-  stroke-dasharray: 1000;
-  animation: text-draw-trail 3.5s ease-out 0.15s forwards;
-}
-@keyframes text-draw-primary {
+/* ─── Hero wordmark stroke draw ─── */
+@keyframes stroke-draw {
   from {
     stroke-dashoffset: 1000;
   }
@@ -427,13 +437,10 @@
     stroke-dashoffset: 0;
   }
 }
-@keyframes text-draw-trail {
-  from {
-    stroke-dashoffset: 1000;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
+.hero-stroke-draw {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: stroke-draw 4s ease-in-out forwards;
 }
 
 /* ─── prefers-reduced-motion ─── */
@@ -443,9 +450,8 @@
     opacity: 1;
     transform: none;
   }
-  .text-draw-primary,
-  .text-draw-trail {
-    animation-play-state: paused;
+  .hero-stroke-draw {
+    animation: none;
     stroke-dashoffset: 0;
   }
 }
