@@ -73,19 +73,19 @@ export const heroShowcaseVehicles: HeroShowcaseVehicle[] = [
   // { label: 'Porsche 911', href: primaryShowroomCollectionHref },
   // { label: 'Lamborghini Aventador', href: primaryShowroomCollectionHref },
   {
-    label: 'Nissan Skyline R34 GTR',
+    label: 'Cars',
     href: primaryShowroomCollectionHref,
   },
   {
-    label: 'Scania S730',
+    label: 'Heavy Duty Trucks',
     href: primaryShowroomCollectionHref,
   },
   {
-    label: 'Excavator',
+    label: 'Heavy Machinery',
     href: primaryShowroomCollectionHref,
   },
   {
-    label: "MAN Lion's Intercity",
+    label: 'Commercial Vehicles',
     href: primaryShowroomCollectionHref,
   },
 ]

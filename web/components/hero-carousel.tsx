@@ -473,15 +473,12 @@ function AnimatedVehicle({
     const progress = revealProgress.current
     const idleStrength = prefersReducedMotion ? 0 : MathUtils.smoothstep(progress, 0.76, 1)
 
-    group.position.x = config.restPosition[0]
-    group.position.z = config.restPosition[2]
     group.position.y =
       MathUtils.lerp(DROP_START_Y, config.restPosition[1], progress) +
       Math.sin(idleTime.current * 0.7) * 0.04 * idleStrength
 
     group.rotation.x = MathUtils.lerp(config.dropRotation[0], config.restRotation[0], progress)
     group.rotation.y = MathUtils.lerp(config.dropRotation[1], config.restRotation[1], progress)
-    group.rotation.z = MathUtils.lerp(config.dropRotation[2], config.restRotation[2], progress)
   })
 
   return <group ref={groupRef}>{children}</group>
