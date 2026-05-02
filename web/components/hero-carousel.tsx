@@ -2,7 +2,7 @@
 
 import { ContactShadows, Environment, useEnvironment, useGLTF } from '@react-three/drei'
 import { applyProps, Canvas, useFrame, useThree } from '@react-three/fiber'
-import React, { type ReactNode, Suspense, useEffect, useRef } from 'react'
+import React, { type ReactNode, Suspense, useEffect, useLayoutEffect, useRef } from 'react'
 import {
   Box3,
   type Group,
@@ -488,7 +488,15 @@ function AnimatedVehicle({
       userDragOffsetRef.current
   })
 
-  return <group ref={groupRef}>{children}</group>
+  return (
+    <group
+      ref={groupRef}
+      position={[0, DROP_START_Y, 0]}
+      rotation={[config.dropRotation[0], config.dropRotation[1], 0]}
+    >
+      {children}
+    </group>
+  )
 }
 
 function CameraRig({
@@ -712,7 +720,7 @@ export function HeroCarouselScene({
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastPointerXRef = useRef(0)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     activePointerIdRef.current = null
     isDraggingRef.current = false
     userDragOffsetRef.current = 0
@@ -774,7 +782,7 @@ export function HeroCarouselScene({
 
   return (
     <div
-      className="size-full touch-none"
+      className="size-full touch-pan-y"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
