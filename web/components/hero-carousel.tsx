@@ -361,14 +361,14 @@ function ManBusModel({ isMobile }: { isMobile: boolean }) {
       mat.polygonOffsetUnits = -1
     })
 
-    // Upgrade carpaint to MeshPhysicalMaterial for clearcoat support — silver finish matching Skyline
+    // Bus body paint — glossy fleet white, not sports-car metallic
     const bodyMat = new MeshPhysicalMaterial({
-      color: '#B0B2B1',
-      envMapIntensity: 2.5,
-      roughness: 0.22,
-      metalness: 0.75,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.06,
+      color: '#D8D9DA',
+      envMapIntensity: 1.2,
+      roughness: 0.38,
+      metalness: 0.1,
+      clearcoat: 0.5,
+      clearcoatRoughness: 0.18,
     })
     scene.traverse(obj => {
       const mesh = obj as Mesh
@@ -377,41 +377,44 @@ function ManBusModel({ isMobile }: { isMobile: boolean }) {
       }
     })
 
+    // Chrome trim — present on buses but not mirror-perfect
     if (materials.chrome)
-      applyProps(materials.chrome, { envMapIntensity: 6.0, roughness: 0.02, metalness: 1.0 })
+      applyProps(materials.chrome, { envMapIntensity: 2.8, roughness: 0.12, metalness: 0.95 })
     if (materials.mirror)
-      applyProps(materials.mirror, { envMapIntensity: 5.5, roughness: 0.02, metalness: 1.0 })
+      applyProps(materials.mirror, { envMapIntensity: 2.5, roughness: 0.08, metalness: 0.95 })
+    // Bus windows — tinted, natural reflectivity
     if (materials.clearglass)
-      applyProps(materials.clearglass, { envMapIntensity: 4.5, roughness: 0.02, metalness: 0.0 })
+      applyProps(materials.clearglass, { envMapIntensity: 1.8, roughness: 0.05, metalness: 0.0 })
     if (materials.windowglass)
-      applyProps(materials.windowglass, { envMapIntensity: 4.5, roughness: 0.02, metalness: 0.0 })
+      applyProps(materials.windowglass, { envMapIntensity: 1.8, roughness: 0.05, metalness: 0.0 })
     if (materials.darkglass)
       applyProps(materials.darkglass, {
-        color: '#0a0a0a',
-        envMapIntensity: 4.0,
-        roughness: 0.02,
+        color: '#1a1a1a',
+        envMapIntensity: 1.5,
+        roughness: 0.05,
         metalness: 0.0,
       })
     if (materials.orangeglass)
-      applyProps(materials.orangeglass, { envMapIntensity: 3.0, roughness: 0.03, metalness: 0.0 })
+      applyProps(materials.orangeglass, { envMapIntensity: 1.2, roughness: 0.08, metalness: 0.0 })
     if (materials.redglass)
       applyProps(materials.redglass, {
         color: '#cc0000',
-        emissive: '#cc0000',
-        emissiveIntensity: 0.8,
-        roughness: 0.03,
+        emissive: '#330000',
+        emissiveIntensity: 0.3,
+        roughness: 0.08,
         metalness: 0.0,
       })
     if (materials.tire)
-      applyProps(materials.tire, { envMapIntensity: 0.3, roughness: 0.95, metalness: 0.0 })
+      applyProps(materials.tire, { envMapIntensity: 0.2, roughness: 0.97, metalness: 0.0 })
     if (materials.black)
-      applyProps(materials.black, { envMapIntensity: 0.6, roughness: 0.85, metalness: 0.0 })
+      applyProps(materials.black, { envMapIntensity: 0.4, roughness: 0.88, metalness: 0.0 })
     if (materials.white)
-      applyProps(materials.white, { envMapIntensity: 1.8, roughness: 0.35, metalness: 0.15 })
+      applyProps(materials.white, { envMapIntensity: 1.0, roughness: 0.45, metalness: 0.05 })
+    // Structural metal panels — matte, industrial
     if (materials.mattemetal)
-      applyProps(materials.mattemetal, { envMapIntensity: 2.5, roughness: 0.45, metalness: 0.85 })
-    if (materials.material) applyProps(materials.material, { envMapIntensity: 1.5 })
-    if (materials.material_21) applyProps(materials.material_21, { envMapIntensity: 1.5 })
+      applyProps(materials.mattemetal, { envMapIntensity: 1.2, roughness: 0.65, metalness: 0.7 })
+    if (materials.material) applyProps(materials.material, { envMapIntensity: 1.0 })
+    if (materials.material_21) applyProps(materials.material_21, { envMapIntensity: 1.0 })
     ;[
       'interior',
       'interior_second',
@@ -422,10 +425,10 @@ function ManBusModel({ isMobile }: { isMobile: boolean }) {
       'interior_seventh',
     ].forEach(name => {
       if (materials[name])
-        applyProps(materials[name], { envMapIntensity: 0.4, roughness: 0.85, metalness: 0.05 })
+        applyProps(materials[name], { envMapIntensity: 0.3, roughness: 0.88, metalness: 0.0 })
     })
     ;['LicPlate_black', 'LicPlate_blue', 'LicPlate_white', 'LicPlate_yellow'].forEach(name => {
-      if (materials[name]) applyProps(materials[name], { envMapIntensity: 1.0 })
+      if (materials[name]) applyProps(materials[name], { envMapIntensity: 0.8 })
     })
 
     // Align wheel contact point (Y_min) to Y=0 so restPosition controls wheel height directly
