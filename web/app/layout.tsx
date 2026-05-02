@@ -49,9 +49,9 @@ export const metadata: Metadata = {
   description:
     'Enermation: Your premier automotive dealership exporting quality used cars and auto spare parts from strategic locations worldwide. Explore our wide selection today!',
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
   },
 }
 
