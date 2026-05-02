@@ -713,6 +713,10 @@
     padding-bottom: 9rem;
   }
 
+  .hero-stage__text-hover text {
+    font-size: clamp(1.5rem, 2.2vw, 2.2rem);
+  }
+
   .hero-stage__carousel-meta {
     bottom: 8rem;
   }

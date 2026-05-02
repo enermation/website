@@ -774,7 +774,7 @@ export function HeroCarouselScene({
 
   return (
     <div
-      className="size-full"
+      className="size-full touch-none"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
