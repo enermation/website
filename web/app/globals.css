@@ -2,14 +2,6 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@font-face {
-  font-family: "Alphacorsa";
-  src: url("/fonts/alphacorsa.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -17,7 +9,7 @@
   --font-display: var(--font-display);
   --font-heading: var(--font-heading);
   --font-body: var(--font-body);
-  --font-alphacorsa: "Alphacorsa", sans-serif;
+  --font-alphacorsa: var(--font-alphacorsa);
 
   /* ─── Font sizes ─── */
   --text-11: 0.6875rem; /* 11px — keyboard hints, fine print */
