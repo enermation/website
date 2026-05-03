@@ -12,6 +12,9 @@ export const QDRANT_COLLECTION = 'enermation-products'
 export const QDRANT_VECTOR_SIZE = EMBED_DIMENSIONS
 export const QDRANT_DISTANCE = 'Cosine'
 
+export const QDRANT_SEARCH_EF = 256
+export const QDRANT_SCORE_THRESHOLD = 0.5
+
 export const INDEX_BATCH_SIZE = 64
 export const QDRANT_UPSERT_BATCH = 128
 

@@ -1,7 +1,12 @@
 import 'server-only'
 
 import { getQdrantClient } from '@/lib/rag/clients'
-import { QDRANT_COLLECTION, TOP_K_RETRIEVE } from '@/lib/rag/constants'
+import {
+  QDRANT_COLLECTION,
+  QDRANT_SCORE_THRESHOLD,
+  QDRANT_SEARCH_EF,
+  TOP_K_RETRIEVE,
+} from '@/lib/rag/constants'
 import { embedQuery } from '@/lib/rag/embed'
 import { rerankCandidates } from '@/lib/rag/rerank'
 import type { RagRetrievalResult } from '@/lib/rag/types'
@@ -14,6 +19,8 @@ export async function findRelevantProducts(query: string): Promise<RagRetrievalR
   const results = await client.search(QDRANT_COLLECTION, {
     vector,
     limit: TOP_K_RETRIEVE,
+    score_threshold: QDRANT_SCORE_THRESHOLD,
+    params: { exact: false, hnsw_ef: QDRANT_SEARCH_EF },
     with_payload: true,
     with_vector: false,
   })

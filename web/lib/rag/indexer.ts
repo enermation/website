@@ -41,6 +41,17 @@ async function ensureCollection(client: QdrantClient): Promise<void> {
         size: QDRANT_VECTOR_SIZE,
         distance: QDRANT_DISTANCE as 'Cosine',
       },
+      quantization: {
+        vector: 'scalar',
+        quantization: {
+          scalar: { quantile: 0.99, ratio: 0.8 },
+        },
+      },
+    })
+    // Index payload fields for efficient filtered lookups
+    await client.createPayloadIndex(QDRANT_COLLECTION, {
+      payload_field: 'handle',
+      field_type: 'keyword',
     })
   }
 }
