@@ -114,17 +114,17 @@ function BrandMark() {
     <Link
       href="/"
       data-slot="footer-brand-mark"
-      className="group inline-flex items-center gap-5"
+      className="group inline-flex items-center gap-5 min-w-0"
       aria-label="Enermation home"
     >
       <span className="shrink-0" aria-hidden="true">
         <FaviconMark />
       </span>
       <span className="flex flex-col border-l border-footer-muted pl-4">
-        <span className="font-heading text-3xl font-bold uppercase leading-none tracking-widest text-on-dark md:text-4xl">
+        <span className="font-heading text-3xl font-bold uppercase leading-none tracking-widest text-on-dark overflow-wrap-break-word md:text-4xl">
           Enermation
         </span>
-        <span className="mt-2 font-heading text-xs font-bold uppercase tracking-widest text-footer-accent">
+        <span className="mt-2 font-heading text-xs font-bold uppercase tracking-widest text-footer-accent overflow-wrap-break-word">
           Sustainable, Innovative and Reliable
         </span>
       </span>
@@ -135,7 +135,7 @@ function BrandMark() {
 function FooterSectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <div data-slot="footer-section-title" className="mb-6">
-      <h2 className="font-heading text-xl font-bold uppercase tracking-wide text-on-dark">
+      <h2 className="font-heading text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide text-on-dark">
         {children}
       </h2>
       <div className="mt-4 h-1 w-9 bg-footer-accent" aria-hidden="true" />
@@ -145,14 +145,14 @@ function FooterSectionTitle({ children }: { children: React.ReactNode }) {
 
 function FooterLinkColumn({ title, links, ariaLabel }: FooterLinkColumnProps) {
   return (
-    <nav data-slot="footer-link-column" aria-label={ariaLabel}>
+    <nav data-slot="footer-link-column" className="min-w-0" aria-label={ariaLabel}>
       <FooterSectionTitle>{title}</FooterSectionTitle>
       <ul className="flex flex-col">
         {links.map(link => (
           <li key={`${title}-${link.href}-${link.label}`} className="border-b border-footer-line">
             <Link
               href={link.href}
-              className="group flex items-center gap-4 py-4 font-body text-base text-on-dark-muted transition-colors hover:text-footer-accent"
+              className="group flex items-center gap-4 py-4 font-body text-sm sm:text-base text-on-dark-muted transition-colors hover:text-footer-accent"
             >
               <ChevronRight
                 className="size-4 shrink-0 text-footer-accent transition-transform group-hover:translate-x-1"
@@ -169,12 +169,12 @@ function FooterLinkColumn({ title, links, ariaLabel }: FooterLinkColumnProps) {
 
 function FooterMarketColumn() {
   return (
-    <section data-slot="footer-market-column" aria-label="Global markets">
+    <section data-slot="footer-market-column" className="min-w-0" aria-label="Global markets">
       <FooterSectionTitle>Global Markets</FooterSectionTitle>
       <ul className="flex flex-col">
         {footerGlobalMarkets.map(market => (
           <li key={market} className="border-b border-footer-line">
-            <div className="flex items-center gap-4 py-4 font-body text-base text-on-dark-muted">
+            <div className="flex items-center gap-4 py-4 font-body text-sm sm:text-base text-on-dark-muted">
               <ChevronRight className="size-4 shrink-0 text-footer-accent" aria-hidden="true" />
               <span>{market}</span>
             </div>
@@ -189,7 +189,7 @@ function ProofPoints() {
   return (
     <ul
       data-slot="footer-proof-points"
-      className="grid grid-cols-2 gap-7 sm:grid-cols-4 lg:grid-cols-4"
+      className="grid min-w-0 grid-cols-2 gap-7 sm:grid-cols-4 lg:grid-cols-4"
     >
       {footerProofPoints.map(point => {
         const Icon = proofPointIcons[point.icon]
@@ -198,8 +198,12 @@ function ProofPoints() {
             key={point.label}
             className="flex flex-col items-center gap-3 text-center sm:items-start sm:text-left"
           >
-            <Icon className="size-9 text-footer-accent" strokeWidth={1.6} aria-hidden="true" />
-            <span className="max-w-20 font-heading text-sm font-semibold uppercase leading-snug text-on-dark">
+            <Icon
+              className="size-6 sm:size-9 text-footer-accent"
+              strokeWidth={1.6}
+              aria-hidden="true"
+            />
+            <span className="max-w-20 truncate font-heading text-xs sm:text-sm font-semibold uppercase leading-snug text-on-dark">
               {point.label}
             </span>
           </li>
@@ -211,7 +215,7 @@ function ProofPoints() {
 
 function ContactPanel() {
   return (
-    <div data-slot="footer-contact-panel" className="flex flex-col gap-6">
+    <div data-slot="footer-contact-panel" className="flex min-w-0 flex-col gap-6">
       <FooterSectionTitle>Contact</FooterSectionTitle>
 
       <ul className="flex flex-col divide-y divide-footer-line">
@@ -220,48 +224,51 @@ function ContactPanel() {
             href={footerContactInfo.whatsappHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center gap-6 py-3"
+            className="group flex min-w-0 items-center gap-3 sm:gap-6 py-3"
           >
             <MessageCircle
-              className="size-10 shrink-0 text-footer-accent"
+              className="size-6 sm:size-8 shrink-0 text-footer-accent"
               strokeWidth={1.6}
               aria-hidden="true"
             />
-            <span className="flex flex-col">
-              <span className="font-body text-sm text-on-dark-muted">WhatsApp</span>
-              <span className="font-heading text-lg font-bold text-footer-accent transition-colors group-hover:text-footer-accent-bright">
+            <span className="flex min-w-0 flex-col">
+              <span className="font-body text-xs sm:text-sm text-on-dark-muted">WhatsApp</span>
+              <span className="font-heading text-sm sm:text-base font-bold text-footer-accent transition-colors group-hover:text-footer-accent-bright truncate">
                 {footerContactInfo.phone}
               </span>
             </span>
           </a>
         </li>
         <li>
-          <a href={footerContactInfo.emailHref} className="group flex items-center gap-6 py-5">
+          <a
+            href={footerContactInfo.emailHref}
+            className="group flex min-w-0 items-center gap-3 sm:gap-6 py-3 sm:py-5"
+          >
             <Mail
-              className="size-10 shrink-0 text-footer-accent"
+              className="size-6 sm:size-8 shrink-0 text-footer-accent"
               strokeWidth={1.6}
               aria-hidden="true"
             />
-            <span className="flex flex-col">
-              <span className="font-body text-sm text-on-dark-muted">Email</span>
-              <span className="font-heading text-lg font-bold text-footer-accent transition-colors group-hover:text-footer-accent-bright">
+            <span className="flex min-w-0 flex-col">
+              <span className="font-body text-xs sm:text-sm text-on-dark-muted">Email</span>
+              <span className="font-heading text-sm sm:text-base font-bold text-footer-accent transition-colors group-hover:text-footer-accent-bright truncate">
                 {footerContactInfo.email}
               </span>
             </span>
           </a>
         </li>
-        <li className="flex items-center gap-6 py-5">
+        <li className="flex min-w-0 items-center gap-3 sm:gap-6 py-3 sm:py-5">
           <MapPin
-            className="size-10 shrink-0 text-footer-accent"
+            className="size-6 sm:size-8 shrink-0 text-footer-accent"
             strokeWidth={1.6}
             aria-hidden="true"
           />
-          <span className="flex flex-col">
-            <span className="font-body text-sm text-on-dark-muted">Location</span>
-            <span className="font-heading text-lg font-bold text-footer-accent">
+          <span className="flex min-w-0 flex-col">
+            <span className="font-body text-xs sm:text-sm text-on-dark-muted">Location</span>
+            <span className="font-heading text-sm sm:text-base font-bold text-footer-accent truncate">
               {footerContactInfo.location}
             </span>
-            <span className="font-body text-base text-on-dark-muted">
+            <span className="font-body text-xs sm:text-sm text-on-dark-muted truncate">
               {footerContactInfo.region}
             </span>
           </span>
@@ -270,18 +277,18 @@ function ContactPanel() {
 
       <Link
         href={footerQuoteCta.href}
-        className="footer-dot-card group flex items-center gap-6 rounded-lg border border-footer-accent p-6 transition-colors hover:border-footer-accent-bright"
+        className="footer-dot-card group flex min-w-0 items-center gap-3 sm:gap-6 rounded-lg border border-footer-accent p-3 sm:p-6 transition-colors hover:border-footer-accent-bright"
       >
         <ClipboardCheck
-          className="size-12 shrink-0 text-footer-accent"
+          className="size-8 sm:size-10 shrink-0 text-footer-accent"
           strokeWidth={1.5}
           aria-hidden="true"
         />
-        <span className="flex flex-col gap-3">
-          <span className="font-body text-base leading-snug text-on-dark">
+        <span className="flex min-w-0 flex-col gap-2 sm:gap-3">
+          <span className="font-body text-sm sm:text-base leading-snug text-on-dark">
             {footerQuoteCta.title}
           </span>
-          <span className="font-heading text-base font-bold uppercase tracking-wide text-footer-accent transition-colors group-hover:text-footer-accent-bright">
+          <span className="font-heading text-xs sm:text-sm font-bold uppercase tracking-wide text-footer-accent transition-colors group-hover:text-footer-accent-bright">
             {footerQuoteCta.label} -&gt;
           </span>
         </span>
@@ -419,11 +426,11 @@ export function SiteFooter({ exploreGroups }: SiteFooterProps) {
         <div className="footer-main-grid mx-auto grid max-w-listing gap-12 px-6 py-16 lg:gap-14 lg:px-16 lg:py-24">
           <section
             data-slot="footer-brand-panel"
-            className="flex flex-col gap-10 border-footer-line lg:border-r lg:pr-12"
+            className="flex min-w-0 flex-col gap-10 border-footer-line lg:border-r lg:pr-12"
             aria-label="Enermation footer summary"
           >
             <BrandMark />
-            <p className="max-w-sm font-body text-xl leading-relaxed text-on-dark-muted">
+            <p className="max-w-sm font-body text-base sm:text-lg lg:text-xl leading-relaxed text-on-dark-muted">
               {footerBrandSummary}
             </p>
             <ProofPoints />

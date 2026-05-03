@@ -53,7 +53,7 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
 
   return (
     <div className={cn('flex flex-col gap-4', className)}>
-      <p className="font-heading text-xl font-bold uppercase tracking-wide text-on-dark">
+      <p className="font-heading text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide text-on-dark">
         Global Export Network
       </p>
       <div className="h-56 w-full overflow-hidden rounded-lg border border-footer-line sm:h-60 md:h-64">

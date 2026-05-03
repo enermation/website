@@ -360,10 +360,12 @@
 
   @media (min-width: 1024px) {
     .footer-main-grid {
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 0.9fr) minmax(
-          0,
-          1.3fr
-        );
+      grid-template-columns:
+        minmax(0, max-content)
+        minmax(0, 1.1fr)
+        minmax(0, 1.1fr)
+        minmax(0, 0.8fr)
+        minmax(0, 1.1fr);
     }
   }
 }
