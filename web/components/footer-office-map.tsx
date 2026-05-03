@@ -58,6 +58,7 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
     if (!map) return
 
     map.on('load', () => {
+      if (rafRef.current !== null) return // already started
       const rotate = (timestamp: number) => {
         if (!isInteractingRef.current) {
           map.rotateTo((timestamp / 100) % 360, { duration: 0 })
@@ -80,7 +81,6 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
       map.on('mouseup', handleInteractionEnd)
       map.on('touchend', handleInteractionEnd)
 
-      // Store cleanup in a closure
       const cleanup = () => {
         if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
         map.off('mousedown', handleInteract)
