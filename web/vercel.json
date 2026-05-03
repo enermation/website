@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/rag/ping",
+      "schedule": "0 0 * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -24,6 +30,9 @@
     },
     "app/api/rag/reindex/route.ts": {
       "maxDuration": 300
+    },
+    "app/api/rag/ping/route.ts": {
+      "maxDuration": 60
     }
   }
 }

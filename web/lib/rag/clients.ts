@@ -1,12 +1,7 @@
 import { QdrantClient } from '@qdrant/qdrant-js'
 import { Redis } from '@upstash/redis'
 import { gateway } from 'ai'
-import {
-  DEFAULT_CHAT_PROVIDER,
-  DEFAULT_COHERE_MODEL,
-  DEFAULT_GROQ_MODEL,
-  DEFAULT_VISION_MODEL,
-} from '@/lib/rag/constants'
+import { CEREBRAS_MODEL, EMBED_MODEL, RERANK_MODEL } from '@/lib/rag/constants'
 
 function getRequiredEnv(name: string): string {
   const value = process.env[name]?.trim()
@@ -36,18 +31,9 @@ export function getRedis(): Redis {
 }
 
 export function getChatModel() {
-  const provider = process.env.CHAT_PROVIDER ?? DEFAULT_CHAT_PROVIDER
-
-  if (provider === 'groq') {
-    return gateway(DEFAULT_GROQ_MODEL)
-  }
-  if (provider === 'cohere') {
-    return gateway(`cohere/${DEFAULT_COHERE_MODEL}`)
-  }
-
-  throw new Error(`Invalid CHAT_PROVIDER: "${provider}". Must be "groq" or "cohere".`)
+  return gateway(CEREBRAS_MODEL)
 }
 
 export function getVisionModel() {
-  return gateway(DEFAULT_VISION_MODEL)
+  return gateway(EMBED_MODEL)
 }

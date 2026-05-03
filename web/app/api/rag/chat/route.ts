@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
 import { getChatModel } from '@/lib/rag/clients'
+import { CEREBRAS_MODEL } from '@/lib/rag/constants'
 import { buildGroundedSystemPrompt } from '@/lib/rag/prompt'
 import { findRelevantProducts } from '@/lib/rag/query'
 import { getChatLimiter, getRateLimitKey } from '@/lib/rag/ratelimit'
@@ -129,6 +130,11 @@ export async function POST(request: Request) {
     system,
     messages: modelMessages,
     temperature: 0.3,
+    providerOptions: {
+      gateway: {
+        models: [`groq/${CEREBRAS_MODEL}`, `cohere/${CEREBRAS_MODEL}`],
+      },
+    },
   })
 
   return result.toUIMessageStreamResponse({
