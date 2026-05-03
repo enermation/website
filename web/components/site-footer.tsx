@@ -1,26 +1,25 @@
 'use client'
 
 import {
-  BuildingOffice2Icon,
-  CameraIcon,
-  GlobeAltIcon,
-  PlayCircleIcon,
-} from '@heroicons/react/24/outline'
-import {
   Award,
+  Building2,
   ChevronRight,
+  CircleCheck,
   ClipboardCheck,
-  Globe2,
+  Globe,
   Headphones,
+  Instagram,
+  Linkedin,
   type LucideIcon,
   Mail,
   MapPin,
   MessageCircle,
   ShieldCheck,
+  Youtube,
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { type ComponentType, Suspense, type SVGProps } from 'react'
+import { Suspense } from 'react'
 
 import { FooterOfficeMap } from '@/components/footer-office-map'
 import {
@@ -39,19 +38,16 @@ import type { FooterNavGroup } from '@/lib/header-navigation'
 
 const proofPointIcons: Record<(typeof footerProofPoints)[number]['icon'], LucideIcon> = {
   badge: Award,
-  globe: Globe2,
+  globe: Globe,
   shield: ShieldCheck,
   support: Headphones,
 }
 
-const socialIcons: Record<
-  (typeof footerSocialLinks)[number]['platform'],
-  ComponentType<SVGProps<SVGSVGElement>>
-> = {
-  email: CameraIcon,
-  quote: BuildingOffice2Icon,
-  website: GlobeAltIcon,
-  whatsapp: PlayCircleIcon,
+const socialIcons: Record<(typeof footerSocialLinks)[number]['platform'], LucideIcon> = {
+  instagram: Instagram,
+  linkedin: Linkedin,
+  youtube: Youtube,
+  whatsapp: MessageCircle,
 }
 
 type SiteFooterProps = {

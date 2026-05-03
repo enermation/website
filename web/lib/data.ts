@@ -178,10 +178,10 @@ export const footerNavigationGroups: FooterLinkGroup[] = [
 ]
 
 export const footerSocialLinks: FooterSocialLink[] = [
-  { label: 'Website', href: 'https://www.enermation.co/', platform: 'website' },
+  { label: 'Instagram', href: 'https://www.instagram.com/enermation/', platform: 'instagram' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/enermation/', platform: 'linkedin' },
+  { label: 'YouTube', href: 'https://www.youtube.com/@enermation', platform: 'youtube' },
   { label: 'WhatsApp', href: footerContactInfo.whatsappHref, platform: 'whatsapp' },
-  { label: 'Email', href: footerContactInfo.emailHref, platform: 'email' },
-  { label: 'Quote', href: '/contact?topic=request-quote', platform: 'quote' },
 ]
 
 export type FooterProofPoint = {
