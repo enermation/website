@@ -132,7 +132,7 @@ export async function POST(request: Request) {
     temperature: 0.3,
     providerOptions: {
       gateway: {
-        models: [`groq/${CEREBRAS_MODEL}`, `cohere/command-r-plus-08-2024`],
+        models: [`groq/${CEREBRAS_MODEL}`, `cohere/command-a-03-2025`],
       },
     },
   })

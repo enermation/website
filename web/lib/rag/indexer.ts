@@ -119,6 +119,12 @@ export async function reindexAll(options: { fresh?: boolean } = {}): Promise<{
         size: QDRANT_VECTOR_SIZE,
         distance: QDRANT_DISTANCE as 'Cosine',
       },
+      quantization: {
+        vector: 'scalar',
+        quantization: {
+          scalar: { quantile: 0.99, ratio: 0.8 },
+        },
+      },
     })
   } else {
     await ensureCollection(client)
