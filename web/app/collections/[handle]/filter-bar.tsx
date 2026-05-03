@@ -2,6 +2,7 @@
 
 import { Bars3Icon, Squares2X2Icon } from '@heroicons/react/24/outline'
 import { X } from 'lucide-react'
+import * as motion from 'motion/react-client'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
@@ -68,6 +69,14 @@ export function FilterBar({
 
   return (
     <>
+      {isPending && (
+        <motion.div
+          className="fixed top-0 left-0 right-0 z-[200] h-[2px] origin-left bg-brand-green"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: [0, 0.7, 1] }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        />
+      )}
       {/* ── Mobile ──────────────────────────────────────────────── */}
       <div className="flex flex-col gap-6 md:hidden">
         {/* Active filter chips + sort row */}
