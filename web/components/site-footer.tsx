@@ -6,6 +6,7 @@ import {
   ChevronRight,
   CircleCheck,
   ClipboardCheck,
+  Facebook,
   Globe,
   Headphones,
   Instagram,
@@ -44,6 +45,7 @@ const proofPointIcons: Record<(typeof footerProofPoints)[number]['icon'], Lucide
 }
 
 const socialIcons: Record<(typeof footerSocialLinks)[number]['platform'], LucideIcon> = {
+  facebook: Facebook,
   instagram: Instagram,
   linkedin: Linkedin,
   youtube: Youtube,

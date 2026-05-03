@@ -179,7 +179,12 @@ export const footerNavigationGroups: FooterLinkGroup[] = [
 
 export const footerSocialLinks: FooterSocialLink[] = [
   { label: 'Instagram', href: 'https://www.instagram.com/enermations/', platform: 'instagram' },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/enermation/', platform: 'linkedin' },
+  { label: 'Facebook', href: 'https://www.facebook.com/enermation.co', platform: 'facebook' },
+  {
+    label: 'LinkedIn',
+    href: 'https://www.linkedin.com/company/enermation-pvt-ltd',
+    platform: 'linkedin',
+  },
   { label: 'YouTube', href: 'https://www.youtube.com/@enermation', platform: 'youtube' },
   { label: 'WhatsApp', href: footerContactInfo.whatsappHref, platform: 'whatsapp' },
 ]
