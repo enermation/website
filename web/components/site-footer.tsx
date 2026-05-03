@@ -2,11 +2,8 @@
 
 import {
   Award,
-  Building2,
   ChevronRight,
-  CircleCheck,
   ClipboardCheck,
-  Facebook,
   Globe,
   Headphones,
   Instagram,
@@ -21,6 +18,20 @@ import {
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Suspense } from 'react'
+
+function FacebookIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  )
+}
 
 import { FooterOfficeMap } from '@/components/footer-office-map'
 import {
@@ -44,8 +55,8 @@ const proofPointIcons: Record<(typeof footerProofPoints)[number]['icon'], Lucide
   support: Headphones,
 }
 
-const socialIcons: Record<(typeof footerSocialLinks)[number]['platform'], LucideIcon> = {
-  facebook: Facebook,
+const socialIcons: Record<string, LucideIcon> = {
+  facebook: FacebookIcon as unknown as LucideIcon,
   instagram: Instagram,
   linkedin: Linkedin,
   youtube: Youtube,
