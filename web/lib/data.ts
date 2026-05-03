@@ -178,7 +178,7 @@ export const footerNavigationGroups: FooterLinkGroup[] = [
 ]
 
 export const footerSocialLinks: FooterSocialLink[] = [
-  { label: 'Instagram', href: 'https://www.instagram.com/enermation/', platform: 'instagram' },
+  { label: 'Instagram', href: 'https://www.instagram.com/enermations/', platform: 'instagram' },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/company/enermation/', platform: 'linkedin' },
   { label: 'YouTube', href: 'https://www.youtube.com/@enermation', platform: 'youtube' },
   { label: 'WhatsApp', href: footerContactInfo.whatsappHref, platform: 'whatsapp' },
