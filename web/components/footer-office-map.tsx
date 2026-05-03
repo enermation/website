@@ -23,6 +23,7 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
   const mapRef = useRef<MapRef>(null)
   const fitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const rafRef = useRef<number | null>(null)
+  const rafCleanupRef = useRef<(() => void) | null>(null)
   const isInteractingRef = useRef(false)
 
   const fitAllMarkers = useCallback(() => {
@@ -49,6 +50,7 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
     fitTimerRef.current = setTimeout(fitAllMarkers, 600)
     return () => {
       if (fitTimerRef.current) clearTimeout(fitTimerRef.current)
+      rafCleanupRef.current?.()
     }
   }, [fitAllMarkers])
 
@@ -56,35 +58,40 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
     const map = mapRef.current
     if (!map) return
 
-    const rotate = (timestamp: number) => {
-      if (!isInteractingRef.current) {
-        map.rotateTo((timestamp * ROTATE_SPEED) % 360, { duration: 0 })
+    map.on('load', () => {
+      const rotate = (timestamp: number) => {
+        if (!isInteractingRef.current) {
+          map.easeTo({ bearing: (timestamp * ROTATE_SPEED) % 360, duration: 0 })
+        }
+        rafRef.current = requestAnimationFrame(rotate)
       }
+
       rafRef.current = requestAnimationFrame(rotate)
-    }
 
-    rafRef.current = requestAnimationFrame(rotate)
+      const handleInteract = () => {
+        isInteractingRef.current = true
+      }
 
-    const handleInteract = () => {
-      isInteractingRef.current = true
-    }
+      const handleInteractionEnd = () => {
+        isInteractingRef.current = false
+      }
 
-    const handleInteractionEnd = () => {
-      isInteractingRef.current = false
-    }
+      map.on('mousedown', handleInteract)
+      map.on('touchstart', handleInteract)
+      map.on('mouseup', handleInteractionEnd)
+      map.on('touchend', handleInteractionEnd)
 
-    map.on('mousedown', handleInteract)
-    map.on('touchstart', handleInteract)
-    map.on('mouseup', handleInteractionEnd)
-    map.on('touchend', handleInteractionEnd)
+      // Store cleanup in a closure
+      const cleanup = () => {
+        if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+        map.off('mousedown', handleInteract)
+        map.off('touchstart', handleInteract)
+        map.off('mouseup', handleInteractionEnd)
+        map.off('touchend', handleInteractionEnd)
+      }
 
-    return () => {
-      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
-      map.off('mousedown', handleInteract)
-      map.off('touchstart', handleInteract)
-      map.off('mouseup', handleInteractionEnd)
-      map.off('touchend', handleInteractionEnd)
-    }
+      rafCleanupRef.current = cleanup
+    })
   }, [])
 
   return (
