@@ -45,7 +45,29 @@ export default function ChatInputArea({
   setError,
 }: ChatInputAreaProps) {
   const controller = useOptionalPromptInputController()
-  const { mediaRecorder, isRecording, startRecording, stopRecording } = useAudioRecorder()
+
+  // Ref keeps the transcription handler up-to-date without destabilising
+  // the useCallback passed to useAudioRecorder.
+  const transcribeRef = useRef<((blob: Blob) => void) | undefined>(undefined)
+  transcribeRef.current = (blob: Blob) => {
+    void (async () => {
+      try {
+        const fd = new FormData()
+        fd.append('audio', new File([blob], 'recording.webm', { type: blob.type || 'audio/webm' }))
+        const res = await fetch('/api/transcribe', { method: 'POST', body: fd })
+        if (res.ok) {
+          const { text } = (await res.json()) as { text: string }
+          if (text?.trim()) setInputValue(text.trim())
+        }
+      } catch {
+        // Web Speech API transcript already in textarea — nothing to do
+      }
+    })()
+  }
+
+  const { mediaRecorder, isRecording, startRecording, stopRecording } = useAudioRecorder({
+    onRecordingComplete: useCallback((blob: Blob) => transcribeRef.current?.(blob), []),
+  })
   const recognitionRef = useRef<{ stop: () => void } | null>(null)
 
   const handleStartVoice = useCallback(async () => {
