@@ -21,6 +21,8 @@ const MAP_ZOOM = 1.5
 export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
   const mapRef = useRef<MapRef>(null)
   const fitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const rotateTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const isInteractingRef = useRef(false)
 
   const fitAllMarkers = useCallback(() => {
     const map = mapRef.current
@@ -42,12 +44,48 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
     map.fitBounds(bounds, { padding, duration: 0 })
   }, [])
 
+  const startAutoRotate = useCallback(() => {
+    const map = mapRef.current
+    if (!map || rotateTimerRef.current) return
+
+    rotateTimerRef.current = setInterval(() => {
+      if (isInteractingRef.current) return
+      const currentBearing = map.getBearing()
+      map.easeTo({ bearing: currentBearing + 0.3, duration: 50 })
+    }, 16)
+  }, [])
+
   useEffect(() => {
     fitTimerRef.current = setTimeout(fitAllMarkers, 600)
     return () => {
       if (fitTimerRef.current) clearTimeout(fitTimerRef.current)
     }
   }, [fitAllMarkers])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+
+    startAutoRotate()
+
+    const handleInteract = () => {
+      isInteractingRef.current = true
+      setTimeout(() => {
+        isInteractingRef.current = false
+      }, 2000)
+    }
+
+    map.on('mousedown', handleInteract)
+    map.on('touchstart', handleInteract)
+    map.on('wheel', handleInteract)
+
+    return () => {
+      if (rotateTimerRef.current) clearInterval(rotateTimerRef.current)
+      map.off('mousedown', handleInteract)
+      map.off('touchstart', handleInteract)
+      map.off('wheel', handleInteract)
+    }
+  }, [startAutoRotate])
 
   return (
     <div className={cn('flex flex-col gap-4', className)}>
