@@ -30,7 +30,7 @@ const projections: { name: ProjectionName; label: string; projection: { type: st
 export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
   const mapRef = useRef<MapRef>(null)
   const fitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [activeProjection, setActiveProjection] = useState<ProjectionName>('globe')
+  const [activeProjection, setActiveProjection] = useState<ProjectionName>('equalEarth')
   const active = projections.find(p => p.name === activeProjection) ?? projections[1]
 
   const fitAllMarkers = useCallback(() => {
