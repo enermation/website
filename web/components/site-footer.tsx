@@ -6,18 +6,78 @@ import {
   ClipboardCheck,
   Globe,
   Headphones,
-  Instagram,
-  Linkedin,
   type LucideIcon,
   Mail,
   MapPin,
   MessageCircle,
   ShieldCheck,
-  Youtube,
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Suspense } from 'react'
+
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" fill="currentColor" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8A4 4 0 0 1 16 11.37m1.5-4.87h.01" fill="currentColor" />
+    </svg>
+  )
+}
+
+function LinkedinIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        fill="currentColor"
+        d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6M2 9h4v12H2z"
+      />
+      <circle fill="currentColor" cx="4" cy="4" r="2" />
+    </svg>
+  )
+}
+
+function YoutubeIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        fill="currentColor"
+        d="M2.5 17a24.1 24.1 0 0 1 0-10a2 2 0 0 1 1.4-1.4a49.6 49.6 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.1 24.1 0 0 1 0 10a2 2 0 0 1-1.4 1.4a49.6 49.6 0 0 1-16.2 0A2 2 0 0 1 2.5 17"
+      />
+      <path fill="currentColor" d="m10 15l5-3l-5-3z" />
+    </svg>
+  )
+}
 
 function FacebookIcon({ className }: { className?: string }) {
   return (
@@ -57,9 +117,9 @@ const proofPointIcons: Record<(typeof footerProofPoints)[number]['icon'], Lucide
 
 const socialIcons: Record<string, LucideIcon> = {
   facebook: FacebookIcon as unknown as LucideIcon,
-  instagram: Instagram,
-  linkedin: Linkedin,
-  youtube: Youtube,
+  instagram: InstagramIcon as unknown as LucideIcon,
+  linkedin: LinkedinIcon as unknown as LucideIcon,
+  youtube: YoutubeIcon as unknown as LucideIcon,
   whatsapp: MessageCircle,
 }
 
