@@ -14,6 +14,7 @@ import {
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Suspense } from 'react'
+import { cn } from '@/lib/utils'
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -191,6 +192,25 @@ function FaviconMark() {
         fill="white"
         d="M8,121.1c0-15.9,0.2-31.8-0.1-47.7c-0.3-14.5,6.9-24.3,22.2-30c18.2-6.8,35.6-15.8,50.2-28.5C93.9,3,107.9,1.1,121.7,9c22.7,13.1,45.5,25.9,68,39.3c19.6,11.7,18.3,39.5-4.2,48.6c-56.2,22.7-105.7,58.6-155.3,93.4c-11,7.7-21.3,0.8-21.8-15.1C7.6,157.2,8.1,139.2,8,121.1C8.1,121.1,8,121.1,8,121.1z M148.2,76.3c0-2.1-0.1-2.6-0.1-4.8c-13.2-7.3-26-15.5-39.8-21.4C98.9,46,46.9,77.3,45.8,87.8c-1.6,15-0.4,30.4-0.4,49.4C81.5,115.7,114.8,96,148.2,76.3z"
       />
+    </svg>
+  )
+}
+
+function AngularCornerAccent({ side }: { side: 'left' | 'right' }) {
+  return (
+    <svg
+      viewBox="0 0 80 60"
+      className={cn(
+        'absolute top-0 h-14 w-16 text-footer-accent opacity-20',
+        side === 'left' ? 'left-0' : 'right-0'
+      )}
+      aria-hidden="true"
+    >
+      {side === 'left' ? (
+        <polygon points="0,0 80,0 0,60" fill="currentColor" />
+      ) : (
+        <polygon points="80,0 80,60 0,60" fill="currentColor" />
+      )}
     </svg>
   )
 }
@@ -386,10 +406,12 @@ function FooterSocialLinks() {
   )
 }
 
+const CURRENT_YEAR = new Date().getFullYear()
+
 function Copyright() {
   return (
     <p className="font-body text-sm text-on-dark-muted">
-      © {new Date().getFullYear()} Enermation. All rights reserved.
+      © {CURRENT_YEAR} Enermation. All rights reserved.
     </p>
   )
 }
@@ -485,11 +507,13 @@ export function SiteFooter({ exploreGroups }: SiteFooterProps) {
       data-slot="site-footer"
       className="relative z-10 overflow-hidden bg-footer-dark text-on-dark"
     >
+      <AngularCornerAccent side="left" />
+      <AngularCornerAccent side="right" />
       <div className="grain-overlay">
         <div className="footer-main-grid mx-auto grid max-w-listing gap-12 px-6 py-16 lg:gap-14 lg:px-16 lg:py-24">
           <section
             data-slot="footer-brand-panel"
-            className="flex min-w-0 flex-col gap-6 sm:gap-8 lg:gap-10 border-footer-line lg:border-r lg:pr-12"
+            className="footer-brand-bg relative flex min-w-0 flex-col gap-6 sm:gap-8 lg:gap-10 border-footer-line lg:border-r lg:pr-12"
             aria-label="Enermation footer summary"
           >
             <BrandMark />
@@ -500,7 +524,7 @@ export function SiteFooter({ exploreGroups }: SiteFooterProps) {
 
             <Link
               href={footerQuoteCta.href}
-              className="footer-dot-card group flex min-w-0 flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 rounded-lg border border-footer-accent p-4 sm:p-6 transition-colors hover:border-footer-accent-bright"
+              className="footer-dot-card footer-cta-slant group flex min-w-0 flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 border border-footer-accent p-4 sm:p-6 transition-colors hover:border-footer-accent-bright"
             >
               <ClipboardCheck
                 className="size-10 sm:size-12 shrink-0 text-footer-accent"
@@ -529,7 +553,8 @@ export function SiteFooter({ exploreGroups }: SiteFooterProps) {
         </div>
 
         <div className="mx-auto max-w-listing border-t border-footer-line px-6 py-10 lg:px-16">
-          <FooterOfficeMap className="max-w-site" />
+          <div className="footer-divider-slice" aria-hidden="true" />
+          <FooterOfficeMap className="footer-map-glow relative max-w-site" />
         </div>
 
         <div className="border-t border-footer-line">

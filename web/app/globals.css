@@ -495,12 +495,73 @@
   position: absolute;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  opacity: 0.025;
+  opacity: 0.04;
   pointer-events: none;
   z-index: 10;
 }
 
-/* Hero stage */
+/* ─── Footer map radial glow ─── */
+.footer-map-glow {
+  position: relative;
+  isolation: isolate;
+}
+.footer-map-glow > * {
+  position: relative;
+  z-index: 1;
+}
+.footer-map-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1rem;
+  background: radial-gradient(ellipse at 50% 50%, oklch(0.65 0.15 145 / 12%) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Footer angular shape utilities ─── */
+.footer-divider-slice {
+  position: relative;
+  height: 2rem;
+  overflow: hidden;
+}
+.footer-divider-slice::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    oklch(0.65 0.15 145 / 30%) 45%,
+    oklch(0.65 0.15 145 / 30%) 55%,
+    transparent 100%
+  );
+  clip-path: polygon(0 0, 30% 0, 50% 100%, 0 100%);
+}
+.footer-divider-slice::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    oklch(0.65 0.15 145 / 20%) 45%,
+    oklch(0.65 0.15 145 / 20%) 55%,
+    transparent 100%
+  );
+  clip-path: polygon(50% 0, 100% 0, 100% 100%, 70% 100%);
+}
+
+/* ─── Footer brand panel diagonal gradient ─── */
+.footer-brand-bg {
+  background: linear-gradient(160deg, oklch(0.06 0 0) 0%, oklch(0.04 0 0) 50%, transparent 100%);
+}
+
+/* ─── Footer CTA clip-path — angular top-right corner ─── */
+.footer-cta-slant {
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
+}
 .hero-stage {
   position: relative;
   min-height: 100dvh;
@@ -953,7 +1014,7 @@
 
 /* ─── Cart sidebar grain — slightly more visible than default ─── */
 .cart-sidebar .grain-overlay::after {
-  opacity: 0.035;
+  opacity: 0.05;
 }
 
 /* ─── Respect prefers-reduced-motion for cart animations ─── */

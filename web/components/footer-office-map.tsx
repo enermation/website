@@ -112,6 +112,7 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
             dark: 'https://tiles.openfreemap.org/styles/liberty',
           }}
           interactive={true}
+          attributionControl={false}
           className="h-full w-full"
         >
           {officeLocations.map((office, index) => (
