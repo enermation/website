@@ -207,7 +207,7 @@ function BrandMark() {
         <FaviconMark />
       </span>
       <span className="flex flex-col border-l border-footer-muted pl-3 sm:pl-4">
-        <span className="font-tachyon text-lg sm:text-xl leading-none tracking-widest text-on-dark overflow-wrap-break-word md:text-2xl">
+        <span className="font-tachyon text-xl sm:text-2xl leading-none tracking-widest text-on-dark overflow-wrap-break-word md:text-3xl">
           enermation
         </span>
         <span className="mt-2 font-heading text-xs sm:text-xs font-bold uppercase tracking-widest text-footer-accent overflow-wrap-break-word">
