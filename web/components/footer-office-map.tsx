@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Map as MapLibreMap,
   MapMarker,
@@ -18,9 +18,20 @@ type FooterOfficeMapProps = {
 const MAP_CENTER: [number, number] = [30.0, 26.0]
 const MAP_ZOOM = 1.5
 
+type ProjectionName = 'mercator' | 'globe' | 'equalEarth' | 'naturalEarth'
+
+const projections: { name: ProjectionName; label: string; projection: { type: string } }[] = [
+  { name: 'mercator', label: 'Mercator', projection: { type: 'mercator' } },
+  { name: 'globe', label: 'Globe', projection: { type: 'globe' } },
+  { name: 'equalEarth', label: 'Equal Earth', projection: { type: 'equalEarth' } },
+  { name: 'naturalEarth', label: 'Natural Earth', projection: { type: 'naturalEarth' } },
+]
+
 export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
   const mapRef = useRef<MapRef>(null)
   const fitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [activeProjection, setActiveProjection] = useState<ProjectionName>('globe')
+  const active = projections.find(p => p.name === activeProjection) ?? projections[1]
 
   const fitAllMarkers = useCallback(() => {
     const map = mapRef.current
@@ -38,13 +49,11 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
       if (office.lat > bounds[1][1]) bounds[1][1] = office.lat
     })
 
-    // Smaller padding for tighter zoom
     const padding = 50
     map.fitBounds(bounds, { padding, duration: 0 })
   }, [])
 
   useEffect(() => {
-    // Debounce fitAllMarkers to avoid rapid recalculations
     fitTimerRef.current = setTimeout(fitAllMarkers, 600)
     return () => {
       if (fitTimerRef.current) clearTimeout(fitTimerRef.current)
@@ -61,7 +70,7 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
           ref={mapRef}
           center={MAP_CENTER}
           zoom={MAP_ZOOM}
-          projection={{ type: 'globe' }}
+          projection={active.projection}
           styles={{
             light: 'https://tiles.openfreemap.org/styles/liberty',
             dark: 'https://tiles.openfreemap.org/styles/liberty',
@@ -91,6 +100,23 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
           </li>
         ))}
       </ul>
+      <div className="flex flex-wrap gap-2">
+        {projections.map(p => (
+          <button
+            type="button"
+            key={p.name}
+            onClick={() => setActiveProjection(p.name)}
+            className={cn(
+              'rounded-full border px-3 py-1 text-xs font-heading font-bold transition-colors',
+              activeProjection === p.name
+                ? 'border-footer-accent bg-footer-accent text-footer-dark'
+                : 'border-footer-line text-on-dark-muted hover:border-footer-accent hover:text-footer-accent'
+            )}
+          >
+            {p.label}
+          </button>
+        ))}
+      </div>
     </div>
   )
 }
