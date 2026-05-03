@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server'
 import { getQdrantClient } from '@/lib/rag/clients'
 import { QDRANT_COLLECTION } from '@/lib/rag/constants'
 
-export const dynamic = 'force-dynamic'
-
 export async function GET() {
   try {
     const client = getQdrantClient()
