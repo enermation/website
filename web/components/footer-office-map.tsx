@@ -57,12 +57,12 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
     const map = mapRef.current
     if (!map) return
 
-    map.on('load', () => {
+    map.on('styledata', () => {
       if (rafRef.current !== null) return
+
       const rotate = (timestamp: number) => {
         if (!isInteractingRef.current) {
-          const bearing = (timestamp / 100) % 360
-          map.setBearing(bearing)
+          map.rotateTo((timestamp / 100) % 360, { duration: 0 })
         }
         rafRef.current = requestAnimationFrame(rotate)
       }
