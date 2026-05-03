@@ -54,7 +54,7 @@ export type FooterLinkGroup = {
   links: FooterLink[]
 }
 
-export type FooterSocialPlatform = 'website' | 'whatsapp' | 'email' | 'quote'
+export type FooterSocialPlatform = 'facebook' | 'instagram' | 'linkedin' | 'youtube' | 'whatsapp'
 
 export type FooterSocialLink = FooterLink & {
   platform: FooterSocialPlatform
