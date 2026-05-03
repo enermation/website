@@ -207,11 +207,11 @@ function BrandMark() {
         <FaviconMark />
       </span>
       <span className="flex flex-col border-l border-footer-muted pl-3 sm:pl-4">
-        <span className="font-heading text-2xl sm:text-3xl font-bold uppercase leading-none tracking-widest text-on-dark overflow-wrap-break-word md:text-4xl">
-          Enermation
+        <span className="font-tachyon text-lg sm:text-xl leading-none tracking-widest text-on-dark overflow-wrap-break-word md:text-2xl">
+          enermation
         </span>
         <span className="mt-2 font-heading text-xs sm:text-xs font-bold uppercase tracking-widest text-footer-accent overflow-wrap-break-word">
-          Sustainable, Innovative and Reliable
+          Sustainable, Innovative, Reliable
         </span>
       </span>
     </Link>
@@ -373,7 +373,7 @@ function FooterSocialLinks() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex size-9 items-center justify-center rounded-full border border-white text-white transition-colors hover:bg-white hover:text-footer-dark"
+                className="flex size-9 items-center justify-center text-white transition-opacity hover:opacity-70"
                 aria-label={link.label}
               >
                 <Icon className="size-5" aria-hidden="true" />
