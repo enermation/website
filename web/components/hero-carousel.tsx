@@ -2,7 +2,7 @@
 
 import { ContactShadows, Environment, useEnvironment, useGLTF } from '@react-three/drei'
 import { applyProps, Canvas, useFrame, useThree } from '@react-three/fiber'
-import { type ReactNode, Suspense, useEffect, useRef } from 'react'
+import React, { type ReactNode, Suspense, useEffect, useLayoutEffect, useRef } from 'react'
 import {
   Box3,
   type Group,
@@ -445,6 +445,7 @@ type AnimatedVehicleProps = {
   shouldDropModel: boolean
   prefersReducedMotion: boolean
   config: HeroModelConfig
+  userDragOffsetRef: { current: number }
   children: ReactNode
 }
 
@@ -452,6 +453,7 @@ function AnimatedVehicle({
   shouldDropModel,
   prefersReducedMotion,
   config,
+  userDragOffsetRef,
   children,
 }: AnimatedVehicleProps) {
   const groupRef = useRef<Group>(null)
@@ -481,10 +483,20 @@ function AnimatedVehicle({
       Math.sin(idleTime.current * 0.7) * 0.04 * idleStrength
 
     group.rotation.x = MathUtils.lerp(config.dropRotation[0], config.restRotation[0], progress)
-    group.rotation.y = MathUtils.lerp(config.dropRotation[1], config.restRotation[1], progress)
+    group.rotation.y =
+      MathUtils.lerp(config.dropRotation[1], config.restRotation[1], progress) +
+      userDragOffsetRef.current
   })
 
-  return <group ref={groupRef}>{children}</group>
+  return (
+    <group
+      ref={groupRef}
+      position={[0, DROP_START_Y, 0]}
+      rotation={[config.dropRotation[0], config.dropRotation[1], 0]}
+    >
+      {children}
+    </group>
+  )
 }
 
 function CameraRig({
@@ -492,11 +504,13 @@ function CameraRig({
   allowIdleOrbit,
   activeModelIndex,
   isMobile,
+  userInteractingRef,
 }: {
   prefersReducedMotion: boolean
   allowIdleOrbit: boolean
   activeModelIndex: number
   isMobile: boolean
+  userInteractingRef: { current: boolean }
 }) {
   const orbitStrength = useRef(allowIdleOrbit ? 1 : 0)
   const orbitRadius = useRef(getModelConfig(activeModelIndex).orbitRadius)
@@ -505,6 +519,9 @@ function CameraRig({
 
   useFrame((state, delta) => {
     const clampedDelta = Math.min(delta, 0.05)
+
+    if (userInteractingRef.current) return
+
     orbitTime.current += clampedDelta
     const elapsedTime = orbitTime.current
     const activeConfig = getModelConfig(activeModelIndex)
@@ -559,6 +576,8 @@ function SceneContent({
   prefersReducedMotion,
   allowIdleOrbit,
   isMobile,
+  userInteractingRef,
+  userDragOffsetRef,
 }: {
   onSceneReady: () => void
   activeModelIndex: number
@@ -566,6 +585,8 @@ function SceneContent({
   prefersReducedMotion: boolean
   allowIdleOrbit: boolean
   isMobile: boolean
+  userInteractingRef: { current: boolean }
+  userDragOffsetRef: { current: number }
 }) {
   const activeConfig = getModelConfig(activeModelIndex)
 
@@ -589,6 +610,7 @@ function SceneContent({
           shouldDropModel={shouldDropModel}
           prefersReducedMotion={prefersReducedMotion}
           config={activeConfig}
+          userDragOffsetRef={userDragOffsetRef}
         >
           <SkylineModel />
         </AnimatedVehicle>
@@ -598,6 +620,7 @@ function SceneContent({
           shouldDropModel={shouldDropModel}
           prefersReducedMotion={prefersReducedMotion}
           config={activeConfig}
+          userDragOffsetRef={userDragOffsetRef}
         >
           <ScaniaModel />
         </AnimatedVehicle>
@@ -607,6 +630,7 @@ function SceneContent({
           shouldDropModel={shouldDropModel}
           prefersReducedMotion={prefersReducedMotion}
           config={activeConfig}
+          userDragOffsetRef={userDragOffsetRef}
         >
           <ExcavatorModel />
         </AnimatedVehicle>
@@ -616,6 +640,7 @@ function SceneContent({
           shouldDropModel={shouldDropModel}
           prefersReducedMotion={prefersReducedMotion}
           config={activeConfig}
+          userDragOffsetRef={userDragOffsetRef}
         >
           <ManBusModel isMobile={isMobile} />
         </AnimatedVehicle>
@@ -637,6 +662,7 @@ function SceneContent({
         allowIdleOrbit={allowIdleOrbit}
         activeModelIndex={activeModelIndex}
         isMobile={isMobile}
+        userInteractingRef={userInteractingRef}
       />
       <ReadyGate onReady={onSceneReady} />
     </>
@@ -687,27 +713,102 @@ export function HeroCarouselScene({
     return () => globalThis.clearTimeout(timer)
   }, [activeModelIndex, preloadInactiveModel])
 
+  const activePointerIdRef = useRef<number | null>(null)
+  const isDraggingRef = useRef(false)
+  const userInteractingRef = useRef(false)
+  const userDragOffsetRef = useRef(0)
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastPointerXRef = useRef(0)
+
+  useLayoutEffect(() => {
+    activePointerIdRef.current = null
+    isDraggingRef.current = false
+    userDragOffsetRef.current = 0
+    userInteractingRef.current = false
+    if (resumeTimerRef.current) {
+      clearTimeout(resumeTimerRef.current)
+      resumeTimerRef.current = null
+    }
+  }, [activeModelIndex])
+
+  useEffect(() => {
+    return () => {
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
+    }
+  }, [])
+
+  function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    if (activePointerIdRef.current !== null) return
+    activePointerIdRef.current = e.pointerId
+    lastPointerXRef.current = e.clientX
+    isDraggingRef.current = true
+    userInteractingRef.current = true
+    if (resumeTimerRef.current) {
+      clearTimeout(resumeTimerRef.current)
+      resumeTimerRef.current = null
+    }
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (!isDraggingRef.current || e.pointerId !== activePointerIdRef.current) return
+    const delta = e.clientX - lastPointerXRef.current
+    lastPointerXRef.current = e.clientX
+    userDragOffsetRef.current += delta * 0.008
+  }
+
+  function handlePointerUp(e: React.PointerEvent<HTMLDivElement>) {
+    if (e.pointerId !== activePointerIdRef.current) return
+    activePointerIdRef.current = null
+    isDraggingRef.current = false
+    resumeTimerRef.current = setTimeout(() => {
+      userInteractingRef.current = false
+      resumeTimerRef.current = null
+    }, 2000)
+  }
+
+  function handlePointerCancel(e: React.PointerEvent<HTMLDivElement>) {
+    if (e.pointerId !== activePointerIdRef.current) return
+    activePointerIdRef.current = null
+    isDraggingRef.current = false
+    resumeTimerRef.current = setTimeout(() => {
+      userInteractingRef.current = false
+      resumeTimerRef.current = null
+    }, 2000)
+  }
+
   const initialOrbitRadius =
     getModelConfig(activeModelIndex).orbitRadius * (isMobile ? MOBILE_ORBIT_FACTOR : 1)
 
   return (
-    <Canvas
-      frameloop={sceneVisible && isInViewport ? 'always' : 'demand'}
-      shadows
-      camera={{ position: [0, CAMERA_Y, initialOrbitRadius], fov: 38 }}
-      dpr={[1, 1.25]}
-      gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
+    <div
+      className="size-full touch-pan-y"
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
     >
-      <Suspense fallback={null}>
-        <SceneContent
-          onSceneReady={onSceneReady}
-          activeModelIndex={activeModelIndex}
-          shouldDropModel={shouldDropModel}
-          prefersReducedMotion={prefersReducedMotion}
-          allowIdleOrbit={allowIdleOrbit}
-          isMobile={isMobile}
-        />
-      </Suspense>
-    </Canvas>
+      <Canvas
+        className="cursor-grab active:cursor-grabbing"
+        frameloop={sceneVisible && isInViewport ? 'always' : 'demand'}
+        shadows
+        camera={{ position: [0, CAMERA_Y, initialOrbitRadius], fov: 38 }}
+        dpr={[1, 1.25]}
+        gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
+      >
+        <Suspense fallback={null}>
+          <SceneContent
+            onSceneReady={onSceneReady}
+            activeModelIndex={activeModelIndex}
+            shouldDropModel={shouldDropModel}
+            prefersReducedMotion={prefersReducedMotion}
+            allowIdleOrbit={allowIdleOrbit}
+            isMobile={isMobile}
+            userInteractingRef={userInteractingRef}
+            userDragOffsetRef={userDragOffsetRef}
+          />
+        </Suspense>
+      </Canvas>
+    </div>
   )
 }

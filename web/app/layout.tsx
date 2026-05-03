@@ -2,7 +2,6 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 import type { Metadata } from 'next'
 import { Barlow_Semi_Condensed, Bebas_Neue, Inter } from 'next/font/google'
-import localFont from 'next/font/local'
 import { Suspense } from 'react'
 import './globals.css'
 import { ChatWidgetMount } from '@/components/chat-widget-mount'
@@ -11,13 +10,6 @@ import { Toaster } from '@/components/ui/sonner'
 import { CartProvider } from '@/lib/cart-context'
 import { getFooterNavigation } from '@/lib/header-navigation'
 import { WishlistProvider } from '@/lib/wishlist-context'
-
-const alphacorsa = localFont({
-  src: '../public/fonts/alphacorsa.ttf',
-  variable: '--font-alphacorsa',
-  display: 'block',
-  preload: true,
-})
 
 const display = Bebas_Neue({
   variable: '--font-display',
@@ -66,7 +58,7 @@ export default async function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${alphacorsa.variable} ${display.variable} ${heading.variable} ${body.variable} h-full antialiased`}
+      className={`${display.variable} ${heading.variable} ${body.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <Suspense>

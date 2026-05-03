@@ -82,7 +82,7 @@ export const TextHoverEffect = ({
         textAnchor="middle"
         dominantBaseline="middle"
         strokeWidth="0.8"
-        className="fill-transparent font-alphacorsa stroke-white-30"
+        className="fill-transparent font-tachyon stroke-white-30"
         style={{ opacity: hovered ? 0.7 : 0 }}
       >
         {text}
@@ -95,7 +95,7 @@ export const TextHoverEffect = ({
         textAnchor="middle"
         dominantBaseline="middle"
         strokeWidth="0.8"
-        className="fill-transparent font-alphacorsa stroke-white-70 hero-stroke-draw"
+        className="fill-transparent font-tachyon stroke-white-70 hero-stroke-draw"
       >
         {text}
       </text>
@@ -109,7 +109,7 @@ export const TextHoverEffect = ({
         stroke="url(#textGradient)"
         strokeWidth="0.8"
         mask="url(#textMask)"
-        className="fill-transparent font-alphacorsa"
+        className="fill-transparent font-tachyon"
       >
         {text}
       </text>

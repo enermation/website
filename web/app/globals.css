@@ -2,6 +2,16 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@font-face {
+  font-family: "Tachyon W00 Light";
+  src:
+    url("/fonts/tachyon-light.woff2") format("woff2"),
+    url("/fonts/tachyon-light.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -9,7 +19,7 @@
   --font-display: var(--font-display);
   --font-heading: var(--font-heading);
   --font-body: var(--font-body);
-  --font-alphacorsa: var(--font-alphacorsa);
+  --font-tachyon: var(--font-tachyon);
 
   /* ─── Font sizes ─── */
   --text-11: 0.6875rem; /* 11px — keyboard hints, fine print */
@@ -21,9 +31,6 @@
   /* ─── Max widths ─── */
   --max-w-site: 82.5rem; /* 1320px — main container */
   --max-w-listing: 108rem; /* 1728px — product listing container */
-
-  /* ─── Wordmark font ─── */
-  --font-flauta: var(--font-flauta);
 
   /* ─── Footer wordmark size (fills container width for ENERMATION) ─── */
   --text-footer-wordmark: 15.5vw;
@@ -157,6 +164,8 @@
 }
 
 :root {
+  --font-tachyon: "Tachyon W00 Light", sans-serif;
+
   /* ─── Shadcn/ui Base Tokens (Cool Gray Monotone) ─── */
   --background: oklch(0.98 0 0);
   --foreground: oklch(0.2 0 0);
@@ -702,6 +711,10 @@
 @media (min-width: 768px) {
   .hero-stage__center {
     padding-bottom: 9rem;
+  }
+
+  .hero-stage__text-hover text {
+    font-size: clamp(1.5rem, 2.2vw, 2.2rem);
   }
 
   .hero-stage__carousel-meta {
