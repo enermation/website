@@ -12,6 +12,7 @@ import {
   type MeshStandardMaterial,
   Vector3,
 } from 'three'
+import type { DeviceTier } from '@/hooks/use-device-tier'
 
 const CAMERA_Y = 1
 const CAMERA_LERP_FACTOR = 0.05
@@ -578,6 +579,7 @@ function SceneContent({
   isMobile,
   userInteractingRef,
   userDragOffsetRef,
+  quality,
 }: {
   onSceneReady: () => void
   activeModelIndex: number
@@ -587,6 +589,7 @@ function SceneContent({
   isMobile: boolean
   userInteractingRef: { current: boolean }
   userDragOffsetRef: { current: number }
+  quality: DeviceTier
 }) {
   const activeConfig = getModelConfig(activeModelIndex)
 
@@ -648,7 +651,7 @@ function SceneContent({
 
       <ContactShadows
         resolution={512}
-        frames={prefersReducedMotion ? 1 : 36}
+        frames={quality === 'high' ? (prefersReducedMotion ? 1 : 36) : 1}
         position={[0, -1.16, 0]}
         scale={11.5}
         blur={2.4}
@@ -679,6 +682,7 @@ type HeroCarouselSceneProps = {
   isMobile: boolean
   sceneVisible: boolean
   isInViewport: boolean
+  quality: DeviceTier
 }
 
 export function HeroCarouselScene({
@@ -691,6 +695,7 @@ export function HeroCarouselScene({
   isMobile,
   sceneVisible,
   isInViewport,
+  quality,
 }: HeroCarouselSceneProps) {
   useEffect(() => {
     useGLTF.preload(getModelPath(activeModelIndex))
@@ -791,10 +796,14 @@ export function HeroCarouselScene({
       <Canvas
         className="cursor-grab active:cursor-grabbing"
         frameloop={sceneVisible && isInViewport ? 'always' : 'demand'}
-        shadows
+        shadows={quality !== 'low'}
         camera={{ position: [0, CAMERA_Y, initialOrbitRadius], fov: 38 }}
-        dpr={[1, 1.25]}
-        gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
+        dpr={[1, quality === 'high' ? 1.25 : 1.0]}
+        gl={{
+          alpha: true,
+          antialias: false,
+          powerPreference: quality === 'high' ? 'high-performance' : 'default',
+        }}
       >
         <Suspense fallback={null}>
           <SceneContent
@@ -806,6 +815,7 @@ export function HeroCarouselScene({
             isMobile={isMobile}
             userInteractingRef={userInteractingRef}
             userDragOffsetRef={userDragOffsetRef}
+            quality={quality}
           />
         </Suspense>
       </Canvas>

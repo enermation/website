@@ -16,7 +16,7 @@ const display = Bebas_Neue({
   weight: '400',
   subsets: ['latin'],
   display: 'swap',
-  preload: false,
+  preload: true,
 })
 
 const heading = Barlow_Semi_Condensed({
@@ -60,6 +60,15 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${display.variable} ${heading.variable} ${body.variable} h-full antialiased`}
     >
+      <head>
+        <link
+          rel="preload"
+          href="/fonts/tachyon-light.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <Suspense>
           <CartProvider>

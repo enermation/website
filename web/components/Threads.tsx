@@ -7,6 +7,9 @@ interface ThreadsProps {
   amplitude?: number
   distance?: number
   enableMouseInteraction?: boolean
+  lineCount?: number
+  targetFps?: number
+  resolutionScale?: number
 }
 
 const vertexShader = `
@@ -19,7 +22,8 @@ void main() {
 }
 `
 
-const fragmentShader = `
+function makeFragmentShader(lineCount: number): string {
+  return `
 precision highp float;
 
 uniform float iTime;
@@ -31,7 +35,7 @@ uniform vec2 uMouse;
 
 #define PI 3.1415926538
 
-const int u_line_count = 40;
+const int u_line_count = ${lineCount};
 const float u_line_width = 7.0;
 const float u_line_blur = 10.0;
 
@@ -125,12 +129,16 @@ void main() {
     mainImage(gl_FragColor, gl_FragCoord.xy);
 }
 `
+}
 
 const Threads: React.FC<ThreadsProps> = ({
   color = [1, 1, 1],
   amplitude = 1,
   distance = 0,
   enableMouseInteraction = false,
+  lineCount = 40,
+  targetFps = 60,
+  resolutionScale = 1,
   ...rest
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -150,7 +158,7 @@ const Threads: React.FC<ThreadsProps> = ({
     const geometry = new Triangle(gl)
     const program = new Program(gl, {
       vertex: vertexShader,
-      fragment: fragmentShader,
+      fragment: makeFragmentShader(lineCount),
       uniforms: {
         iTime: { value: 0 },
         iResolution: {
@@ -167,10 +175,15 @@ const Threads: React.FC<ThreadsProps> = ({
 
     function resize() {
       const { clientWidth, clientHeight } = container
-      renderer.setSize(clientWidth, clientHeight)
-      program.uniforms.iResolution.value.r = clientWidth
-      program.uniforms.iResolution.value.g = clientHeight
-      program.uniforms.iResolution.value.b = clientWidth / clientHeight
+      const w = Math.round(clientWidth * resolutionScale)
+      const h = Math.round(clientHeight * resolutionScale)
+      renderer.setSize(w, h)
+      // OGL's setSize sets canvas CSS size to (w, h) — override to fill container
+      gl.canvas.style.width = `${clientWidth}px`
+      gl.canvas.style.height = `${clientHeight}px`
+      program.uniforms.iResolution.value.r = w
+      program.uniforms.iResolution.value.g = h
+      program.uniforms.iResolution.value.b = w / h
     }
     window.addEventListener('resize', resize)
     resize()
@@ -180,9 +193,10 @@ const Threads: React.FC<ThreadsProps> = ({
 
     function handleMouseMove(e: MouseEvent) {
       const rect = container.getBoundingClientRect()
-      const x = (e.clientX - rect.left) / rect.width
-      const y = 1.0 - (e.clientY - rect.top) / rect.height
-      targetMouse = [x, y]
+      targetMouse = [
+        (e.clientX - rect.left) / rect.width,
+        1.0 - (e.clientY - rect.top) / rect.height,
+      ]
     }
     function handleMouseLeave() {
       targetMouse = [0.5, 0.5]
@@ -192,28 +206,55 @@ const Threads: React.FC<ThreadsProps> = ({
       container.addEventListener('mouseleave', handleMouseLeave)
     }
 
-    function update(t: number) {
-      if (enableMouseInteraction) {
-        const smoothing = 0.05
-        currentMouse[0] += smoothing * (targetMouse[0] - currentMouse[0])
-        currentMouse[1] += smoothing * (targetMouse[1] - currentMouse[1])
-        program.uniforms.uMouse.value[0] = currentMouse[0]
-        program.uniforms.uMouse.value[1] = currentMouse[1]
-      } else {
-        program.uniforms.uMouse.value[0] = 0.5
-        program.uniforms.uMouse.value[1] = 0.5
-      }
-      program.uniforms.iTime.value = t * 0.001
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    let io: IntersectionObserver | null = null
 
+    if (prefersReducedMotion) {
+      // Render a single static snapshot — preserves the visual without motion
+      program.uniforms.iTime.value = 2.5
       renderer.render({ scene: mesh })
+    } else {
+      let isVisible = true
+      io = new IntersectionObserver(
+        ([entry]) => {
+          isVisible = entry.isIntersecting
+        },
+        { threshold: 0 }
+      )
+      io.observe(container)
+
+      // frames to ms: 0 means uncapped, positive value throttles to targetFps
+      const frameDuration = targetFps > 0 ? 1000 / targetFps : 0
+      let lastFrameTime = 0
+
+      const update = (t: number) => {
+        animationFrameId.current = requestAnimationFrame(update)
+
+        if (!isVisible) return
+        if (frameDuration > 0 && t - lastFrameTime < frameDuration) return
+        lastFrameTime = t
+
+        if (enableMouseInteraction) {
+          const smoothing = 0.05
+          currentMouse[0] += smoothing * (targetMouse[0] - currentMouse[0])
+          currentMouse[1] += smoothing * (targetMouse[1] - currentMouse[1])
+          program.uniforms.uMouse.value[0] = currentMouse[0]
+          program.uniforms.uMouse.value[1] = currentMouse[1]
+        } else {
+          program.uniforms.uMouse.value[0] = 0.5
+          program.uniforms.uMouse.value[1] = 0.5
+        }
+
+        program.uniforms.iTime.value = t * 0.001
+        renderer.render({ scene: mesh })
+      }
       animationFrameId.current = requestAnimationFrame(update)
     }
-    animationFrameId.current = requestAnimationFrame(update)
 
     return () => {
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current)
+      io?.disconnect()
       window.removeEventListener('resize', resize)
-
       if (enableMouseInteraction) {
         container.removeEventListener('mousemove', handleMouseMove)
         container.removeEventListener('mouseleave', handleMouseLeave)
@@ -221,7 +262,7 @@ const Threads: React.FC<ThreadsProps> = ({
       if (container.contains(gl.canvas)) container.removeChild(gl.canvas)
       gl.getExtension('WEBGL_lose_context')?.loseContext()
     }
-  }, [color, amplitude, distance, enableMouseInteraction])
+  }, [color, amplitude, distance, enableMouseInteraction, lineCount, targetFps, resolutionScale])
 
   return <div ref={containerRef} className="w-full h-full relative" {...rest} />
 }

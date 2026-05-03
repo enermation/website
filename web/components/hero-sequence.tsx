@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { TextHoverEffect } from '@/components/ui/text-hover-effect'
+import { useDeviceTier } from '@/hooks/use-device-tier'
 import { useIsMobile } from '@/hooks/use-mobile'
 import {
   heroBrandWordmark,
@@ -57,6 +58,7 @@ type HeroSequenceProps = {
 export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
   const prefersReducedMotion = usePrefersReducedMotion()
   const isMobile = useIsMobile()
+  const tier = useDeviceTier()
   const [phase, setPhase] = useState<HeroPhase>('shell-visible')
   const [sceneReady, setSceneReady] = useState(false)
   const [textAnimationComplete, setTextAnimationComplete] = useState(false)
@@ -190,6 +192,7 @@ export function HeroSequence({ initialIndex = 0 }: HeroSequenceProps) {
               isMobile={isMobile}
               sceneVisible={shouldRevealScene}
               isInViewport={isInViewport}
+              quality={tier}
             />
           </div>
         ) : null}

@@ -1,5 +1,40 @@
 # Changelog
 
+## v0.1.4 (2026-05-03)
+
+### Features
+- **Hero**: add device-tier adaptive quality system with `useDeviceTier` hook for
+  hardware capability detection (high/mid/low) based on hardware concurrency, device
+  memory, and WebGL GPU renderer string
+- **Threads**: add configurable `lineCount`, `targetFps`, `resolutionScale` props;
+  add IntersectionObserver-based visibility culling to pause rendering when
+  off-screen; add `prefers-reduced-motion` static frame mode
+- **Font loading**: enable preload for Bebas Neue and add explicit `<link rel="preload">`
+  for Tachyon Light woff2 font in root layout
+
+### Performance
+- **Threads**: throttle animation loop to targetFps (frameDuration = 1000/targetFps);
+  skip frames when tab is not visible; reduce canvas resolution on low-tier via
+  resolutionScale; reduce line count from 40 → 25 (mid) → 15 (low)
+- **HeroCarouselScene**: reduce ContactShadows frames from 36 to 1 on mid/low tiers;
+  disable shadows on Canvas entirely for low tier; cap dpr at 1.0 on mid/low
+  (was 1.25); set gl powerPreference to 'default' on mid/low ('high-performance'
+  only on high)
+- **HeroBackgroundVideo**: apply tier-specific THREADS_CONFIG (high=40l/60fps/1x,
+  mid=25l/30fps/1x, low=15l/20fps/0.7x) to reduce GPU load on lower-end devices
+
+### Bug Fixes
+- **Threads**: fix canvas CSS sizing mismatch — renderer.setSize() now uses scaled
+  resolution while canvas.style is explicitly set to fill container CSS size
+- **Threads**: fix stale closure capture on mouse position calculation by computing
+  targetMouse inline instead of through intermediary variables
+
+### Refactor
+- **Threads**: refactor fragment shader from static const to `makeFragmentShader(lineCount)`
+  factory function to allow dynamic line count at runtime
+
+---
+
 ## v0.1.3 (2026-04-18)
 
 ### Features
