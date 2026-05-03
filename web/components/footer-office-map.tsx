@@ -15,8 +15,8 @@ type FooterOfficeMapProps = {
   className?: string
 }
 
-const MAP_CENTER: [number, number] = [30.0, 26.0]
-const MAP_ZOOM = 1.5
+const MAP_CENTER: [number, number] = [30.0, 20.0]
+const MAP_ZOOM = 0.5
 
 export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
   const mapRef = useRef<MapRef>(null)
@@ -58,14 +58,16 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
     if (!map) return
 
     map.on('load', () => {
-      if (rafRef.current !== null) return // already started
+      if (rafRef.current !== null) return
       const rotate = (timestamp: number) => {
         if (!isInteractingRef.current) {
-          map.rotateTo((timestamp / 100) % 360, { duration: 0 })
+          const bearing = (timestamp / 100) % 360
+          map.setBearing(bearing)
         }
         rafRef.current = requestAnimationFrame(rotate)
       }
 
+      rotate(0)
       rafRef.current = requestAnimationFrame(rotate)
 
       const handleInteract = () => {
@@ -83,6 +85,7 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
 
       const cleanup = () => {
         if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
         map.off('mousedown', handleInteract)
         map.off('touchstart', handleInteract)
         map.off('mouseup', handleInteractionEnd)
