@@ -7,7 +7,6 @@ import {
   type MapRef,
   MarkerContent,
   MarkerTooltip,
-  useMap,
 } from '@/components/ui/map'
 import { officeLocations } from '@/lib/data'
 import { cn } from '@/lib/utils'
@@ -18,19 +17,6 @@ type FooterOfficeMapProps = {
 
 const MAP_CENTER: [number, number] = [30.0, 26.0]
 const MAP_ZOOM = 1.5
-
-function GlobeStyler() {
-  const { map, isLoaded } = useMap()
-
-  useEffect(() => {
-    if (!isLoaded || !map) return
-
-    // Set globe background color to grey
-    map.setPaintProperty('background', 'background-color', '#2a2a2a')
-  }, [map, isLoaded])
-
-  return null
-}
 
 export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
   const mapRef = useRef<MapRef>(null)
@@ -66,12 +52,11 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
   }, [fitAllMarkers])
 
   return (
-    <div className={cn('flex flex-col gap-3', className)}>
-      <p className="font-heading text-xs font-semibold uppercase tracking-wide text-white-70 sm:text-sm">
-        Our Locations
+    <div className={cn('flex flex-col gap-4', className)}>
+      <p className="font-heading text-xl font-bold uppercase tracking-wide text-on-dark">
+        Global Export Network
       </p>
-      {/* Map: taller on mobile for better touch visibility, consistent on desktop */}
-      <div className="h-56 w-full overflow-hidden rounded-sm border border-white-10 sm:h-60 md:h-64">
+      <div className="h-56 w-full overflow-hidden rounded-lg border border-footer-line sm:h-60 md:h-64">
         <MapLibreMap
           ref={mapRef}
           center={MAP_CENTER}
@@ -84,12 +69,10 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
           interactive={false}
           className="h-full w-full"
         >
-          <GlobeStyler />
           {officeLocations.map((office, index) => (
             <MapMarker key={office.id} longitude={office.lng} latitude={office.lat}>
               <MarkerContent>
-                {/* Larger marker on mobile for better touch target */}
-                <div className="size-6 flex items-center justify-center rounded-full border-2 border-white bg-blue-500 text-xs font-bold text-white shadow-lg sm:size-5">
+                <div className="size-6 flex items-center justify-center rounded-full border-2 border-footer-dark bg-footer-accent font-heading text-xs font-bold text-footer-dark shadow-lg sm:size-5">
                   {index + 1}
                 </div>
               </MarkerContent>
@@ -98,11 +81,10 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
           ))}
         </MapLibreMap>
       </div>
-      {/* Location list: wrap on mobile, larger touch targets */}
-      <ul className="flex flex-col gap-x-3 gap-y-1.5 text-xs text-on-dark sm:text-sm md:flex-row md:gap-x-4">
+      <ul className="flex flex-col gap-x-3 gap-y-2 text-xs text-on-dark-muted sm:text-sm md:flex-row md:gap-x-4">
         {officeLocations.map((office, index) => (
           <li key={office.id} className="flex items-start gap-1.5">
-            <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border border-white-30 bg-white/10 text-[9px] font-bold text-white">
+            <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border border-footer-accent bg-footer-dark font-heading text-11 font-bold text-footer-accent">
               {index + 1}
             </span>
             <span className="text-xs leading-snug sm:text-sm">{office.address}</span>

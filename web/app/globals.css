@@ -88,6 +88,11 @@
   --color-white-30: var(--white-30);
   --color-white-50: var(--white-50);
   --color-white-70: var(--white-70);
+  --color-footer-dark: var(--footer-dark);
+  --color-footer-line: var(--footer-line);
+  --color-footer-muted: var(--footer-muted);
+  --color-footer-accent: var(--footer-accent);
+  --color-footer-accent-bright: var(--footer-accent-bright);
 
   /* ─── Shadcn/ui Semantic Tokens ─── */
   --color-background: var(--background);
@@ -240,6 +245,13 @@
   --white-50: oklch(1 0 0 / 50%);
   --white-70: oklch(1 0 0 / 70%);
 
+  /* ─── Reference footer palette ─── */
+  --footer-dark: oklch(0.04 0 0);
+  --footer-line: oklch(1 0 0 / 10%);
+  --footer-muted: oklch(1 0 0 / 18%);
+  --footer-accent: oklch(0.76 0.12 86);
+  --footer-accent-bright: oklch(0.84 0.14 87);
+
   /* ─── Hero text hover gradient ─── */
   --hero-gradient-1: oklch(0.77 0.21 91);
   --hero-gradient-2: oklch(0.64 0.24 26);
@@ -339,6 +351,20 @@
 
   .translate-y-footer-meta {
     transform: translateY(3px);
+  }
+
+  .footer-dot-card {
+    background-image: radial-gradient(var(--footer-line) 1px, transparent 1px);
+    background-size: 0.75rem 0.75rem;
+  }
+
+  @media (min-width: 1024px) {
+    .footer-main-grid {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 0.9fr) minmax(
+          0,
+          1.3fr
+        );
+    }
   }
 }
 

@@ -54,7 +54,7 @@ export type FooterLinkGroup = {
   links: FooterLink[]
 }
 
-export type FooterSocialPlatform = 'instagram' | 'facebook' | 'tiktok' | 'twitter' | 'youtube'
+export type FooterSocialPlatform = 'website' | 'whatsapp' | 'email' | 'quote'
 
 export type FooterSocialLink = FooterLink & {
   platform: FooterSocialPlatform
@@ -152,15 +152,18 @@ export const footerPrimaryLinks: FooterLink[] = [
 export const footerContactLinks: FooterLink[] = [{ label: 'How To Find Us', href: '/contact' }]
 
 export const footerContactInfo = {
-  location: 'Preston, Lancashire, UK',
-  phone: '+44 (0)1772 663777',
-  email: 'sales@enermation.com',
+  location: 'Dubai, UAE',
+  region: 'Global Export Network',
+  phone: '+1 307 488 4085',
+  email: 'info@enermation.us',
+  whatsappHref: 'https://wa.me/13074884085',
+  phoneHref: 'tel:+13074884085',
+  emailHref: 'mailto:info@enermation.us',
 }
 
 export const footerLegalLinks: FooterLink[] = [
-  { label: 'Terms & Conditions', href: '/terms' },
   { label: 'Privacy Policy', href: '/privacy' },
-  { label: 'Contact Us', href: '/contact' },
+  { label: 'Terms of Service', href: '/terms' },
 ]
 
 export const footerNavigationGroups: FooterLinkGroup[] = [
@@ -175,12 +178,61 @@ export const footerNavigationGroups: FooterLinkGroup[] = [
 ]
 
 export const footerSocialLinks: FooterSocialLink[] = [
-  { label: 'Instagram', href: '#', platform: 'instagram' },
-  { label: 'Facebook', href: '#', platform: 'facebook' },
-  { label: 'TikTok', href: '#', platform: 'tiktok' },
-  { label: 'Twitter', href: '#', platform: 'twitter' },
-  { label: 'YouTube', href: '#', platform: 'youtube' },
+  { label: 'Website', href: 'https://www.enermation.co/', platform: 'website' },
+  { label: 'WhatsApp', href: footerContactInfo.whatsappHref, platform: 'whatsapp' },
+  { label: 'Email', href: footerContactInfo.emailHref, platform: 'email' },
+  { label: 'Quote', href: '/contact?topic=request-quote', platform: 'quote' },
 ]
+
+export type FooterProofPoint = {
+  label: string
+  icon: 'globe' | 'shield' | 'badge' | 'support'
+}
+
+export const footerProofPoints: FooterProofPoint[] = [
+  { label: 'Global Network', icon: 'globe' },
+  { label: 'Trusted Partner', icon: 'shield' },
+  { label: 'Quality Assured', icon: 'badge' },
+  { label: 'Dedicated Support', icon: 'support' },
+]
+
+export const footerBrandSummary =
+  'Global export solutions for cars, commercial vehicles, heavy-duty trucks, heavy machinery and auto parts.'
+
+export const footerQuickLinks: FooterLink[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Cars', href: '/collections/residential-automobiles' },
+  { label: 'Commercial Vehicles', href: '/collections/commercial-vehicles' },
+  { label: 'Heavy Duty Trucks', href: '/collections/heavy-duty-trucks' },
+  { label: 'Heavy Machinery', href: '/collections/heavy-machineries' },
+  { label: 'Shop All', href: primaryShowroomCollectionHref },
+  { label: 'Contact Us', href: '/contact' },
+]
+
+export const footerExportSolutions: FooterLink[] = [
+  { label: 'Vehicle Export', href: '/collections/shop-all' },
+  { label: 'Heavy Machinery Export', href: '/collections/heavy-machineries' },
+  { label: 'Auto Parts Sourcing', href: '/search?q=auto%20parts' },
+  { label: 'Shipping Assistance', href: '/contact?topic=shipping-assistance' },
+  { label: 'Inspection Support', href: '/contact?topic=inspection-support' },
+  { label: 'Custom Order Requests', href: '/contact?topic=custom-order' },
+]
+
+export const footerGlobalMarkets: string[] = [
+  'Japan',
+  'China',
+  'UAE',
+  'Korea',
+  'Thailand',
+  'United Kingdom',
+  'United States',
+]
+
+export const footerQuoteCta = {
+  title: 'Looking for a specific vehicle or machine?',
+  label: 'Request a Quote',
+  href: '/contact?topic=request-quote',
+} as const
 
 export const footerContent = {
   eyebrow: 'Stay Connected',
