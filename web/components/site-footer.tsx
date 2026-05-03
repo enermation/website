@@ -373,7 +373,7 @@ function FooterSocialLinks() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex size-9 items-center justify-center rounded-full border border-footer-accent text-footer-accent transition-colors hover:bg-footer-accent hover:text-footer-dark"
+                className="flex size-9 items-center justify-center rounded-full border border-white text-white transition-colors hover:bg-white hover:text-footer-dark"
                 aria-label={link.label}
               >
                 <Icon className="size-5" aria-hidden="true" />
