@@ -183,42 +183,12 @@ type FooterLinkColumnProps = {
 function FaviconMark() {
   return (
     <svg className="size-10 sm:size-12 md:size-14" viewBox="-8 -8 224 252" aria-hidden="true">
-      <defs>
-        <linearGradient
-          id="footer-favicon-g1"
-          gradientUnits="userSpaceOnUse"
-          x1="76.9469"
-          y1="95.7725"
-          x2="216.4974"
-          y2="95.7725"
-          gradientTransform="matrix(1 0 0 -1 -13.5469 288.0856)"
-        >
-          <stop offset="0" stopColor="#939598" />
-          <stop offset="0.303" stopColor="#9A9C9F" />
-          <stop offset="0.7452" stopColor="#AEB0B2" />
-          <stop offset="1" stopColor="#BCBEC0" />
-        </linearGradient>
-        <linearGradient
-          id="footer-favicon-g2"
-          gradientUnits="userSpaceOnUse"
-          x1="21.4379"
-          y1="189.2285"
-          x2="217.0018"
-          y2="189.2285"
-          gradientTransform="matrix(1 0 0 -1 -13.5469 288.0856)"
-        >
-          <stop offset="0" stopColor="#939598" />
-          <stop offset="0.3036" stopColor="#9A9C9F" />
-          <stop offset="0.7485" stopColor="#AEB0B2" />
-          <stop offset="1" stopColor="#BCBEC0" />
-        </linearGradient>
-      </defs>
       <path
-        fill="url(#footer-favicon-g1)"
+        fill="white"
         d="M63.4,220.5c13-7.8,23.5-14.2,34.2-20.4c29.3-17.2,58.5-34.4,87.9-51.3c13.1-7.6,15.6-5.4,17.1,9.4c2.1,21.4-5.1,35.9-25.3,45.4c-17.2,8.8-35.4,19.4-52.5,30.1c-13.7,8.5-26.4,8.6-39.6-0.3C79.1,229.2,72.6,225.9,63.4,220.5z"
       />
       <path
-        fill="url(#footer-favicon-g2)"
+        fill="white"
         d="M8,121.1c0-15.9,0.2-31.8-0.1-47.7c-0.3-14.5,6.9-24.3,22.2-30c18.2-6.8,35.6-15.8,50.2-28.5C93.9,3,107.9,1.1,121.7,9c22.7,13.1,45.5,25.9,68,39.3c19.6,11.7,18.3,39.5-4.2,48.6c-56.2,22.7-105.7,58.6-155.3,93.4c-11,7.7-21.3,0.8-21.8-15.1C7.6,157.2,8.1,139.2,8,121.1C8.1,121.1,8,121.1,8,121.1z M148.2,76.3c0-2.1-0.1-2.6-0.1-4.8c-13.2-7.3-26-15.5-39.8-21.4C98.9,46,46.9,77.3,45.8,87.8c-1.6,15-0.4,30.4-0.4,49.4C81.5,115.7,114.8,96,148.2,76.3z"
       />
     </svg>
@@ -393,7 +363,7 @@ function ContactPanel() {
 function FooterSocialLinks() {
   return (
     <div data-slot="footer-social-links" className="flex items-center gap-4">
-      <span className="font-body text-base text-on-dark-muted">Follow Us</span>
+      <span className="font-body text-sm text-on-dark-muted">Follow Us</span>
       <ul className="flex items-center gap-4">
         {footerSocialLinks.map(link => {
           const Icon = socialIcons[link.platform]
@@ -418,7 +388,7 @@ function FooterSocialLinks() {
 
 function Copyright() {
   return (
-    <p className="font-body text-base text-on-dark-muted">
+    <p className="font-body text-sm text-on-dark-muted">
       © {new Date().getFullYear()} Enermation. All rights reserved.
     </p>
   )
@@ -578,7 +548,7 @@ export function SiteFooter({ exploreGroups }: SiteFooterProps) {
                       />
                       <Link
                         href={link.href}
-                        className="font-body text-base text-on-dark-muted transition-colors hover:text-footer-accent"
+                        className="font-body text-sm text-on-dark-muted transition-colors hover:text-footer-accent"
                       >
                         {link.label}
                       </Link>

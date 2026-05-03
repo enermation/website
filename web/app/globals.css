@@ -249,8 +249,8 @@
   --footer-dark: oklch(0.04 0 0);
   --footer-line: oklch(1 0 0 / 10%);
   --footer-muted: oklch(1 0 0 / 18%);
-  --footer-accent: oklch(0.76 0.12 86);
-  --footer-accent-bright: oklch(0.84 0.14 87);
+  --footer-accent: oklch(0.65 0.15 145);
+  --footer-accent-bright: oklch(0.72 0.16 145);
 
   /* ─── Hero text hover gradient ─── */
   --hero-gradient-1: oklch(0.77 0.21 91);
