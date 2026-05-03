@@ -274,25 +274,6 @@ function ContactPanel() {
           </span>
         </li>
       </ul>
-
-      <Link
-        href={footerQuoteCta.href}
-        className="footer-dot-card group flex min-w-0 flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 rounded-lg border border-footer-accent p-4 sm:p-6 transition-colors hover:border-footer-accent-bright"
-      >
-        <ClipboardCheck
-          className="size-10 sm:size-12 shrink-0 text-footer-accent"
-          strokeWidth={1.5}
-          aria-hidden="true"
-        />
-        <span className="flex min-w-0 flex-col gap-2">
-          <span className="font-body text-sm leading-snug text-on-dark">
-            {footerQuoteCta.title}
-          </span>
-          <span className="font-heading text-sm font-bold uppercase tracking-wide text-footer-accent transition-colors group-hover:text-footer-accent-bright">
-            {footerQuoteCta.label} -&gt;
-          </span>
-        </span>
-      </Link>
     </div>
   )
 }
@@ -434,6 +415,25 @@ export function SiteFooter({ exploreGroups }: SiteFooterProps) {
               {footerBrandSummary}
             </p>
             <ProofPoints />
+
+            <Link
+              href={footerQuoteCta.href}
+              className="footer-dot-card group flex min-w-0 flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 rounded-lg border border-footer-accent p-4 sm:p-6 transition-colors hover:border-footer-accent-bright"
+            >
+              <ClipboardCheck
+                className="size-10 sm:size-12 shrink-0 text-footer-accent"
+                strokeWidth={1.5}
+                aria-hidden="true"
+              />
+              <span className="flex min-w-0 flex-col gap-2">
+                <span className="font-body text-sm leading-snug text-on-dark">
+                  {footerQuoteCta.title}
+                </span>
+                <span className="font-heading text-sm font-bold uppercase tracking-wide text-footer-accent transition-colors group-hover:text-footer-accent-bright">
+                  {footerQuoteCta.label} -&gt;
+                </span>
+              </span>
+            </Link>
           </section>
 
           <FooterLinkColumn title="Quick Links" links={quickLinks} ariaLabel="Quick links" />
