@@ -17,7 +17,6 @@ type FooterOfficeMapProps = {
 
 const MAP_CENTER: [number, number] = [30.0, 26.0]
 const MAP_ZOOM = 1.5
-const ROTATE_SPEED = 0.08
 
 export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
   const mapRef = useRef<MapRef>(null)
@@ -61,7 +60,7 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
     map.on('load', () => {
       const rotate = (timestamp: number) => {
         if (!isInteractingRef.current) {
-          map.easeTo({ bearing: (timestamp * ROTATE_SPEED) % 360, duration: 0 })
+          map.rotateTo((timestamp / 100) % 360, { duration: 0 })
         }
         rafRef.current = requestAnimationFrame(rotate)
       }
