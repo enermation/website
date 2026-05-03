@@ -41,17 +41,13 @@ async function ensureCollection(client: QdrantClient): Promise<void> {
         size: QDRANT_VECTOR_SIZE,
         distance: QDRANT_DISTANCE as 'Cosine',
       },
-      quantization: {
-        vector: 'scalar',
-        quantization: {
-          scalar: { quantile: 0.99, ratio: 0.8 },
-        },
+      quantization_config: {
+        scalar: { quantile: 0.99, ratio: 0.8 },
       },
     })
-    // Index payload fields for efficient filtered lookups
     await client.createPayloadIndex(QDRANT_COLLECTION, {
-      payload_field: 'handle',
-      field_type: 'keyword',
+      field_name: 'handle',
+      field_schema: 'keyword',
     })
   }
 }
@@ -130,11 +126,8 @@ export async function reindexAll(options: { fresh?: boolean } = {}): Promise<{
         size: QDRANT_VECTOR_SIZE,
         distance: QDRANT_DISTANCE as 'Cosine',
       },
-      quantization: {
-        vector: 'scalar',
-        quantization: {
-          scalar: { quantile: 0.99, ratio: 0.8 },
-        },
+      quantization_config: {
+        scalar: { quantile: 0.99, ratio: 0.8 },
       },
     })
   } else {
