@@ -155,7 +155,7 @@ export const footerContactInfo = {
   location: 'Dubai, UAE',
   region: 'Global Export Network',
   phone: '+1 307 488 4085',
-  email: 'info@enermation.us',
+  email: 'info@enermation.co',
   whatsappHref: 'https://wa.me/13074884085',
   phoneHref: 'tel:+13074884085',
   emailHref: 'mailto:info@enermation.us',
@@ -182,7 +182,7 @@ export const footerSocialLinks: FooterSocialLink[] = [
   { label: 'Facebook', href: 'https://www.facebook.com/enermation.co', platform: 'facebook' },
   {
     label: 'LinkedIn',
-    href: 'https://www.linkedin.com/company/enermation-pvt-ltd',
+    href: 'https://www.facebook.com/enermation.co',
     platform: 'linkedin',
   },
   { label: 'YouTube', href: 'https://www.youtube.com/@enermation', platform: 'youtube' },
