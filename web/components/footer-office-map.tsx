@@ -60,6 +60,12 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
     }
   }, [fitAllMarkers])
 
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    map.setProjection(active.projection as Parameters<typeof map.setProjection>[0])
+  }, [activeProjection, active.projection])
+
   return (
     <div className={cn('flex flex-col gap-4', className)}>
       <p className="font-heading text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide text-on-dark">
