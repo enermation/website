@@ -2,6 +2,7 @@ import 'server-only'
 
 import { generateText } from 'ai'
 import { getVisionModel } from '@/lib/rag/clients'
+import { CEREBRAS_VISION_MODEL, GROQ_VISION_MODEL } from '@/lib/rag/constants'
 import { DESCRIBE_PROMPT } from '@/lib/rag/prompt'
 
 export async function describeImagesForRetrieval(
@@ -68,6 +69,11 @@ export async function describeImagesForRetrieval(
       },
     ],
     temperature: 0,
+    providerOptions: {
+      gateway: {
+        models: [`cerebras/${CEREBRAS_VISION_MODEL}`, `groq/${GROQ_VISION_MODEL}`],
+      },
+    },
   })
 
   return accompanyingText ? `${accompanyingText}\n\n[image context] ${description}` : description
