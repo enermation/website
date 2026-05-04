@@ -22,6 +22,8 @@ export const QDRANT_DENSE_SCORE_THRESHOLD = 0.3
 export const INDEX_BATCH_SIZE = 64
 export const QDRANT_UPSERT_BATCH = 128
 
+export const QDRANT_SPARSE_SCORE_THRESHOLD = 0.25
+
 export const RATELIMIT_WINDOW = '60 s'
 export const RATELIMIT_REQUESTS = 10
 

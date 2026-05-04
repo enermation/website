@@ -6,6 +6,7 @@ import {
   QDRANT_DENSE_SCORE_THRESHOLD,
   QDRANT_DENSE_VECTOR,
   QDRANT_SEARCH_EF,
+  QDRANT_SPARSE_SCORE_THRESHOLD,
   QDRANT_SPARSE_VECTOR,
   TOP_K_RETRIEVE,
 } from '@/lib/rag/constants'
@@ -37,6 +38,7 @@ export async function findRelevantProducts(query: string): Promise<RagRetrievalR
         query: { indices: sparseVector.indices, values: sparseVector.values },
         using: QDRANT_SPARSE_VECTOR,
         limit: TOP_K_RETRIEVE,
+        score_threshold: QDRANT_SPARSE_SCORE_THRESHOLD,
       },
     ],
     query: { fusion: 'rrf' },

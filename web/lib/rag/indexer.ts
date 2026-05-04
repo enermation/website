@@ -59,7 +59,7 @@ async function createFreshCollection(client: QdrantClient): Promise<void> {
     },
     sparse_vectors: {
       [QDRANT_SPARSE_VECTOR]: {
-        index: { on_disk: false },
+        index: { on_disk: false, datatype: 'uint8' },
       },
     },
     quantization_config: {
