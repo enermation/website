@@ -45,8 +45,6 @@ const PAYLOAD_INDEXES: Array<{ field_name: string; field_schema: string }> = [
   { field_name: 'transmission', field_schema: 'keyword' },
   { field_name: 'condition', field_schema: 'keyword' },
   { field_name: 'driveType', field_schema: 'keyword' },
-  { field_name: 'colour', field_schema: 'keyword' },
-  { field_name: 'mileage', field_schema: 'keyword' },
   { field_name: 'available', field_schema: 'bool' },
   { field_name: 'priceAmount', field_schema: 'float' },
 ]

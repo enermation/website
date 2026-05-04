@@ -53,7 +53,7 @@ export async function fetchProductMetafieldsAdmin(productId: string): Promise<Ra
   const { data } = await adminGraphQL<{
     product: { metafields: { edges: { node: RawMetafield }[] } } | null
   }>(
-    `{ product(id: "${productId}") { metafields(first: 50) { edges { node { namespace key value type definition { name } } } } } }`
+    `{ product(id: "${productId}") { metafields(first: 250) { edges { node { namespace key value type definition { name } } } } } }`
   )
   return data?.product?.metafields?.edges.map(e => e.node) ?? []
 }

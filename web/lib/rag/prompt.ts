@@ -15,32 +15,28 @@ export function buildGroundedSystemPrompt(products: RagRetrievalResult[]): strin
 
       const coreLine =
         `  make=${d(m.make)} model=${d(m.model)} year=${d(m.year)}` +
-        ` fuel=${d(m.fuelType)} transmission=${d(m.transmission)} drive=${d(m.driveType)}` +
-        ` condition=${d(m.condition)}`
+        ` fuel=${d(m.fuelType)} transmission=${d(m.transmission)}` +
+        ` drive=${d(m.driveType)} condition=${d(m.condition)}`
 
-      const detailParts = [
-        m.mileage ? `mileage=${m.mileage}` : null,
-        m.colour ? `colour=${m.colour}` : null,
-        m.engine ? `engine=${m.engine}` : null,
-        m.displacement ? `displacement=${m.displacement}` : null,
-        m.originCountry ? `origin=${m.originCountry}` : null,
-      ].filter(Boolean)
-
-      const detailLine = detailParts.length > 0 ? `  ${detailParts.join(' ')}\n` : ''
-
-      const extraSpecsLine =
+      // Dynamic specs — keyed by stable namespace.key, rendered with current display label
+      const specsLine =
         Object.keys(m.specs).length > 0
-          ? `  specs: ${Object.entries(m.specs)
-              .map(([k, v]) => `${k}=${v}`)
+          ? `  ${Object.values(m.specs)
+              .map(({ label, value }) => `${label}=${value}`)
               .join(' | ')}\n`
+          : ''
+
+      const featuresLine =
+        Array.isArray(m.features) && m.features.length > 0
+          ? `  features: ${m.features.join(', ')}\n`
           : ''
 
       return (
         `[${m.handle}] ${m.title} — ${m.priceAmount} ${m.priceCurrency}\n` +
         coreLine +
         '\n' +
-        detailLine +
-        extraSpecsLine +
+        specsLine +
+        featuresLine +
         `  collections=${m.collectionHandles.join(', ') || '—'}\n` +
         `  snippet: ${m.textSnippet.replace(/\s+/g, ' ').trim().slice(0, SNIPPET_TRUNCATE)}`
       )
