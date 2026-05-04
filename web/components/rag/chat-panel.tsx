@@ -404,7 +404,7 @@ export function ChatPanel({
 
   return (
     <PromptInputProvider>
-      <div className="flex h-full flex-col overflow-hidden">
+      <div className="relative flex h-full flex-col overflow-hidden bg-transparent">
         {/* Messages area — scrolls, prompt bar is sticky INSIDE this */}
         <div className="flex-1 overflow-y-auto">
           {messages.length === 0 && showSuggestedQuestions && (

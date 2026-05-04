@@ -2,6 +2,13 @@
 
 ---
 
+## Caching Rules (`'use cache'` functions)
+
+- NEVER return `null` or `[]` on API failure inside a `'use cache'` function — throw instead. Errors are not cached; null/empty values are. Callers use `.catch(() => null)` to preserve graceful degradation without poisoning the cache.
+- NEVER wrap a `'use cache'` function with React's `cache()` — they are separate systems and the combination can break in production builds. Use one or the other: `'use cache'` for persistent cross-request caching, `cache()` for within-render deduplication only.
+
+---
+
 ## Pretext — Text Measurement
 
 This project uses **`@chenglou/pretext`** for DOM-reflow-free multiline text measurement.

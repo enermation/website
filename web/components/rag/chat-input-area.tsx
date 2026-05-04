@@ -124,8 +124,8 @@ export default function ChatInputArea({
   )
 
   return (
-    <div className="flex-shrink-0 px-3 pb-6 pt-3 sm:px-4 sm:pb-6">
-      <div className="max-w-3xl mx-auto">
+    <div className="sticky bottom-0 backdrop-blur-sm bg-background/60 px-3 pb-6 pt-3 sm:px-4 sm:pb-6">
+      <div className="mx-auto max-w-3xl">
         {error && (
           <div className="mb-2 rounded-lg border border-destructive/30 bg-destructive px-3 py-2 text-sm text-destructive-foreground">
             <div className="flex items-center justify-between gap-2">
@@ -141,7 +141,7 @@ export default function ChatInputArea({
           </div>
         )}
 
-        <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-background shadow-sm shadow-foreground/5">
+        <div className="relative overflow-hidden rounded-2xl border border-border/80 shadow-sm shadow-foreground/5">
           <div className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
           <form onSubmit={handleFormSubmit} className="flex flex-col">
             <input accept="image/jpeg,image/png,image/webp" className="hidden" multiple onChange={handleFileChange} ref={fileInputRef} type="file" />
