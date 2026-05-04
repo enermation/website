@@ -49,7 +49,7 @@ export async function POST(request: Request) {
           await enqueueJob(handle, 'upsert')
         }
       } catch {
-        // parse error — still revalidated cache above
+        // RAG job failed — cache already revalidated above
       }
       break
     }
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
           await enqueueJob(handle, 'delete')
         }
       } catch {
-        // parse error — still revalidated cache above
+        // RAG job failed — cache already revalidated above
       }
       break
     }

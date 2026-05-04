@@ -217,3 +217,16 @@ export type FilterDimension = {
 // Keys are `${namespace}.${key}` spec IDs (e.g. `shopify.fuel-supply`).
 // Built dynamically from product resolvedSpecs — no hardcoded field names.
 export type ActiveFilters = Record<string, string | undefined>
+
+// ── Cart error type ───────────────────────────────────────────────────────────
+
+export type CartUserError = {
+  code: string
+  field: string[] | null
+  message: string
+}
+
+export type CartMutationResponse<T = ShopifyCart> = {
+  cart: T | null
+  error: CartUserError | null
+}

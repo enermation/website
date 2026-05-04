@@ -119,15 +119,15 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       if (!cartId) {
         const result = await createWishlistCartAction([{ merchandiseId, quantity: 1 }])
 
-        if (result) {
-          storeWishlistCartId(result.id)
-          setLines(mapWishlistLines(result.lines.edges))
+        if (result.cart) {
+          storeWishlistCartId(result.cart.id)
+          setLines(mapWishlistLines(result.cart.lines.edges))
         }
       } else {
         const result = await addWishlistLinesAction(cartId, [{ merchandiseId, quantity: 1 }])
 
-        if (result) {
-          setLines(mapWishlistLines(result.lines.edges))
+        if (result.cart) {
+          setLines(mapWishlistLines(result.cart.lines.edges))
         }
       }
     } finally {
@@ -144,8 +144,8 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     try {
       const result = await removeWishlistLinesAction(cartId, [lineId])
 
-      if (result) {
-        setLines(mapWishlistLines(result.lines.edges))
+      if (result.cart) {
+        setLines(mapWishlistLines(result.cart.lines.edges))
       }
     } finally {
       setIsUpdating(false)
@@ -161,8 +161,8 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     try {
       const result = await removeWishlistLinesAction(cartId, [lineId])
 
-      if (result) {
-        setLines(mapWishlistLines(result.lines.edges))
+      if (result.cart) {
+        setLines(mapWishlistLines(result.cart.lines.edges))
       }
     } finally {
       setIsUpdating(false)
@@ -180,8 +180,8 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     try {
       const result = await removeWishlistLinesAction(cartId, lineIds)
 
-      if (result) {
-        setLines(mapWishlistLines(result.lines.edges))
+      if (result.cart) {
+        setLines(mapWishlistLines(result.cart.lines.edges))
       }
     } finally {
       setIsUpdating(false)

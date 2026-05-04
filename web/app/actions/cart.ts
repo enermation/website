@@ -9,22 +9,31 @@ import {
   UPDATE_CART_LINES,
 } from '@/lib/queries'
 import { getClient } from '@/lib/shopify'
-import type { ShopifyCart } from '@/lib/types'
+import type { CartMutationResponse, CartUserError, ShopifyCart } from '@/lib/types'
 
 const WISHLIST_CART_ATTRIBUTE = { key: 'type', value: 'wishlist' }
 
 type CartMutationResult = {
   cart: ShopifyCart | null
-  userErrors?: { field: string[]; message: string }[]
+  userErrors?: { field: string[]; message: string; code: string }[]
+}
+
+function normalizeUserError(errors: CartMutationResult['userErrors']): CartUserError | null {
+  if (!errors?.length) return null
+  const e = errors[0]
+  return { code: e.code ?? 'UNKNOWN', field: e.field ?? null, message: e.message }
 }
 
 export async function createCartAction(
   lines: { merchandiseId: string; quantity: number }[]
-): Promise<ShopifyCart | null> {
+): Promise<CartMutationResponse> {
   const shopify = await getClient()
 
   const { data } = await shopify.request<{
-    cartCreate: { cart: ShopifyCart | null } | null
+    cartCreate: {
+      cart: ShopifyCart | null
+      userErrors?: { field: string[]; message: string; code: string }[]
+    } | null
   }>(CREATE_CART, {
     variables: {
       cartInput: {
@@ -33,15 +42,18 @@ export async function createCartAction(
     },
   })
 
-  if (!data?.cartCreate?.cart) return null
+  const error = normalizeUserError(data?.cartCreate?.userErrors)
+  if (error || !data?.cartCreate?.cart) {
+    return { cart: null, error }
+  }
 
-  return data.cartCreate.cart
+  return { cart: data.cartCreate.cart, error: null }
 }
 
 export async function addCartLinesAction(
   cartId: string,
   lines: { merchandiseId: string; quantity: number }[]
-): Promise<ShopifyCart | null> {
+): Promise<CartMutationResponse> {
   const shopify = await getClient()
 
   const { data } = await shopify.request<{
@@ -50,17 +62,18 @@ export async function addCartLinesAction(
     variables: { cartId, lines },
   })
 
-  if (data?.cartLinesAdd?.userErrors?.length) return null
+  const error = normalizeUserError(data?.cartLinesAdd?.userErrors)
+  if (error || !data?.cartLinesAdd?.cart) {
+    return { cart: null, error }
+  }
 
-  if (!data?.cartLinesAdd?.cart) return null
-
-  return data.cartLinesAdd.cart
+  return { cart: data.cartLinesAdd.cart, error: null }
 }
 
 export async function updateCartLinesAction(
   cartId: string,
   lines: { id: string; quantity: number }[]
-): Promise<ShopifyCart | null> {
+): Promise<CartMutationResponse> {
   const shopify = await getClient()
 
   const { data } = await shopify.request<{
@@ -69,17 +82,18 @@ export async function updateCartLinesAction(
     variables: { cartId, lines },
   })
 
-  if (data?.cartLinesUpdate?.userErrors?.length) return null
+  const error = normalizeUserError(data?.cartLinesUpdate?.userErrors)
+  if (error || !data?.cartLinesUpdate?.cart) {
+    return { cart: null, error }
+  }
 
-  if (!data?.cartLinesUpdate?.cart) return null
-
-  return data.cartLinesUpdate.cart
+  return { cart: data.cartLinesUpdate.cart, error: null }
 }
 
 export async function removeCartLinesAction(
   cartId: string,
   lineIds: string[]
-): Promise<ShopifyCart | null> {
+): Promise<CartMutationResponse> {
   const shopify = await getClient()
 
   const { data } = await shopify.request<{
@@ -88,11 +102,12 @@ export async function removeCartLinesAction(
     variables: { cartId, lineIds },
   })
 
-  if (data?.cartLinesRemove?.userErrors?.length) return null
+  const error = normalizeUserError(data?.cartLinesRemove?.userErrors)
+  if (error || !data?.cartLinesRemove?.cart) {
+    return { cart: null, error }
+  }
 
-  if (!data?.cartLinesRemove?.cart) return null
-
-  return data.cartLinesRemove.cart
+  return { cart: data.cartLinesRemove.cart, error: null }
 }
 
 export async function getCartAction(cartId: string): Promise<ShopifyCart | null> {
@@ -109,11 +124,14 @@ export async function getCartAction(cartId: string): Promise<ShopifyCart | null>
 
 export async function createWishlistCartAction(
   lines: { merchandiseId: string; quantity: number }[]
-): Promise<ShopifyCart | null> {
+): Promise<CartMutationResponse> {
   const shopify = await getClient()
 
   const { data } = await shopify.request<{
-    cartCreate: { cart: ShopifyCart | null }
+    cartCreate: {
+      cart: ShopifyCart | null
+      userErrors?: { field: string[]; message: string; code: string }[]
+    }
   }>(CREATE_WISHLIST_CART, {
     variables: {
       cartInput: {
@@ -123,42 +141,58 @@ export async function createWishlistCartAction(
     },
   })
 
-  return data?.cartCreate?.cart ?? null
+  const error = normalizeUserError(data?.cartCreate?.userErrors)
+  if (error || !data?.cartCreate?.cart) {
+    return { cart: null, error }
+  }
+
+  return { cart: data.cartCreate.cart, error: null }
 }
 
 export async function addWishlistLinesAction(
   cartId: string,
   lines: { merchandiseId: string; quantity: number }[]
-): Promise<ShopifyCart | null> {
+): Promise<CartMutationResponse> {
   const shopify = await getClient()
 
   const { data } = await shopify.request<{
-    cartLinesAdd: { cart: ShopifyCart | null; userErrors?: { field: string[]; message: string }[] }
+    cartLinesAdd: {
+      cart: ShopifyCart | null
+      userErrors?: { field: string[]; message: string; code: string }[]
+    }
   }>(ADD_CART_LINES, {
     variables: { cartId, lines },
   })
 
-  if (data?.cartLinesAdd?.userErrors?.length) return null
-  return data?.cartLinesAdd?.cart ?? null
+  const error = normalizeUserError(data?.cartLinesAdd?.userErrors)
+  if (error || !data?.cartLinesAdd?.cart) {
+    return { cart: null, error }
+  }
+
+  return { cart: data.cartLinesAdd.cart, error: null }
 }
 
 export async function removeWishlistLinesAction(
   cartId: string,
   lineIds: string[]
-): Promise<ShopifyCart | null> {
+): Promise<CartMutationResponse> {
   const shopify = await getClient()
 
   const { data } = await shopify.request<{
     cartLinesRemove: {
       cart: ShopifyCart | null
-      userErrors?: { field: string[]; message: string }[]
+      userErrors?: { field: string[]; message: string; code: string }[]
     }
   }>(REMOVE_CART_LINES, {
     variables: { cartId, lineIds },
   })
 
-  if (data?.cartLinesRemove?.userErrors?.length) return null
-  return data?.cartLinesRemove?.cart ?? null
+  const error = normalizeUserError(data?.cartLinesRemove?.userErrors)
+  if (error || !data?.cartLinesRemove?.cart) {
+    return { cart: null, error }
+  }
+
+  return { cart: data.cartLinesRemove.cart, error: null }
 }
 
 export async function getWishlistCartAction(cartId: string): Promise<ShopifyCart | null> {

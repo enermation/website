@@ -55,6 +55,7 @@ type CartState = {
   totalItemCount: number
   isLoading: boolean
   isUpdating: boolean
+  cartError: { code: string; message: string } | null
 }
 
 type CartContextType = CartState & {
@@ -65,6 +66,7 @@ type CartContextType = CartState & {
   closeCart: () => void
   isCartOpen: boolean
   refreshCart: () => Promise<void>
+  clearCartError: () => void
 }
 
 const CartContext = createContext<CartContextType | null>(null)
@@ -112,6 +114,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const [cartError, setCartError] = useState<{ code: string; message: string } | null>(null)
 
   const loadCart = useCallback(async (cartId: string) => {
     setIsLoading(true)
@@ -147,6 +150,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!merchandiseId) return
 
     setIsUpdating(true)
+    setCartError(null)
     const cartId = getStoredCartId()
 
     let newCartId: string | null = null
@@ -155,14 +159,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (!cartId) {
         const result = await createCartAction([{ merchandiseId, quantity }])
 
-        if (result) {
-          storeCartId(result.id)
-          newCartId = result.id
+        if (result.error) {
+          setCartError({ code: result.error.code, message: result.error.message })
+          setIsUpdating(false)
+          return
+        }
+        if (result.cart) {
+          storeCartId(result.cart.id)
+          newCartId = result.cart.id
         }
       } else {
         const result = await addCartLinesAction(cartId, [{ merchandiseId, quantity }])
 
-        if (result) {
+        if (result.error) {
+          setCartError({ code: result.error.code, message: result.error.message })
+          setIsUpdating(false)
+          return
+        }
+        if (result.cart) {
           newCartId = cartId
         }
       }
@@ -189,12 +203,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!cartId) return
 
     setIsUpdating(true)
+    setCartError(null)
 
     try {
+      let result: {
+        cart: import('@/lib/types').ShopifyCart | null
+        error: import('@/lib/types').CartUserError | null
+      } | null
       if (quantity <= 0) {
-        await removeCartLinesAction(cartId, [lineId])
+        result = await removeCartLinesAction(cartId, [lineId])
       } else {
-        await updateCartLinesAction(cartId, [{ id: lineId, quantity }])
+        result = await updateCartLinesAction(cartId, [{ id: lineId, quantity }])
+      }
+
+      if (result.error) {
+        setCartError({ code: result.error.code, message: result.error.message })
+        setIsUpdating(false)
+        return
       }
 
       const fullCart = await getCartAction(cartId)
@@ -216,9 +241,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!cartId) return
 
     setIsUpdating(true)
+    setCartError(null)
 
     try {
-      await removeCartLinesAction(cartId, [lineId])
+      const result = await removeCartLinesAction(cartId, [lineId])
+
+      if (result.error) {
+        setCartError({ code: result.error.code, message: result.error.message })
+        setIsUpdating(false)
+        return
+      }
 
       const fullCart = await getCartAction(cartId)
 
@@ -242,6 +274,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const openCart = useCallback(() => setIsCartOpen(true), [])
   const closeCart = useCallback(() => setIsCartOpen(false), [])
+  const clearCartError = useCallback(() => setCartError(null), [])
 
   const subtotal = useMemo(() => computeSubtotal(lines), [lines])
   const totalItemCount = useMemo(() => computeTotalItemCount(lines), [lines])
@@ -255,6 +288,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       totalItemCount,
       isLoading,
       isUpdating,
+      cartError,
       addToCart,
       updateLine,
       removeLine,
@@ -262,6 +296,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       closeCart,
       isCartOpen,
       refreshCart,
+      clearCartError,
     }),
     [
       cart,
@@ -271,6 +306,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       totalItemCount,
       isLoading,
       isUpdating,
+      cartError,
       addToCart,
       updateLine,
       removeLine,
@@ -278,6 +314,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       closeCart,
       isCartOpen,
       refreshCart,
+      clearCartError,
     ]
   )
 
