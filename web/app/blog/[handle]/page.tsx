@@ -13,7 +13,7 @@ export async function generateMetadata({
   params: Promise<{ handle: string }>
 }): Promise<Metadata> {
   const { handle } = await params
-  const blog = await fetchBlogByHandle(handle)
+  const blog = await fetchBlogByHandle(handle).catch(() => null)
 
   if (!blog) return {}
   return {
@@ -29,7 +29,7 @@ export async function generateMetadata({
 
 export default async function BlogPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const blog = await fetchBlogByHandle(handle)
+  const blog = await fetchBlogByHandle(handle).catch(() => null)
 
   if (!blog) notFound()
 

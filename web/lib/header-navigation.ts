@@ -65,7 +65,7 @@ async function fetchCollections(): Promise<HeaderNavChild[]> {
   cacheTag('collections')
 
   const { data } = await getClient().request<CollectionsResponse>(GET_COLLECTIONS_FOR_HEADER)
-  if (!data?.collections) return []
+  if (!data?.collections) throw new Error('Failed to fetch collections for header')
   return data.collections.edges.map(({ node }) => ({
     label: node.title,
     href: `/collections/${node.handle}`,
@@ -120,7 +120,7 @@ export async function getHeaderNavigation(): Promise<HeaderNavigation> {
   cacheLife('hours')
   cacheTag('navigation')
 
-  const collections = await fetchCollections()
+  const collections = await fetchCollections().catch(() => [] as HeaderNavChild[])
   const items = buildNavItems(collections)
 
   // Add Assistant link
@@ -145,7 +145,7 @@ export async function getFooterNavigation(): Promise<FooterNavGroup[]> {
   cacheLife('hours')
   cacheTag('collections')
 
-  const collections = await fetchCollections()
+  const collections = await fetchCollections().catch(() => [] as HeaderNavChild[])
   const grouped = groupCollectionsByCategory(collections)
 
   const categoryOrder: CollectionCategory[] = ['cars', 'motorcycles', 'commercial', 'parts']

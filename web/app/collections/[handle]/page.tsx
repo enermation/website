@@ -9,7 +9,7 @@ import { CarCard } from '@/components/car-card'
 import { SiteHeader } from '@/components/site-header'
 import { applyFilters, buildFilterDimensions } from '@/lib/filter-utils'
 import { fetchBlogByHandle, fetchCollectionProductsAdmin, fetchCollections } from '@/lib/shopify'
-import type { ActiveFilters } from '@/lib/types'
+import type { ActiveFilters, ShopifyCollection } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { FilterBar } from './filter-bar'
 
@@ -39,7 +39,7 @@ export async function generateMetadata({
   const collection = await fetchCollectionProductsAdmin(handle, {
     sortKey: 'TITLE',
     reverse: false,
-  })
+  }).catch(() => null)
 
   if (!collection) return {}
   return {
@@ -80,9 +80,9 @@ export default async function CollectionPage({
   )
 
   const [collection, collectionLinks, blog] = await Promise.all([
-    fetchCollectionProductsAdmin(handle, { sortKey, reverse }),
-    fetchCollections(),
-    fetchBlogByHandle('news'),
+    fetchCollectionProductsAdmin(handle, { sortKey, reverse }).catch(() => null),
+    fetchCollections().catch(() => [] as ShopifyCollection[]),
+    fetchBlogByHandle('news').catch(() => null),
   ])
 
   if (!collection) notFound()

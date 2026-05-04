@@ -19,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ handle: string }>
 }): Promise<Metadata> {
   const { handle } = await params
-  const product = await fetchProduct(handle)
+  const product = await fetchProduct(handle).catch(() => null)
 
   if (!product) return {}
 
@@ -59,7 +59,7 @@ async function SimilarCarsSection({
   const collection = await fetchCollectionProducts(collectionHandle, {
     sortKey: 'BEST_SELLING',
     reverse: false,
-  })
+  }).catch(() => null)
 
   const similarCars =
     collection?.products.filter(product => product.handle !== currentProductHandle).slice(0, 3) ??
@@ -119,7 +119,10 @@ async function SimilarCarsSection({
 export default async function ProductPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
 
-  const [product, blog] = await Promise.all([fetchProduct(handle), fetchBlogByHandle('news')])
+  const [product, blog] = await Promise.all([
+    fetchProduct(handle).catch(() => null),
+    fetchBlogByHandle('news').catch(() => null),
+  ])
   if (!product) notFound()
 
   const images = product.images.edges.map(edge => edge.node)

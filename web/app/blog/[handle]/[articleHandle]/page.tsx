@@ -11,7 +11,7 @@ export async function generateMetadata({
   params: Promise<{ handle: string; articleHandle: string }>
 }): Promise<Metadata> {
   const { handle, articleHandle } = await params
-  const article = await fetchArticleByHandle(handle, articleHandle)
+  const article = await fetchArticleByHandle(handle, articleHandle).catch(() => null)
 
   if (!article) return {}
   return {
@@ -32,7 +32,7 @@ export default async function ArticlePage({
   params: Promise<{ handle: string; articleHandle: string }>
 }) {
   const { handle, articleHandle } = await params
-  const article = await fetchArticleByHandle(handle, articleHandle)
+  const article = await fetchArticleByHandle(handle, articleHandle).catch(() => null)
 
   if (!article) notFound()
 

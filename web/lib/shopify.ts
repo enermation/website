@@ -1,6 +1,5 @@
 import { createStorefrontApiClient } from '@shopify/storefront-api-client'
 import { cacheLife, cacheTag } from 'next/cache'
-import { cache } from 'react'
 import {
   GET_ARTICLE_BY_HANDLE,
   GET_BLOG_BY_HANDLE,
@@ -323,7 +322,7 @@ export async function fetchCollectionByHandleAdmin(handle: string) {
   }>(GET_COLLECTION_BY_HANDLE_ADMIN, { handle })
 
   const node = data?.collectionByHandle
-  if (!node) return null
+  if (!node) throw new Error(`Collection not found: ${handle}`)
   return { id: node.id, title: node.title, description: node.description, image: node.image }
 }
 
@@ -340,13 +339,12 @@ export async function fetchCollectionProductsAdmin(
   description: string | null
   image: { url: string; altText: string | null } | null
   products: ShopifyProduct[]
-} | null> {
+}> {
   'use cache'
   cacheLife('minutes')
   cacheTag('products', `collection-${handle}`)
 
   const collection = await fetchCollectionByHandleAdmin(handle)
-  if (!collection) return null
 
   const { data } = await adminGraphQL<{
     collection: {
@@ -365,7 +363,7 @@ export async function fetchCollectionProductsAdmin(
     reverse: options?.reverse ?? true,
   })
 
-  if (!data?.collection) return null
+  if (!data?.collection) throw new Error(`Collection products unavailable: ${handle}`)
 
   const productEdges = data.collection.products.edges
 
@@ -435,7 +433,7 @@ export async function fetchCollectionProductsAdmin(
     sortKey: options?.sortKey ?? 'CREATED',
     reverse: options?.reverse ?? true,
     first: options?.first ?? 250,
-  })
+  }).catch(() => null)
   const storefrontPriceMap = new Map(
     (storefrontCollection?.products ?? []).map(p => [p.id, p.priceRange.minVariantPrice.amount])
   )
@@ -470,7 +468,8 @@ export async function fetchCollections(): Promise<ShopifyCollection[]> {
     collections: { edges: { node: ShopifyCollection }[] }
   }>(GET_COLLECTIONS)
 
-  return data?.collections.edges.map(e => e.node) ?? []
+  if (!data?.collections) throw new Error('Failed to fetch collections')
+  return data.collections.edges.map(e => e.node)
 }
 
 export async function fetchCollectionProducts(
@@ -482,7 +481,7 @@ export async function fetchCollectionProducts(
   description: string | null
   image: { url: string; altText: string | null } | null
   products: ShopifyProduct[]
-} | null> {
+}> {
   'use cache'
   cacheLife('minutes')
   cacheTag('products', `collection-${handle}`)
@@ -497,7 +496,7 @@ export async function fetchCollectionProducts(
     } | null
   }>(GET_PRODUCTS_IN_COLLECTION, { variables: { handle, ...options } })
 
-  if (!data?.collection) return null
+  if (!data?.collection) throw new Error(`Collection not found: ${handle}`)
 
   const { title, description, image, products } = data.collection
 
@@ -594,7 +593,7 @@ export async function fetchCollectionProducts(
   }
 }
 
-export const fetchProduct = cache(async (handle: string): Promise<ShopifyProduct | null> => {
+export async function fetchProduct(handle: string): Promise<ShopifyProduct> {
   'use cache'
   cacheLife('minutes')
   cacheTag('products', `product-${handle}`)
@@ -604,19 +603,20 @@ export const fetchProduct = cache(async (handle: string): Promise<ShopifyProduct
     { variables: { handle } }
   )
 
-  if (!data?.product) return null
+  if (!data?.product) throw new Error(`Product not found: ${handle}`)
 
   return resolveVehicleMetafields(data.product)
-})
+}
 
-export async function fetchShopInfo(): Promise<ShopifyShopInfo | null> {
+export async function fetchShopInfo(): Promise<ShopifyShopInfo> {
   'use cache'
   cacheLife('days')
   cacheTag('shop')
 
   const { data } = await getClient().request<{ shop: ShopifyShopInfo | null }>(GET_SHOP_INFO)
 
-  return data?.shop ?? null
+  if (!data?.shop) throw new Error('Shop info unavailable')
+  return data.shop
 }
 
 // ── Blog ──────────────────────────────────────────────────────────────────────
@@ -627,7 +627,7 @@ export async function fetchBlogByHandle(blogHandle: string): Promise<{
   title: string
   description: string | null
   articles: ShopifyArticle[]
-} | null> {
+}> {
   'use cache'
   cacheLife('hours')
   cacheTag('blog', `blog-${blogHandle}`)
@@ -645,7 +645,7 @@ export async function fetchBlogByHandle(blogHandle: string): Promise<{
     console.error('[fetchBlogByHandle] GraphQL errors:', errors)
   }
 
-  if (!data?.blog) return null
+  if (!data?.blog) throw new Error(`Blog not found: ${blogHandle}`)
 
   const { id, handle, title, articles } = data.blog
   return {
@@ -660,7 +660,7 @@ export async function fetchBlogByHandle(blogHandle: string): Promise<{
 export async function fetchArticleByHandle(
   blogHandle: string,
   articleHandle: string
-): Promise<ShopifyArticle | null> {
+): Promise<ShopifyArticle> {
   'use cache'
   cacheLife('minutes')
   cacheTag('blog', `blog-${blogHandle}`, `article-${articleHandle}`)
@@ -669,7 +669,9 @@ export async function fetchArticleByHandle(
     blog: { articleByHandle: ShopifyArticle | null } | null
   }>(GET_ARTICLE_BY_HANDLE, { variables: { blogHandle, articleHandle } })
 
-  return data?.blog?.articleByHandle ?? null
+  const article = data?.blog?.articleByHandle
+  if (!article) throw new Error(`Article not found: ${blogHandle}/${articleHandle}`)
+  return article
 }
 
 // ── Search (no caching — always dynamic) ──────────────────────────────────────

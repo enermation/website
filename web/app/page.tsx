@@ -158,7 +158,7 @@ export default function Home() {
 async function LatestArrivalsSection() {
   const latestArrivalsCollection = await fetchCollectionProducts(primaryShowroomCollectionHandle, {
     first: 6,
-  })
+  }).catch(() => null)
 
   const latestArrivals = latestArrivalsCollection?.products ?? []
 
@@ -180,7 +180,7 @@ async function LatestArrivalsSection() {
 }
 
 async function CollectionsSection() {
-  const collections = (await fetchCollections()).filter(
+  const collections = (await fetchCollections().catch(() => [])).filter(
     c => c.handle !== primaryShowroomCollectionHandle
   )
 
