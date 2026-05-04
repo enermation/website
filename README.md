@@ -1,115 +1,117 @@
 # Enermation Website
 
-**Next.js 16**  Storefront and marketing site for Enermation, with Shopify Storefront API integration, collection browsing, and product detail pages.
+**Next.js 16** — Storefront and marketing site for Enermation, with Shopify Storefront API integration, collection browsing, and product detail pages.
 
-## At  glance
+## At a glance
 
-| Area | What it does | Source |
-|---|---|---|
-| `web/` | Main Next.js application (App Router, React 19, Biome scripts) | [web/package.json:1-55](https://github.com/syedaliabbas1/enermation-website/blob/main/web/package.json#L1-L55) |
-| `web/lib/shopify.ts` | Creates the Storefront API client and enforces required env vars | [web/lib/shopify.ts:3-17](https://github.com/syedaliabbas1/enermation-website/blob/main/web/lib/shopify.ts#L3-L17) |
-| `web/lib/queries.ts` | Centralized GraphQL queries for products, collections, and cart | [web/lib/queries.ts:3-441](https://github.com/syedaliabbas1/enermation-website/blob/main/web/lib/queries.ts#L3-L441) |
-| `web/app/page.tsx` | Homepage sections + collection fetch from Shopify | [web/app/page.tsx:104-161](https://github.com/syedaliabbas1/enermation-website/blob/main/web/app/page.tsx#L104-L161) |
-| `web/app/collections/\[handle\]/page.tsx` | Server-side sorting/filtering and collection rendering | `web/app/collections/[handle]/page.tsx:30-90` |
-| `web/app/products/\[handle\]/page.tsx` | Product detail page + metadata + similar cars | `web/app/products/[handle]/page.tsx:73-126` |
+| Area | What it does | Key files |
+|------|-------------|-----------|
+| `web/` | Main Next.js application (App Router, React 19, Biome) | `web/package.json` |
+| `web/lib/shopify.ts` | Dual Shopify client — Storefront API + Admin API for metafields | `web/lib/shopify.ts` |
+| `web/lib/queries.ts` | GraphQL query/mutation string constants | `web/lib/queries.ts` |
+| `web/app/page.tsx` | Homepage — sections + collection fetch | `web/app/page.tsx` |
+| `web/app/collections/[handle]/page.tsx` | Collection pages with server-side sorting/filtering | `web/app/collections/[handle]/page.tsx` |
+| `web/app/products/[handle]/page.tsx` | Product detail page + metadata + similar cars | `web/app/products/[handle]/page.tsx` |
 
 ## Architecture
 
+### Shopify dual-client setup
+
+| Client | Used for | Env |
+|--------|----------|-----|
+| `getClient()` — Storefront API (`@shopify/storefront-api-client`) | Products, collections, cart, blog | `PRIVATE_STOREFRONT_API_TOKEN` |
+| `adminGraphQL()` — raw Admin REST/GraphQL | Metafields, metaobject resolution | `SHOPIFY_ADMIN_ACCESS_TOKEN` |
+
+The Storefront API lacks `unauthenticated_read_metafields` in the Headless channel, so metafields are fetched server-side via the Admin API.
+
+### Data layer
+
+```
+lib/queries.ts      — GraphQL query/mutation string constants (Storefront + Admin)
+lib/shopify.ts      — Fetching logic, dual-client orchestration, caching, data transformation
+lib/types.ts        — TypeScript interfaces for all Shopify response shapes
+lib/cart-context.tsx — Client-side cart state with error handling
+```
+
+### Caching
+
+All data-fetching functions in `shopify.ts` use Next.js `'use cache'` with `cacheLife` and `cacheTag` for persistent cross-request caching. Errors are thrown, not returned as `null` or `[]` — callers use `.catch(() => null)` for graceful degradation.
+
+### Request flow
+
 ```mermaid
 flowchart LR
-  U[User Browser] --> N[Next.js App Router<br>web/app]
-  N --> H[Homepage<br>app/page.tsx]
-  N --> C[Collections Page<br>app/collections/\[handle\]/page.tsx]
-  N --> P[Product Page<br>app/products/\[handle\]/page.tsx]
-  H --> Q[GraphQL Queries<br>web/lib/queries.ts]
-  C --> Q
-  P --> Q
-  Q --> S[Shopify Client<br>web/lib/shopify.ts]
-  S --> API[Shopify Storefront API]
-
-  classDef dark fill:#2d333b,stroke:#6d5dfc,color:#e6edf3;
-  class U,N,H,C,P,Q,S,API dark;
+    U[User Browser] --> N[Next.js App Router]
+    N --> H[Homepage<br>app/page.tsx]
+    N --> C[Collections Page<br>app/collections]
+    N --> P[Product Page<br>app/products]
+    H --> Q[GraphQL Queries<br>lib/queries.ts]
+    C --> Q
+    P --> Q
+    Q --> S[Shopify Client<br>lib/shopify.ts]
+    S --> SF[Shopify Storefront API]
+    S --> ADM[Shopify Admin API]
 ```
-<!-- Sources: web/app/page.tsx:104, web/app/collections/\[handle\]/page.tsx:62, web/app/products/\[handle\]/page.tsx:91, web/lib/queries.ts:3, web/lib/shopify.ts:13 -->
-
-### Product page request flow
 
 ```mermaid
 sequenceDiagram
-  autonumber
-  participant B as Browser
-  participant R as Product Route
-  participant Q as Queries
-  participant S as Shopify Client
-  participant A as Shopify API
+    autonumber
+    participant B as Browser
+    participant R as Product Route
+    participant Q as Queries
+    participant S as Shopify Client
+    participant A as Shopify API
 
-  B->>R: GET /products/:handle
-  R->>Q: Use GET_PRODUCT_BY_HANDLE + GET_PRODUCTS_IN_COLLECTION
-  R->>S: client.request(...) in Promise.all
-  S->>A: GraphQL requests
-  A-->>S: Product + collection payloads
-  S-->>R: data
-  R-->>B: Render product details + similar cars
+    B->>R: GET /products/:handle
+    R->>Q: GET_PRODUCT_BY_HANDLE + GET_PRODUCTS_IN_COLLECTION
+    R->>S: client.request() in Promise.all
+    S->>A: GraphQL requests
+    A-->>S: Product + collection data
+    S-->>R: Transformed product
+    R-->>B: Rendered page
 ```
-<!-- Sources: web/app/products/\[handle\]/page.tsx:94-125, web/lib/queries.ts:51-180, web/lib/shopify.ts:13-19 -->
-
-### Collection filtering behavior
-
-```mermaid
-stateDiagram-v2
-  [*] --> ReadQueryParams
-  ReadQueryParams --> MapSortConfig
-  MapSortConfig --> FetchFiltered
-  FetchFiltered --> FetchAllForCounts
-  FetchAllForCounts --> BuildMakeOptions
-  BuildMakeOptions --> RenderGrid
-  RenderGrid --> EmptyState: products.length===0
-  RenderGrid --> ProductCards: products.length>0
-  EmptyState --> [*]
-  ProductCards --> [*]
-```
-<!-- Sources: web/app/collections/\[handle\]/page.tsx:30-90, web/app/collections/\[handle\]/page.tsx:161-171 -->
-
-## Why this structure
-
-The app keeps **Shopify access centralized** (`web/lib/shopify.ts`, `web/lib/queries.ts`) so pages stay focused on rendering and route-level behavior, not API client setup. This reduces duplication and makes query updates straightforward across homepage, collections, and product pages.  
-Sources: [web/lib/shopify.ts:13-19], [web/lib/queries.ts:3-441], [web/app/page.tsx:104-108], [web/app/products/[handle]/page.tsx:94-101]
 
 ## Getting started
 
-1. Install dependencies:
+1. Install dependencies (from `web/` directory):
 
    ```bash
-   cd web
-   npm install
+   bun install
    ```
 
-2. Create `web/.env.local` with:
+2. Create `web/.env.local`:
 
    ```bash
    PUBLIC_STORE_DOMAIN=your-store.myshopify.com
    PRIVATE_STOREFRONT_API_TOKEN=your-storefront-token
+   SHOPIFY_ADMIN_ACCESS_TOKEN=your-admin-token
    ```
 
-3. Run locally:
+3. Run dev server:
 
    ```bash
-   npm run dev
+   bun run dev
    ```
 
-4. Open `http://localhost:3000`.
-
-Env vars are required at runtime and throw if missing. Source: [web/lib/shopify.ts:3-8](https://github.com/syedaliabbas1/enermation-website/blob/main/web/lib/shopify.ts#L3-L8)
+4. Open `http://localhost:3000`
 
 ## Developer scripts
 
-| Command | Purpose | Source |
-|---|---|---|
-| `npm run dev` | Start local dev server | [web/package.json:6](https://github.com/syedaliabbas1/enermation-website/blob/main/web/package.json#L6) |
-| `npm run build` | Production build | [web/package.json:7](https://github.com/syedaliabbas1/enermation-website/blob/main/web/package.json#L7) |
-| `npm run start` | Run production server | [web/package.json:8](https://github.com/syedaliabbas1/enermation-website/blob/main/web/package.json#L8) |
-| `npm run lint` | Biome checks | [web/package.json:9](https://github.com/syedaliabbas1/enermation-website/blob/main/web/package.json#L9) |
-| `npm run format` | Biome formatting | [web/package.json:11](https://github.com/syedaliabbas1/enermation-website/blob/main/web/package.json#L11) |
+| Command | Purpose |
+|---------|---------|
+| `bun run dev` | Start local dev server |
+| `bun run build` | Production build |
+| `bun run start` | Run production server |
+| `bun run lint` | Biome lint checks |
+| `bun run format` | Biome formatting |
+
+## Repository layout
+
+| Path | Purpose |
+|------|---------|
+| `web/` | Main Next.js application (App Router, React 19) |
+| `graphql/` | Shopify Storefront API query examples and Insomnia collection generator |
+| `tasks/` | Working notes, lessons, and ad-hoc plans |
 
 ## API test route
 
@@ -122,19 +124,4 @@ Use `GET /api/test` to quickly validate Shopify query wiring:
 - `/api/test?q=collection&handle=<collection-handle>`
 - `/api/test?q=cart&cartId=<cart-id>`
 
-Source: [web/app/api/test/route.ts:20-72](https://github.com/syedaliabbas1/enermation-website/blob/main/web/app/api/test/route.ts#L20-L72)
-
-## Repository layout
-
-| Path | Purpose | Source |
-|---|---|---|
-| `web/` | Main application code | [web/package.json:1](https://github.com/syedaliabbas1/enermation-website/blob/main/web/package.json#L1) |
-| `graphql/` | Shopify storefront API learning/reference kit | [graphql/package.json:1](https://github.com/syedaliabbas1/enermation-website/blob/main/graphql/package.json#L1) |
-| `scripts/` | Project scripts including Shopify seed tasks | [scripts/seed-shopify-catalog.mjs:1](https://github.com/syedaliabbas1/enermation-website/blob/main/scripts/seed-shopify-catalog.mjs#L1) |
-
-## Related Pages
-
-| Page | Relationship |
-|---|---|
-| [CHANGELOG](./CHANGELOG.md) | Release and change history |
-| [Web app README](./web/README.md) | Default Next.js starter readme inside `web/` |
+Source: `web/app/api/test/route.ts`
