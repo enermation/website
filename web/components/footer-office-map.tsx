@@ -113,14 +113,19 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
             dark: 'https://tiles.openfreemap.org/styles/liberty',
           }}
           interactive={true}
+          minZoom={0}
+          maxZoom={3}
           attributionControl={false}
           className="h-full w-full"
         >
           {officeLocations.map(office => (
             <MapMarker key={office.id} longitude={office.lng} latitude={office.lat}>
               <MarkerContent>
-                <div className="flex items-center justify-center text-footer-accent">
-                  <MapPin className="size-6 drop-shadow-md sm:size-7" strokeWidth={2.5} />
+                <div className="flex items-center justify-center">
+                  <MapPin
+                    className="size-6 text-white drop-shadow-lg sm:size-7"
+                    strokeWidth={2.5}
+                  />
                 </div>
               </MarkerContent>
               <MarkerPopup>{office.name}</MarkerPopup>
