@@ -1,36 +1,80 @@
-This is [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Enermation Website
 
-## Getting Started
+Next.js 16 application with Shopify Storefront API integration. Displays vehicle inventory, collection browsing, and product detail pages backed by Shopify data.
 
-First, run the development server:
+## Architecture
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Shopify dual-client setup
+
+| Client | Used for | Env |
+|--------|----------|-----|
+| `getClient()` — Storefront API (`@shopify/storefront-api-client`) | Products, collections, cart, blog | `PRIVATE_STOREFRONT_API_TOKEN` |
+| `adminGraphQL()` — raw Admin REST/GraphQL | Metafields, metaobject resolution | `SHOPIFY_ADMIN_ACCESS_TOKEN` |
+
+The Storefront API doesn't expose `unauthenticated_read_metafields` in the Headless channel, so metafields are fetched server-side via the Admin API.
+
+### Data layer
+
+```
+lib/queries.ts     — GraphQL query/mutation string constants (Storefront + Admin)
+lib/shopify.ts     — Fetching logic, dual-client orchestration, caching, data transformation
+lib/types.ts       — TypeScript interfaces for all Shopify response shapes
+lib/cart-context.tsx — Client-side cart state (add, update, remove, error handling)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Caching
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+All data-fetching functions in `shopify.ts` use Next.js `'use cache'` with `cacheLife` and `cacheTag` for persistent cross-request caching. Errors are thrown, not returned as `null` or `[]` — callers use `.catch(() => null)` for graceful degradation.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Key files
 
-## Learn More
+| File | Role |
+|------|------|
+| `lib/shopify.ts` | `getClient()`, `adminGraphQL()`, product/collection/metafield fetchers |
+| `lib/queries.ts` | Named GraphQL query constants (imported by shopify.ts) |
+| `lib/types.ts` | `ShopifyProduct`, `ShopifyCart`, `ShopifyCollection`, `CartMutationResponse`, etc. |
+| `app/actions/cart.ts` | Server actions for cart mutations |
+| `lib/cart-context.tsx` | `CartProvider` + `useCart()` hook with error state |
+| `lib/wishlist-context.tsx` | `WishlistProvider` + `useWishlist()` hook |
 
-To learn more about Next.js, take a look at the following resources:
+## Getting started
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Install dependencies (from `web/` directory):
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   bun install
+   ```
 
-## Deploy on Vercel
+2. Create `web/.env.local`:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   PUBLIC_STORE_DOMAIN=your-store.myshopify.com
+   PRIVATE_STOREFRONT_API_TOKEN=your-storefront-token
+   SHOPIFY_ADMIN_ACCESS_TOKEN=your-admin-token
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Run dev server:
+
+   ```bash
+   bun run dev
+   ```
+
+4. Open `http://localhost:3000`
+
+## Developer scripts
+
+| Command | Purpose |
+|---------|---------|
+| `bun run dev` | Start local dev server |
+| `bun run build` | Production build |
+| `bun run start` | Run production server |
+| `bun run lint` | Biome lint checks |
+| `bun run format` | Biome formatting |
+
+## Repository layout
+
+```
+web/           — Next.js application (App Router, React 19)
+graphql/       — Shopify Storefront API query examples and Insomnia collection generator
+tasks/         — Working notes, lessons, and ad-hoc plans
+```
