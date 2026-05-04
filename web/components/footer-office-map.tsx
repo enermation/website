@@ -1,12 +1,13 @@
 'use client'
 
+import { MapPin } from 'lucide-react'
 import { useCallback, useEffect, useRef } from 'react'
 import {
   Map as MapLibreMap,
   MapMarker,
   type MapRef,
   MarkerContent,
-  MarkerTooltip,
+  MarkerPopup,
 } from '@/components/ui/map'
 import { officeLocations } from '@/lib/data'
 import { cn } from '@/lib/utils'
@@ -115,14 +116,14 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
           attributionControl={false}
           className="h-full w-full"
         >
-          {officeLocations.map((office, index) => (
+          {officeLocations.map(office => (
             <MapMarker key={office.id} longitude={office.lng} latitude={office.lat}>
               <MarkerContent>
-                <div className="size-6 flex items-center justify-center rounded-full border-2 border-footer-dark bg-footer-accent font-heading text-xs font-bold text-footer-dark shadow-lg sm:size-5">
-                  {index + 1}
+                <div className="flex items-center justify-center text-footer-accent">
+                  <MapPin className="size-6 drop-shadow-md sm:size-7" strokeWidth={2.5} />
                 </div>
               </MarkerContent>
-              <MarkerTooltip>{office.name}</MarkerTooltip>
+              <MarkerPopup>{office.name}</MarkerPopup>
             </MapMarker>
           ))}
         </MapLibreMap>
