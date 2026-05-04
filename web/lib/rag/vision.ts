@@ -2,7 +2,7 @@ import 'server-only'
 
 import { generateText } from 'ai'
 import { getVisionModel } from '@/lib/rag/clients'
-import { COHERE_VISION_MODEL, GROQ_VISION_MODEL } from '@/lib/rag/constants'
+import { VISION_FALLBACK_MODEL } from '@/lib/rag/constants'
 import { DESCRIBE_PROMPT } from '@/lib/rag/prompt'
 
 export async function describeImagesForRetrieval(
@@ -71,7 +71,7 @@ export async function describeImagesForRetrieval(
     temperature: 0,
     providerOptions: {
       gateway: {
-        models: [`cohere/${COHERE_VISION_MODEL}`],
+        models: [VISION_FALLBACK_MODEL],
       },
     },
   })

@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
 import { getChatModel } from '@/lib/rag/clients'
-import { CEREBRAS_MODEL } from '@/lib/rag/constants'
+
 import { buildGroundedSystemPrompt } from '@/lib/rag/prompt'
 import { findRelevantProducts } from '@/lib/rag/query'
 import { getChatLimiter, getRateLimitKey } from '@/lib/rag/ratelimit'
@@ -89,23 +89,26 @@ export async function POST(request: Request) {
 
   const modelMessages = await convertToModelMessages(messages)
 
-  const suggestionsPromise = generateObject({
-    model: getChatModel(),
-    schema: z.object({
-      suggestions: z.array(z.string()).min(2).max(3),
-    }),
-    system:
-      'Generate 2-3 short follow-up questions (max 10 words each) a user might ask next about vehicles or parts. Be specific to what was asked. Return only the questions.',
-    prompt: `User asked: "${userText}". Top products found: ${products
-      .slice(0, 4)
-      .map(p => p.metadata.title)
-      .join(', ')}.`,
-  })
-    .then(r => r.object.suggestions)
-    .catch(err => {
-      console.error('[rag/chat] suggestion generation failed:', err)
-      return []
-    })
+  const suggestionsPromise =
+    products.length === 0
+      ? Promise.resolve([])
+      : generateObject({
+          model: getChatModel(),
+          schema: z.object({
+            suggestions: z.array(z.string()).min(2).max(3),
+          }),
+          system:
+            'Generate 2-3 short follow-up questions (max 10 words each) a user might ask next about vehicles or parts. Be specific to what was asked. Return only the questions.',
+          prompt: `User asked: "${userText}". Top products found: ${products
+            .slice(0, 4)
+            .map(p => p.metadata.title)
+            .join(', ')}.`,
+        })
+          .then(r => r.object.suggestions)
+          .catch(err => {
+            console.error('[rag/chat] suggestion generation failed:', err)
+            return []
+          })
 
   const citations: ProductCitationData[] = products.map(p => ({
     handle: p.metadata.handle,
@@ -132,7 +135,7 @@ export async function POST(request: Request) {
     temperature: 0.3,
     providerOptions: {
       gateway: {
-        models: [`groq/${CEREBRAS_MODEL}`, `cohere/command-a-03-2025`],
+        models: ['meta/llama-3.1-8b', 'cohere/command-a'],
       },
     },
   })

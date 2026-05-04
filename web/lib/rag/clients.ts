@@ -1,7 +1,7 @@
 import { QdrantClient } from '@qdrant/qdrant-js'
 import { Redis } from '@upstash/redis'
 import { gateway } from 'ai'
-import { CEREBRAS_MODEL, GROQ_VISION_MODEL } from '@/lib/rag/constants'
+import { CHAT_MODEL, VISION_MODEL } from '@/lib/rag/constants'
 
 function getRequiredEnv(name: string): string {
   const value = process.env[name]?.trim()
@@ -31,9 +31,9 @@ export function getRedis(): Redis {
 }
 
 export function getChatModel() {
-  return gateway(CEREBRAS_MODEL)
+  return gateway(CHAT_MODEL)
 }
 
 export function getVisionModel() {
-  return gateway(GROQ_VISION_MODEL)
+  return gateway(VISION_MODEL)
 }

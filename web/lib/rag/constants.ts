@@ -1,9 +1,9 @@
-export const EMBED_MODEL = 'embed-v4.0'
+export const EMBED_MODEL = 'cohere/embed-v4.0'
 export const EMBED_DIMENSIONS = 1536
-export const RERANK_MODEL = 'rerank-v4.0-fast'
-export const CEREBRAS_MODEL = 'qwen-3-235b-a22b-instruct-2507'
-export const GROQ_VISION_MODEL = 'llama-scout'
-export const COHERE_VISION_MODEL = 'command-a-03-2025'
+export const RERANK_MODEL = 'cohere/rerank-v4-fast'
+export const CHAT_MODEL = 'openai/gpt-oss-120b'
+export const VISION_MODEL = 'meta/llama-4-scout'
+export const VISION_FALLBACK_MODEL = 'cohere/command-a'
 
 export const TOP_K_RETRIEVE = 25
 export const TOP_K_RERANK = 6
@@ -11,6 +11,8 @@ export const TOP_K_RERANK = 6
 export const QDRANT_COLLECTION = 'enermation-products'
 export const QDRANT_VECTOR_SIZE = EMBED_DIMENSIONS
 export const QDRANT_DISTANCE = 'Cosine'
+export const QDRANT_DENSE_VECTOR = 'dense'
+export const QDRANT_SPARSE_VECTOR = 'sparse'
 
 export const QDRANT_SEARCH_EF = 256
 export const QDRANT_SCORE_THRESHOLD = 0.5

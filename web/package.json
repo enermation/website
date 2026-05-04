@@ -12,6 +12,8 @@
     "format": "biome format --write .",
     "format:check": "biome format .",
     "typecheck": "tsc --noEmit",
+    "ingest": "bun run scripts/ingest.ts",
+    "ingest:fresh": "bun run scripts/ingest.ts --fresh",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "prepare": "cd .. && husky web/.husky"

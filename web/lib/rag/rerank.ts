@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { cohere } from '@ai-sdk/cohere'
+import { gateway } from '@ai-sdk/gateway'
 import { rerank } from 'ai'
 import { RERANK_MODEL, TOP_K_RERANK } from '@/lib/rag/constants'
 import type { RagRetrievalResult } from '@/lib/rag/types'
@@ -16,7 +16,7 @@ export async function rerankCandidates(
   const documents = candidates.map(c => `${c.metadata.textSnippet} ${c.metadata.title}`)
 
   const { ranking } = await rerank({
-    model: cohere.reranking(RERANK_MODEL),
+    model: gateway.rerankingModel(RERANK_MODEL),
     documents,
     query,
     topN: TOP_K_RERANK,

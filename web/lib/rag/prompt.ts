@@ -6,16 +6,45 @@ part type, material, visible codes or markings, apparent vehicle make/model if i
 If you cannot identify the object, output: unknown object.`
 
 export function buildGroundedSystemPrompt(products: RagRetrievalResult[]): string {
-  const SNIPPET_TRUNCATE = 200
+  const SNIPPET_TRUNCATE = 500
 
   const productLines = products
-    .map(
-      p =>
-        `[${p.metadata.handle}] ${p.metadata.title} — ${p.metadata.priceAmount} ${p.metadata.priceCurrency}\n` +
-        `  make=${p.metadata.make ?? '—'} model=${p.metadata.model ?? '—'} year=${p.metadata.year ?? '—'} fuel=${p.metadata.fuelType ?? '—'} transmission=${p.metadata.transmission ?? '—'} condition=${p.metadata.condition ?? '—'}\n` +
-        `  collections=${p.metadata.collectionHandles.join(', ') || '—'}\n` +
-        `  snippet: ${p.metadata.textSnippet.replace(/\s+/g, ' ').trim().slice(0, SNIPPET_TRUNCATE)}`
-    )
+    .map(p => {
+      const m = p.metadata
+      const d = (v: string | null | undefined) => v ?? '—'
+
+      const coreLine =
+        `  make=${d(m.make)} model=${d(m.model)} year=${d(m.year)}` +
+        ` fuel=${d(m.fuelType)} transmission=${d(m.transmission)} drive=${d(m.driveType)}` +
+        ` condition=${d(m.condition)}`
+
+      const detailParts = [
+        m.mileage ? `mileage=${m.mileage}` : null,
+        m.colour ? `colour=${m.colour}` : null,
+        m.engine ? `engine=${m.engine}` : null,
+        m.displacement ? `displacement=${m.displacement}` : null,
+        m.originCountry ? `origin=${m.originCountry}` : null,
+      ].filter(Boolean)
+
+      const detailLine = detailParts.length > 0 ? `  ${detailParts.join(' ')}\n` : ''
+
+      const extraSpecsLine =
+        Object.keys(m.specs).length > 0
+          ? `  specs: ${Object.entries(m.specs)
+              .map(([k, v]) => `${k}=${v}`)
+              .join(' | ')}\n`
+          : ''
+
+      return (
+        `[${m.handle}] ${m.title} — ${m.priceAmount} ${m.priceCurrency}\n` +
+        coreLine +
+        '\n' +
+        detailLine +
+        extraSpecsLine +
+        `  collections=${m.collectionHandles.join(', ') || '—'}\n` +
+        `  snippet: ${m.textSnippet.replace(/\s+/g, ' ').trim().slice(0, SNIPPET_TRUNCATE)}`
+      )
+    })
     .join('\n\n')
 
   return `You are Miles, Enermation's dealership assistant. Answer only from the products listed below. If none match, say so and suggest the closest category.
