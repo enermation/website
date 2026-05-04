@@ -3,8 +3,8 @@ import 'server-only'
 import { getQdrantClient } from '@/lib/rag/clients'
 import {
   QDRANT_COLLECTION,
+  QDRANT_DENSE_SCORE_THRESHOLD,
   QDRANT_DENSE_VECTOR,
-  QDRANT_SCORE_THRESHOLD,
   QDRANT_SEARCH_EF,
   QDRANT_SPARSE_VECTOR,
   TOP_K_RETRIEVE,
@@ -29,6 +29,9 @@ export async function findRelevantProducts(query: string): Promise<RagRetrievalR
         using: QDRANT_DENSE_VECTOR,
         limit: TOP_K_RETRIEVE,
         params: { hnsw_ef: QDRANT_SEARCH_EF, exact: false },
+        // Threshold on cosine similarity (0–1) — filters semantically irrelevant results
+        // before they pollute the RRF fusion pool
+        score_threshold: QDRANT_DENSE_SCORE_THRESHOLD,
       },
       {
         query: { indices: sparseVector.indices, values: sparseVector.values },
@@ -38,7 +41,8 @@ export async function findRelevantProducts(query: string): Promise<RagRetrievalR
     ],
     query: { fusion: 'rrf' },
     limit: TOP_K_RETRIEVE,
-    score_threshold: QDRANT_SCORE_THRESHOLD,
+    // No score_threshold here — RRF scores are rank-based (~0.01–0.033),
+    // incomparable to cosine similarity thresholds. Reranker handles quality filtering.
     with_payload: true,
     with_vector: false,
   })
