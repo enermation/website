@@ -123,7 +123,7 @@ export function FooterOfficeMap({ className }: FooterOfficeMapProps) {
               <MarkerContent>
                 <div className="flex items-center justify-center">
                   <MapPin
-                    className="size-6 text-white drop-shadow-lg sm:size-7"
+                    className="size-7 text-green-500 drop-shadow-lg sm:size-8"
                     strokeWidth={2.5}
                   />
                 </div>
