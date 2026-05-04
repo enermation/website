@@ -5,7 +5,7 @@ import { Barlow_Semi_Condensed, Bebas_Neue, Inter } from 'next/font/google'
 import { Suspense } from 'react'
 import './globals.css'
 import { ChatWidgetMount } from '@/components/chat-widget-mount'
-import { SiteFooter } from '@/components/site-footer'
+import { FooterContent } from '@/components/footer-content'
 import { Toaster } from '@/components/ui/sonner'
 import { CartProvider } from '@/lib/cart-context'
 import { getFooterNavigation } from '@/lib/header-navigation'
@@ -74,7 +74,9 @@ export default async function RootLayout({
           <CartProvider>
             <WishlistProvider>
               {children}
-              <SiteFooter exploreGroups={exploreGroups} />
+              <Suspense>
+                <FooterContent exploreGroups={exploreGroups} />
+              </Suspense>
               <ChatWidgetMount />
               <Toaster />
               <Analytics />
