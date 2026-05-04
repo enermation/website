@@ -42,7 +42,7 @@ async function ensureCollection(client: QdrantClient): Promise<void> {
         distance: QDRANT_DISTANCE as 'Cosine',
       },
       quantization_config: {
-        scalar: { quantile: 0.99, ratio: 0.8 },
+        scalar: { type: 'int8', quantile: 0.99 },
       },
     })
     await client.createPayloadIndex(QDRANT_COLLECTION, {
@@ -127,7 +127,7 @@ export async function reindexAll(options: { fresh?: boolean } = {}): Promise<{
         distance: QDRANT_DISTANCE as 'Cosine',
       },
       quantization_config: {
-        scalar: { quantile: 0.99, ratio: 0.8 },
+        scalar: { type: 'int8', quantile: 0.99 },
       },
     })
   } else {
