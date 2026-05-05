@@ -12,7 +12,6 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { Suspense } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -495,10 +494,6 @@ function categoryTerms(label: string) {
 }
 
 export function SiteFooter({ exploreGroups }: SiteFooterProps) {
-  const pathname = usePathname()
-
-  if (pathname === '/miles') return null
-
   const quickLinks = resolvedQuickLinks(exploreGroups)
   const exportLinks = resolvedExportLinks(exploreGroups)
 
