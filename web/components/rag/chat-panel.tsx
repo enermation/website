@@ -411,15 +411,13 @@ export function ChatPanel({
             <div className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8">
               <div className="w-full max-w-3xl space-y-6 sm:space-y-8">
                 <div className="space-y-3 text-center sm:space-y-4">
-                  <div className="flex justify-center">
-                    <Image
-                      src="/miles_logo.png"
-                      alt="Miles"
-                      width={32}
-                      height={32}
-                      className="h-8 w-8 object-contain"
-                    />
-                  </div>
+                  <Image
+                    src="/miles_logo.png"
+                    alt="Miles"
+                    width={32}
+                    height={32}
+                    className="mx-auto h-8 w-8 object-contain"
+                  />
                   {greeting ? (
                     <h2
                       key={greeting}
@@ -429,7 +427,7 @@ export function ChatPanel({
                       {greeting}
                     </h2>
                   ) : (
-                    <div className="font-sans text-2xl font-normal text-foreground sm:text-3xl md:text-4xl" />
+                    <div className="font-sans text-2xl font-normal text-foreground sm:text-3xl md:text-4xl min-h-[1.5em]" />
                   )}
                   <p className="font-sans text-sm text-muted-foreground sm:text-base">
                     Hi, I'm Miles <Hand className="inline size-4 align-middle" /> — your Enermation assistant. I can help you find vehicles, prices, and shipping details instantly.
