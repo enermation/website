@@ -421,15 +421,15 @@ export function ChatPanel({
                   {greeting ? (
                     <h2
                       key={greeting}
-                      className="font-sans text-2xl font-normal text-foreground sm:text-3xl md:text-4xl animate-in fade-in slide-in-from-bottom-4 duration-500"
+                      className="text-2xl font-normal text-foreground sm:text-3xl md:text-4xl animate-in fade-in slide-in-from-bottom-4 duration-500"
                       suppressHydrationWarning
                     >
                       {greeting}
                     </h2>
                   ) : (
-                    <div className="font-sans text-2xl font-normal text-foreground sm:text-3xl md:text-4xl min-h-[1.5em]" />
+                    <div className="text-2xl font-normal text-foreground sm:text-3xl md:text-4xl min-h-[1.5em]" />
                   )}
-                  <p className="font-sans text-sm text-muted-foreground sm:text-base">
+                  <p className="text-sm text-muted-foreground sm:text-base">
                     Hi, I'm Miles <Hand className="inline size-4 align-middle" /> — your Enermation assistant. I can help you find vehicles, prices, and shipping details instantly.
                   </p>
                 </div>
