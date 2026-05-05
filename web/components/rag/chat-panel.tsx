@@ -404,9 +404,9 @@ export function ChatPanel({
 
   return (
     <PromptInputProvider>
-      <div className="flex h-full flex-col overflow-hidden">
-        {/* Messages area — scrolls, prompt bar is sticky INSIDE this */}
-        <div className="flex-1 overflow-y-auto">
+      <div className="relative h-full overflow-hidden">
+        {/* Messages area — scrolls under floating prompt bar */}
+        <div className="absolute inset-0 overflow-y-auto">
           {messages.length === 0 && showSuggestedQuestions && (
             <div className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8">
               <div className="w-full max-w-2xl space-y-6 sm:space-y-8">
@@ -489,42 +489,43 @@ export function ChatPanel({
               </div>
             )}
 
-            {/* Spacer for sticky prompt bar clearance */}
+            {/* Spacer for floating prompt bar clearance */}
             <div className="h-28" aria-hidden />
           </div>
         </div>
 
-        {/* Error bar */}
-        {status === 'error' && (
-          <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2">
-            <span className="text-13 text-muted-foreground">Something went wrong. Try again.</span>
-            <Button
-              className="text-13"
-              onClick={() => regenerate()}
-              size="sm"
-              type="button"
-              variant="ghost"
-            >
-              Retry
-            </Button>
-          </div>
-        )}
-
-        <ChatInputArea
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          pendingFiles={pendingFiles}
-          removeFile={removeFile}
-          status={status}
-          stop={stop}
-          fileInputRef={fileInputRef}
-          cameraInputRef={cameraInputRef}
-          inputRef={inputRef}
-          handleFileChange={handleFileChange}
-          onSubmit={handleSubmit}
-          error={error}
-          setError={setError}
-        />
+        {/* Floating prompt bar */}
+        <div className="absolute inset-x-0 bottom-0 z-10">
+          {status === 'error' && (
+            <div className="flex items-center justify-between gap-2 border-t border-border bg-background px-4 py-2">
+              <span className="text-13 text-muted-foreground">Something went wrong. Try again.</span>
+              <Button
+                className="text-13"
+                onClick={() => regenerate()}
+                size="sm"
+                type="button"
+                variant="ghost"
+              >
+                Retry
+              </Button>
+            </div>
+          )}
+          <ChatInputArea
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            pendingFiles={pendingFiles}
+            removeFile={removeFile}
+            status={status}
+            stop={stop}
+            fileInputRef={fileInputRef}
+            cameraInputRef={cameraInputRef}
+            inputRef={inputRef}
+            handleFileChange={handleFileChange}
+            onSubmit={handleSubmit}
+            error={error}
+            setError={setError}
+          />
+        </div>
       </div>
     </PromptInputProvider>
   )
