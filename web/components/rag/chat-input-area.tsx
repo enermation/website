@@ -125,7 +125,7 @@ export default function ChatInputArea({
 
   return (
     <div className="px-3 pb-6 pt-3 sm:px-4 sm:pb-6">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         {error && (
           <div className="mb-2 rounded-lg border border-destructive/30 bg-destructive px-3 py-2 text-sm text-destructive-foreground">
             <div className="flex items-center justify-between gap-2">

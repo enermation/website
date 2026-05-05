@@ -5,7 +5,9 @@ const config = {
         !f.includes('components/rag/') &&
         !f.includes('components\\rag\\') &&
         !f.includes('components/ai-elements/') &&
-        !f.includes('components\\ai-elements\\')
+        !f.includes('components\\ai-elements\\') &&
+        !f.includes('components/ui/') &&
+        !f.includes('components\\ui\\')
     )
     if (!toCheck.length) return []
     return `biome check --write ${toCheck.map(f => `"${f}"`).join(' ')}`

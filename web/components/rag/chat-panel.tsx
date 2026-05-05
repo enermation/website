@@ -100,7 +100,7 @@ function UserMessage({
 
   return (
     <div className="flex justify-end items-end gap-2">
-      <div className="max-w-[95%] gap-2 sm:max-w-[85%] sm:gap-3 md:max-w-[80%] flex flex-col">
+      <div className="max-w-[95%] gap-2 sm:max-w-[85%] sm:gap-3 md:max-w-[80%] lg:max-w-4xl flex flex-col">
         <div className="flex flex-col gap-2">
           {imageParts.length > 0 && (
             <div className="flex flex-wrap gap-2 justify-end">
@@ -203,7 +203,7 @@ function AssistantMessage({
         src="/miles_logo.png"
         width={32}
       />
-      <div className="w-full max-w-full gap-2 sm:gap-3 lg:max-w-5xl flex flex-col">
+      <div className="w-full max-w-4xl gap-2 sm:gap-3 flex flex-col">
         <div className="flex-1 space-y-3 min-w-0">
           {reasoningPart?.text && (
             <ReasoningCollapsible reasoning={reasoningPart.text} />
@@ -409,7 +409,7 @@ export function ChatPanel({
         <div className="absolute inset-0 overflow-y-auto">
           {messages.length === 0 && showSuggestedQuestions && (
             <div className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8">
-              <div className="w-full max-w-2xl space-y-6 sm:space-y-8">
+              <div className="w-full max-w-3xl space-y-6 sm:space-y-8">
                 <div className="space-y-3 text-center sm:space-y-4">
                   <div className="flex justify-center">
                     <Image
