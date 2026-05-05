@@ -215,7 +215,7 @@ export default async function CollectionPage({
         </div>
       </section>
 
-      <SiteFooter exploreGroups={footerNavigation} bypass />
+      <SiteFooter exploreGroups={footerNavigation} />
     </>
   )
 }

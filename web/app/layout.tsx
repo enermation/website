@@ -5,10 +5,8 @@ import { Barlow_Semi_Condensed, Bebas_Neue, Inter } from 'next/font/google'
 import { Suspense } from 'react'
 import './globals.css'
 import { ChatWidgetMount } from '@/components/chat-widget-mount'
-import { FooterContent } from '@/components/footer-content'
 import { Toaster } from '@/components/ui/sonner'
 import { CartProvider } from '@/lib/cart-context'
-import { getFooterNavigation } from '@/lib/header-navigation'
 import { WishlistProvider } from '@/lib/wishlist-context'
 
 const display = Bebas_Neue({
@@ -47,13 +45,11 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const exploreGroups = await getFooterNavigation()
-
   return (
     <html
       lang="en"
@@ -74,9 +70,6 @@ export default async function RootLayout({
           <CartProvider>
             <WishlistProvider>
               {children}
-              <Suspense>
-                <FooterContent exploreGroups={exploreGroups} />
-              </Suspense>
               <ChatWidgetMount />
               <Toaster />
               <Analytics />
