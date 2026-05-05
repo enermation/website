@@ -338,3 +338,11 @@ Rules:
 - Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
 - If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
 - After modifying code files in this session, run `python3 -c "from graphify.watch import _rebuild_code; from pathlib import Path; _rebuild_code(Path('.'))"` to keep the graph current
+
+## Remember Plugin Debugging
+
+When debugging the remember plugin (or any Claude Code hooks that use `2>>` redirects):
+
+- **Remember plugin hook error**: `mkdir -p` must come **before** the redirect — directory must exist when `2>>` is parsed, not when the script runs. The `2>>` redirect fails silently if parent directory doesn't exist.
+- **Hook stdout contract**: Remember plugin SessionStart/PostToolUse hooks output memory context to stdout for Claude injection. Only use `2>>` for stderr redirect — never `>> 2>&1` which breaks session memory.
+- **Windows bash subprocess**: When testing bash scripts via Python subprocess on Windows, use explicit Git Bash path with `shell=False` — `shell=True` causes cmd.exe to mangle Unix paths. Use `C:\Program Files\Git\usr\bin\bash.exe`.`

@@ -100,7 +100,7 @@ function UserMessage({
 
   return (
     <div className="flex justify-end items-end gap-2">
-      <div className="max-w-[95%] gap-2 sm:max-w-[85%] sm:gap-3 md:max-w-[80%] flex flex-col">
+      <div className="max-w-[95%] gap-2 sm:max-w-[85%] sm:gap-3 md:max-w-[80%] lg:max-w-4xl flex flex-col">
         <div className="flex flex-col gap-2">
           {imageParts.length > 0 && (
             <div className="flex flex-wrap gap-2 justify-end">
@@ -203,7 +203,7 @@ function AssistantMessage({
         src="/miles_logo.png"
         width={32}
       />
-      <div className="w-full max-w-full gap-2 sm:gap-3 lg:max-w-5xl flex flex-col">
+      <div className="w-full max-w-4xl gap-2 sm:gap-3 flex flex-col">
         <div className="flex-1 space-y-3 min-w-0">
           {reasoningPart?.text && (
             <ReasoningCollapsible reasoning={reasoningPart.text} />
@@ -404,34 +404,32 @@ export function ChatPanel({
 
   return (
     <PromptInputProvider>
-      <div className="flex h-full flex-col overflow-hidden">
-        {/* Messages area — scrolls, prompt bar is sticky INSIDE this */}
-        <div className="flex-1 overflow-y-auto">
+      <div className="relative h-full overflow-hidden">
+        {/* Messages area — scrolls under floating prompt bar */}
+        <div className="absolute inset-0 overflow-y-auto">
           {messages.length === 0 && showSuggestedQuestions && (
             <div className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8">
-              <div className="w-full max-w-2xl space-y-6 sm:space-y-8">
+              <div className="w-full max-w-3xl space-y-6 sm:space-y-8">
                 <div className="space-y-3 text-center sm:space-y-4">
-                  <div className="flex justify-center">
-                    <Image
-                      src="/miles_logo.png"
-                      alt="Miles"
-                      width={32}
-                      height={32}
-                      className="h-8 w-8 object-contain"
-                    />
-                  </div>
+                  <Image
+                    src="/miles_logo.png"
+                    alt="Miles"
+                    width={32}
+                    height={32}
+                    className="mx-auto h-8 w-8 object-contain"
+                  />
                   {greeting ? (
                     <h2
                       key={greeting}
-                      className="font-sans text-2xl font-normal text-foreground sm:text-3xl md:text-4xl animate-in fade-in slide-in-from-bottom-4 duration-500"
+                      className="text-2xl font-normal text-foreground sm:text-3xl md:text-4xl animate-in fade-in slide-in-from-bottom-4 duration-500"
                       suppressHydrationWarning
                     >
                       {greeting}
                     </h2>
                   ) : (
-                    <div className="font-sans text-2xl font-normal text-foreground sm:text-3xl md:text-4xl" />
+                    <div className="text-2xl font-normal text-foreground sm:text-3xl md:text-4xl min-h-[1.5em]" />
                   )}
-                  <p className="font-sans text-sm text-muted-foreground sm:text-base">
+                  <p className="text-sm text-muted-foreground sm:text-base">
                     Hi, I'm Miles <Hand className="inline size-4 align-middle" /> — your Enermation assistant. I can help you find vehicles, prices, and shipping details instantly.
                   </p>
                 </div>
@@ -489,42 +487,43 @@ export function ChatPanel({
               </div>
             )}
 
-            {/* Spacer for sticky prompt bar clearance */}
+            {/* Spacer for floating prompt bar clearance */}
             <div className="h-28" aria-hidden />
           </div>
         </div>
 
-        {/* Error bar */}
-        {status === 'error' && (
-          <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2">
-            <span className="text-13 text-muted-foreground">Something went wrong. Try again.</span>
-            <Button
-              className="text-13"
-              onClick={() => regenerate()}
-              size="sm"
-              type="button"
-              variant="ghost"
-            >
-              Retry
-            </Button>
-          </div>
-        )}
-
-        <ChatInputArea
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          pendingFiles={pendingFiles}
-          removeFile={removeFile}
-          status={status}
-          stop={stop}
-          fileInputRef={fileInputRef}
-          cameraInputRef={cameraInputRef}
-          inputRef={inputRef}
-          handleFileChange={handleFileChange}
-          onSubmit={handleSubmit}
-          error={error}
-          setError={setError}
-        />
+        {/* Floating prompt bar */}
+        <div className="absolute inset-x-0 bottom-0 z-10">
+          {status === 'error' && (
+            <div className="flex items-center justify-between gap-2 border-t border-border bg-background px-4 py-2">
+              <span className="text-13 text-muted-foreground">Something went wrong. Try again.</span>
+              <Button
+                className="text-13"
+                onClick={() => regenerate()}
+                size="sm"
+                type="button"
+                variant="ghost"
+              >
+                Retry
+              </Button>
+            </div>
+          )}
+          <ChatInputArea
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            pendingFiles={pendingFiles}
+            removeFile={removeFile}
+            status={status}
+            stop={stop}
+            fileInputRef={fileInputRef}
+            cameraInputRef={cameraInputRef}
+            inputRef={inputRef}
+            handleFileChange={handleFileChange}
+            onSubmit={handleSubmit}
+            error={error}
+            setError={setError}
+          />
+        </div>
       </div>
     </PromptInputProvider>
   )

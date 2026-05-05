@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckIcon, ClipboardDocumentIcon } from '@heroicons/react/24/outline'
+import { Check, Clipboard } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { stripMarkdown } from '@/lib/utils'
@@ -48,9 +48,9 @@ export function CopyButton({ content, htmlContent, copyMessage = 'Copied!' }: Co
       variant="ghost"
     >
       {copied ? (
-        <CheckIcon className="size-4 text-green-500" />
+        <Check className="size-4 text-green-500" />
       ) : (
-        <ClipboardDocumentIcon className="size-4" />
+        <Clipboard className="size-4" />
       )}
       <span className="sr-only">{copied ? copyMessage : 'Copy response'}</span>
     </Button>
