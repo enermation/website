@@ -6,8 +6,10 @@ import { Suspense } from 'react'
 import { AnimatedSection } from '@/components/animated-section'
 import { BlogCardGrid } from '@/components/blog-card-grid'
 import { CarCard } from '@/components/car-card'
+import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { applyFilters, buildFilterDimensions } from '@/lib/filter-utils'
+import { getFooterNavigation } from '@/lib/header-navigation'
 import { fetchBlogByHandle, fetchCollectionProductsAdmin, fetchCollections } from '@/lib/shopify'
 import type { ActiveFilters, ShopifyCollection } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -79,10 +81,11 @@ export default async function CollectionPage({
     Object.entries(rawFilters).filter(([, v]) => v && v !== 'Show All')
   )
 
-  const [collection, collectionLinks, blog] = await Promise.all([
+  const [collection, collectionLinks, blog, footerNavigation] = await Promise.all([
     fetchCollectionProductsAdmin(handle, { sortKey, reverse }).catch(() => null),
     fetchCollections().catch(() => [] as ShopifyCollection[]),
     fetchBlogByHandle('news').catch(() => null),
+    getFooterNavigation().catch(() => []),
   ])
 
   if (!collection) notFound()
@@ -211,6 +214,8 @@ export default async function CollectionPage({
           )}
         </div>
       </section>
+
+      <SiteFooter exploreGroups={footerNavigation} bypass />
     </>
   )
 }

@@ -173,6 +173,7 @@ const socialIcons: Record<string, LucideIcon> = {
 
 type SiteFooterProps = {
   exploreGroups: FooterNavGroup[]
+  bypass?: boolean
 }
 
 type FooterLinkColumnProps = {
@@ -494,10 +495,10 @@ function categoryTerms(label: string) {
   return aliases[normalized] ?? [normalized]
 }
 
-export function SiteFooter({ exploreGroups }: SiteFooterProps) {
+export function SiteFooter({ exploreGroups, bypass = false }: SiteFooterProps) {
   const pathname = usePathname()
 
-  if (pathname === '/miles') return null
+  if (!bypass && (pathname === '/miles' || pathname.startsWith('/collections/'))) return null
 
   const quickLinks = resolvedQuickLinks(exploreGroups)
   const exportLinks = resolvedExportLinks(exploreGroups)
