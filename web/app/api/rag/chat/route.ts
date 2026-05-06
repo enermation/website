@@ -11,6 +11,8 @@ import { getChatLimiter, getRateLimitKey } from '@/lib/rag/ratelimit'
 import type { FullRagChatMessageMetadata, ProductCitationData } from '@/lib/rag/types'
 import { describeImagesForRetrieval } from '@/lib/rag/vision'
 
+export const maxDuration = 300
+
 type ChatRequestBody = {
   messages: UIMessage[]
   sessionId?: string
