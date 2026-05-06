@@ -75,6 +75,7 @@ export async function POST(request: Request) {
     retrievalQuery = await describeImagesForRetrieval(imageParts, userText)
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Image description failed'
+    console.error('[rag/chat] vision error:', err)
     return NextResponse.json({ error: message }, { status: 500 })
   }
 
@@ -84,6 +85,7 @@ export async function POST(request: Request) {
     products = await findRelevantProducts(retrievalQuery)
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Retrieval failed'
+    console.error('[rag/chat] retrieval error:', err)
     return NextResponse.json({ error: message }, { status: 500 })
   }
 
