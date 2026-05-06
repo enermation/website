@@ -12,7 +12,6 @@ import {
 } from '@/components/ai-elements/message'
 import { PromptInputProvider } from '@/components/ai-elements/prompt-input'
 import { CopyButton } from '@/components/ui/copy-button'
-import { Button } from '@/components/ui/button'
 import { Conversation, ConversationContent, ConversationDownload, ConversationScrollButton } from '@/components/ai-elements/conversation'
 import { toast } from 'sonner'
 import { ProductCitation } from '@/components/rag/product-citation'
@@ -508,20 +507,6 @@ export function ChatPanel({
 
         {/* Floating prompt bar */}
         <div className="absolute inset-x-0 bottom-0 z-10">
-          {status === 'error' && (
-            <div className="flex items-center justify-between gap-2 border-t border-border bg-background px-4 py-2">
-              <span className="text-13 text-muted-foreground">Something went wrong. Try again.</span>
-              <Button
-                className="text-13"
-                onClick={() => regenerate()}
-                size="sm"
-                type="button"
-                variant="ghost"
-              >
-                Retry
-              </Button>
-            </div>
-          )}
           <ChatInputArea
             inputValue={inputValue}
             setInputValue={setInputValue}
