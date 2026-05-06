@@ -19,6 +19,8 @@ type ChatRequestBody = {
 }
 
 export async function POST(request: Request) {
+  console.error('[rag/chat] request started')
+
   let body: ChatRequestBody
 
   try {
