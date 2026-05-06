@@ -14,6 +14,7 @@ import { PromptInputProvider } from '@/components/ai-elements/prompt-input'
 import { CopyButton } from '@/components/ui/copy-button'
 import { Button } from '@/components/ui/button'
 import { Conversation, ConversationContent, ConversationDownload, ConversationScrollButton } from '@/components/ai-elements/conversation'
+import { toast } from 'sonner'
 import { ProductCitation } from '@/components/rag/product-citation'
 import { SuggestionButton } from '@/components/ui/suggestion-button'
 import { useTimeBasedGreeting } from '@/hooks/use-time-based-greeting'
@@ -303,6 +304,17 @@ export function ChatPanel({
   const { messages, sendMessage, status, regenerate, stop } = useChat({
     transport: new DefaultChatTransport({ api }),
   })
+
+  useEffect(() => {
+    if (status === 'error') {
+      toast.error('Something went wrong. Try again.', {
+        action: {
+          label: 'Retry',
+          onClick: () => regenerate(),
+        },
+      })
+    }
+  }, [status, regenerate])
 
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
