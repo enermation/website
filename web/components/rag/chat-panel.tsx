@@ -1,7 +1,7 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
-import { ChevronRight, Hand, X } from 'lucide-react'
+import { ChevronRight, X } from 'lucide-react'
 import type { FileUIPart } from 'ai'
 import { DefaultChatTransport } from 'ai'
 import Image from 'next/image'
