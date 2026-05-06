@@ -449,7 +449,7 @@ export function ChatPanel({
             </div>
           )}
 
-          <ConversationContent>
+          <ConversationContent className="container px-3 py-6 max-w-4xl mx-auto sm:space-y-6 sm:px-4 sm:py-8 md:px-12">
             {messages.map((msg, index) => {
               if (msg.role === 'user') {
                 return <UserMessage key={msg.id} message={msg} />
