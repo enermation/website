@@ -135,6 +135,8 @@ export async function POST(request: Request) {
     temperature: 0.3,
     providerOptions: {
       gateway: {
+        user: sessionId ?? ip,
+        tags: ['feature:chat', 'env:production'],
         models: ['meta/llama-3.1-8b', 'cohere/command-a'],
       },
     },

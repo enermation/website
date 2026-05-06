@@ -20,6 +20,9 @@ export async function embedDocuments(texts: string[]): Promise<number[][]> {
       values: batch,
       providerOptions: {
         cohere: { inputType: 'search_document' },
+        gateway: {
+          models: ['cohere/embed-v4.0'],
+        },
       },
     })
 

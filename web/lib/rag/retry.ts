@@ -6,7 +6,7 @@ const DEFAULT_MAX_RETRIES = 6
 const DEFAULT_BASE_DELAY_MS = 500
 const DEFAULT_MAX_DELAY_MS = 60_000
 
-// Voyager AI free tier: 3 RPM — rate limit backoff must be long
+// AI Gateway free tier and many providers: 3 RPM — rate limit backoff must be long
 const RATE_LIMIT_BASE_DELAY_MS = 22_000
 
 function jitter(ms: number): number {

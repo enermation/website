@@ -20,6 +20,11 @@ export async function rerankCandidates(
     documents,
     query,
     topN: TOP_K_RERANK,
+    providerOptions: {
+      gateway: {
+        models: ['cohere/rerank-v4-pro'],
+      },
+    },
   })
 
   const reranked: RagRetrievalResult[] = []
