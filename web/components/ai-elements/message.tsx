@@ -321,26 +321,23 @@ export const MessageResponse = ({
   className,
   isAnimating,
   ...props
-}: MessageResponseProps) => {
-  return (
-    <Streamdown
-      className={cn(
-        "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
-        className
-      )}
-      animated={{
-        animation: "blurIn",
-        duration: 200,
-        easing: "ease-out",
-        sep: "word",
-      }}
-      caret="block"
-      isAnimating={isAnimating}
-      onError={(err) => console.error('[MessageResponse] Streamdown error:', err)}
-      {...props}
-    />
-  )
-};
+}: MessageResponseProps) => (
+  <Streamdown
+    className={cn(
+      "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
+      className
+    )}
+    animated={{
+      animation: "blurIn",
+      duration: 200,
+      easing: "ease-out",
+      sep: "word",
+    }}
+    caret="block"
+    isAnimating={isAnimating}
+    {...props}
+  />
+);
 
 export type MessageToolbarProps = ComponentProps<"div">;
 
