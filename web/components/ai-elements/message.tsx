@@ -24,6 +24,7 @@ import {
   useState,
 } from "react";
 import { Streamdown } from "streamdown";
+import "streamdown/styles.css";
 
 export type MessageProps = HTMLAttributes<HTMLDivElement> & {
   from: UIMessage["role"];
@@ -318,6 +319,7 @@ export type MessageResponseProps = ComponentProps<typeof Streamdown>;
 
 export const MessageResponse = ({
   className,
+  isAnimating,
   ...props
 }: MessageResponseProps) => (
   <Streamdown
@@ -325,6 +327,14 @@ export const MessageResponse = ({
       "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
       className
     )}
+    animated={{
+      animation: "blurIn",
+      duration: 200,
+      easing: "ease-out",
+      sep: "word",
+    }}
+    caret="block"
+    isAnimating={isAnimating}
     {...props}
   />
 );
