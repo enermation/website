@@ -146,9 +146,16 @@ export async function POST(request: Request) {
         models: ['meta/llama-3.1-8b', 'cohere/command-a'],
       },
     },
+    onError({ error }) {
+      console.error('[rag/chat] streamText error:', error)
+    },
   })
 
   return result.toUIMessageStreamResponse({
+    onError(error) {
+      console.error('[rag/chat] stream response error:', error)
+      return 'Something went wrong while generating the response.'
+    },
     messageMetadata({ part }: { part: TextStreamPart<ToolSet> }) {
       if (part.type === 'finish') {
         return { citations, suggestions: resolvedSuggestions } as FullRagChatMessageMetadata

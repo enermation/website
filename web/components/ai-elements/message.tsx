@@ -317,6 +317,13 @@ export const MessageBranchPage = ({
 
 export type MessageResponseProps = ComponentProps<typeof Streamdown>;
 
+const STREAMDOWN_ANIMATED = {
+  animation: "blurIn",
+  duration: 200,
+  easing: "ease-out",
+  sep: "word",
+} as const;
+
 export const MessageResponse = ({
   className,
   isAnimating,
@@ -327,12 +334,7 @@ export const MessageResponse = ({
       "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
       className
     )}
-    animated={{
-      animation: "blurIn",
-      duration: 200,
-      easing: "ease-out",
-      sep: "word",
-    }}
+    animated={STREAMDOWN_ANIMATED}
     caret="block"
     isAnimating={isAnimating}
     {...props}

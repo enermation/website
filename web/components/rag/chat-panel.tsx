@@ -302,6 +302,9 @@ export function ChatPanel({
 
   const { messages, sendMessage, status, regenerate, stop } = useChat({
     transport: new DefaultChatTransport({ api }),
+    onError(error) {
+      console.error('[useChat] error:', error)
+    },
   })
 
   useEffect(() => {
@@ -416,7 +419,7 @@ export function ChatPanel({
 
   return (
     <PromptInputProvider>
-      <div className="relative h-full overflow-hidden">
+      <div className="relative h-full overflow-hidden flex flex-col">
         <Conversation>
           {messages.length === 0 && showSuggestedQuestions && (
             <div className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8">
