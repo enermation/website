@@ -5,7 +5,7 @@ export const ASSISTANT_GREETING = 'Ask about our vehicles'
 export const ASSISTANT_WIDGET_TITLE = 'Miles'
 
 export const ASSISTANT_EMPTY_DESCRIPTION =
-  "Hi, I'm Miles — your Enermation assistant. I can help you find vehicles, prices, and shipping details instantly."
+  "Hi, I'm Miles. I'm here to help you find vehicles, check prices, and explore shipping options. What can I help you with today?"
 
 export type SuggestionIcon = 'car' | 'truck' | 'bolt' | 'dollar'
 

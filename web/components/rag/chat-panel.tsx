@@ -13,10 +13,11 @@ import {
 import { PromptInputProvider } from '@/components/ai-elements/prompt-input'
 import { CopyButton } from '@/components/ui/copy-button'
 import { Button } from '@/components/ui/button'
+import { Conversation, ConversationContent, ConversationDownload, ConversationScrollButton } from '@/components/ai-elements/conversation'
 import { ProductCitation } from '@/components/rag/product-citation'
 import { SuggestionButton } from '@/components/ui/suggestion-button'
 import { useTimeBasedGreeting } from '@/hooks/use-time-based-greeting'
-import { SUGGESTED_QUESTIONS_WITH_ICONS } from '@/lib/assistant-data'
+import { ASSISTANT_EMPTY_DESCRIPTION, SUGGESTED_QUESTIONS_WITH_ICONS } from '@/lib/assistant-data'
 import type { FullRagChatMessageMetadata, ProductCitationData } from '@/lib/rag/types'
 import { cn } from '@/lib/utils'
 import {
@@ -405,8 +406,7 @@ export function ChatPanel({
   return (
     <PromptInputProvider>
       <div className="relative h-full overflow-hidden">
-        {/* Messages area — scrolls under floating prompt bar */}
-        <div className="absolute inset-0 overflow-y-auto">
+        <Conversation>
           {messages.length === 0 && showSuggestedQuestions && (
             <div className="flex h-full items-center justify-center p-4 sm:p-6 md:p-8">
               <div className="w-full max-w-3xl space-y-6 sm:space-y-8">
@@ -430,7 +430,7 @@ export function ChatPanel({
                     <div className="text-2xl font-normal text-foreground sm:text-3xl md:text-4xl min-h-[1.5em]" />
                   )}
                   <p className="text-sm text-muted-foreground sm:text-base">
-                    Hi, I'm Miles <Hand className="inline size-4 align-middle" /> — your Enermation assistant. I can help you find vehicles, prices, and shipping details instantly.
+                    {ASSISTANT_EMPTY_DESCRIPTION}
                   </p>
                 </div>
 
@@ -449,7 +449,7 @@ export function ChatPanel({
             </div>
           )}
 
-          <div className="space-y-4 container px-3 py-6 max-w-4xl mx-auto sm:space-y-6 sm:px-4 sm:py-8 md:px-12">
+          <ConversationContent>
             {messages.map((msg, index) => {
               if (msg.role === 'user') {
                 return <UserMessage key={msg.id} message={msg} />
@@ -486,11 +486,13 @@ export function ChatPanel({
                 ))}
               </div>
             )}
+          </ConversationContent>
 
-            {/* Spacer for floating prompt bar clearance */}
-            <div className="h-28" aria-hidden />
-          </div>
-        </div>
+          {messages.length > 0 && (
+            <ConversationDownload messages={messages} />
+          )}
+          <ConversationScrollButton />
+        </Conversation>
 
         {/* Floating prompt bar */}
         <div className="absolute inset-x-0 bottom-0 z-10">
