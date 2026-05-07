@@ -4,7 +4,7 @@ import { cohere } from '@ai-sdk/cohere'
 import { embed, embedMany } from 'ai'
 import { INDEX_BATCH_SIZE } from '@/lib/rag/constants'
 
-const embeddingModel = cohere.textEmbedding('embed-v4.0')
+const embeddingModel = cohere.embedding('embed-v4.0')
 const queryCache = new Map<string, Promise<number[]>>()
 
 export async function embedDocuments(texts: string[]): Promise<number[][]> {
