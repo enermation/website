@@ -149,6 +149,14 @@ bun run lint
 - API version: 2026-04
 - Uses `@shopify/storefront-api-client` package
 
+## Vercel AI Gateway BYOK
+- Dashboard-configured BYOK alone is insufficient — every request must include
+  `providerOptions.gateway.byok` with actual provider API keys
+- Structure: `byok: { 'provider-slug': [{ apiKey: process.env.PROVIDER_API_KEY! }] }`
+- Auth priority: AI_GATEWAY_API_KEY → VERCEL_OIDC_TOKEN → Vercel free credits (causes 429)
+- Model format: provider/model (e.g., 'cohere/command-a'), not full canonical paths
+- Export byok helpers (e.g., `chatModelByok()`, `visionModelByok()`) — gateway() does not accept providerOptions directly
+
 ## Agent Instructions
 
 For AI coding assistants working on this project:

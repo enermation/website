@@ -1,7 +1,7 @@
 export const EMBED_MODEL = 'cohere/embed-v4.0'
 export const EMBED_DIMENSIONS = 1536
 export const RERANK_MODEL = 'cohere/rerank-v4-fast'
-export const CHAT_MODEL = 'openai/gpt-oss-120b'
+export const CHAT_MODEL = 'groq/gpt-oss-120b'
 export const VISION_MODEL = 'meta/llama-4-scout'
 export const VISION_FALLBACK_MODEL = 'cohere/command-a'
 

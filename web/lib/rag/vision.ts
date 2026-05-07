@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { generateText } from 'ai'
-import { getVisionModel } from '@/lib/rag/clients'
+import { getVisionModel, visionModelByok } from '@/lib/rag/clients'
 import { VISION_FALLBACK_MODEL } from '@/lib/rag/constants'
 import { DESCRIBE_PROMPT } from '@/lib/rag/prompt'
 
@@ -72,6 +72,7 @@ export async function describeImagesForRetrieval(
     providerOptions: {
       gateway: {
         models: [VISION_FALLBACK_MODEL],
+        byok: visionModelByok(),
       },
     },
   })

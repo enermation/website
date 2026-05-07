@@ -37,3 +37,18 @@ export function getChatModel() {
 export function getVisionModel() {
   return gateway(VISION_MODEL)
 }
+
+export function chatModelByok() {
+  return {
+    groq: [{ apiKey: process.env.GROQ_API_KEY! }],
+    cerebras: [{ apiKey: process.env.CEREBRAS_API_KEY! }],
+    cohere: [{ apiKey: process.env.COHERE_API_KEY! }],
+  }
+}
+
+export function visionModelByok() {
+  return {
+    groq: [{ apiKey: process.env.GROQ_API_KEY! }],
+    cohere: [{ apiKey: process.env.COHERE_API_KEY! }],
+  }
+}

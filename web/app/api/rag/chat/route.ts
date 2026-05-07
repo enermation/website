@@ -3,7 +3,7 @@ import { convertToModelMessages, generateObject, streamText, type ToolSet } from
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
-import { getChatModel } from '@/lib/rag/clients'
+import { chatModelByok, getChatModel } from '@/lib/rag/clients'
 
 import { buildGroundedSystemPrompt } from '@/lib/rag/prompt'
 import { findRelevantProducts } from '@/lib/rag/query'
@@ -143,7 +143,9 @@ export async function POST(request: Request) {
       gateway: {
         user: sessionId ?? ip,
         tags: ['feature:chat', 'env:production'],
-        models: ['meta/llama-3.1-8b', 'cohere/command-a'],
+        order: ['groq', 'cohere'],
+        models: ['cohere/command-a'],
+        byok: chatModelByok(),
       },
     },
     onError({ error }) {
