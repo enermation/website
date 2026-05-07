@@ -1,10 +1,10 @@
 import 'server-only'
 
-import { gateway } from '@ai-sdk/gateway'
+import { cohere } from '@ai-sdk/cohere'
 import { embed, embedMany } from 'ai'
-import { EMBED_MODEL, INDEX_BATCH_SIZE } from '@/lib/rag/constants'
+import { INDEX_BATCH_SIZE } from '@/lib/rag/constants'
 
-const embeddingModel = gateway.textEmbeddingModel(EMBED_MODEL)
+const embeddingModel = cohere.textEmbedding('embed-v4.0')
 const queryCache = new Map<string, Promise<number[]>>()
 
 export async function embedDocuments(texts: string[]): Promise<number[][]> {
@@ -20,9 +20,6 @@ export async function embedDocuments(texts: string[]): Promise<number[][]> {
       values: batch,
       providerOptions: {
         cohere: { inputType: 'search_document' },
-        gateway: {
-          models: ['cohere/embed-v4.0'],
-        },
       },
     })
 
