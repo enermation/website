@@ -149,6 +149,9 @@ bun run lint
 - API version: 2026-04
 - Uses `@shopify/storefront-api-client` package
 
+## AI SDK / useChat
+- Always include `experimental_throttle: 50` on `useChat` — fast streaming fires one `useSyncExternalStore` notification per token, which React 19 processes synchronously and exceeds its 50-nested-update limit without throttling
+
 ## Vercel AI Gateway BYOK
 - Dashboard-configured BYOK alone is insufficient — every request must include
   `providerOptions.gateway.byok` with actual provider API keys
