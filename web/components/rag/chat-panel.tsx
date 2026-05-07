@@ -302,6 +302,7 @@ export function ChatPanel({
 
   const { messages, sendMessage, status, regenerate, stop } = useChat({
     transport: new DefaultChatTransport({ api }),
+    experimental_throttle: 50,
     onError(error) {
       console.error('[useChat] error:', error)
     },
