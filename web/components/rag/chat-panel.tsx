@@ -502,12 +502,15 @@ export function ChatPanel({
               </div>
             )}
           </ConversationContent>
-
-          {messages.length > 0 && (
-            <ConversationDownload messages={messages} />
-          )}
           <ConversationScrollButton />
         </Conversation>
+
+        {/* Download button — sibling of Conversation so it's not clipped by overflow-hidden */}
+        {/* {messages.length > 0 && (
+          <div className="absolute top-20 right-4 z-30">
+            <ConversationDownload messages={messages} />
+          </div>
+        )} */}
 
         {/* Floating prompt bar */}
         <div className="absolute inset-x-0 bottom-0 z-10">
