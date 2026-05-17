@@ -71,6 +71,47 @@ All data-fetching functions in `shopify.ts` use Next.js `'use cache'` with `cach
 | `bun run lint` | Biome lint checks |
 | `bun run format` | Biome formatting |
 
+| `bun run test` | Run unit + integration tests with Bun |
+| `bun run test:unit` | Run unit tests only |
+| `bun run test:integration` | Run integration tests only |
+| `bun run test:e2e` | Run Playwright E2E tests |
+
+## Testing
+
+Tests run with **Bun** (`bun test`) using happy-dom for DOM environment.
+
+### Running tests
+
+```bash
+bun run test          # unit + integration
+bun run test:unit      # unit only
+bun run test:integration  # integration only
+bun run test:e2e       # Playwright E2E
+```
+
+### Test infrastructure
+
+| File | Purpose |
+|------|---------|
+| `tests/bun-setup.tsx` | Preload: happy-dom registration, mocks (next/image, next/cache, server-only, matchMedia, IntersectionObserver, ResizeObserver, canvas), test env vars |
+| `tests/test-utils.ts` | `mocked()` helper — replaces `vi.mocked()` type assertion |
+| `bunfig.toml` | Bun test config (coverage threshold 80%, 10s timeout) |
+
+### Mock patterns
+
+```ts
+// vi.mocked() replacement — Bun has no equivalent:
+vi.mocked(fn)  // ❌ doesn't exist
+(fn as ReturnType<typeof vi.fn>).mockResolvedValue(value)  // ✅
+
+// Fake timers — same API as Vitest:
+vi.useFakeTimers()
+vi.runAllTimers()
+vi.useRealTimers()
+```
+
+See `docs/BUN_TESTS.md` for full reference.
+
 ## Repository layout
 
 ```
