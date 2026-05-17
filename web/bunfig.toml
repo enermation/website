@@ -1,0 +1,9 @@
+[test]
+preload = ["./tests/bun-setup.tsx"]
+include = [
+  "tests/unit/**/*.test.{ts,tsx}",
+  "tests/integration/**/*.test.{ts,tsx}",
+]
+timeout = 10000
+coverage = true
+coverageThreshold = 0.8

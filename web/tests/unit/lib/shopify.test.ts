@@ -110,7 +110,7 @@ describe('metafieldLabel', () => {
 
 describe('getClient', () => {
   beforeEach(() => {
-    vi.resetModules()
+    // vi.resetModules() not available in Bun - env vars are set per-test
   })
 
   it('creates client with correct parameters', () => {

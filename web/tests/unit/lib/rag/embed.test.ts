@@ -29,8 +29,8 @@ vi.mock('next/cache', () => ({
 
 describe('embedDocuments', () => {
   beforeEach(() => {
+    // vi.resetModules() not available in Bun - remove
     vi.clearAllMocks()
-    vi.resetModules()
   })
 
   it('returns empty array for empty input', async () => {
@@ -95,8 +95,8 @@ describe('embedDocuments', () => {
 
 describe('embedQuery', () => {
   beforeEach(() => {
+    // vi.resetModules() not available in Bun - remove
     vi.clearAllMocks()
-    vi.resetModules()
   })
 
   it('caches identical queries', async () => {
