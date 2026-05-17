@@ -38,7 +38,7 @@ describe('GET /api/search', () => {
       { id: '1', title: 'Test Product', handle: 'test-product' },
       { id: '2', title: 'Another Product', handle: 'another-product' },
     ]
-    vi.mocked(searchProducts).mockResolvedValue(mockResults as never)
+    ;(searchProducts as ReturnType<typeof vi.fn>).mockResolvedValue(mockResults as never)
 
     const { GET } = await import('@/app/api/search/route')
     const request = new NextRequest(new URL('/api/search?q=test', 'http://localhost'))
@@ -51,7 +51,7 @@ describe('GET /api/search', () => {
   })
 
   it('returns 500 when searchProducts throws', async () => {
-    vi.mocked(searchProducts).mockRejectedValue(new Error('Search failed'))
+    ;(searchProducts as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Search failed'))
 
     const { GET } = await import('@/app/api/search/route')
     const request = new NextRequest(new URL('/api/search?q=test', 'http://localhost'))

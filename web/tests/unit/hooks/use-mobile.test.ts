@@ -32,12 +32,15 @@ describe('useIsMobile', () => {
 
     const addEventListenerMock = vi.fn()
     const removeEventListenerMock = vi.fn()
-    matchMediaSpy.mockReturnValue({
+    matchMediaSpy.mockImplementation(() => ({
       matches: false,
       media: '(max-width: 767px)',
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
       addEventListener: addEventListenerMock,
       removeEventListener: removeEventListenerMock,
-    })
+      dispatchEvent: vi.fn(),
+    }))
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       configurable: true,
@@ -58,12 +61,15 @@ describe('useIsMobile', () => {
 
     const addEventListenerMock = vi.fn()
     const removeEventListenerMock = vi.fn()
-    matchMediaSpy.mockReturnValue({
+    matchMediaSpy.mockImplementation(() => ({
       matches: true,
       media: '(max-width: 767px)',
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
       addEventListener: addEventListenerMock,
       removeEventListener: removeEventListenerMock,
-    })
+      dispatchEvent: vi.fn(),
+    }))
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       configurable: true,
@@ -85,12 +91,15 @@ describe('useIsMobile', () => {
     const addEventListenerMock = vi.fn()
     const removeEventListenerMock = vi.fn()
 
-    matchMediaSpy.mockReturnValue({
+    matchMediaSpy.mockImplementation(() => ({
       matches: false,
       media: '(max-width: 767px)',
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
       addEventListener: addEventListenerMock,
       removeEventListener: removeEventListenerMock,
-    })
+      dispatchEvent: vi.fn(),
+    }))
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       configurable: true,
@@ -122,12 +131,15 @@ describe('useIsMobile', () => {
     setViewportWidth(1024)
 
     const removeEventListenerMock = vi.fn()
-    matchMediaSpy.mockReturnValue({
+    matchMediaSpy.mockImplementation(() => ({
       matches: false,
       media: '(max-width: 767px)',
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
       addEventListener: vi.fn(),
       removeEventListener: removeEventListenerMock,
-    })
+      dispatchEvent: vi.fn(),
+    }))
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       configurable: true,
@@ -148,12 +160,15 @@ describe('useIsMobile', () => {
     setViewportWidth(1024)
 
     const addEventListenerMock = vi.fn()
-    matchMediaSpy.mockReturnValue({
+    matchMediaSpy.mockImplementation(() => ({
       matches: false,
       media: '(max-width: 767px)',
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
       addEventListener: addEventListenerMock,
       removeEventListener: vi.fn(),
-    })
+      dispatchEvent: vi.fn(),
+    }))
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       configurable: true,

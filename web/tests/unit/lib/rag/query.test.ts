@@ -112,9 +112,9 @@ describe('findRelevantProducts', () => {
     const mockQuery = vi.fn().mockResolvedValue({
       points: [],
     })
-    vi.mocked(getQdrantClient).mockReturnValue({ query: mockQuery } as never)
-    vi.mocked(embedQuery).mockResolvedValue(mockQueryEmbedding as never)
-    vi.mocked(toSparseVector).mockReturnValue(mockSparseVector as never)
+    ;(getQdrantClient as ReturnType<typeof vi.fn>).mockReturnValue({ query: mockQuery } as never)
+    ;(embedQuery as ReturnType<typeof vi.fn>).mockResolvedValue(mockQueryEmbedding as never)
+    ;(toSparseVector as ReturnType<typeof vi.fn>).mockReturnValue(mockSparseVector as never)
 
     const { findRelevantProducts } = await import('@/lib/rag/query')
     const result = await findRelevantProducts('test query')
@@ -130,9 +130,9 @@ describe('findRelevantProducts', () => {
         { id: '2', score: 0.8, payload: null },
       ],
     })
-    vi.mocked(getQdrantClient).mockReturnValue({ query: mockQuery } as never)
-    vi.mocked(embedQuery).mockResolvedValue(mockQueryEmbedding as never)
-    vi.mocked(toSparseVector).mockReturnValue(mockSparseVector as never)
+    ;(getQdrantClient as ReturnType<typeof vi.fn>).mockReturnValue({ query: mockQuery } as never)
+    ;(embedQuery as ReturnType<typeof vi.fn>).mockResolvedValue(mockQueryEmbedding as never)
+    ;(toSparseVector as ReturnType<typeof vi.fn>).mockReturnValue(mockSparseVector as never)
 
     const { findRelevantProducts } = await import('@/lib/rag/query')
     const result = await findRelevantProducts('test query')
@@ -142,10 +142,14 @@ describe('findRelevantProducts', () => {
 
   it('calls embedQuery and toSparseVector in parallel', async () => {
     const mockQuery = vi.fn().mockResolvedValue({ points: [] })
-    vi.mocked(getQdrantClient).mockReturnValue({ query: mockQuery } as never)
+    ;(getQdrantClient as ReturnType<typeof vi.fn>).mockReturnValue({ query: mockQuery } as never)
 
-    const embedSpy = vi.mocked(embedQuery).mockResolvedValue(mockQueryEmbedding as never)
-    const sparseSpy = vi.mocked(toSparseVector).mockReturnValue(mockSparseVector as never)
+    const embedSpy = (embedQuery as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockQueryEmbedding as never
+    )
+    const sparseSpy = (toSparseVector as ReturnType<typeof vi.fn>).mockReturnValue(
+      mockSparseVector as never
+    )
 
     const { findRelevantProducts } = await import('@/lib/rag/query')
     await findRelevantProducts('test query')
@@ -158,10 +162,10 @@ describe('findRelevantProducts', () => {
     const mockQuery = vi.fn().mockResolvedValue({
       points: [mockPoints[0], { id: 'null-payload-point', score: 0.7, payload: null }],
     })
-    vi.mocked(getQdrantClient).mockReturnValue({ query: mockQuery } as never)
-    vi.mocked(embedQuery).mockResolvedValue(mockQueryEmbedding as never)
-    vi.mocked(toSparseVector).mockReturnValue(mockSparseVector as never)
-    vi.mocked(rerankCandidates).mockResolvedValue([mockRetrievalResults[0]])
+    ;(getQdrantClient as ReturnType<typeof vi.fn>).mockReturnValue({ query: mockQuery } as never)
+    ;(embedQuery as ReturnType<typeof vi.fn>).mockResolvedValue(mockQueryEmbedding as never)
+    ;(toSparseVector as ReturnType<typeof vi.fn>).mockReturnValue(mockSparseVector as never)
+    ;(rerankCandidates as ReturnType<typeof vi.fn>).mockResolvedValue([mockRetrievalResults[0]])
 
     const { findRelevantProducts } = await import('@/lib/rag/query')
     const result = await findRelevantProducts('test query')
@@ -172,10 +176,10 @@ describe('findRelevantProducts', () => {
 
   it('calls rerankCandidates with the query and filtered candidates', async () => {
     const mockQuery = vi.fn().mockResolvedValue({ points: mockPoints })
-    vi.mocked(getQdrantClient).mockReturnValue({ query: mockQuery } as never)
-    vi.mocked(embedQuery).mockResolvedValue(mockQueryEmbedding as never)
-    vi.mocked(toSparseVector).mockReturnValue(mockSparseVector as never)
-    vi.mocked(rerankCandidates).mockResolvedValue(mockRetrievalResults)
+    ;(getQdrantClient as ReturnType<typeof vi.fn>).mockReturnValue({ query: mockQuery } as never)
+    ;(embedQuery as ReturnType<typeof vi.fn>).mockResolvedValue(mockQueryEmbedding as never)
+    ;(toSparseVector as ReturnType<typeof vi.fn>).mockReturnValue(mockSparseVector as never)
+    ;(rerankCandidates as ReturnType<typeof vi.fn>).mockResolvedValue(mockRetrievalResults)
 
     const { findRelevantProducts } = await import('@/lib/rag/query')
     await findRelevantProducts('test query')
@@ -191,12 +195,12 @@ describe('findRelevantProducts', () => {
 
   it('returns reranked results from rerankCandidates', async () => {
     const mockQuery = vi.fn().mockResolvedValue({ points: mockPoints })
-    vi.mocked(getQdrantClient).mockReturnValue({ query: mockQuery } as never)
-    vi.mocked(embedQuery).mockResolvedValue(mockQueryEmbedding as never)
-    vi.mocked(toSparseVector).mockReturnValue(mockSparseVector as never)
+    ;(getQdrantClient as ReturnType<typeof vi.fn>).mockReturnValue({ query: mockQuery } as never)
+    ;(embedQuery as ReturnType<typeof vi.fn>).mockResolvedValue(mockQueryEmbedding as never)
+    ;(toSparseVector as ReturnType<typeof vi.fn>).mockReturnValue(mockSparseVector as never)
 
     const reversedResults = [mockRetrievalResults[1], mockRetrievalResults[0]]
-    vi.mocked(rerankCandidates).mockResolvedValue(reversedResults)
+    ;(rerankCandidates as ReturnType<typeof vi.fn>).mockResolvedValue(reversedResults)
 
     const { findRelevantProducts } = await import('@/lib/rag/query')
     const result = await findRelevantProducts('test query')
@@ -208,9 +212,9 @@ describe('findRelevantProducts', () => {
 
   it('uses correct Qdrant query parameters', async () => {
     const mockQuery = vi.fn().mockResolvedValue({ points: [] })
-    vi.mocked(getQdrantClient).mockReturnValue({ query: mockQuery } as never)
-    vi.mocked(embedQuery).mockResolvedValue(mockQueryEmbedding as never)
-    vi.mocked(toSparseVector).mockReturnValue(mockSparseVector as never)
+    ;(getQdrantClient as ReturnType<typeof vi.fn>).mockReturnValue({ query: mockQuery } as never)
+    ;(embedQuery as ReturnType<typeof vi.fn>).mockResolvedValue(mockQueryEmbedding as never)
+    ;(toSparseVector as ReturnType<typeof vi.fn>).mockReturnValue(mockSparseVector as never)
 
     const { findRelevantProducts } = await import('@/lib/rag/query')
     await findRelevantProducts('vehicle query')

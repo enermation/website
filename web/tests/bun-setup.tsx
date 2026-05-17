@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom'
 import { afterEach, mock, vi } from 'bun:test'
 import { GlobalRegistrator } from '@happy-dom/global-registrator'
-import * as matchers from '@testing-library/jest-dom/matchers'
 import { cleanup } from '@testing-library/react'
 
 // Use vi.fn() for mock functions (Vitest compatibility)
@@ -10,14 +9,14 @@ const fn = vi.fn
 // ── Register happy-dom globals ────────────────────────────────────────────────
 GlobalRegistrator.register()
 
-// ── Extend expect with jest-dom matchers ──────────────────────────────────────
-expect.extend(matchers)
-
 // ── Cleanup after each test ────────────────────────────────────────────────────
 afterEach(() => {
   cleanup()
   mock.restore()
 })
+
+// ── Mock server-only (must be before any server-only imports) ─────────────────
+mock.module('server-only', () => ({}))
 
 // ── Mock next/image ────────────────────────────────────────────────────────────
 mock.module('next/image', () => ({
