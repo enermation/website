@@ -160,6 +160,19 @@ bun run lint
 - Model format: provider/model (e.g., 'cohere/command-a'), not full canonical paths
 - Export byok helpers (e.g., `chatModelByok()`, `visionModelByok()`) — gateway() does not accept providerOptions directly
 
+## Bun Test Runner
+
+- **Run tests**: `bun test --preload ./tests/bun-setup.tsx ./tests/unit ./tests/integration`
+- **Why --preload flag**: bunfig.toml `[test].preload` is not auto-read by Bun CLI — flag always required
+- **Preload file**: `tests/bun-setup.tsx` sets up happy-dom, mocks (next/image, next/cache, server-only, matchMedia, IntersectionObserver, ResizeObserver, canvas), and test env vars
+- **`vi.mocked()` replacement**: Use `(fn as ReturnType<typeof vi.fn>)` — Bun has no vi.mocked equivalent
+- **`server-only` mock**: Required in preload to prevent side-effect throw — `mock.module('server-only', () => ({}))`
+- **matchMedia mock**: Must include full interface — `addListener`, `removeListener`, `dispatchEvent` (not just addEventListener)
+- **Fake timers**: `vi.useFakeTimers()` + `vi.runAllTimers()` work the same as Vitest
+- **`vi.resetModules()`**: Not available in Bun — refactor tests to not depend on it
+- **DOM environment**: happy-dom via `@happy-dom/global-registrator` — jsdom not supported (Bun uses JavaScriptCore)
+- **E2E tests**: `bun run playwright test` works with no changes
+
 ## Agent Instructions
 
 For AI coding assistants working on this project:
