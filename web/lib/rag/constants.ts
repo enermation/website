@@ -28,3 +28,4 @@ export const RATELIMIT_WINDOW = '60 s'
 export const RATELIMIT_REQUESTS = 10
 
 export const SYSTEM_PROMPT_VERSION = 'v1'
+export const RERANK_SCORE_THRESHOLD = 0.15

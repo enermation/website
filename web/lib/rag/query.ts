@@ -8,6 +8,7 @@ import {
   QDRANT_SEARCH_EF,
   QDRANT_SPARSE_SCORE_THRESHOLD,
   QDRANT_SPARSE_VECTOR,
+  RERANK_SCORE_THRESHOLD,
   TOP_K_RETRIEVE,
 } from '@/lib/rag/constants'
 import { embedQuery } from '@/lib/rag/embed'
@@ -62,5 +63,5 @@ export async function findRelevantProducts(query: string): Promise<RagRetrievalR
 
   if (candidates.length === 0) return []
 
-  return rerankCandidates(query, candidates)
+  return rerankCandidates(query, candidates).filter(c => c.score >= RERANK_SCORE_THRESHOLD)
 }

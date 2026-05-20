@@ -138,7 +138,7 @@ export async function POST(request: Request) {
     model: getChatModel(),
     system,
     messages: modelMessages,
-    temperature: 0.3,
+    temperature: 0.1,
     providerOptions: {
       gateway: {
         user: sessionId ?? ip,
