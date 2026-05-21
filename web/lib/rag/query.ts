@@ -63,5 +63,5 @@ export async function findRelevantProducts(query: string): Promise<RagRetrievalR
 
   if (candidates.length === 0) return []
 
-  return rerankCandidates(query, candidates).filter(c => c.score >= RERANK_SCORE_THRESHOLD)
+  return (await rerankCandidates(query, candidates)).filter(c => c.score >= RERANK_SCORE_THRESHOLD)
 }
