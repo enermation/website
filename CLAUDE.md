@@ -2,7 +2,6 @@
 
 ## Git Commit Rules
 
-- Every commit must use `--author="enermation <admin@enermation.co>"`
 - Never add `Co-Authored-By: Claude` or any Claude attribution in commit messages
 
 ## Overview
