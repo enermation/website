@@ -95,6 +95,18 @@ export async function POST(request: Request) {
 
   const modelMessages = await convertToModelMessages(messages)
 
+  // Prefill: guides Claude to open with a response framing statement rather than
+  // starting with generic chatter. Inserted as an assistant message so the model
+  // continues from here — it becomes the first assistant token emitted.
+  const prefillIndex = modelMessages.findIndex(m => m.role === 'user')
+  const prefillMessage = {
+    role: 'assistant' as const,
+    content: 'Based on the Enermation product catalog above, here is my response:',
+  }
+  if (prefillIndex !== -1) {
+    modelMessages.splice(prefillIndex, 0, prefillMessage)
+  }
+
   const suggestionsPromise =
     products.length === 0
       ? Promise.resolve([])
