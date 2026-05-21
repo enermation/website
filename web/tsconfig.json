@@ -38,6 +38,7 @@
     "_temp-hero-old",
     "components/ai-elements/**",
     "components/rag/**",
-    "tests/**"
+    "tests/**",
+    "vitest.setup.tsx"
   ]
 }
