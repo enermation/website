@@ -37,6 +37,7 @@
     "../graphql",
     "_temp-hero-old",
     "components/ai-elements/**",
-    "components/rag/**"
+    "components/rag/**",
+    "tests/**"
   ]
 }
