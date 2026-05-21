@@ -1,3 +1,5 @@
+import type { RagRetrievalResult } from '@/lib/rag/types'
+
 export const DESCRIBE_PROMPT = `Identify the object in the image as concisely as possible for product search.
 
 Output format — comma-separated key=value pairs, no prose, no preamble:
