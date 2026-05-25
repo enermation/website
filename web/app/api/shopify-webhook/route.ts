@@ -43,13 +43,23 @@ export async function POST(request: Request) {
     case 'products/update': {
       const payload = JSON.parse(body)
       const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
-      if (handle) {
-        // revalidateTag accepts ONE tag per call — bust both the list and the specific product page
-        revalidateTag('products', 'max')
-        revalidateTag(`product-${handle}`, 'max')
-        enqueueJob(handle, 'upsert').catch(err => {
-          console.error('[shopify-webhook] RAG upsert job failed:', err)
-        })
+      if (!handle) {
+        console.warn(
+          '[shopify-webhook] products/create|update: unresolvable handle, cannot revalidate',
+          {
+            hasHandle: !!payload.handle,
+            hasAdminUrl: !!payload.admin_url,
+          }
+        )
+        return NextResponse.json({ handled: false, reason: 'unresolvable handle' }, { status: 422 })
+      }
+      revalidateTag('products', 'max')
+      revalidateTag(`product-${handle}`, 'max')
+      try {
+        await enqueueJob(handle, 'upsert')
+      } catch (err) {
+        console.error('[shopify-webhook] RAG upsert job failed:', err)
+        return NextResponse.json({ handled: false, reason: 'RAG job failed' }, { status: 500 })
       }
       break
     }
@@ -57,12 +67,20 @@ export async function POST(request: Request) {
     case 'products/delete': {
       const payload = JSON.parse(body)
       const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
-      if (handle) {
-        revalidateTag('products', 'max')
-        revalidateTag(`product-${handle}`, 'max')
-        enqueueJob(handle, 'delete').catch(err => {
-          console.error('[shopify-webhook] RAG delete job failed:', err)
+      if (!handle) {
+        console.warn('[shopify-webhook] products/delete: unresolvable handle, cannot revalidate', {
+          hasHandle: !!payload.handle,
+          hasAdminUrl: !!payload.admin_url,
         })
+        return NextResponse.json({ handled: false, reason: 'unresolvable handle' }, { status: 422 })
+      }
+      revalidateTag('products', 'max')
+      revalidateTag(`product-${handle}`, 'max')
+      try {
+        await enqueueJob(handle, 'delete')
+      } catch (err) {
+        console.error('[shopify-webhook] RAG delete job failed:', err)
+        return NextResponse.json({ handled: false, reason: 'RAG job failed' }, { status: 500 })
       }
       break
     }
@@ -72,10 +90,19 @@ export async function POST(request: Request) {
     case 'collections/delete': {
       const payload = JSON.parse(body)
       const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
-      if (handle) {
-        revalidateTag('collections', 'max')
-        revalidateTag(`collection-${handle}`, 'max')
+      if (!handle) {
+        console.warn(
+          '[shopify-webhook] collections/create|update|delete: unresolvable handle, cannot revalidate',
+          {
+            hasHandle: !!payload.handle,
+            hasAdminUrl: !!payload.admin_url,
+          }
+        )
+        return NextResponse.json({ handled: false, reason: 'unresolvable handle' }, { status: 422 })
       }
+      revalidateTag('collections', 'max')
+      revalidateTag(`collection-${handle}`, 'max')
+      revalidateTag('products', 'max')
       break
     }
 
