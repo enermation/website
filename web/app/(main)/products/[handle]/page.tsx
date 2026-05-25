@@ -18,8 +18,6 @@ import { truncateForMeta } from '@/lib/text'
 import { ImageGallery } from './image-gallery'
 import { ProductInfoPanel } from './product-info-panel'
 
-export const revalidate = 86400
-
 export async function generateStaticParams() {
   const collections = await fetchCollections()
   const productHandles = new Set<string>()

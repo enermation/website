@@ -45,8 +45,8 @@ export async function POST(request: Request) {
       const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
       if (handle) {
         // revalidateTag accepts ONE tag per call — bust both the list and the specific product page
-        revalidateTag('products')
-        revalidateTag(`product-${handle}`)
+        revalidateTag('products', 'max')
+        revalidateTag(`product-${handle}`, 'max')
         enqueueJob(handle, 'upsert').catch(err => {
           console.error('[shopify-webhook] RAG upsert job failed:', err)
         })
@@ -58,8 +58,8 @@ export async function POST(request: Request) {
       const payload = JSON.parse(body)
       const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
       if (handle) {
-        revalidateTag('products')
-        revalidateTag(`product-${handle}`)
+        revalidateTag('products', 'max')
+        revalidateTag(`product-${handle}`, 'max')
         enqueueJob(handle, 'delete').catch(err => {
           console.error('[shopify-webhook] RAG delete job failed:', err)
         })
@@ -73,8 +73,8 @@ export async function POST(request: Request) {
       const payload = JSON.parse(body)
       const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
       if (handle) {
-        revalidateTag('collections')
-        revalidateTag(`collection-${handle}`)
+        revalidateTag('collections', 'max')
+        revalidateTag(`collection-${handle}`, 'max')
       }
       break
     }
