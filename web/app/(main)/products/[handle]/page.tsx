@@ -8,10 +8,33 @@ import { BlogCardGrid } from '@/components/blog-card-grid'
 import { CarCard } from '@/components/car-card'
 import { SiteHeader } from '@/components/site-header'
 import { productPage } from '@/lib/data'
-import { fetchBlogByHandle, fetchCollectionProducts, fetchProduct } from '@/lib/shopify'
+import {
+  fetchBlogByHandle,
+  fetchCollectionProducts,
+  fetchCollections,
+  fetchProduct,
+} from '@/lib/shopify'
 import { truncateForMeta } from '@/lib/text'
 import { ImageGallery } from './image-gallery'
 import { ProductInfoPanel } from './product-info-panel'
+
+export const revalidate = 86400
+
+export async function generateStaticParams() {
+  const collections = await fetchCollections()
+  const productHandles = new Set<string>()
+
+  await Promise.all(
+    collections.map(async c => {
+      const p = await fetchCollectionProducts(c.handle, { first: 250 }).catch(() => null)
+      for (const prod of p?.products ?? []) {
+        productHandles.add(prod.handle)
+      }
+    })
+  )
+
+  return [...productHandles].map(handle => ({ handle }))
+}
 
 export async function generateMetadata({
   params,

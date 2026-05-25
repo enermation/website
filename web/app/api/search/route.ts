@@ -11,7 +11,14 @@ export async function GET(request: Request) {
 
   try {
     const results = await searchProducts(q)
-    return NextResponse.json({ results })
+    return NextResponse.json(
+      { results },
+      {
+        headers: {
+          'Cache-Control': 's-maxage=60, stale-while-revalidate=300',
+        },
+      }
+    )
   } catch {
     return NextResponse.json({ error: 'Search failed' }, { status: 500 })
   }

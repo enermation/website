@@ -41,38 +41,43 @@ export async function POST(request: Request) {
   switch (topic) {
     case 'products/create':
     case 'products/update': {
-      revalidateTag('products', 'max')
-      try {
-        const payload = JSON.parse(body)
-        const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
-        if (handle) {
-          await enqueueJob(handle, 'upsert')
-        }
-      } catch {
-        // RAG job failed — cache already revalidated above
+      const payload = JSON.parse(body)
+      const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
+      if (handle) {
+        // revalidateTag accepts ONE tag per call — bust both the list and the specific product page
+        revalidateTag('products')
+        revalidateTag(`product-${handle}`)
+        enqueueJob(handle, 'upsert').catch(err => {
+          console.error('[shopify-webhook] RAG upsert job failed:', err)
+        })
       }
       break
     }
 
     case 'products/delete': {
-      revalidateTag('products', 'max')
-      try {
-        const payload = JSON.parse(body)
-        const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
-        if (handle) {
-          await enqueueJob(handle, 'delete')
-        }
-      } catch {
-        // RAG job failed — cache already revalidated above
+      const payload = JSON.parse(body)
+      const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
+      if (handle) {
+        revalidateTag('products')
+        revalidateTag(`product-${handle}`)
+        enqueueJob(handle, 'delete').catch(err => {
+          console.error('[shopify-webhook] RAG delete job failed:', err)
+        })
       }
       break
     }
 
     case 'collections/create':
     case 'collections/update':
-    case 'collections/delete':
-      revalidateTag('collections', 'max')
+    case 'collections/delete': {
+      const payload = JSON.parse(body)
+      const handle = payload.handle ?? extractHandleFromUrl(payload.admin_url)
+      if (handle) {
+        revalidateTag('collections')
+        revalidateTag(`collection-${handle}`)
+      }
       break
+    }
 
     default:
       // Ignore other topics (orders, customers, etc.)

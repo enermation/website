@@ -15,6 +15,13 @@ import type { ActiveFilters, ShopifyCollection } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { FilterBar } from './filter-bar'
 
+export const revalidate = 86400
+
+export async function generateStaticParams() {
+  const collections = await fetchCollections()
+  return collections.map(c => ({ handle: c.handle }))
+}
+
 // ── Sort key mapping ──────────────────────────────────────────────────────────
 
 function getSortConfig(sort?: string): { sortKey: string; reverse?: boolean } {
